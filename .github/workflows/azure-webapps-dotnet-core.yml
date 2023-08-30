@@ -53,10 +53,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build with dotnet
-        run: dotnet build .\Eclipse.WebAPI\Eclipse.WebAPI.sln --configuration Release
+        run: dotnet build ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish Eclipse.WebAPI\Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./Eclipse.WebAPI/Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
