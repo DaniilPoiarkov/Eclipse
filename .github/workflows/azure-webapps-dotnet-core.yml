@@ -53,10 +53,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build with dotnet
-        run: ls && dotnet build --configuration Release
+        run: dotnet build --configuration Release --project Eclipse.WebAPI
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp --project Eclipse.WebAPI
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
