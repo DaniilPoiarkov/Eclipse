@@ -7,11 +7,11 @@ public class EclipseStarter : IEclipseStarter
 {
     private readonly ITelegramBotClient _client;
 
-    private readonly ILogger _logger;
+    private readonly ILogger<EclipseStarter> _logger;
 
     private readonly IUpdateHandler _updateHandler;
 
-    public EclipseStarter(ITelegramBotClient botClient, ILogger logger, IUpdateHandler updateHandler)
+    public EclipseStarter(ITelegramBotClient botClient, ILogger<EclipseStarter> logger, IUpdateHandler updateHandler)
     {
         _client = botClient;
         _logger = logger;
