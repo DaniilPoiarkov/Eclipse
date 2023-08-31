@@ -1,9 +1,11 @@
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Middlewares;
+using Eclipse.WebAPI.TelegramHandler;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Telegram.Bot;
+using Telegram.Bot.Polling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,8 @@ builder.Services.Scan(tss =>
         .AsMatchingInterface()
         .WithTransientLifetime());
 
+builder.Services.AddTransient<IUpdateHandler, TelegramUpdateHandler>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -29,17 +33,13 @@ var telegramConfig = builder.Configuration.GetSection("Telegram");
 var token = telegramConfig["Token"];
 var url = telegramConfig["Webhook"];
 
-if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(url))
-{
-    var client = new TelegramBotClient(token);
-    await client.SetWebhookAsync(url);
-
-    builder.Services.AddSingleton<ITelegramBotClient>(client);
-}
+var client = new TelegramBotClient(token!);
+builder.Services.AddSingleton<ITelegramBotClient>(client);
 
 var app = builder.Build();
 
 app.Logger.LogInformation("Bot Token: {token}, webhook: {url}", token, url);
+client.StartReceiving(app.Services.GetRequiredService<IUpdateHandler>());
 
 app.UseSwagger();
 app.UseSwaggerUI();
