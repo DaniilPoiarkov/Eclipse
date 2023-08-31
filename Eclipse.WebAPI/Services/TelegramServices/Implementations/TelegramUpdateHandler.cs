@@ -1,9 +1,10 @@
-﻿using Telegram.Bot;
+﻿using Eclipse.WebAPI.Services.Cache;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Eclipse.WebAPI.TelegramHandler;
+namespace Eclipse.WebAPI.Services.TelegramServices.Implementations;
 
 public class TelegramUpdateHandler : IUpdateHandler
 {
@@ -29,6 +30,10 @@ public class TelegramUpdateHandler : IUpdateHandler
         }
 
         _logger.LogInformation("Recieved message from {chatId} (chatId)", update.Message!.Chat.Id);
-        await botClient.SendTextMessageAsync(update.Message!.Chat.Id, "Hello! I'm Eclipse. Right now I'm having a rest, so see you later", cancellationToken: cancellationToken);
+        
+        await botClient.SendTextMessageAsync(
+            update.Message!.Chat.Id,
+            "Hello! I'm Eclipse. Right now I'm having a rest, so see you later",
+            cancellationToken: cancellationToken);
     }
 }
