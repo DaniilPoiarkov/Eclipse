@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 namespace Eclipse.WebAPI.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class ApiKeyAuthorizationAttribute : Attribute, IAuthorizationFilter
+public class ApiKeyAuthorizeAttribute : Attribute, IAuthorizationFilter
 {
     private static readonly string HeaderName = "API-KEY";
 

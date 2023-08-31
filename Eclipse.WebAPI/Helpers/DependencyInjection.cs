@@ -22,7 +22,7 @@ public static class DependencyInjection
         services
             .AddTransient<IUpdateHandler, TelegramUpdateHandler>()
             .AddSingleton<ICacheService, CacheService>()
-            .AddScoped<ApiKeyAuthorizationAttribute>();
+            .AddScoped<ApiKeyAuthorizeAttribute>();
         
         return services;
     }
@@ -40,7 +40,7 @@ public static class DependencyInjection
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Eclipse",
-                Description = "Open API to test an app. Some features might require special access",
+                Description = "Open API to test an app. Some features might require special access via API-KEY",
                 Version = "v1",
             });
 
