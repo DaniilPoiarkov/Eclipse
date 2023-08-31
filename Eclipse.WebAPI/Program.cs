@@ -30,15 +30,14 @@ builder.Services.AddSwaggerGen();
 
 var telegramConfig = builder.Configuration.GetSection("Telegram");
 
-var token = telegramConfig["Token"];
-var url = telegramConfig["Webhook"];
-
-var client = new TelegramBotClient(token!);
+var client = new TelegramBotClient(telegramConfig["Token"]!);
 builder.Services.AddSingleton<ITelegramBotClient>(client);
 
 var app = builder.Build();
 
-app.Logger.LogInformation("Bot Token: {token}, webhook: {url}", token, url);
+var eclipse = await client.GetMeAsync();
+
+app.Logger.LogInformation("Bot: {token}", eclipse.Username);
 client.StartReceiving(app.Services.GetRequiredService<IUpdateHandler>());
 
 app.UseSwagger();
