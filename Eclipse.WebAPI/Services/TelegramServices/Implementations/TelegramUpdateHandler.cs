@@ -1,4 +1,5 @@
 ﻿using Eclipse.WebAPI.Services.Cache;
+using Eclipse.WebAPI.Services.UserStores;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -10,9 +11,12 @@ public class TelegramUpdateHandler : IUpdateHandler
 {
     private readonly ILogger<TelegramUpdateHandler> _logger;
 
-    public TelegramUpdateHandler(ILogger<TelegramUpdateHandler> logger)
+    private readonly IUserStore _userStore;
+
+    public TelegramUpdateHandler(ILogger<TelegramUpdateHandler> logger, IUserStore userStore)
     {
         _logger = logger;
+        _userStore = userStore;
     }
 
     public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -35,5 +39,7 @@ public class TelegramUpdateHandler : IUpdateHandler
             update.Message!.Chat.Id,
             "Hello! I'm Eclipse. Right now I'm having a rest, so see you later",
             cancellationToken: cancellationToken);
+
+        _userStore.AddUser(new TelegramUser(update));
     }
 }
