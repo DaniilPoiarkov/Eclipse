@@ -26,18 +26,20 @@ builder.Services.AddSwaggerGen();
 
 var telegramConfig = builder.Configuration.GetSection("Telegram");
 
-var botToken = telegramConfig["Token"];
+var token = telegramConfig["Token"];
 var url = telegramConfig["Webhook"];
 
-if (!string.IsNullOrEmpty(botToken) && !string.IsNullOrEmpty(url))
+if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(url))
 {
-    var client = new TelegramBotClient(botToken);
+    var client = new TelegramBotClient(token);
     await client.SetWebhookAsync(url);
 
     builder.Services.AddSingleton<ITelegramBotClient>(client);
 }
 
 var app = builder.Build();
+
+app.Logger.LogInformation("Bot Token: {token}, webhook: {url}", token, url);
 
 app.UseSwagger();
 app.UseSwaggerUI();
