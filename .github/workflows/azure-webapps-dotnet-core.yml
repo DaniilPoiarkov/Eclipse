@@ -52,6 +52,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
+      - name: Restore dependencies
+        run: dotnet restore ./Eclipse.WebAPI/Eclipse.WebAPI.sln
+
       - name: Build with dotnet
         run: dotnet build ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
 

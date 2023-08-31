@@ -29,7 +29,7 @@ public class TelegramController : ControllerBase
 
         _logger.LogInformation("Recieved message from {chatId} (chatId)", update.Message!.Chat.Id);
 
-        await _botClient.SendTextMessageAsync(397223698, "New message handled", cancellationToken: cancellationToken);
+        await _botClient.SendTextMessageAsync(update.Message!.Chat.Id, "Hello! I'm Eclipse. Right now I'm having a rest, so see you later", cancellationToken: cancellationToken);
         return NoContent();
     }
 }
