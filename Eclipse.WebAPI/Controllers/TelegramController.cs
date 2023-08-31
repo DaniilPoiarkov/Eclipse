@@ -1,25 +1,23 @@
-﻿using Eclipse.WebAPI.Services.TelegramServices;
+﻿using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Services.TelegramServices;
 using Eclipse.WebAPI.Services.UserStores;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[ApiKeyAuthorization]
 public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;
 
     private readonly IUserStore _userStore;
 
-    private readonly IOptions<TelegramOptions> _options;
-
-    public TelegramController(ITelegramService telegramService, IUserStore userStore, IOptions<TelegramOptions> options)
+    public TelegramController(ITelegramService telegramService, IUserStore userStore)
     {
         _telegramService = telegramService;
         _userStore = userStore;
-        _options = options;
     }
 
     [HttpPost]
@@ -30,13 +28,8 @@ public class TelegramController : ControllerBase
     }
 
     [HttpGet("users")]
-    public IActionResult GetUsers([FromQuery] string eclipsetoken)
+    public IActionResult GetUsers()
     {
-        if (!_options.Value.EclipseToken.Equals(eclipsetoken))
-        {
-            return Unauthorized();
-        }
-
         return Ok(_userStore.GetUsers());
     }
 }

@@ -7,21 +7,13 @@ public class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IOptions<TelegramOptions> _telegramOptions;
-
-    public TelegramService(ITelegramBotClient botClient, IOptions<TelegramOptions> telegramOptions)
+    public TelegramService(ITelegramBotClient botClient)
     {
         _botClient = botClient;
-        _telegramOptions = telegramOptions;
     }
 
     public async Task Send(SendMessageModel message, CancellationToken cancellationToken = default)
     {
-        if (!message.EclipseToken.Equals(_telegramOptions.Value.EclipseToken))
-        {
-            return;
-        }
-
         await _botClient.SendTextMessageAsync(
             message.ChatId,
             message.Message,
