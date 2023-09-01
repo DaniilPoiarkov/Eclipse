@@ -1,14 +1,14 @@
-﻿using Eclipse.Application.Contracts.UserStores;
-using Eclipse.Infrastructure.Telegram;
+﻿using Eclipse.Infrastructure.Telegram;
 using Telegram.Bot;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using ILogger = Serilog.ILogger;
+using Telegram.Bot.Types;
+using Eclipse.Application.Contracts.UserStores;
+using Serilog;
+using Eclipse.Application.Contracts.Telegram;
 
-namespace Eclipse.WebAPI.Services;
+namespace Eclipse.Application.Telegram;
 
-public class TelegramUpdateHandler : IUpdateHandler
+internal class TelegramUpdateHandler : ITelegramUpdateHandler
 {
     private readonly ILogger _logger;
 

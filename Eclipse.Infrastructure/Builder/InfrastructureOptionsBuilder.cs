@@ -17,8 +17,8 @@ public class InfrastructureOptionsBuilder
     }
 
     public void UseTelegramHandler<THandler>()
-        where THandler : class, IUpdateHandler =>
-        _services.AddTransient<IUpdateHandler, THandler>();
+        where THandler : IUpdateHandler =>
+        _services.AddTransient<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
 
     internal InfrastructureOptions Build()
     {

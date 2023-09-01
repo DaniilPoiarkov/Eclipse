@@ -1,11 +1,11 @@
 using Eclipse.Application;
+using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Infrastructure;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Telegram;
 using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Helpers;
 using Eclipse.WebAPI.Middlewares;
-using Eclipse.WebAPI.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +18,7 @@ builder.Services
             Token = builder.Configuration["Telegram:Token"]!,
         };
 
-        config.UseTelegramHandler<TelegramUpdateHandler>();
+        config.UseTelegramHandler<ITelegramUpdateHandler>();
 
         config.CacheOptions = new CacheOptions
         {
