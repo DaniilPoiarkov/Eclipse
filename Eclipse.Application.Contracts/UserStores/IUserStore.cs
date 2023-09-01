@@ -1,6 +1,6 @@
-﻿using Eclipse.WebAPI.Services.TelegramServices;
+﻿using Eclipse.Infrastructure.Telegram;
 
-namespace Eclipse.WebAPI.Services.UserStores;
+namespace Eclipse.Application.Contracts.UserStores;
 
 public interface IUserStore
 {

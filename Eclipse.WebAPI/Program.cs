@@ -1,14 +1,43 @@
+using Eclipse.Application;
+using Eclipse.Infrastructure;
+using Eclipse.Infrastructure.Builder;
+using Eclipse.Infrastructure.Telegram;
+using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Helpers;
 using Eclipse.WebAPI.Middlewares;
-using Eclipse.WebAPI.Services.TelegramServices;
+using Eclipse.WebAPI.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddApplication()
-    .AddInfrastructure();
+    .AddInfrastructure(config =>
+    {
+        config.TelegramOptions = new TelegramOptions
+        {
+            Token = builder.Configuration["Telegram:Token"]!,
+        };
 
-var client = builder.AddEclipseBot();
+        config.UseTelegramHandler<TelegramUpdateHandler>();
+
+        config.CacheOptions = new CacheOptions
+        {
+            Expiration = new TimeSpan(1, 0, 0, 0)
+        };
+    });
+
+builder.Services
+    .AddApplication()
+    .AddCore();
+
+builder.Services.Configure<ApiKeyAuthorizationOptions>(
+    builder.Configuration.GetSection("Authorization")
+);
+
+builder.Host.UseSerilog((_, config) =>
+{
+    config.WriteTo.Console();
+});
 
 var app = builder.Build();
 
@@ -23,7 +52,7 @@ if (app.Environment.IsDevelopment())
     ///
 }
 
-app.UseMiddleware<GlobalExceptionHandler>();
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 

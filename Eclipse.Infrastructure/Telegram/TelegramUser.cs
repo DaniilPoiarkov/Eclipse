@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types;
 
-namespace Eclipse.WebAPI.Services.TelegramServices;
+namespace Eclipse.Infrastructure.Telegram;
 
 public class TelegramUser
 {

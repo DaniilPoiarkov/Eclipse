@@ -5,6 +5,16 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.WebAPI", "Eclipse.WebAPI.csproj", "{7CF6B718-D97D-4930-A2BA-BE722856D2D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Application.Contracts", "..\Eclipse.Application.Contracts\Eclipse.Application.Contracts.csproj", "{FFC6F2BC-C133-4274-B270-2943FBFC0407}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Application", "..\Eclipse.Application\Eclipse.Application.csproj", "{32D0F814-493B-424E-A703-47132FC9815B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Domain.Shared", "..\Eclipse.Domain.Shared\Eclipse.Domain.Shared.csproj", "{47604332-477E-4594-A670-A934402F43A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Domain", "..\Eclipse.Domain\Eclipse.Domain.csproj", "{CA894B24-6723-478A-9DBA-24EFB107A93E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Infrastructure", "..\Eclipse.Infrastructure\Eclipse.Infrastructure.csproj", "{891ABE1E-8AFA-4428-B87C-90D4790D5082}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +25,26 @@ Global
 		{7CF6B718-D97D-4930-A2BA-BE722856D2D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CF6B718-D97D-4930-A2BA-BE722856D2D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CF6B718-D97D-4930-A2BA-BE722856D2D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC6F2BC-C133-4274-B270-2943FBFC0407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC6F2BC-C133-4274-B270-2943FBFC0407}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC6F2BC-C133-4274-B270-2943FBFC0407}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC6F2BC-C133-4274-B270-2943FBFC0407}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32D0F814-493B-424E-A703-47132FC9815B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32D0F814-493B-424E-A703-47132FC9815B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32D0F814-493B-424E-A703-47132FC9815B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32D0F814-493B-424E-A703-47132FC9815B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47604332-477E-4594-A670-A934402F43A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47604332-477E-4594-A670-A934402F43A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47604332-477E-4594-A670-A934402F43A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47604332-477E-4594-A670-A934402F43A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA894B24-6723-478A-9DBA-24EFB107A93E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA894B24-6723-478A-9DBA-24EFB107A93E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA894B24-6723-478A-9DBA-24EFB107A93E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA894B24-6723-478A-9DBA-24EFB107A93E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{891ABE1E-8AFA-4428-B87C-90D4790D5082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{891ABE1E-8AFA-4428-B87C-90D4790D5082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{891ABE1E-8AFA-4428-B87C-90D4790D5082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{891ABE1E-8AFA-4428-B87C-90D4790D5082}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

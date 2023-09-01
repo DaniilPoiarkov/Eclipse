@@ -1,9 +1,10 @@
-﻿using Eclipse.WebAPI.Services.Cache;
-using Eclipse.WebAPI.Services.TelegramServices;
+﻿using Eclipse.Application.Contracts.UserStores;
+using Eclipse.Infrastructure.Cache;
+using Eclipse.Infrastructure.Telegram;
 
-namespace Eclipse.WebAPI.Services.UserStores;
+namespace Eclipse.Application.UserStores;
 
-public class UserStore : IUserStore
+internal class UserStore : IUserStore
 {
     private readonly ICacheService _cacheService;
 
@@ -18,7 +19,7 @@ public class UserStore : IUserStore
     {
         var key = new CacheKey(Key);
 
-        var users = _cacheService.Get<List<TelegramUser>>(key, true)
+        var users = _cacheService.GetAndDelete<List<TelegramUser>>(key)
             ?? new List<TelegramUser>();
 
         if (!users.Exists(u => u.Id == user.Id))
