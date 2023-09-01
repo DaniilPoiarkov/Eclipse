@@ -1,17 +1,19 @@
-﻿using Telegram.Bot;
+﻿using Eclipse.Infrastructure.Telegram;
 using Telegram.Bot.Polling;
+using Telegram.Bot;
+using Serilog;
 
-namespace Eclipse.WebAPI.Services.TelegramServices.Implementations;
+namespace Eclipse.Infrastructure.Internals.Telegram;
 
-public class EclipseStarter : IEclipseStarter
+internal class EclipseStarter : IEclipseStarter
 {
     private readonly ITelegramBotClient _client;
 
-    private readonly ILogger<EclipseStarter> _logger;
+    private readonly ILogger _logger;
 
     private readonly IUpdateHandler _updateHandler;
 
-    public EclipseStarter(ITelegramBotClient botClient, ILogger<EclipseStarter> logger, IUpdateHandler updateHandler)
+    public EclipseStarter(ITelegramBotClient botClient, ILogger logger, IUpdateHandler updateHandler)
     {
         _client = botClient;
         _logger = logger;
@@ -23,6 +25,6 @@ public class EclipseStarter : IEclipseStarter
         _client.StartReceiving(_updateHandler);
         var eclipse = await _client.GetMeAsync();
 
-        _logger.LogInformation("Bot: {token}", eclipse.Username);
+        _logger.Information("Bot: {token}", eclipse.Username);
     }
 }

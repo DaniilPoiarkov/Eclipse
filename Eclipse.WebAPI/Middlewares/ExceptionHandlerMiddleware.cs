@@ -2,11 +2,11 @@
 
 namespace Eclipse.WebAPI.Middlewares;
 
-public class GlobalExceptionHandler
+public class ExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public GlobalExceptionHandler(RequestDelegate next)
+    public ExceptionHandlerMiddleware(RequestDelegate next)
     {
         _next = next;
     }

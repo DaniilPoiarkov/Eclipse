@@ -1,5 +1,4 @@
-﻿using Eclipse.WebAPI.Services.TelegramServices;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 
@@ -12,7 +11,7 @@ public class ApiKeyAuthorizeAttribute : Attribute, IAuthorizationFilter
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<TelegramOptions>>();
+        var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<ApiKeyAuthorizationOptions>>();
 
         if (!context.HttpContext.Request.Headers.TryGetValue(HeaderName, out var apiKey))
         {
@@ -20,7 +19,7 @@ public class ApiKeyAuthorizeAttribute : Attribute, IAuthorizationFilter
             return;
         }
 
-        if (!options.Value.EclipseToken.Equals(apiKey))
+        if (!options.Value.EclipseApiKey.Equals(apiKey))
         {
             context.Result = new UnauthorizedObjectResult("API-KEY is invalid");
             return;

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Eclipse.Infrastructure.Telegram;
 using Telegram.Bot;
 
-namespace Eclipse.WebAPI.Services.TelegramServices.Implementations;
+namespace Eclipse.Infrastructure.Internals.Telegram;
 
-public class TelegramService : ITelegramService
+internal class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _botClient;
 
