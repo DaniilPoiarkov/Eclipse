@@ -16,6 +16,7 @@ builder.Services
         config.TelegramOptions = new TelegramOptions
         {
             Token = builder.Configuration["Telegram:Token"]!,
+            Chat = long.Parse(builder.Configuration["Telegram:Chat"]!),
         };
 
         config.UseTelegramHandler<ITelegramUpdateHandler>();

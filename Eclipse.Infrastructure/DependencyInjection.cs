@@ -2,10 +2,14 @@
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Telegram;
+using Eclipse.Infrastructure.Quartz;
+using Eclipse.Infrastructure.Quartz.Jobs;
 using Eclipse.Infrastructure.Telegram;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Quartz;
 using Serilog;
 using Telegram.Bot;
 
@@ -39,6 +43,20 @@ public static class DependencyInjection
 
             return new TelegramBotClient(options.TelegramOptions.Token);
         });
+
+        services.AddHttpClient<WarmupJob>((sp, client) =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+            client.BaseAddress = new(config["App:SelfUrl"]!);
+        });
+
+        services.AddQuartz();
+        services.AddQuartzHostedService(cfg =>
+        {
+            cfg.WaitForJobsToComplete = true;
+        });
+
+        services.ConfigureOptions<QuartzOptionsConfiguration>();
 
         return services;
     }
