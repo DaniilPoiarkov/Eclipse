@@ -14,7 +14,7 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
             .AddTrigger(b => b.ForJob(jobKey)
                 .StartNow()
                 .WithSimpleSchedule(s =>
-                    s.WithIntervalInSeconds(1)
+                    s.WithIntervalInHours(1)
                     .RepeatForever()));
     }
 }
