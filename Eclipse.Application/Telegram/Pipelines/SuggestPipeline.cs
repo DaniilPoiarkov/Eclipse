@@ -43,6 +43,11 @@ public class SuggestPipeline : EclipsePipelineBase
         {
             return Menu(MainMenuButton, "As you wish");
         }
+
+        if (string.IsNullOrEmpty(context.Value))
+        {
+            return Menu(MainMenuButton, "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊");
+        }
         
         var options = _options.TelegramOptions;
         var message = $"Suggestion from {context.User.Name}, @{context.User.Username}:" +
