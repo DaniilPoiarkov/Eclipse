@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.UserStores;
+﻿using Eclipse.Application.Contracts.Telegram.Stores;
 using Eclipse.Infrastructure.Telegram;
 using Eclipse.WebAPI.Filters;
 using Microsoft.AspNetCore.Mvc;

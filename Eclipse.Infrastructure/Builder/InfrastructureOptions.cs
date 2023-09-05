@@ -1,8 +1,8 @@
 ﻿namespace Eclipse.Infrastructure.Builder;
 
-internal class InfrastructureOptions
+public class InfrastructureOptions
 {
-    internal TelegramOptions TelegramOptions { get; }
+    public TelegramOptions TelegramOptions { get; }
 
     public CacheOptions CacheOptions { get; }
 

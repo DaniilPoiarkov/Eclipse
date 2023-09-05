@@ -1,6 +1,5 @@
 ﻿using Eclipse.Infrastructure.Builder;
 using Quartz;
-using Serilog;
 using Telegram.Bot;
 
 namespace Eclipse.Infrastructure.Quartz.Jobs;

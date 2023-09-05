@@ -1,8 +1,8 @@
-﻿using Eclipse.Application.Contracts.UserStores;
+﻿using Eclipse.Application.Contracts.Telegram.Stores;
+using Eclipse.Core.Models;
 using Eclipse.Infrastructure.Cache;
-using Eclipse.Infrastructure.Telegram;
 
-namespace Eclipse.Application.UserStores;
+namespace Eclipse.Application.Telegram.Stores;
 
 internal class UserStore : IUserStore
 {
