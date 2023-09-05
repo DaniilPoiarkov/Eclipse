@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eclipse.Core\Eclipse.Core.csproj" />
     <ProjectReference Include="..\Eclipse.Domain.Shared\Eclipse.Domain.Shared.csproj" />
     <ProjectReference Include="..\Eclipse.Infrastructure\Eclipse.Infrastructure.csproj" />
   </ItemGroup>
