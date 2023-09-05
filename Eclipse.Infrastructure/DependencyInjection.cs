@@ -8,7 +8,6 @@ using Eclipse.Infrastructure.Telegram;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Quartz;
 using Serilog;
 using Telegram.Bot;

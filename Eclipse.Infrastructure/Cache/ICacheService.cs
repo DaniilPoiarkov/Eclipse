@@ -7,4 +7,6 @@ public interface ICacheService
     T? Get<T>(CacheKey key);
 
     T? GetAndDelete<T>(CacheKey key);
+
+    void Delete(CacheKey key);
 }

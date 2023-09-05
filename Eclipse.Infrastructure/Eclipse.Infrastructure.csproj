@@ -20,4 +20,8 @@
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Eclipse.Core\Eclipse.Core.csproj" />
+  </ItemGroup>
+
 </Project>

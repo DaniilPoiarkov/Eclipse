@@ -16,6 +16,11 @@ internal class CacheService : ICacheService
         _options = options;
     }
 
+    public void Delete(CacheKey key)
+    {
+        _memoryCache.Remove(key.Key);
+    }
+
     public T? Get<T>(CacheKey key) => _memoryCache.Get<T>(key.Key);
 
     public T? GetAndDelete<T>(CacheKey key)

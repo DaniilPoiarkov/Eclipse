@@ -1,6 +1,6 @@
-﻿using Eclipse.Infrastructure.Telegram;
+﻿using Eclipse.Core.Models;
 
-namespace Eclipse.Application.Contracts.UserStores;
+namespace Eclipse.Application.Contracts.Telegram.Stores;
 
 public interface IUserStore
 {
