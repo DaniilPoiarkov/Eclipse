@@ -19,10 +19,10 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
+    .AddApplicationModule()
     .AddDomainSharedModule()
     .AddDomainModule()
     .AddCoreModule()
-    .AddApplicationModule()
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()

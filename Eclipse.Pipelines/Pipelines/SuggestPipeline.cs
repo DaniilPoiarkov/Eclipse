@@ -2,6 +2,7 @@
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Eclipse.Pipelines.Pipelines;
 
@@ -43,7 +44,7 @@ public class SuggestPipeline : EclipsePipelineBase
         {
             return Menu(MainMenuButton, "As you wish");
         }
-
+        
         if (string.IsNullOrEmpty(context.Value))
         {
             return Menu(MainMenuButton, "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊");
