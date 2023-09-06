@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eclipse.Infrastructure.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Polling;
 
 namespace Eclipse.Infrastructure.Builder;

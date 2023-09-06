@@ -2,20 +2,19 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Serilog;
-using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Core.Models;
-using Eclipse.Application.Contracts.Telegram.Stores;
 using Eclipse.Core.Core;
-using Microsoft.Extensions.Options;
 using Eclipse.Infrastructure.Builder;
+using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Contracts.Telegram.Pipelines;
 
-namespace Eclipse.Application.Telegram;
+namespace Eclipse.Pipelines.UpdateHandler;
 
 internal class TelegramUpdateHandler : ITelegramUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly IUserInfoStore _userStore;
+    private readonly ITelegramUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -25,7 +24,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
     public TelegramUpdateHandler(
         ILogger logger,
-        IUserInfoStore userStore,
+        ITelegramUserStore userStore,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         InfrastructureOptions options)

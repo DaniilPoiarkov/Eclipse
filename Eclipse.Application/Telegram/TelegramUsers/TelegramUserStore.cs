@@ -1,16 +1,16 @@
-﻿using Eclipse.Application.Contracts.Telegram.Stores;
+﻿using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Core.Models;
 using Eclipse.Infrastructure.Cache;
 
-namespace Eclipse.Application.Telegram.Stores;
+namespace Eclipse.Application.Telegram.TelegramUsers;
 
-internal class UserInfoStore : IUserInfoStore
+internal class TelegramUserStore : ITelegramUserStore
 {
     private readonly ICacheService _cacheService;
 
     private static readonly string Key = "Telegram-Users";
 
-    public UserInfoStore(ICacheService cacheService)
+    public TelegramUserStore(ICacheService cacheService)
     {
         _cacheService = cacheService;
     }

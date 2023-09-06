@@ -1,8 +1,8 @@
 ﻿using Eclipse.Core.Models;
 
-namespace Eclipse.Application.Contracts.Telegram.Stores;
+namespace Eclipse.Application.Contracts.Telegram.TelegramUsers;
 
-public interface IUserInfoStore
+public interface ITelegramUserStore
 {
     void AddUser(TelegramUser user);
 

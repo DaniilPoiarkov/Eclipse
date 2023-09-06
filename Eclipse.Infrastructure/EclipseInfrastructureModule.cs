@@ -1,5 +1,4 @@
-﻿using Eclipse.Core;
-using Eclipse.Infrastructure.Builder;
+﻿using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Telegram;

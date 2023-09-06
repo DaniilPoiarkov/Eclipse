@@ -8,6 +8,7 @@ using Eclipse.Infrastructure;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Telegram;
 using Eclipse.Pipelines;
+using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Middlewares;

@@ -1,8 +1,8 @@
 ﻿using Telegram.Bot.Polling;
 
-namespace Eclipse.Application.Contracts.Telegram;
+namespace Eclipse.Pipelines.UpdateHandler;
 
 public interface ITelegramUpdateHandler : IUpdateHandler
 {
-    
+
 }
