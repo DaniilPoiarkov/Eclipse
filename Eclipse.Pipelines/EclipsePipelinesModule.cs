@@ -1,0 +1,28 @@
+﻿using Eclipse.Core;
+using Eclipse.Core.Core;
+using Eclipse.Core.Pipelines;
+using Eclipse.Pipelines.Pipelines;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace Eclipse.Pipelines;
+
+/// <summary>
+/// Takes responsibility for pipelines registration and implementation
+/// </summary>
+public static class EclipsePipelinesModule
+{
+    public static IServiceCollection AddPipelinesModule(this IServiceCollection services)
+    {
+        services
+            .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>());
+
+        services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
+            .AddClasses(c => c.AssignableTo<PipelineBase>())
+            .As<PipelineBase>()
+            .AsSelf()
+            .WithTransientLifetime());
+        
+        return services;
+    }
+}

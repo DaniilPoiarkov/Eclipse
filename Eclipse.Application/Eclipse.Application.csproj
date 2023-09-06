@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eclipse.Application.Contracts\Eclipse.Application.Contracts.csproj" />
-    <ProjectReference Include="..\Eclipse.Infrastructure\Eclipse.Infrastructure.csproj" />
+    <ProjectReference Include="..\Eclipse.Domain\Eclipse.Domain.csproj" />
   </ItemGroup>
 
 </Project>

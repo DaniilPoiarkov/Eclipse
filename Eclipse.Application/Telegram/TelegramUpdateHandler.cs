@@ -15,7 +15,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly IUserStore _userStore;
+    private readonly IUserInfoStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -25,7 +25,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
     public TelegramUpdateHandler(
         ILogger logger,
-        IUserStore userStore,
+        IUserInfoStore userStore,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         InfrastructureOptions options)

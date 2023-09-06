@@ -12,9 +12,9 @@ public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;
 
-    private readonly IUserStore _userStore;
+    private readonly IUserInfoStore _userStore;
 
-    public TelegramController(ITelegramService telegramService, IUserStore userStore)
+    public TelegramController(ITelegramService telegramService, IUserInfoStore userStore)
     {
         _telegramService = telegramService;
         _userStore = userStore;

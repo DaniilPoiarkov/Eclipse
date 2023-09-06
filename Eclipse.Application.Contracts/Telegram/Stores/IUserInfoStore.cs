@@ -2,7 +2,7 @@
 
 namespace Eclipse.Application.Contracts.Telegram.Stores;
 
-public interface IUserStore
+public interface IUserInfoStore
 {
     void AddUser(TelegramUser user);
 

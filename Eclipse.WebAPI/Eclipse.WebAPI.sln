@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Domain", "..\Eclips
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Infrastructure", "..\Eclipse.Infrastructure\Eclipse.Infrastructure.csproj", "{891ABE1E-8AFA-4428-B87C-90D4790D5082}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Core", "..\Eclipse.Core\Eclipse.Core.csproj", "{1F0FC184-61C6-46EA-BF44-8A7E27DDD1D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Core", "..\Eclipse.Core\Eclipse.Core.csproj", "{1F0FC184-61C6-46EA-BF44-8A7E27DDD1D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Pipelines", "..\Eclipse.Pipelines\Eclipse.Pipelines.csproj", "{37E91233-CD01-4463-95F1-08282D0A6682}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{1F0FC184-61C6-46EA-BF44-8A7E27DDD1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F0FC184-61C6-46EA-BF44-8A7E27DDD1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F0FC184-61C6-46EA-BF44-8A7E27DDD1D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37E91233-CD01-4463-95F1-08282D0A6682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37E91233-CD01-4463-95F1-08282D0A6682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37E91233-CD01-4463-95F1-08282D0A6682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37E91233-CD01-4463-95F1-08282D0A6682}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

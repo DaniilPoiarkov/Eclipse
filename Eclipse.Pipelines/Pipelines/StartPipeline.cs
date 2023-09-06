@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
-namespace Eclipse.Application.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines;
 
 [Route("Start", "/start")]
 public class StartPipeline : EclipsePipelineBase

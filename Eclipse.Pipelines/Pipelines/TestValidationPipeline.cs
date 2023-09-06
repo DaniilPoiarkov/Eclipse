@@ -1,8 +1,8 @@
-﻿using Eclipse.Application.Telegram.Attributes;
-using Eclipse.Core.Attributes;
+﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Pipelines;
+using Eclipse.Pipelines.Attributes;
 
-namespace Eclipse.Application.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines;
 
 [TestValidation]
 [Route("test", "/test")]

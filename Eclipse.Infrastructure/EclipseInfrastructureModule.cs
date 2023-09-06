@@ -1,4 +1,5 @@
-﻿using Eclipse.Infrastructure.Builder;
+﻿using Eclipse.Core;
+using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Telegram;
@@ -14,9 +15,12 @@ using Telegram.Bot;
 
 namespace Eclipse.Infrastructure;
 
-public static class DependencyInjection
+/// <summary>
+/// Takes responsibility for 3rd party services integration and easy to use wrapprers around them
+/// </summary>
+public static class EclipseInfrastructureModule
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, Action<InfrastructureOptionsBuilder> options)
+    public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, Action<InfrastructureOptionsBuilder> options)
     {
         var builder = new InfrastructureOptionsBuilder(services);
 

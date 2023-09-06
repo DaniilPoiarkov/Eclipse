@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Validation;
 
-namespace Eclipse.Application.Telegram.Attributes;
+namespace Eclipse.Pipelines.Attributes;
 
 internal class TestValidationAttribute : ContextValidationAttribute
 {

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eclipse.Application\Eclipse.Application.csproj" />
+    <ProjectReference Include="..\Eclipse.Pipelines\Eclipse.Pipelines.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,13 +4,13 @@ using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Application.Telegram.Stores;
 
-internal class UserStore : IUserStore
+internal class UserInfoStore : IUserInfoStore
 {
     private readonly ICacheService _cacheService;
 
     private static readonly string Key = "Telegram-Users";
 
-    public UserStore(ICacheService cacheService)
+    public UserInfoStore(ICacheService cacheService)
     {
         _cacheService = cacheService;
     }

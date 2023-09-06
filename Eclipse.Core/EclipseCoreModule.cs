@@ -4,9 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Core;
 
-public static class DependencyInjection
+/// <summary>
+/// Takes responsibility to provide usefull API to implement pipelines
+/// </summary>
+public static class EclipseCoreModule
 {
-    public static IServiceCollection AddEclipseCore(this IServiceCollection services)
+    public static IServiceCollection AddCoreModule(this IServiceCollection services)
     {
         services.AddTransient<INotFoundPipeline, NotFoundPipeline>()
             .AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()

@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Pipelines;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Application.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
