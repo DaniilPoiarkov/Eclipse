@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Eclipse.Application.Contracts.Telegram.BotManagement;
+namespace Eclipse.Application.Contracts.Telegram.Commands;
 
 public class CommandDto
 {

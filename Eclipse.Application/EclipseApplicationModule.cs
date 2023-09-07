@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.BotManagement;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Telegram.Commands;

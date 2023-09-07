@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.BotManagement;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.WebAPI.Filters;
 using Microsoft.AspNetCore.Mvc;
 

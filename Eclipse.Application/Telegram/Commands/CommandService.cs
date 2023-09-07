@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.BotManagement;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using FluentValidation;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -32,13 +32,13 @@ internal class CommandService : ICommandService
             Description = command.Description,
         });
 
-        await _botClient.SetMyCommandsAsync(newCommands, cancellationToken: cancellationToken);
+        await SetCommands(newCommands, cancellationToken: cancellationToken);
     }
 
     public async Task<IReadOnlyList<CommandDto>> GetList(CancellationToken cancellationToken = default)
     {
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
-
+        
         return commands.Select(c => new CommandDto()
         {
             Command = c.Command,
@@ -50,8 +50,14 @@ internal class CommandService : ICommandService
     {
         var commands = await GetMyCommands(cancellationToken);
         var newCommands = commands.Where(c => !c.Command.Equals(command));
-        await _botClient.SetMyCommandsAsync(newCommands, cancellationToken: cancellationToken);
+
+        await SetCommands(newCommands, cancellationToken: cancellationToken);
     }
+
+    private async Task SetCommands(IEnumerable<BotCommand> commands, CancellationToken cancellationToken = default)
+    {
+        await _botClient.SetMyCommandsAsync(commands, new BotCommandScopeAllPrivateChats(), cancellationToken: cancellationToken);
+    } 
 
     private async Task<BotCommand[]> GetMyCommands(CancellationToken cancellationToken = default)
     {

@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Telegram.BotManagement;
+﻿namespace Eclipse.Application.Contracts.Telegram.Commands;
 
 public interface ICommandService
 {
