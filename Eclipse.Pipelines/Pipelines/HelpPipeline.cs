@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.BotManagement;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using System.Text;
@@ -8,7 +8,7 @@ namespace Eclipse.Pipelines.Pipelines;
 [Route("", "/help")]
 public class HelpPipeline : EclipsePipelineBase
 {
-    private static readonly string _info = "Here what can I do:\r\n\r\n";
+    private static readonly string _info = "Here what I can do:\r\n\r\n";
 
     private readonly ICommandService _commandService;
 
