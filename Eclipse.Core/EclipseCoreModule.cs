@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Eclipse.Core;
 
 /// <summary>
-/// Takes responsibility to provide usefull API to implement pipelines
+/// Takes responsibility to provide useful API to implement pipelines
 /// </summary>
 public static class EclipseCoreModule
 {

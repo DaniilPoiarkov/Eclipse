@@ -15,7 +15,7 @@ using Telegram.Bot;
 namespace Eclipse.Infrastructure;
 
 /// <summary>
-/// Takes responsibility for 3rd party services integration and easy to use wrapprers around them
+/// Takes responsibility for 3rd party services integration and easy to use wrappers around them
 /// </summary>
 public static class EclipseInfrastructureModule
 {

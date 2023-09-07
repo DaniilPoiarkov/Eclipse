@@ -1,6 +1,7 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Pipelines;
+using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
