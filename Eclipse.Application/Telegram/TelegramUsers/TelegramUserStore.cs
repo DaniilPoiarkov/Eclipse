@@ -15,7 +15,7 @@ internal class TelegramUserStore : ITelegramUserStore
         _cacheService = cacheService;
     }
 
-    public void AddUser(TelegramUser user)
+    public void EnsureAdded(TelegramUser user)
     {
         var key = new CacheKey(Key);
 

@@ -17,8 +17,8 @@ public static class EclipseApplicationModule
     public static IServiceCollection AddApplicationModule(this IServiceCollection services)
     {
         services
-            .AddTransient<ITelegramUserStore, TelegramUserStore>()
-            .AddTransient<IPipelineStore, PipelineStore>()
+            .AddSingleton<ITelegramUserStore, TelegramUserStore>()
+            .AddSingleton<IPipelineStore, PipelineStore>()
             .AddTransient<ICommandService, CommandService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>();

@@ -57,16 +57,10 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
         var key = new PipelineKey(chatId);
 
-        var pipeline = _pipelineStore.GetOrDefault(key);
+        var pipeline = _pipelineStore.GetOrDefault(key)
+            ?? _pipelineProvider.Get(value);
 
-        if (pipeline is not null)
-        {
-            _pipelineStore.Remove(key);
-        }
-
-        pipeline ??= _pipelineProvider.Get(value);
-
-        _pipelineStore.Set(pipeline, key);
+        _pipelineStore.Remove(key);
 
         var context = new MessageContext(chatId, value, new TelegramUser(update));
 
@@ -74,11 +68,11 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
         await result.SendAsync(botClient, cancellationToken);
 
-        if (pipeline.IsFinished)
+        if (!pipeline.IsFinished)
         {
-            _pipelineStore.Remove(key);
+            _pipelineStore.Set(pipeline, key);
         }
 
-        _userStore.AddUser(new TelegramUser(update));
+        _userStore.EnsureAdded(new TelegramUser(update));
     }
 }

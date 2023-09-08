@@ -1,6 +1,5 @@
 using Eclipse.Application;
 using Eclipse.Application.Contracts;
-using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Core;
 using Eclipse.Domain;
 using Eclipse.Domain.Shared;
