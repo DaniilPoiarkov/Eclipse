@@ -39,7 +39,7 @@ public static class EclipseInfrastructureModule
         services.TryAddTransient<IEclipseStarter, EclipseStarter>();
         services.TryAddTransient<ITelegramService, TelegramService>();
         
-        services.TryAddTransient<ITelegramBotClient>(sp =>
+        services.AddSingleton<ITelegramBotClient>(sp =>
         {
             var options = sp.GetRequiredService<InfrastructureOptions>();
 
