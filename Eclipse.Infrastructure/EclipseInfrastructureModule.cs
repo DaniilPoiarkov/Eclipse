@@ -36,7 +36,7 @@ public static class EclipseInfrastructureModule
 
         services.TryAddSingleton<ICacheService, CacheService>();
 
-        services.TryAddTransient<IEclipseStarter, EclipseStarter>();
+        services.AddSingleton<IEclipseStarter, EclipseStarter>();
         services.TryAddTransient<ITelegramService, TelegramService>();
         
         services.AddSingleton<ITelegramBotClient>(sp =>

@@ -52,8 +52,8 @@ builder.Host.UseSerilog((_, config) =>
 
 var app = builder.Build();
 
-await app.Services.GetRequiredService<IEclipseStarter>()
-    .StartAsync();
+var starter = app.Services.GetRequiredService<IEclipseStarter>();
+await starter.StartAsync();
 
 app.UseSwagger();
 app.UseSwaggerUI();
