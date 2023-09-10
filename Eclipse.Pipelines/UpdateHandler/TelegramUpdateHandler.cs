@@ -2,20 +2,19 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Serilog;
-using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Core.Models;
-using Eclipse.Application.Contracts.Telegram.Stores;
 using Eclipse.Core.Core;
-using Microsoft.Extensions.Options;
 using Eclipse.Infrastructure.Builder;
+using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Contracts.Telegram.Pipelines;
 
-namespace Eclipse.Application.Telegram;
+namespace Eclipse.Pipelines.UpdateHandler;
 
 internal class TelegramUpdateHandler : ITelegramUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly IUserStore _userStore;
+    private readonly ITelegramUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -25,7 +24,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
     public TelegramUpdateHandler(
         ILogger logger,
-        IUserStore userStore,
+        ITelegramUserStore userStore,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         InfrastructureOptions options)
@@ -58,16 +57,10 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
         var key = new PipelineKey(chatId);
 
-        var pipeline = _pipelineStore.GetOrDefault(key);
+        var pipeline = _pipelineStore.GetOrDefault(key)
+            ?? _pipelineProvider.Get(value);
 
-        if (pipeline is not null)
-        {
-            _pipelineStore.Remove(key);
-        }
-
-        pipeline ??= _pipelineProvider.Get(value);
-
-        _pipelineStore.Set(pipeline, key);
+        _pipelineStore.Remove(key);
 
         var context = new MessageContext(chatId, value, new TelegramUser(update));
 
@@ -75,11 +68,11 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
         await result.SendAsync(botClient, cancellationToken);
 
-        if (pipeline.IsFinished)
+        if (!pipeline.IsFinished)
         {
-            _pipelineStore.Remove(key);
+            _pipelineStore.Set(pipeline, key);
         }
 
-        _userStore.AddUser(new TelegramUser(update));
+        _userStore.EnsureAdded(new TelegramUser(update));
     }
 }

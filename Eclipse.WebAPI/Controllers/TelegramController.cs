@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.Stores;
+﻿using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Infrastructure.Telegram;
 using Eclipse.WebAPI.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +12,9 @@ public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;
 
-    private readonly IUserStore _userStore;
+    private readonly ITelegramUserStore _userStore;
 
-    public TelegramController(ITelegramService telegramService, IUserStore userStore)
+    public TelegramController(ITelegramService telegramService, ITelegramUserStore userStore)
     {
         _telegramService = telegramService;
         _userStore = userStore;

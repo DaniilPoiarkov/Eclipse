@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Infrastructure;
+﻿namespace Eclipse.Infrastructure.Exceptions;
 
 internal class InfrastructureException : Exception
 {

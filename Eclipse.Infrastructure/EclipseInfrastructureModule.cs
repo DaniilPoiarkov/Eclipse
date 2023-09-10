@@ -14,9 +14,12 @@ using Telegram.Bot;
 
 namespace Eclipse.Infrastructure;
 
-public static class DependencyInjection
+/// <summary>
+/// Takes responsibility for 3rd party services integration and easy to use wrappers around them
+/// </summary>
+public static class EclipseInfrastructureModule
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, Action<InfrastructureOptionsBuilder> options)
+    public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, Action<InfrastructureOptionsBuilder> options)
     {
         var builder = new InfrastructureOptionsBuilder(services);
 
@@ -33,10 +36,10 @@ public static class DependencyInjection
 
         services.TryAddSingleton<ICacheService, CacheService>();
 
-        services.TryAddTransient<IEclipseStarter, EclipseStarter>();
+        services.AddSingleton<IEclipseStarter, EclipseStarter>();
         services.TryAddTransient<ITelegramService, TelegramService>();
         
-        services.TryAddTransient<ITelegramBotClient>(sp =>
+        services.AddSingleton<ITelegramBotClient>(sp =>
         {
             var options = sp.GetRequiredService<InfrastructureOptions>();
 

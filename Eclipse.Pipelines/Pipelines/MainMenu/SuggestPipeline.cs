@@ -3,7 +3,7 @@ using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
 using Telegram.Bot;
 
-namespace Eclipse.Application.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Suggest", "/suggest")]
 public class SuggestPipeline : EclipsePipelineBase
@@ -48,7 +48,7 @@ public class SuggestPipeline : EclipsePipelineBase
         {
             return Menu(MainMenuButton, "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊");
         }
-        
+
         var options = _options.TelegramOptions;
         var message = $"Suggestion from {context.User.Name}, @{context.User.Username}:" +
             $"\n{context.Value}";

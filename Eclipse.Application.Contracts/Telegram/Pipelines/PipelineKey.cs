@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Telegram;
+﻿namespace Eclipse.Application.Contracts.Telegram.Pipelines;
 
 public class PipelineKey
 {

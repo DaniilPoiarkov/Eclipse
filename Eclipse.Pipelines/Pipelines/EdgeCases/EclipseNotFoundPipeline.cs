@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 
-namespace Eclipse.Application.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines.EdgeCases;
 
 public class EclipseNotFoundPipeline : PipelineBase, INotFoundPipeline
 {

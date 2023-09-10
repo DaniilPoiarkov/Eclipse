@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eclipse.Infrastructure.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Polling;
 
 namespace Eclipse.Infrastructure.Builder;
@@ -18,7 +19,7 @@ public class InfrastructureOptionsBuilder
 
     public void UseTelegramHandler<THandler>()
         where THandler : IUpdateHandler =>
-        _services.AddTransient<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
+        _services.AddSingleton<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
 
     internal InfrastructureOptions Build()
     {

@@ -1,11 +1,14 @@
 ﻿using Eclipse.WebAPI.Filters;
 using Microsoft.OpenApi.Models;
 
-namespace Eclipse.WebAPI.Helpers;
+namespace Eclipse.WebAPI;
 
-public static class DependencyInjection
+/// <summary>
+/// Takes responsibility for WebAPI
+/// </summary>
+public static class EclipseWebApiModule
 {
-    public static IServiceCollection AddCore(this IServiceCollection services)
+    public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
         services.Scan(tss =>
             tss.FromAssemblyOf<WeatherForecast>()
