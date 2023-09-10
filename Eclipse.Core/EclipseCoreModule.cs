@@ -13,7 +13,7 @@ public static class EclipseCoreModule
     {
         services.AddTransient<INotFoundPipeline, NotFoundPipeline>()
             .AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()
-            .AddSingleton<IPipelineProvider, PipelineProvider>();
+            .AddTransient<IPipelineProvider, PipelineProvider>();
 
         return services;
     }

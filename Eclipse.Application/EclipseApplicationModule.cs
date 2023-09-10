@@ -21,10 +21,7 @@ public static class EclipseApplicationModule
             .AddSingleton<IPipelineStore, PipelineStore>()
             .AddTransient<ICommandService, CommandService>();
 
-        services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>();
-        
-        // TODO: Why the hell call above not registering this validator
-        services.AddTransient<IValidator<CommandDto>, CommandDtoValidator>();
+        services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
         return services;
     }
