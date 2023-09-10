@@ -4,6 +4,7 @@ using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Telegram;
 using Eclipse.Infrastructure.Quartz;
 using Eclipse.Infrastructure.Quartz.Jobs;
+using Eclipse.Infrastructure.Sheets;
 using Eclipse.Infrastructure.Telegram;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,6 +60,12 @@ public static class EclipseInfrastructureModule
         });
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
+
+        services.AddSingleton<IGoogleClient>(sp =>
+        {
+            var options = sp.GetRequiredService<InfrastructureOptions>().GoogleOptions;
+            return new GoogleClient(options.ServiceApiKey);
+        });
 
         return services;
     }
