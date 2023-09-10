@@ -56,11 +56,13 @@ internal class CommandService : ICommandService
 
     private async Task SetCommands(IEnumerable<BotCommand> commands, CancellationToken cancellationToken = default)
     {
-        await _botClient.SetMyCommandsAsync(commands, new BotCommandScopeAllPrivateChats(), cancellationToken: cancellationToken);
+        await _botClient.SetMyCommandsAsync(commands, BotCommandScope.AllPrivateChats(), cancellationToken: cancellationToken);
     } 
 
     private async Task<BotCommand[]> GetMyCommands(CancellationToken cancellationToken = default)
     {
-        return await _botClient.GetMyCommandsAsync(cancellationToken: cancellationToken);
+        return await _botClient.GetMyCommandsAsync(
+            BotCommandScope.AllPrivateChats(),
+            cancellationToken: cancellationToken);
     }
 }
