@@ -1,8 +1,9 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using Eclipse.Infrastructure.Google;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 
-namespace Eclipse.Infrastructure.Sheets;
+namespace Eclipse.Infrastructure.Internals.Google;
 
 internal class GoogleClient : IGoogleClient
 {

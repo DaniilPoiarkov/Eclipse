@@ -1,6 +1,6 @@
 ﻿using Google.Apis.Sheets.v4;
 
-namespace Eclipse.Infrastructure.Sheets;
+namespace Eclipse.Infrastructure.Google;
 
 public interface IGoogleClient
 {
