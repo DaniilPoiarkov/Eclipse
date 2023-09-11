@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Eclipse.Infrastructure\Eclipse.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Google\Sheets\" />
-  </ItemGroup>
-
 </Project>

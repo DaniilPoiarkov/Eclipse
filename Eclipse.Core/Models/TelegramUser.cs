@@ -21,4 +21,11 @@ public class TelegramUser
         Name = $"{from.FirstName} {from.LastName}";
         Username = from.Username;
     }
+
+    public TelegramUser(long id, string name, string? username)
+    {
+        Id = id;
+        Name = name;
+        Username = username;
+    }
 }
