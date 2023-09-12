@@ -30,7 +30,7 @@ public class InfrastructureOptionsBuilder
             throw new InfrastructureException("Telegram options are invalid");
         }
 
-        if (GoogleOptions is null || string.IsNullOrEmpty(GoogleOptions.ServiceApiKey))
+        if (GoogleOptions is null || string.IsNullOrEmpty(GoogleOptions.Credentials))
         {
             throw new InfrastructureException("Google options are invalid");
         }

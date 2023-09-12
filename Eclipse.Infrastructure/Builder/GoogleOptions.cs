@@ -2,5 +2,5 @@
 
 public class GoogleOptions
 {
-    public string ServiceApiKey { get; set; } = null!;
+    public string Credentials { get; set; } = null!;
 }

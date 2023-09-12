@@ -19,8 +19,8 @@ internal class EclipseSheetsServiceFactory
 
     internal IEclipseSheetsService Build()
     {
-        var sheetsId = _configuration["Sheets:SheetsId"];
-        ArgumentNullException.ThrowIfNull(sheetsId, nameof(sheetsId));
+        var sheetId = _configuration["Sheets:SheetId"];
+        ArgumentNullException.ThrowIfNull(sheetId, nameof(sheetId));
 
         var suggestionsRange = _configuration["Sheets:SuggestionsRange"];
         ArgumentNullException.ThrowIfNull(suggestionsRange, nameof(suggestionsRange));
@@ -28,6 +28,6 @@ internal class EclipseSheetsServiceFactory
         var usersRange = _configuration["Sheets:UsersRange"];
         ArgumentNullException.ThrowIfNull(usersRange, nameof(usersRange));
 
-        return new EclipseSheetsService(_googleSheetsService, sheetsId, suggestionsRange, usersRange);
+        return new EclipseSheetsService(_googleSheetsService, sheetId, suggestionsRange, usersRange);
     }
 }

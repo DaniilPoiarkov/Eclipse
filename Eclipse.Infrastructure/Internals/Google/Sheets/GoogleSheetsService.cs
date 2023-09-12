@@ -19,7 +19,7 @@ internal class GoogleSheetsService : IGoogleSheetsService
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
         var values = request.Execute();
 
-        return values.Values.Select(parser.Parse);
+        return values.Values.Skip(1).Select(parser.Parse);
     }
 
     public void Append<IObject>(string sheetId, string range, IObject value, IObjectParser<IObject> parser)

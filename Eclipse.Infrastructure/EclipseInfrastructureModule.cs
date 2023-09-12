@@ -52,7 +52,7 @@ public static class EclipseInfrastructureModule
         services.AddSingleton<IGoogleClient>(sp =>
         {
             var options = sp.GetRequiredService<InfrastructureOptions>().GoogleOptions;
-            return new GoogleClient(options.ServiceApiKey);
+            return new GoogleClient(options.Credentials);
         });
 
         services.AddTransient(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService());

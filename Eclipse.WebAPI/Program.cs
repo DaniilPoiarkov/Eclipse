@@ -42,7 +42,7 @@ builder.Services
 
         config.GoogleOptions = new GoogleOptions
         {
-            ServiceApiKey = configuration["Google:ServiceApiKey"]!
+            Credentials = configuration["Google:Credentials"]!
         };
     });
 

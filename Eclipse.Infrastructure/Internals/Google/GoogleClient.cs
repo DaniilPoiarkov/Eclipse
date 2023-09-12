@@ -7,11 +7,11 @@ namespace Eclipse.Infrastructure.Internals.Google;
 
 internal class GoogleClient : IGoogleClient
 {
-    private readonly string _apiKey;
+    private readonly string _credentials;
 
-    public GoogleClient(string apiKey)
+    public GoogleClient(string credentials)
     {
-        _apiKey = apiKey;
+        _credentials = credentials;
     }
 
     public SheetsService GetSheetsService()
@@ -22,7 +22,7 @@ internal class GoogleClient : IGoogleClient
 
     private BaseClientService.Initializer InitializeBaseClient(string scope)
     {
-        var creds = GoogleCredential.FromAccessToken(_apiKey)
+        var creds = GoogleCredential.FromJson(_credentials)
             .CreateScoped(scope);
 
         return new BaseClientService.Initializer()
