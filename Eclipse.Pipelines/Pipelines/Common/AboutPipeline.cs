@@ -25,7 +25,7 @@ public sealed class AboutPipeline : EclipsePipelineBase
     public IResult SendAbout(MessageContext context)
     {
         var about = _configuration["Eclipse:About"]
-            ?? _default.Replace("{name}", context.User.Name);
+            ?? _default.Replace("{name}", context.User.Name.Trim());
 
         return Text(about);
     }

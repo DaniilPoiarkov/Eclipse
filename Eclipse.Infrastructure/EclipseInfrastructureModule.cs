@@ -1,15 +1,23 @@
 ﻿using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
+using Eclipse.Infrastructure.Google;
+using Eclipse.Infrastructure.Google.Sheets;
 using Eclipse.Infrastructure.Internals.Cache;
+using Eclipse.Infrastructure.Internals.Google;
+using Eclipse.Infrastructure.Internals.Google.Sheets;
 using Eclipse.Infrastructure.Internals.Telegram;
 using Eclipse.Infrastructure.Quartz;
 using Eclipse.Infrastructure.Quartz.Jobs;
 using Eclipse.Infrastructure.Telegram;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Quartz;
+
 using Serilog;
+
 using Telegram.Bot;
 
 namespace Eclipse.Infrastructure;
@@ -27,24 +35,36 @@ public static class EclipseInfrastructureModule
 
         var config = builder.Build();
 
-        services.AddSingleton(config)
-            .AddMemoryCache()
-            .AddSerilog((_, configuration) =>
-            {
-                configuration.WriteTo.Console();
-            });
+        services.AddSingleton(config);
 
-        services.TryAddSingleton<ICacheService, CacheService>();
+        services
+            .AddSerilogIntegration()
+            .AddMemoryCacheIntegration()
+            .AddTelegramIntegration()
+            .AddQuartzIntegration()
+            .AddGoogleIntegration();
 
-        services.AddSingleton<IEclipseStarter, EclipseStarter>();
-        services.TryAddTransient<ITelegramService, TelegramService>();
-        
-        services.AddSingleton<ITelegramBotClient>(sp =>
+        return services;
+    }
+
+    private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
+    {
+        services.AddSingleton<IGoogleClient>(sp =>
         {
-            var options = sp.GetRequiredService<InfrastructureOptions>();
-
-            return new TelegramBotClient(options.TelegramOptions.Token);
+            var options = sp.GetRequiredService<InfrastructureOptions>().GoogleOptions;
+            return new GoogleClient(options.Credentials);
         });
+
+        services.AddTransient(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService());
+
+        services.AddTransient<IGoogleSheetsService, GoogleSheetsService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddQuartzIntegration(this IServiceCollection services)
+    {
+        services.ConfigureOptions<QuartzOptionsConfiguration>();
 
         services.AddHttpClient<WarmupJob>((sp, client) =>
         {
@@ -58,7 +78,37 @@ public static class EclipseInfrastructureModule
             cfg.WaitForJobsToComplete = true;
         });
 
-        services.ConfigureOptions<QuartzOptionsConfiguration>();
+        return services;
+    }
+
+    private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
+    {
+        services.AddSingleton<IEclipseStarter, EclipseStarter>();
+        services.TryAddTransient<ITelegramService, TelegramService>();
+
+        services.AddSingleton<ITelegramBotClient>(sp =>
+        {
+            var options = sp.GetRequiredService<InfrastructureOptions>();
+            return new TelegramBotClient(options.TelegramOptions.Token);
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddMemoryCacheIntegration(this IServiceCollection services)
+    {
+        services.AddMemoryCache()
+            .TryAddSingleton<ICacheService, CacheService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSerilogIntegration(this IServiceCollection services)
+    {
+        services.AddSerilog((_, configuration) =>
+        {
+            configuration.WriteTo.Console();
+        });
 
         return services;
     }

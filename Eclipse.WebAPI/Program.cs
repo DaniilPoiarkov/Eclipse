@@ -39,6 +39,11 @@ builder.Services
         {
             Expiration = new TimeSpan(1, 0, 0, 0)
         };
+
+        config.GoogleOptions = new GoogleOptions
+        {
+            Credentials = configuration["Google:Credentials"]!
+        };
     });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(

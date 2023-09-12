@@ -14,7 +14,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly ITelegramUserStore _userStore;
+    private readonly ITelegramUserRepository _userRepository;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -24,16 +24,16 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
 
     public TelegramUpdateHandler(
         ILogger logger,
-        ITelegramUserStore userStore,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        InfrastructureOptions options)
+        InfrastructureOptions options,
+        ITelegramUserRepository userRepository)
     {
         _logger = logger;
-        _userStore = userStore;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _options = options;
+        _userRepository = userRepository;
     }
 
     public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -73,6 +73,6 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
             _pipelineStore.Set(pipeline, key);
         }
 
-        _userStore.EnsureAdded(new TelegramUser(update));
+        _userRepository.EnshureAdded(new TelegramUser(update));
     }
 }

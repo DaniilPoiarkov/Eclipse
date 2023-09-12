@@ -1,6 +1,9 @@
-﻿using Eclipse.Core.Attributes;
+﻿using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
+
 using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
@@ -12,10 +15,13 @@ public class SuggestPipeline : EclipsePipelineBase
 
     private readonly InfrastructureOptions _options;
 
-    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options)
+    private readonly IEclipseSheetsService _sheetsService;
+
+    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options, IEclipseSheetsService sheetsService)
     {
         _botClient = botClient;
         _options = options;
+        _sheetsService = sheetsService;
     }
 
     private static readonly string[] _greetings = new[]
@@ -52,6 +58,16 @@ public class SuggestPipeline : EclipsePipelineBase
         var options = _options.TelegramOptions;
         var message = $"Suggestion from {context.User.Name}, @{context.User.Username}:" +
             $"\n{context.Value}";
+
+        var suggestionDto = new SuggestionDto
+        {
+            Id = Guid.NewGuid(),
+            Text = context.Value,
+            ChatId = context.User.Id,
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        _sheetsService.AddSuggestion(suggestionDto);
 
         await _botClient.SendTextMessageAsync(options.Chat, message, cancellationToken: cancellationToken);
 

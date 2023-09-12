@@ -12,6 +12,8 @@ public class InfrastructureOptionsBuilder
 
     public CacheOptions? CacheOptions { get; set; }
 
+    public GoogleOptions? GoogleOptions { get; set; }
+
     public InfrastructureOptionsBuilder(IServiceCollection services)
     {
         _services = services;
@@ -28,8 +30,13 @@ public class InfrastructureOptionsBuilder
             throw new InfrastructureException("Telegram options are invalid");
         }
 
+        if (GoogleOptions is null || string.IsNullOrEmpty(GoogleOptions.Credentials))
+        {
+            throw new InfrastructureException("Google options are invalid");
+        }
+
         CacheOptions ??= new();
 
-        return new InfrastructureOptions(TelegramOptions, CacheOptions);
+        return new InfrastructureOptions(TelegramOptions, CacheOptions, GoogleOptions);
     }
 }

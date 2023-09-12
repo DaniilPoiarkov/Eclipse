@@ -12,12 +12,12 @@ public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;
 
-    private readonly ITelegramUserStore _userStore;
+    private readonly ITelegramUserRepository _userRepositoy;
 
-    public TelegramController(ITelegramService telegramService, ITelegramUserStore userStore)
+    public TelegramController(ITelegramService telegramService, ITelegramUserRepository userRepositoy)
     {
         _telegramService = telegramService;
-        _userStore = userStore;
+        _userRepositoy = userRepositoy;
     }
 
     [HttpPost]
@@ -30,6 +30,6 @@ public class TelegramController : ControllerBase
     [HttpGet("users")]
     public IActionResult GetUsers()
     {
-        return Ok(_userStore.GetUsers());
+        return Ok(_userRepositoy.GetAll());
     }
 }

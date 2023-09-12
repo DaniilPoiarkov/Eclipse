@@ -6,10 +6,16 @@ public class InfrastructureOptions
 
     public CacheOptions CacheOptions { get; }
 
-    public InfrastructureOptions(TelegramOptions telegramOptions, CacheOptions cacheOptions)
+    public GoogleOptions GoogleOptions { get; }
+
+    public InfrastructureOptions(
+        TelegramOptions telegramOptions,
+        CacheOptions cacheOptions,
+        GoogleOptions googleOptions)
     {
         TelegramOptions = telegramOptions;
         CacheOptions = cacheOptions;
+        GoogleOptions = googleOptions;
     }
 }
 
