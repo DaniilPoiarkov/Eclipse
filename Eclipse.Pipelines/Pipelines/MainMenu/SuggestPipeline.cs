@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets;
+﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
@@ -15,9 +15,9 @@ public class SuggestPipeline : EclipsePipelineBase
 
     private readonly InfrastructureOptions _options;
 
-    private readonly IEclipseSheetsService _sheetsService;
+    private readonly ISuggestionsSheetsService _sheetsService;
 
-    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options, IEclipseSheetsService sheetsService)
+    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options, ISuggestionsSheetsService sheetsService)
     {
         _botClient = botClient;
         _options = options;
@@ -67,7 +67,7 @@ public class SuggestPipeline : EclipsePipelineBase
             CreatedAt = DateTime.UtcNow,
         };
 
-        _sheetsService.AddSuggestion(suggestionDto);
+        _sheetsService.Add(suggestionDto);
 
         await _botClient.SendTextMessageAsync(options.Chat, message, cancellationToken: cancellationToken);
 

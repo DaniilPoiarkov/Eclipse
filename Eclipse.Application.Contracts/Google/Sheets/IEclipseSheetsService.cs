@@ -1,15 +1,8 @@
-﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Core.Models;
+﻿namespace Eclipse.Application.Contracts.Google.Sheets;
 
-namespace Eclipse.Application.Contracts.Google.Sheets;
-
-public interface IEclipseSheetsService
+public interface IEclipseSheetsService<TObject>
 {
-    IReadOnlyList<SuggestionDto> GetSuggestions();
+    IReadOnlyList<TObject> GetAll();
 
-    void AddSuggestion(SuggestionDto suggestion);
-
-    IReadOnlyList<TelegramUser> GetUsers();
-
-    void AddUser(TelegramUser user);
+    void Add(TObject value);
 }
