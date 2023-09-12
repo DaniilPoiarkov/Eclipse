@@ -5,7 +5,7 @@ using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;
 
-internal class SuggestionObjectParser : IObjectParser<SuggestionDto>
+public class SuggestionObjectParser : IObjectParser<SuggestionDto>
 {
     public SuggestionDto Parse(IList<object> values)
     {

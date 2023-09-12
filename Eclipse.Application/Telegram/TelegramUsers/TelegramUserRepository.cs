@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets;
+﻿using Eclipse.Application.Contracts.Google.Sheets.Users;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Core.Models;
 
@@ -8,9 +8,9 @@ internal class TelegramUserRepository : ITelegramUserRepository
 {
     private readonly ITelegramUserStore _userStore;
 
-    private readonly IEclipseSheetsService _sheetsService;
+    private readonly IUsersSheetsService _sheetsService;
 
-    public TelegramUserRepository(ITelegramUserStore userStore, IEclipseSheetsService sheetsService)
+    public TelegramUserRepository(ITelegramUserStore userStore, IUsersSheetsService sheetsService)
     {
         _userStore = userStore;
         _sheetsService = sheetsService;
@@ -23,7 +23,7 @@ internal class TelegramUserRepository : ITelegramUserRepository
             return;
         }
 
-        var stored = _sheetsService.GetUsers();
+        var stored = _sheetsService.GetAll();
 
         if (stored.Any(u => u.Id == user.Id))
         {
@@ -31,11 +31,11 @@ internal class TelegramUserRepository : ITelegramUserRepository
             return;
         }
 
-        _sheetsService.AddUser(user);
+        _sheetsService.Add(user);
     }
 
     public IReadOnlyList<TelegramUser> GetAll()
     {
-        return _sheetsService.GetUsers();
+        return _sheetsService.GetAll();
     }
 }

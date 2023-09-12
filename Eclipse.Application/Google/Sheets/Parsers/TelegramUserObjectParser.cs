@@ -5,7 +5,7 @@ using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;
 
-internal class TelegramUserObjectParser : IObjectParser<TelegramUser>
+public class TelegramUserObjectParser : IObjectParser<TelegramUser>
 {
     public TelegramUser Parse(IList<object> values)
     {

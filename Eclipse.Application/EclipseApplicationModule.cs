@@ -1,12 +1,19 @@
-﻿using Eclipse.Application.Contracts.Suggestions;
+﻿using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+using Eclipse.Application.Contracts.Google.Sheets.Users;
+using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Google.Sheets;
+using Eclipse.Application.Google.Sheets.Parsers;
+using Eclipse.Application.Google.Sheets.Suggestions;
+using Eclipse.Application.Google.Sheets.Users;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.Telegram.Pipelines;
 using Eclipse.Application.Telegram.TelegramUsers;
+using Eclipse.Infrastructure.Google.Sheets;
 
 using FluentValidation;
 
@@ -30,8 +37,13 @@ public static class EclipseApplicationModule
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
-        services.AddTransient<EclipseSheetsServiceFactory>()
-            .AddTransient(sp => sp.GetRequiredService<EclipseSheetsServiceFactory>().Build());
+        services.Scan(tss => tss.FromAssemblyOf<SuggestionObjectParser>()
+            .AddClasses(c => c.AssignableTo(typeof(IObjectParser<>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.AddTransient<IUsersSheetsService, UsersSheetsService>()
+            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>();
 
         return services;
     }

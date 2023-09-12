@@ -1,56 +1,31 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Application.Google.Sheets.Parsers;
-using Eclipse.Core.Models;
 using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets;
 
-internal class EclipseSheetsService : IEclipseSheetsService
+internal abstract class EclipseSheetsService<TObject> : IEclipseSheetsService<TObject>
 {
-    private readonly string _sheetId;
+    private readonly IGoogleSheetsService _service;
 
-    private readonly string _suggestionsRange;
+    private readonly IObjectParser<TObject> _parser;
 
-    private readonly string _usersRange;
+    protected abstract string Range { get; }
 
-    private readonly IGoogleSheetsService _sheetsService;
+    protected abstract string SheetId { get; }
 
-    public EclipseSheetsService(IGoogleSheetsService sheetsService, string sheetId, string suggestionsRange, string usersRange)
+    public EclipseSheetsService(IGoogleSheetsService service, IObjectParser<TObject> parser)
     {
-        _sheetsService = sheetsService;
-        _sheetId = sheetId;
-        _suggestionsRange = suggestionsRange;
-        _usersRange = usersRange;
+        _service = service;
+        _parser = parser;
     }
 
-    public IReadOnlyList<SuggestionDto> GetSuggestions()
+    public IReadOnlyList<TObject> GetAll()
     {
-        return GetObjects(_suggestionsRange, new SuggestionObjectParser());
+        return _service.Get(SheetId, Range, _parser).ToList();
     }
 
-    public void AddSuggestion(SuggestionDto suggestion)
+    public void Add(TObject value)
     {
-        AddObject(_suggestionsRange, suggestion, new SuggestionObjectParser());
-    }
-
-    public IReadOnlyList<TelegramUser> GetUsers()
-    {
-        return GetObjects(_usersRange, new TelegramUserObjectParser());
-    }
-
-    public void AddUser(TelegramUser user)
-    {
-        AddObject(_usersRange, user, new TelegramUserObjectParser());
-    }
-
-    private void AddObject<TObject>(string range, TObject obj, IObjectParser<TObject> parser)
-    {
-        _sheetsService.Append(_sheetId, range, obj, parser);
-    }
-
-    private IReadOnlyList<TObject> GetObjects<TObject>(string range, IObjectParser<TObject> parser)
-    {
-        return _sheetsService.Get(_sheetId, range, parser).ToList();
+        _service.Append(SheetId, Range, value, _parser);
     }
 }
