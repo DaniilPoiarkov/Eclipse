@@ -22,7 +22,8 @@ public static class EclipseApplicationModule
         services
             .AddSingleton<ITelegramUserStore, TelegramUserStore>()
             .AddSingleton<IPipelineStore, PipelineStore>()
-            .AddTransient<ICommandService, CommandService>();
+            .AddTransient<ICommandService, CommandService>()
+            .AddTransient<ITelegramUserRepository, TelegramUserRepository>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
