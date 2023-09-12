@@ -7,6 +7,8 @@ namespace Eclipse.Infrastructure.Internals.Google.Sheets;
 
 internal class GoogleSheetsService : IGoogleSheetsService
 {
+    private static readonly int _namesRow = 1;
+
     private readonly SheetsService _sheetsService;
 
     public GoogleSheetsService(SheetsService sheetsService)
@@ -19,7 +21,7 @@ internal class GoogleSheetsService : IGoogleSheetsService
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
         var values = request.Execute();
 
-        return values.Values.Skip(1).Select(parser.Parse);
+        return values.Values.Skip(_namesRow).Select(parser.Parse);
     }
 
     public void Append<IObject>(string sheetId, string range, IObject value, IObjectParser<IObject> parser)
