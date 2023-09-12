@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Core.Models;
-using Eclipse.Domain.Shared.Suggestions;
 using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets;

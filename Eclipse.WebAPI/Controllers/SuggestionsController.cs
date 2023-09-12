@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets;
+﻿using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.WebAPI.Filters;
 
 using Microsoft.AspNetCore.Mvc;
@@ -10,16 +10,16 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiKeyAuthorize]
 public class SuggestionsController : ControllerBase
 {
-    private readonly IEclipseSheetsService _sheetsService;
+    private readonly ISuggestionsService _suggestionsService;
 
-    public SuggestionsController(IEclipseSheetsService sheetsService)
+    public SuggestionsController(ISuggestionsService suggestionsService)
     {
-        _sheetsService = sheetsService;
+        _suggestionsService = suggestionsService;
     }
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Ok(_sheetsService.GetSuggestions());
+        return Ok(_suggestionsService.GetDetailedInfo());
     }
 }

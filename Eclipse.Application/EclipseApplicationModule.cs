@@ -1,7 +1,9 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Google.Sheets;
+using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.Telegram.Pipelines;
 using Eclipse.Application.Telegram.TelegramUsers;
@@ -23,7 +25,8 @@ public static class EclipseApplicationModule
             .AddSingleton<ITelegramUserStore, TelegramUserStore>()
             .AddSingleton<IPipelineStore, PipelineStore>()
             .AddTransient<ICommandService, CommandService>()
-            .AddTransient<ITelegramUserRepository, TelegramUserRepository>();
+            .AddTransient<ITelegramUserRepository, TelegramUserRepository>()
+            .AddTransient<ISuggestionsService, SuggestionsService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 

@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Exceptions;
+﻿using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Application.Exceptions;
 using Eclipse.Application.Extensions;
-using Eclipse.Domain.Shared.Suggestions;
 using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;

@@ -1,6 +1,6 @@
-﻿using Eclipse.Domain.Shared.Base;
+﻿using Eclipse.Application.Contracts.Base;
 
-namespace Eclipse.Domain.Shared.Suggestions;
+namespace Eclipse.Application.Contracts.Suggestions;
 
 public class SuggestionDto : EntityDto
 {

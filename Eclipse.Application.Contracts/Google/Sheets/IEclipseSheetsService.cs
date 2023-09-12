@@ -1,5 +1,5 @@
-﻿using Eclipse.Core.Models;
-using Eclipse.Domain.Shared.Suggestions;
+﻿using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Core.Models;
 
 namespace Eclipse.Application.Contracts.Google.Sheets;
 

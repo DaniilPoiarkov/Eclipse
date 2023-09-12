@@ -1,8 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Shared.Suggestions;
 using Eclipse.Infrastructure.Builder;
+
 using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
