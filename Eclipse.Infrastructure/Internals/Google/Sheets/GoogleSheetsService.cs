@@ -20,7 +20,7 @@ internal class GoogleSheetsService : IGoogleSheetsService
     {
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
         var values = request.Execute();
-
+        
         return values.Values.Skip(_namesRow).Select(parser.Parse);
     }
 

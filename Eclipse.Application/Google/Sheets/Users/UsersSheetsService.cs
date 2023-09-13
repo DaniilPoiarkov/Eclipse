@@ -7,19 +7,14 @@ using Microsoft.Extensions.Configuration;
 namespace Eclipse.Application.Google.Sheets.Users;
 
 internal class UsersSheetsService : EclipseSheetsService<TelegramUser>, IUsersSheetsService
-{
-    private readonly IConfiguration _configuration;
-
+{    
     public UsersSheetsService(
         IGoogleSheetsService service,
         IObjectParser<TelegramUser> parser,
         IConfiguration configuration)
-        : base(service, parser)
+        : base(service, parser, configuration)
     {
-        _configuration = configuration;
     }
 
-    protected override string Range => _configuration["Sheets:UsersRange"]!;
-
-    protected override string SheetId => _configuration["Sheets:SheetId"]!;
+    protected override string Range => Configuration["Sheets:UsersRange"]!;
 }
