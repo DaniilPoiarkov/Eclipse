@@ -1,10 +1,10 @@
 ﻿using Eclipse.Domain.Base;
 
-namespace Eclipse.Domain.Chronicles;
+namespace Eclipse.Domain.TodoItems;
 
-public class ChronicleItem : Entity
+public class TodoItem : Entity
 {
-    public ChronicleItem(Guid id, Guid userId, string text)
+    public TodoItem(Guid id, long userId, string text)
         : base(id)
     {
         UserId = userId;
@@ -12,9 +12,9 @@ public class ChronicleItem : Entity
         CreatedAt = DateTime.UtcNow;
     }
 
-    public ChronicleItem() { }
+    public TodoItem() { }
 
-    public Guid UserId { get; private set; }
+    public long UserId { get; private set; }
 
     public string Text { get; private set; } = string.Empty;
 
@@ -23,7 +23,6 @@ public class ChronicleItem : Entity
     public DateTime CreatedAt { get; private set; }
 
     public DateTime? FinishedAt { get; private set; }
-
 
     public void MarkAsFinished()
     {

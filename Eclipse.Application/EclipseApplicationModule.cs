@@ -1,18 +1,20 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.Google.Sheets.Users;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
-using Eclipse.Application.Google.Sheets;
+using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
+using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.Google.Sheets.Users;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.Telegram.Pipelines;
 using Eclipse.Application.Telegram.TelegramUsers;
+using Eclipse.Application.TodoItems;
 using Eclipse.Infrastructure.Google.Sheets;
 
 using FluentValidation;
@@ -33,7 +35,8 @@ public static class EclipseApplicationModule
             .AddSingleton<IPipelineStore, PipelineStore>()
             .AddTransient<ICommandService, CommandService>()
             .AddTransient<ITelegramUserRepository, TelegramUserRepository>()
-            .AddTransient<ISuggestionsService, SuggestionsService>();
+            .AddTransient<ISuggestionsService, SuggestionsService>()
+            .AddTransient<ITodoItemService, TodoItemService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
@@ -43,7 +46,8 @@ public static class EclipseApplicationModule
             .WithTransientLifetime());
 
         services.AddTransient<IUsersSheetsService, UsersSheetsService>()
-            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>();
+            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()
+            .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>();
 
         return services;
     }

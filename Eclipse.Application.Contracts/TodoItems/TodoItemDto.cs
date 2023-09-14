@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Base;
 
-namespace Eclipse.Application.Contracts.ChronicleItems;
+namespace Eclipse.Application.Contracts.TodoItems;
 
-public class ChronicleItemDto : EntityDto
+public class TodoItemDto : EntityDto
 {
     public long UserId { get; set; }
 
