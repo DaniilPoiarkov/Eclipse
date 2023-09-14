@@ -1,6 +1,7 @@
 using Eclipse.Application;
 using Eclipse.Application.Contracts;
 using Eclipse.Core;
+using Eclipse.DataAccess;
 using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
@@ -25,6 +26,7 @@ builder.Services
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()
+    .AddDataAccessModule()
     .AddInfrastructureModule(config =>
     {
         config.TelegramOptions = new TelegramOptions
