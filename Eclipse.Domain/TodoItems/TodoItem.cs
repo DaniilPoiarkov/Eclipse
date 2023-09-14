@@ -12,7 +12,7 @@ public class TodoItem : Entity
         CreatedAt = DateTime.UtcNow;
     }
 
-    public TodoItem() { }
+    private TodoItem() { }
 
     public long UserId { get; private set; }
 
@@ -26,6 +26,11 @@ public class TodoItem : Entity
 
     public void MarkAsFinished()
     {
+        if (IsFinished)
+        {
+            throw new TodoItemAlreadyFinishedException(this);
+        }
+
         IsFinished = true;
         FinishedAt = DateTime.UtcNow;
     }

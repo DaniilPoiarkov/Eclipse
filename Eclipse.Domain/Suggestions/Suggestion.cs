@@ -11,7 +11,7 @@ public class Suggestion : Entity
         CreatedAt = DateTime.UtcNow;
     }
 
-    public Suggestion() { }
+    private Suggestion() { }
 
     public string Text { get; private set; } = string.Empty;
 
