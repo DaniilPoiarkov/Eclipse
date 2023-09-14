@@ -4,17 +4,17 @@ namespace Eclipse.Domain.TodoItems;
 
 public class TodoItem : Entity
 {
-    public TodoItem(Guid id, long userId, string text)
+    public TodoItem(Guid id, long telegramUserId, string text)
         : base(id)
     {
-        UserId = userId;
+        TelegramUserId = telegramUserId;
         Text = text;
         CreatedAt = DateTime.UtcNow;
     }
 
     private TodoItem() { }
 
-    public long UserId { get; private set; }
+    public long TelegramUserId { get; private set; }
 
     public string Text { get; private set; } = string.Empty;
 

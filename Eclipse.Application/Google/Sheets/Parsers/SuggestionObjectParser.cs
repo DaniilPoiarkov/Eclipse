@@ -24,12 +24,12 @@ public class SuggestionObjectParser : IObjectParser<SuggestionDto>
             Id = id,
             Text = text ?? string.Empty,
             CreatedAt = createdAt,
-            ChatId = chatId,
+            TelegramUserId = chatId,
         };
     }
 
     public IList<object> Parse(SuggestionDto value)
     {
-        return new List<object> { value.Id, value.Text, value.ChatId, value.CreatedAt };
+        return new List<object> { value.Id, value.Text, value.TelegramUserId, value.CreatedAt };
     }
 }

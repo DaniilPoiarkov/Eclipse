@@ -25,7 +25,7 @@ internal class TodoItemService : ITodoItemService
         var dto = new TodoItemDto
         {
             Id = chronicleItem.Id,
-            UserId = chronicleItem.UserId,
+            TelegramUserId = chronicleItem.TelegramUserId,
             Text = chronicleItem.Text,
             CreatedAt = chronicleItem.CreatedAt,
             IsFinished = chronicleItem.IsFinished,

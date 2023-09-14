@@ -23,7 +23,7 @@ public class TodoItemObjectParser : IObjectParser<TodoItemDto>
         var item = new TodoItemDto
         {
             Id = id,
-            UserId = userId,
+            TelegramUserId = userId,
             Text = text ?? string.Empty,
             IsFinished = isFinished,
             CreatedAt = createdAt,
@@ -39,6 +39,6 @@ public class TodoItemObjectParser : IObjectParser<TodoItemDto>
 
     public IList<object> Parse(TodoItemDto value)
     {
-        return new List<object> { value.Id, value.UserId, value.Text, value.IsFinished, value.CreatedAt, value.FinishedAt?.ToString() ?? "null" };
+        return new List<object> { value.Id, value.TelegramUserId, value.Text, value.IsFinished, value.CreatedAt, value.FinishedAt?.ToString() ?? "null" };
     }
 }

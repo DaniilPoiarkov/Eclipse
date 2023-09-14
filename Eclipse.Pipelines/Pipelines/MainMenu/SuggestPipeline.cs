@@ -63,7 +63,7 @@ public class SuggestPipeline : EclipsePipelineBase
         {
             Id = Guid.NewGuid(),
             Text = context.Value,
-            ChatId = context.User.Id,
+            TelegramUserId = context.User.Id,
             CreatedAt = DateTime.UtcNow,
         };
 

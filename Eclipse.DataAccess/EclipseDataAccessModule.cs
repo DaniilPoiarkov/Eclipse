@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eclipse.DataAccess.DbContext;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.DataAccess;
 
@@ -10,6 +12,8 @@ public static class EclipseDataAccessModule
     public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
         // TODO: add DbContext etc.
+        services.AddSingleton<NullDbContext>();
+
         return services;
     }
 }

@@ -6,7 +6,7 @@ public class SuggestionDto : EntityDto
 {
     public string Text { get; set; } = string.Empty;
 
-    public long ChatId { get; set; }
+    public long TelegramUserId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 }

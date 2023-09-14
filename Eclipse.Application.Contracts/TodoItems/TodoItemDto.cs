@@ -4,7 +4,7 @@ namespace Eclipse.Application.Contracts.TodoItems;
 
 public class TodoItemDto : EntityDto
 {
-    public long UserId { get; set; }
+    public long TelegramUserId { get; set; }
 
     public string Text { get; set; } = string.Empty;
 
