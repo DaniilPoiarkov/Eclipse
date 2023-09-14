@@ -12,7 +12,7 @@ public static class EclipseDataAccessModule
     public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
         // TODO: add DbContext etc.
-        services.AddSingleton<NullDbContext>();
+        services.AddSingleton<IDbContext, InMemoryDbContext>();
 
         return services;
     }

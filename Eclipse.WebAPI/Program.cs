@@ -1,5 +1,6 @@
 using Eclipse.Application;
 using Eclipse.Application.Contracts;
+using Eclipse.Application.Extensions;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
@@ -32,7 +33,7 @@ builder.Services
         config.TelegramOptions = new TelegramOptions
         {
             Token = configuration["Telegram:Token"]!,
-            Chat = long.Parse(configuration["Telegram:Chat"]!),
+            Chat = configuration["Telegram:Chat"]!.ToLong(),
         };
 
         config.UseTelegramHandler<ITelegramUpdateHandler>();
