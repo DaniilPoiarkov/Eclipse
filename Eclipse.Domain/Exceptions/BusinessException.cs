@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Domain.Exceptions.Base;
+﻿namespace Eclipse.Domain.Exceptions;
 
 internal class BusinessException : Exception
 {
