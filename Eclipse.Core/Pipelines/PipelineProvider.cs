@@ -1,7 +1,9 @@
 ﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Core.Validation;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using System.Reflection;
 
 namespace Eclipse.Core.Pipelines;
@@ -12,7 +14,9 @@ internal class PipelineProvider : IPipelineProvider
 
     private readonly Dictionary<RouteAttribute, Type> _pipelines;
 
-    public PipelineProvider(IEnumerable<PipelineBase> pipelines, IServiceProvider serviceProvider)
+    private readonly ICurrentTelegramUser _currentUser;
+
+    public PipelineProvider(IEnumerable<PipelineBase> pipelines, IServiceProvider serviceProvider, ICurrentTelegramUser currentUser)
     {
         _pipelines = pipelines
             .Select(p => p.GetType())
@@ -20,6 +24,7 @@ internal class PipelineProvider : IPipelineProvider
             .ToDictionary(pipeline => pipeline.GetCustomAttribute<RouteAttribute>()!);
 
         _serviceProvider = serviceProvider;
+        _currentUser = currentUser;
     }
 
     public PipelineBase Get(string route)
@@ -78,7 +83,7 @@ internal class PipelineProvider : IPipelineProvider
             return Enumerable.Empty<ValidationResult>();
         }
 
-        var context = new ValidationContext(_serviceProvider);
+        var context = new ValidationContext(_serviceProvider, _currentUser.GetCurrentUser());
 
         var validationResult = validationAttributes.Select(a => a.Validate(context));
 
