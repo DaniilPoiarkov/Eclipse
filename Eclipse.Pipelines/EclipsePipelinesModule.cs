@@ -18,6 +18,7 @@ public static class EclipsePipelinesModule
     {
         services
             .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>())
+            .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
             .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
             .AddTransient<ITelegramUpdateHandler, TelegramUpdateHandler>();
 

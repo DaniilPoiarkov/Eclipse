@@ -7,9 +7,6 @@ public class EclipseNotFoundPipeline : PipelineBase, INotFoundPipeline
 {
     protected override void Initialize()
     {
-        RegisterStage(SendMessage);
+        RegisterStage(_ => Text("Oh, I don't know what you want. Are you sure that you used buttons below?"));
     }
-
-    public IResult SendMessage(MessageContext context) =>
-        Text("Oh, I don't know what you want. Are you sure that you used buttons below?");
 }

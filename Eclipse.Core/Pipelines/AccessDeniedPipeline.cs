@@ -4,7 +4,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Core.Pipelines;
 
-internal class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
+public class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
 {
     protected readonly ITelegramBotClient BotClient;
 
@@ -22,8 +22,12 @@ internal class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
 
     protected override void Initialize()
     {
-        RegisterStage(ProccedErrors);
+        RegisterStage(SendErrors);
     }
 
-    public virtual Task<IResult> ProccedErrors(MessageContext context, CancellationToken cancellationToken = default) => Task.FromResult(Empty());
+    protected virtual IResult SendErrors(MessageContext context)
+    {
+        var infos = Errors.Select(e => e.ErrorMessage);
+        return Text(string.Join(Environment.NewLine, infos));
+    }
 }
