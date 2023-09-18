@@ -11,6 +11,7 @@ public class TodoItemsMenuPipeline : EclipsePipelineBase
     {
         new KeyboardButton("My list"),
         new KeyboardButton("Add item"),
+        new KeyboardButton("Main menu"),
     };
 
     private static readonly string _message = "Let's take a look what do we have here..";
