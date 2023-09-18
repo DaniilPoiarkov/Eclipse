@@ -3,8 +3,8 @@ using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("", "/admin_menu")]
-internal class AdminMenuPipeline : AdminPipelineBase
+[Route("", "/admin_mode")]
+internal class AdminModePipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {
@@ -13,6 +13,6 @@ internal class AdminMenuPipeline : AdminPipelineBase
 
     private IResult SendAdminMenu(MessageContext context)
     {
-        return Menu(AdminMenuButtons, "Switched to admin menu");
+        return Menu(AdminMenuButtons, "Switched to admin mode");
     }
 }
