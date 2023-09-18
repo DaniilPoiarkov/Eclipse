@@ -18,7 +18,7 @@ public class TelegramUser
 
         var from = message.From!;
 
-        Name = $"{from.FirstName} {from.LastName}";
+        Name = $"{from.FirstName} {from.LastName}".Trim();
         Username = from.Username;
     }
 
