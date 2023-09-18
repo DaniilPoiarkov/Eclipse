@@ -50,26 +50,25 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (update.Type != UpdateType.Message)
+        if (update.Type != UpdateType.Message && update.Type != UpdateType.CallbackQuery)
         {
-            _logger.Information("Update is not type of message");
+            _logger.Information("Update is not type of message not inline query");
             return;
         }
 
-        var chatId = update.Message!.Chat.Id;
-        var value = update.Message!.Text ?? string.Empty;
+        var data = ParseUpdate(update);
 
-        var key = new PipelineKey(chatId);
-        var user = new TelegramUser(update);
+        var key = new PipelineKey(data.ChatId);
+        var user = TelegramUser.Create(update);
 
         _currentUser.SetCurrentUser(user);
 
         var pipeline = _pipelineStore.GetOrDefault(key)
-            ?? _pipelineProvider.Get(value);
+            ?? _pipelineProvider.Get(data.Value);
 
         _pipelineStore.Remove(key);
 
-        var context = new MessageContext(chatId, value, user);
+        var context = new MessageContext(data.ChatId, data.Value, user);
 
         var result = await pipeline.RunNext(context, cancellationToken);
 
@@ -81,5 +80,21 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         _userRepository.EnshureAdded(user);
+    }
+
+    private static (long ChatId, string Value) ParseUpdate(Update update)
+    {
+        if (update.Type == UpdateType.Message)
+        {
+            var chatId = update.Message!.Chat.Id;
+            var value = update.Message!.Text ?? string.Empty;
+
+            return (chatId, value);
+        }
+
+        var inlineChatId = update.CallbackQuery!.From.Id;
+        var inlineValue = update.CallbackQuery.Data ?? string.Empty;
+
+        return (inlineChatId, inlineValue);
     }
 }

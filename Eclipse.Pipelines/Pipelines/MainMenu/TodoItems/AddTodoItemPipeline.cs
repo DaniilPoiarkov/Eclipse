@@ -8,7 +8,7 @@ using Serilog;
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Add item", "/todos_add")]
-internal class AddTodoItemPipeline : EclipsePipelineBase
+internal class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
@@ -42,17 +42,17 @@ internal class AddTodoItemPipeline : EclipsePipelineBase
         try
         {
             _todoItemService.AddItem(createNewItemModel);
-            return Menu(MainMenuButtons, "New item added!");
+            return Menu(TodoItemMenuButtons, "New item added!");
         }
         catch (EclipseValidationException ex)
         {
             var message = ex.Errors.Select(error => $" - {error}");
-            return Menu(MainMenuButtons, $"Some errors occured while creating.{Environment.NewLine}{string.Join(Environment.NewLine, message)}");
+            return Menu(TodoItemMenuButtons, $"Some errors occured while creating.{Environment.NewLine}{string.Join(Environment.NewLine, message)}");
         }
         catch (Exception ex)
         {
             _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex.Message);
-            return Menu(MainMenuButtons, "Oops, something went wrong. Try again a bit later");
+            return Menu(TodoItemMenuButtons, "Oops, something went wrong. Try again a bit later");
         }
     }
 }
