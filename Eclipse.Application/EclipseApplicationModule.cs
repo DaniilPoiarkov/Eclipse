@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+﻿using Eclipse.Application.Contracts.Base;
+using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.Google.Sheets.Users;
 using Eclipse.Application.Contracts.Suggestions;
@@ -42,6 +43,11 @@ public static class EclipseApplicationModule
 
         services.Scan(tss => tss.FromAssemblyOf<SuggestionObjectParser>()
             .AddClasses(c => c.AssignableTo(typeof(IObjectParser<>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblyOf<TodoItemMapper>()
+            .AddClasses(c => c.AssignableTo(typeof(IMapper<,>)))
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
