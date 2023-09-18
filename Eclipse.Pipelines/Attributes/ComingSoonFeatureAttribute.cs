@@ -3,10 +3,10 @@ using Eclipse.Core.Validation;
 
 namespace Eclipse.Pipelines.Attributes;
 
-internal class NotPublicFeatureAttribute : ContextValidationAttribute
+internal class ComingSoonFeatureAttribute : ContextValidationAttribute
 {
     public override ValidationResult Validate(ValidationContext context)
     {
-        return ValidationResult.Failure("Not allowed");
+        return ValidationResult.Failure("This feature is coming soon. Stay ahead!");
     }
 }
