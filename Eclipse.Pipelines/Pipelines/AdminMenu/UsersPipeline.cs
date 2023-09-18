@@ -1,13 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Pipelines.Attributes;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("", "/users")]
-[AdminOnly]
-public class UsersPipeline : EclipsePipelineBase
+[Route("View users", "/users")]
+public class UsersPipeline : AdminPipelineBase
 {
     private readonly ITelegramUserRepository _userRepository;
 

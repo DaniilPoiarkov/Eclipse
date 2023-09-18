@@ -1,16 +1,13 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Core.Pipelines;
-using Eclipse.Pipelines.Attributes;
 
 using System.Text;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("", "/suggestions_all")]
-[AdminOnly]
-public class CheckSuggestionsPipeline : PipelineBase
+[Route("View suggestions", "/suggestions_all")]
+public class CheckSuggestionsPipeline : AdminPipelineBase
 {
     private readonly ISuggestionsService _suggestionsService;
 

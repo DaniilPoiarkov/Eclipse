@@ -17,6 +17,6 @@ public class StartPipeline : EclipsePipelineBase
     protected virtual IResult Start(MessageContext context)
     {
         var message = _welcomeMessage.Replace("{name}", context.User.Name.TrimEnd());
-        return Menu(MainMenuButton, message);
+        return Menu(MainMenuButtons, message);
     }
 }
