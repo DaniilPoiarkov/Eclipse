@@ -27,6 +27,13 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
         using var scope = _serviceProvider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<IEclipseUpdateHandler>();
 
-        await handler.HandleUpdateAsync(botClient, update, cancellationToken);
+        try
+        {
+            await handler.HandleUpdateAsync(botClient, update, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            await HandlePollingErrorAsync(botClient, ex, cancellationToken);
+        }
     }
 }

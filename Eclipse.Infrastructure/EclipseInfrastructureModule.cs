@@ -62,9 +62,9 @@ public static class EclipseInfrastructureModule
             return new GoogleClient(options.Credentials);
         });
 
-        services.AddTransient(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService());
+        services.AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService());
 
-        services.AddTransient<IGoogleSheetsService, GoogleSheetsService>();
+        services.AddScoped<IGoogleSheetsService, GoogleSheetsService>();
 
         return services;
     }
