@@ -5,7 +5,7 @@ namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
-    protected static readonly IReadOnlyCollection<KeyboardButton> MainMenuButton = new KeyboardButton[]
+    protected static readonly IReadOnlyCollection<KeyboardButton> MainMenuButtons = new KeyboardButton[]
     {
         new KeyboardButton("Suggest")
     };

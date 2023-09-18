@@ -47,12 +47,12 @@ public class SuggestPipeline : EclipsePipelineBase
     {
         if (context.Value.Equals("/cancel", StringComparison.CurrentCultureIgnoreCase))
         {
-            return Menu(MainMenuButton, "As you wish");
+            return Menu(MainMenuButtons, "As you wish");
         }
 
         if (string.IsNullOrEmpty(context.Value))
         {
-            return Menu(MainMenuButton, "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊");
+            return Menu(MainMenuButtons, "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊");
         }
 
         var options = _options.TelegramOptions;
@@ -71,6 +71,6 @@ public class SuggestPipeline : EclipsePipelineBase
 
         await _botClient.SendTextMessageAsync(options.Chat, message, cancellationToken: cancellationToken);
 
-        return Menu(MainMenuButton, "Thank you for suggestion! I'll think about it");
+        return Menu(MainMenuButtons, "Thank you for suggestion! I'll think about it");
     }
 }
