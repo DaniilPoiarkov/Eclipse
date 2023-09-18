@@ -22,7 +22,7 @@ public sealed class HelpPipeline : EclipsePipelineBase
         RegisterStage(GetInfo);
     }
 
-    protected virtual async Task<IResult> GetInfo(MessageContext context, CancellationToken cancellationToken = default)
+    private async Task<IResult> GetInfo(MessageContext context, CancellationToken cancellationToken = default)
     {
         var commands = await _commandService.GetList(cancellationToken);
 
