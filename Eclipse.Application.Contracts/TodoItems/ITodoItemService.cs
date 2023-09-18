@@ -4,7 +4,7 @@ public interface ITodoItemService
 {
     IReadOnlyList<TodoItemDto> GetUserItems(long userId);
 
-    TodoItemDto AddItem(long userId, string text);
+    TodoItemDto AddItem(CreateTodoItemDto input);
 
     void FinishItem(Guid itemId);
 }

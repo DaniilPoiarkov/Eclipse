@@ -1,5 +1,8 @@
 ﻿namespace Eclipse.Infrastructure.Cache;
 
+/// <summary>
+/// Simple wrapper around memory cache with easy to use API
+/// </summary>
 public interface ICacheService
 {
     void Set<T>(CacheKey key, T value);

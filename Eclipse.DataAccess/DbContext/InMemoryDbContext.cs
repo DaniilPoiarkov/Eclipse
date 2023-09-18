@@ -13,9 +13,9 @@ public class InMemoryDbContext : IDbContext
     public virtual IList<TEntity> Set<TEntity>()
         where TEntity : Entity
     {
-        if (Suggestions is List<TEntity> entities)
+        if (Suggestions is List<TEntity> suggestions)
         {
-            return entities;
+            return suggestions;
         }
 
         if (TodoItems is List<TEntity> todoItems)

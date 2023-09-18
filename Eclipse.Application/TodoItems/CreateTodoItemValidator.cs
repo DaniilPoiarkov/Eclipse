@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Eclipse.Application.TodoItems;
 
-public class TodoItemValidator : AbstractValidator<TodoItemDto>
+public class CreateTodoItemValidator : AbstractValidator<CreateTodoItemDto>
 {
-    public TodoItemValidator()
+    public CreateTodoItemValidator()
     {
         RuleFor(i => i.Text)
             .NotNull()
