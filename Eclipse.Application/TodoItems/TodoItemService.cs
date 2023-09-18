@@ -28,7 +28,16 @@ internal class TodoItemService : ITodoItemService
 
     public TodoItemDto AddItem(CreateTodoItemDto input)
     {
-        _validator.ValidateAndThrow(input);
+        var result = _validator.Validate(input);
+
+        if (!result.IsValid)
+        {
+            var errors = result.Errors.Select(e => e.ErrorMessage)
+                .Distinct()
+                .ToList();
+
+            throw new EclipseValidationException(errors);
+        }
 
         var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!);
 

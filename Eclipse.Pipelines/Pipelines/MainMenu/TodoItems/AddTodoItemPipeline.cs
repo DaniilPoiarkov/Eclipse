@@ -1,6 +1,9 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+
+using Serilog;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
@@ -9,9 +12,12 @@ internal class AddTodoItemPipeline : EclipsePipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
-    public AddTodoItemPipeline(ITodoItemService todoItemService)
+    private readonly ILogger _logger;
+
+    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
     {
         _todoItemService = todoItemService;
+        _logger = logger;
     }
 
     protected override void Initialize()
@@ -38,9 +44,15 @@ internal class AddTodoItemPipeline : EclipsePipelineBase
             _todoItemService.AddItem(createNewItemModel);
             return Menu(MainMenuButtons, "New item added!");
         }
+        catch (EclipseValidationException ex)
+        {
+            var message = ex.Errors.Select(error => $" - {error}");
+            return Menu(MainMenuButtons, $"Some errors occured while creating.{Environment.NewLine}{string.Join(Environment.NewLine, message)}");
+        }
         catch (Exception ex)
         {
-            return Menu(MainMenuButtons, ex.Message);
+            _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex.Message);
+            return Menu(MainMenuButtons, "Oops, something went wrong. Try again a bit later");
         }
     }
 }

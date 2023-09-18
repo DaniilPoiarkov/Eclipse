@@ -1,4 +1,6 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Domain.Shared.TodoItems;
+
 using FluentValidation;
 
 namespace Eclipse.Application.TodoItems;
@@ -9,8 +11,16 @@ public class CreateTodoItemValidator : AbstractValidator<CreateTodoItemDto>
     {
         RuleFor(i => i.Text)
             .NotNull()
+                .WithErrorCode(TodoItemError.Codes.Null)
+                .WithMessage(TodoItemError.Messages.Empty)
             .NotEmpty()
-            .MinimumLength(1)
-            .MaximumLength(125);
+                .WithErrorCode(TodoItemError.Codes.Empty)
+                .WithMessage(TodoItemError.Messages.Empty)
+            .MinimumLength(TodoItemConstants.MinLength)
+                .WithErrorCode(TodoItemError.Codes.MinLength)
+                .WithMessage(TodoItemError.Messages.Empty)
+            .MaximumLength(TodoItemConstants.MaxLength)
+                .WithErrorCode(TodoItemError.Codes.MaxLength)
+                .WithMessage(TodoItemError.Messages.MaxLength);
     }
 }
