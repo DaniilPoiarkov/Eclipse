@@ -2,7 +2,6 @@
 
 internal class ObjectNotFoundException : Exception
 {
-    internal ObjectNotFoundException(string name) : base($"Object {name} not found")
-    {
-    }
+    internal ObjectNotFoundException(string name)
+        : base($"Object {name} not found") { }
 }

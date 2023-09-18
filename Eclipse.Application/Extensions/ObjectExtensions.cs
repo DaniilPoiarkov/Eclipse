@@ -19,7 +19,7 @@ public static class ObjectExtensions
             return value;
         }
 
-        return 0;
+        return default;
     }
 
     public static DateTime ToDateTime(this object obj)
@@ -28,7 +28,7 @@ public static class ObjectExtensions
         {
             return dateTime;
         }
-
+        
         return default;
     }
 
