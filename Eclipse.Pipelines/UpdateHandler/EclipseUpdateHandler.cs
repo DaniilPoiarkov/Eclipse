@@ -55,7 +55,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
             _logger.Information("Update is not type of message not inline query");
             return;
         }
-
+        // TODO: Extract logic of parsing update and review user creation
         var data = ParseUpdate(update);
 
         var key = new PipelineKey(data.ChatId);
