@@ -4,18 +4,18 @@ namespace Eclipse.Domain.Suggestions;
 
 public class Suggestion : Entity
 {
-    public Suggestion(Guid id, string text, long chatId) : base(id)
+    public Suggestion(Guid id, string text, long telegramUserId) : base(id)
     {
         Text = text;
-        ChatId = chatId;
+        TelegramUserId = telegramUserId;
         CreatedAt = DateTime.UtcNow;
     }
 
-    public Suggestion() { }
+    private Suggestion() { }
 
     public string Text { get; private set; } = string.Empty;
 
-    public long ChatId { get; private set; }
+    public long TelegramUserId { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
 }

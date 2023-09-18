@@ -1,31 +1,37 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Infrastructure.Google.Sheets;
 
+using Microsoft.Extensions.Configuration;
+
 namespace Eclipse.Application.Google.Sheets;
 
 internal abstract class EclipseSheetsService<TObject> : IEclipseSheetsService<TObject>
 {
-    private readonly IGoogleSheetsService _service;
+    protected readonly IGoogleSheetsService Service;
 
-    private readonly IObjectParser<TObject> _parser;
+    protected readonly IObjectParser<TObject> Parser;
+
+    protected readonly IConfiguration Configuration;
+
+    protected readonly string SheetId;
 
     protected abstract string Range { get; }
 
-    protected abstract string SheetId { get; }
-
-    public EclipseSheetsService(IGoogleSheetsService service, IObjectParser<TObject> parser)
+    public EclipseSheetsService(IGoogleSheetsService service, IObjectParser<TObject> parser, IConfiguration configuration)
     {
-        _service = service;
-        _parser = parser;
+        Service = service;
+        Parser = parser;
+        Configuration = configuration;
+        SheetId = Configuration["Sheets:SheetId"]!;
     }
 
-    public IReadOnlyList<TObject> GetAll()
+    public virtual IReadOnlyList<TObject> GetAll()
     {
-        return _service.Get(SheetId, Range, _parser).ToList();
+        return Service.Get(SheetId, Range, Parser).ToList();
     }
 
-    public void Add(TObject value)
+    public virtual void Add(TObject value)
     {
-        _service.Append(SheetId, Range, value, _parser);
+        Service.Append(SheetId, Range, value, Parser);
     }
 }

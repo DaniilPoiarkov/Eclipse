@@ -2,5 +2,5 @@
 
 public interface ISuggestionsService
 {
-    IReadOnlyList<SuggestionAndUserDto> GetDetailedInfo();
+    IReadOnlyList<SuggestionAndUserDto> GetWithUserInfo();
 }

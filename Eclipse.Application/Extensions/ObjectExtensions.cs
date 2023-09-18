@@ -31,4 +31,14 @@ public static class ObjectExtensions
 
         return default;
     }
+
+    public static bool ToBool(this object obj)
+    {
+        if (bool.TryParse(obj.ToString(), out var result))
+        {
+            return result;
+        }
+
+        return default;
+    }
 }

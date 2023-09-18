@@ -9,6 +9,7 @@ public static class EclipseDomainModule
 {
     public static IServiceCollection AddDomainModule(this IServiceCollection services)
     {
+        //TODO: Add domain services, managers etc
         return services;
     }
 }

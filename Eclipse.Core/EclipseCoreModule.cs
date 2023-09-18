@@ -1,4 +1,5 @@
 ﻿using Eclipse.Core.Core;
+using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +14,8 @@ public static class EclipseCoreModule
     {
         services.AddTransient<INotFoundPipeline, NotFoundPipeline>()
             .AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()
-            .AddTransient<IPipelineProvider, PipelineProvider>();
+            .AddTransient<IPipelineProvider, PipelineProvider>()
+            .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>();
 
         return services;
     }

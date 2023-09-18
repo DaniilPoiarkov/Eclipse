@@ -20,6 +20,6 @@ public class SuggestionsController : ControllerBase
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Ok(_suggestionsService.GetDetailedInfo());
+        return Ok(_suggestionsService.GetWithUserInfo());
     }
 }

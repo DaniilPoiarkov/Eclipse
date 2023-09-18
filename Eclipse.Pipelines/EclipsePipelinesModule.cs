@@ -3,6 +3,7 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -17,6 +18,7 @@ public static class EclipsePipelinesModule
     {
         services
             .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>())
+            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
             .AddTransient<ITelegramUpdateHandler, TelegramUpdateHandler>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()

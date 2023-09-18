@@ -14,7 +14,7 @@ internal class EclipseStarter : IEclipseStarter
 
     private readonly IUpdateHandler _updateHandler;
 
-    private bool IsStarted { get; set; }
+    public bool IsStarted { get; private set; }
 
     public EclipseStarter(ITelegramBotClient botClient, ILogger logger, IUpdateHandler updateHandler)
     {

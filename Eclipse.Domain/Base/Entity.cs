@@ -9,5 +9,5 @@ public abstract class Entity
         Id = id;
     }
 
-    public Entity() { }
+    protected Entity() { }
 }

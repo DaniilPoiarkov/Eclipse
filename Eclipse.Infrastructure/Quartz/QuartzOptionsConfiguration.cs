@@ -6,7 +6,26 @@ namespace Eclipse.Infrastructure.Quartz;
 
 internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 {
+    private static readonly int _hoursDelay = 1;
     public void Configure(QuartzOptions options)
+    {
+        AddWarmupJob(options);
+        AddBotHealthCheckJob(options);
+    }
+
+    private static void AddBotHealthCheckJob(QuartzOptions options)
+    {
+        var jobKey = JobKey.Create(nameof(BotHealthCheckJob));
+
+        options.AddJob<BotHealthCheckJob>(b => b.WithIdentity(jobKey))
+            .AddTrigger(b => b.ForJob(jobKey)
+                .StartNow()
+                .WithSimpleSchedule(s =>
+                    s.WithIntervalInHours(_hoursDelay)
+                        .RepeatForever()));
+    }
+
+    private static void AddWarmupJob(QuartzOptions options)
     {
         var jobKey = JobKey.Create(nameof(WarmupJob));
 
@@ -14,7 +33,7 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
             .AddTrigger(b => b.ForJob(jobKey)
                 .StartNow()
                 .WithSimpleSchedule(s =>
-                    s.WithIntervalInHours(1)
+                    s.WithIntervalInHours(_hoursDelay)
                     .RepeatForever()));
     }
 }

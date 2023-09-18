@@ -16,12 +16,12 @@ internal class SuggestionsService : ISuggestionsService
         _userRepository = userRepository;
     }
 
-    public IReadOnlyList<SuggestionAndUserDto> GetDetailedInfo()
+    public IReadOnlyList<SuggestionAndUserDto> GetWithUserInfo()
     {
         var suggestions = _sheetsService.GetAll();
         var users = _userRepository.GetAll();
 
-        return suggestions.Join(users, s => s.ChatId, u => u.Id, (suggestion, user) => new SuggestionAndUserDto
+        return suggestions.Join(users, s => s.TelegramUserId, u => u.Id, (suggestion, user) => new SuggestionAndUserDto
         {
             Id = suggestion.Id,
             Text = suggestion.Text,
