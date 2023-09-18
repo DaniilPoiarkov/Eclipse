@@ -5,5 +5,5 @@
 /// </summary>
 public interface INotFoundPipeline
 {
-    IResult SendMessage(MessageContext context);
+
 }
