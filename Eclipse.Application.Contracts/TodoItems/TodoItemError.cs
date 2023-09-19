@@ -21,6 +21,6 @@ public static class TodoItemError
     {
         public static readonly string Empty = "To do item cannot be empty";
 
-        public static readonly string MaxLength = $"To do item text cant be more than {TodoItemConstants.MaxLength}";
+        public static readonly string MaxLength = $"To do item text cant be more than {TodoItemConstants.MaxLength} characters";
     }
 }
