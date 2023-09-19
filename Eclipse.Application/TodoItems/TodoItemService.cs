@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
+using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.DataAccess.TodoItems;
 using Eclipse.Domain.TodoItems;
 
@@ -10,6 +11,8 @@ namespace Eclipse.Application.TodoItems;
 
 internal class TodoItemService : ITodoItemService
 {
+    private static readonly int _limit = 7;
+
     private readonly ITodoItemRepository _todoItemRepository;
 
     private readonly IValidator<CreateTodoItemDto> _validator;
@@ -39,6 +42,13 @@ internal class TodoItemService : ITodoItemService
             throw new EclipseValidationException(errors);
         }
 
+        var userItems = _todoItemRepository.GetByExpression(i => i.TelegramUserId == input.UserId);
+
+        if (userItems.Count == _limit)
+        {
+            throw new TodoItemLimitException(_limit);
+        }
+
         var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!);
 
         _todoItemRepository.Add(todoItem);
@@ -54,6 +64,7 @@ internal class TodoItemService : ITodoItemService
         item.MarkAsFinished();
 
         _todoItemRepository.Update(item);
+        _todoItemRepository.Delete(itemId);
     }
 
     public IReadOnlyList<TodoItemDto> GetUserItems(long userId)

@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
+using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -44,10 +45,14 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
             _todoItemService.AddItem(createNewItemModel);
             return Menu(TodoItemMenuButtons, "New item added!");
         }
+        catch(TodoItemLimitException ex)
+        {
+            return Menu(TodoItemMenuButtons, ex.Message);
+        }
         catch (EclipseValidationException ex)
         {
-            var message = ex.Errors.Select(error => $" - {error}");
-            return Menu(TodoItemMenuButtons, $"Some errors occured while creating.{Environment.NewLine}{string.Join(Environment.NewLine, message)}");
+            return Menu(TodoItemMenuButtons, $"🥺It looks like I forgot to tell you that {string.Join(", ", ex.Errors)}.{Environment.NewLine}" +
+                $"Click 'Add item' and try again");
         }
         catch (Exception ex)
         {

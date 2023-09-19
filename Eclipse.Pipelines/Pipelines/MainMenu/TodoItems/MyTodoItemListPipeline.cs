@@ -14,7 +14,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
-    private static readonly string _errorMessage = "Well, something went wrong. I'll try to figure out what exectly, try again a bit latere please";
+    private static readonly string _errorMessage = "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can use menu to help yourself go further to your dreams";
 
     public MyTodoItemListPipeline(ITodoItemService todoItemService)
     {
@@ -95,7 +95,17 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
         try
         {
             _todoItemService.FinishItem(id);
-            return Menu(TodoItemMenuButtons, "Horray! You are doing great!");
+
+            var userItems = _todoItemService.GetUserItems(context.ChatId);
+
+            if (userItems.Count > 0)
+            {
+                RegisterStage(HandleUpdate);
+                return Text("Horray! You are doing great!");
+            }
+
+            return Text($"You did em all!{Environment.NewLine}" +
+                $"My congratulations 🥳");
         }
         catch
         {
