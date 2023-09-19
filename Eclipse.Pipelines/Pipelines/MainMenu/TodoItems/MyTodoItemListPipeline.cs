@@ -117,7 +117,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         var menu = new InlineKeyboardMarkup(new List<IEnumerable<InlineKeyboardButton>>()
         {
-            new[] { InlineKeyboardButton.WithCallbackData("Horray!", "Main Menu") }
+            new[] { InlineKeyboardButton.WithCallbackData("Horray!", "Main menu") }
         });
 
         return Edit(message.MessageId, text, menu);
