@@ -2,11 +2,11 @@
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Serilog;
-using Eclipse.Core.Models;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
+using Eclipse.Core.UpdateParsing;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -22,22 +22,32 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly ICurrentTelegramUser _currentUser;
 
+    private readonly IUpdateParser _updateParser;
+
     private readonly InfrastructureOptions _options;
+
+
+    private static readonly UpdateType[] _allowedUpdateTypes = new[]
+    {
+        UpdateType.Message, UpdateType.CallbackQuery
+    };
 
     public EclipseUpdateHandler(
         ILogger logger,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        InfrastructureOptions options,
         ITelegramUserRepository userRepository,
-        ICurrentTelegramUser currentUser)
+        ICurrentTelegramUser currentUser,
+        IUpdateParser updateParser,
+        InfrastructureOptions options)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
-        _options = options;
         _userRepository = userRepository;
         _currentUser = currentUser;
+        _updateParser = updateParser;
+        _options = options;
     }
 
     public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -50,25 +60,28 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (update.Type != UpdateType.Message && update.Type != UpdateType.CallbackQuery)
+        if (!_allowedUpdateTypes.Contains(update.Type))
         {
-            _logger.Information("Update is not type of message not inline query");
+            _logger.Information("Update of type {updateType} is not supported", update.Type);
             return;
         }
-        // TODO: Extract logic of parsing update and review user creation
-        var data = ParseUpdate(update);
+        
+        var context = _updateParser.Parse(update);
+        
+        if (context is null)
+        {
+            _logger.Error("Context is null after parsing update of type {updateType}", update.Type);
+            return;
+        }
 
-        var key = new PipelineKey(data.ChatId);
-        var user = TelegramUser.Create(update);
+        _currentUser.SetCurrentUser(context.User);
 
-        _currentUser.SetCurrentUser(user);
+        var key = new PipelineKey(context.ChatId);
 
         var pipeline = _pipelineStore.GetOrDefault(key)
-            ?? _pipelineProvider.Get(data.Value);
+            ?? _pipelineProvider.Get(context.Value);
 
         _pipelineStore.Remove(key);
-
-        var context = new MessageContext(data.ChatId, data.Value, user);
 
         var result = await pipeline.RunNext(context, cancellationToken);
 
@@ -79,22 +92,6 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
             _pipelineStore.Set(pipeline, key);
         }
 
-        _userRepository.EnshureAdded(user);
-    }
-
-    private static (long ChatId, string Value) ParseUpdate(Update update)
-    {
-        if (update.Type == UpdateType.Message)
-        {
-            var chatId = update.Message!.Chat.Id;
-            var value = update.Message!.Text ?? string.Empty;
-
-            return (chatId, value);
-        }
-
-        var inlineChatId = update.CallbackQuery!.From.Id;
-        var inlineValue = update.CallbackQuery.Data ?? string.Empty;
-
-        return (inlineChatId, inlineValue);
+        _userRepository.EnshureAdded(context.User);
     }
 }
