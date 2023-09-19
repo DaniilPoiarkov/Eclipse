@@ -9,6 +9,7 @@ using Eclipse.Infrastructure.Builder;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
+using Eclipse.Application.Contracts.Telegram.Messages;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -26,6 +27,8 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
+    private readonly IMessageStore _messageStore;
+
     private readonly InfrastructureOptions _options;
 
 
@@ -41,7 +44,8 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         ITelegramUserRepository userRepository,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
-        InfrastructureOptions options)
+        InfrastructureOptions options,
+        IMessageStore messageStore)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
@@ -50,6 +54,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         _currentUser = currentUser;
         _updateParser = updateParser;
         _options = options;
+        _messageStore = messageStore;
     }
 
     public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -87,7 +92,12 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
         var result = await pipeline.RunNext(context, cancellationToken);
 
-        await result.SendAsync(botClient, cancellationToken);
+        var message = await result.SendAsync(botClient, cancellationToken);
+
+        if (message is not null)
+        {
+            _messageStore.SaveMessage(new MessageKey(context.ChatId), message);
+        }
 
         if (!pipeline.IsFinished)
         {
