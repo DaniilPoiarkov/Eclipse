@@ -4,6 +4,7 @@ using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.Google.Sheets.Users;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram.Commands;
+using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Contracts.TodoItems;
@@ -13,6 +14,7 @@ using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.Google.Sheets.Users;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram.Commands;
+using Eclipse.Application.Telegram.Messages;
 using Eclipse.Application.Telegram.Pipelines;
 using Eclipse.Application.Telegram.TelegramUsers;
 using Eclipse.Application.TodoItems;
@@ -34,10 +36,11 @@ public static class EclipseApplicationModule
         services
             .AddSingleton<ITelegramUserStore, TelegramUserStore>()
             .AddSingleton<IPipelineStore, PipelineStore>()
-            .AddTransient<ICommandService, CommandService>()
-            .AddTransient<ITelegramUserRepository, TelegramUserRepository>()
-            .AddTransient<ISuggestionsService, SuggestionsService>()
-            .AddTransient<ITodoItemService, TodoItemService>();
+            .AddSingleton<IMessageStore, MessageStore>()
+                .AddTransient<ICommandService, CommandService>()
+                .AddTransient<ITelegramUserRepository, TelegramUserRepository>()
+                .AddTransient<ISuggestionsService, SuggestionsService>()
+                .AddTransient<ITodoItemService, TodoItemService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
