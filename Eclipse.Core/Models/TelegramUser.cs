@@ -1,6 +1,4 @@
-﻿using Telegram.Bot.Types;
-
-namespace Eclipse.Core.Models;
+﻿namespace Eclipse.Core.Models;
 
 public class TelegramUser
 {
@@ -10,19 +8,7 @@ public class TelegramUser
 
     public string? Username { get; set; } = string.Empty;
 
-    public TelegramUser(Update update)
-    {
-        var message = update.Message!;
-
-        Id = message.Chat.Id;
-
-        var from = message.From!;
-
-        Name = $"{from.FirstName} {from.LastName}".Trim();
-        Username = from.Username;
-    }
-
-    public TelegramUser(long id, string name, string? username)
+    public TelegramUser(long id, string name, string username)
     {
         Id = id;
         Name = name;

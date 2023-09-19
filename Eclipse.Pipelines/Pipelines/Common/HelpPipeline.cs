@@ -6,7 +6,7 @@ using System.Text;
 namespace Eclipse.Pipelines.Pipelines.Common;
 
 [Route("", "/help")]
-public class HelpPipeline : EclipsePipelineBase
+public sealed class HelpPipeline : EclipsePipelineBase
 {
     private static readonly string _info = "Here what I can do:\r\n\r\n";
 
@@ -22,7 +22,7 @@ public class HelpPipeline : EclipsePipelineBase
         RegisterStage(GetInfo);
     }
 
-    protected virtual async Task<IResult> GetInfo(MessageContext context, CancellationToken cancellationToken = default)
+    private async Task<IResult> GetInfo(MessageContext context, CancellationToken cancellationToken = default)
     {
         var commands = await _commandService.GetList(cancellationToken);
 

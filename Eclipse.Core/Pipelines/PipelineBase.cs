@@ -34,6 +34,11 @@ public abstract class PipelineBase : Pipeline
         return result;
     }
 
+    protected void FinishPipeline()
+    {
+        _stages.Clear();
+    }
+
     /// <summary>
     /// Use this method to register stages using <a cref="RegisterStage"></a>
     /// </summary>

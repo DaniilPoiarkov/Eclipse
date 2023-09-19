@@ -12,17 +12,42 @@ public abstract class Pipeline
 
     protected static IResult Text(string text) => new TextResult(text);
 
-    protected static IResult Menu(IEnumerable<KeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
-            Menu(new List<IEnumerable<KeyboardButton>>() { buttons }, message, inputPlaceholder, resize);
+    protected static IResult Menu(IEnumerable<IKeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
+            Menu(new List<IEnumerable<IKeyboardButton>>() { buttons }, message, inputPlaceholder, resize);
 
-    protected static IResult Menu(IEnumerable<IEnumerable<KeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
+    protected static IResult Menu(IEnumerable<IEnumerable<IKeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
     {
-        var menu = new ReplyKeyboardMarkup(buttons)
-        {
-            InputFieldPlaceholder = inputPlaceholder,
-            ResizeKeyboard = resize
-        };
+        var button = buttons.FirstOrDefault()?
+            .FirstOrDefault();
 
-        return new MenuResult(message, menu);
+        if (button is null)
+        {
+            return Text(message);
+        }
+
+        if (button is KeyboardButton)
+        {
+            var keyboardButtons = buttons.Cast<IEnumerable<KeyboardButton>>();
+
+            var menu = new ReplyKeyboardMarkup(keyboardButtons)
+            {
+                InputFieldPlaceholder = inputPlaceholder,
+                ResizeKeyboard = resize
+            };
+
+            return new MenuResult(message, menu);
+        }
+
+        if (button is InlineKeyboardButton)
+        {
+
+            var inlineButtons = buttons.Cast<IEnumerable<InlineKeyboardButton>>();
+
+            var inlineMenu = new InlineKeyboardMarkup(inlineButtons);
+
+            return new MenuResult(message, inlineMenu);
+        }
+
+        return Text(message);
     }
 }
