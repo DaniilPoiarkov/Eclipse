@@ -1,7 +1,9 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
+
 using Serilog;
+
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Application.Contracts.Telegram.TelegramUsers;
