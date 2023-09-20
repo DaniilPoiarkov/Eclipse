@@ -9,14 +9,17 @@ public class TelegramUserObjectParser : IObjectParser<TelegramUser>
 {
     public TelegramUser Parse(IList<object> values)
     {
-        if (values.Count != 3)
+        if (values.Count != 3 && values.Count != 2)
         {
             throw new UnableToParseValueException("objects", "TelegramUser");
         }
 
         var id = values[0].ToLong();
         var name = values[1].ToString();
-        var userName = values[2].ToString();
+        
+        var userName = values.Count == 3
+            ? values[2].ToString()
+            : string.Empty;
 
         return new TelegramUser(id, name ?? string.Empty, userName ?? string.Empty);
     }
