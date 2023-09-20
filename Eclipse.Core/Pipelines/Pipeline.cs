@@ -27,6 +27,8 @@ public abstract class Pipeline
             Edit(messageId, menu)
         });
 
+    protected static IResult Multiple(params IResult[] results) =>
+        new MultipleActionsResult(results);
 
     protected static IResult Menu(IEnumerable<IKeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
             Menu(new List<IEnumerable<IKeyboardButton>>() { buttons }, message, inputPlaceholder, resize);
