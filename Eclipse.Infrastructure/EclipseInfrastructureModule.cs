@@ -22,6 +22,7 @@ using Telegram.Bot;
 
 using Polly;
 using Polly.Contrib.WaitAndRetry;
+using FluentValidation;
 
 namespace Eclipse.Infrastructure;
 
@@ -42,7 +43,8 @@ public static class EclipseInfrastructureModule
 
         var config = builder.Build();
 
-        services.AddSingleton(config);
+        services.AddSingleton(config)
+            .AddValidatorsFromAssemblyContaining<SendMessageModelValidator>(ServiceLifetime.Transient);
 
         services
             .AddSerilogIntegration()

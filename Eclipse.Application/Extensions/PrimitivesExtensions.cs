@@ -1,7 +1,9 @@
 ﻿namespace Eclipse.Application.Extensions;
 
-public static class ObjectExtensions
+public static class PrimitivesExtensions
 {
+    #region object
+
     public static Guid ToGuid(this object obj)
     {
         if (Guid.TryParse(obj.ToString(), out var guid))
@@ -41,4 +43,20 @@ public static class ObjectExtensions
 
         return default;
     }
+
+    #endregion
+
+    #region string
+
+    public static string FormattedOrEmpty(this string? str, Func<string, string> format)
+    {
+        if (string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str))
+        {
+            return string.Empty;
+        }
+
+        return format(str);
+    }
+
+    #endregion
 }
