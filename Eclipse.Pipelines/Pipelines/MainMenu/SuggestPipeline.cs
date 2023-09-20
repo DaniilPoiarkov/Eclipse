@@ -56,7 +56,11 @@ public class SuggestPipeline : EclipsePipelineBase
         }
 
         var options = _options.TelegramOptions;
-        var message = $"Suggestion from {context.User.Name}, @{context.User.Username}:" +
+
+        var message = $"Suggestion from {context.User.Name}{(
+            string.IsNullOrEmpty(context.User.Username)
+                ? string.Empty
+                : $", @{context.User.Username}")}:" +
             $"\n{context.Value}";
 
         var suggestionDto = new SuggestionDto
