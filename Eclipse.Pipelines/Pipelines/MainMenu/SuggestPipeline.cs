@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
@@ -57,10 +58,7 @@ public class SuggestPipeline : EclipsePipelineBase
 
         var options = _options.TelegramOptions;
 
-        var message = $"Suggestion from {context.User.Name}{(
-            string.IsNullOrEmpty(context.User.Username)
-                ? string.Empty
-                : $", @{context.User.Username}")}:" +
+        var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:" +
             $"\n{context.Value}";
 
         var suggestionDto = new SuggestionDto
