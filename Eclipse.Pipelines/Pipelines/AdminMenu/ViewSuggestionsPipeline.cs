@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -7,11 +8,11 @@ using System.Text;
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
 [Route("View suggestions", "/suggestions_all")]
-internal class CheckSuggestionsPipeline : AdminPipelineBase
+internal class ViewSuggestionsPipeline : AdminPipelineBase
 {
     private readonly ISuggestionsService _suggestionsService;
 
-    public CheckSuggestionsPipeline(ISuggestionsService suggestionsService)
+    public ViewSuggestionsPipeline(ISuggestionsService suggestionsService)
     {
         _suggestionsService = suggestionsService;
     }
@@ -37,7 +38,7 @@ internal class CheckSuggestionsPipeline : AdminPipelineBase
             
             if (suggestion.User is not null)
             {
-                sb.AppendLine($"{suggestion.User.Id} | @{suggestion.User.Username} | {suggestion.User.Name}");
+                sb.AppendLine($"{suggestion.User.Id} | {suggestion.User.Name} {suggestion.User.Username.FormattedOrEmpty(s => $"| @{s}")}");
             }
 
             sb.AppendLine($"Created at: {suggestion.CreatedAt.ToString("dd.MM - HH:mm")}");

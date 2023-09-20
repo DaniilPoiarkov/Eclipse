@@ -1,15 +1,16 @@
 ﻿using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
 [Route("View users", "/users")]
-internal class UsersPipeline : AdminPipelineBase
+internal class ViewUsersPipeline : AdminPipelineBase
 {
     private readonly ITelegramUserRepository _userRepository;
 
-    public UsersPipeline(ITelegramUserRepository userRepository)
+    public ViewUsersPipeline(ITelegramUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
@@ -22,7 +23,7 @@ internal class UsersPipeline : AdminPipelineBase
     private IResult GetUserInfo(MessageContext context)
     {
         var usersInfo = _userRepository.GetAll()
-            .Select((user, index) => $"{++index} | {user.Id} | {user.Name} | @{user.Username}");
+            .Select((user, index) => $"{++index} | {user.Id} | {user.Name} {user.Username.FormattedOrEmpty(s => $"| @{s}")}");
 
         return Text(string.Join(Environment.NewLine, usersInfo));
     }
