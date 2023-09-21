@@ -1,12 +1,14 @@
-﻿namespace Eclipse.Application.Exceptions;
+﻿using Eclipse.Localization.Exceptions;
 
-public class EclipseValidationException : Exception
+namespace Eclipse.Application.Exceptions;
+
+public class EclipseValidationException : LocalizedException
 {
     private readonly IList<string> _errors;
 
     public IReadOnlyList<string> Errors => _errors.AsReadOnly();
 
-    public EclipseValidationException(IList<string> errors)
+    public EclipseValidationException(IList<string> errors) : base("Eclipse:ValidationFailed", string.Join(", ", errors))
     {
         _errors = errors;
     }
