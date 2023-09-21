@@ -2,8 +2,8 @@
 
 namespace Eclipse.Domain.TodoItems;
 
-internal class TodoItemAlreadyFinishedException : BusinessException
+internal class TodoItemAlreadyFinishedException : DomainException
 {
     public TodoItemAlreadyFinishedException(TodoItem item)
-        : base($"TodoItem {item.Text} already finished") { }
+        : base(TodoItemErrors.Messages.AlreadyFinished, item.Text) { }
 }
