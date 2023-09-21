@@ -21,7 +21,7 @@ internal class WarmupJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var response = await _httpClient.GetAsync("/api/ping");
+        var response = await _httpClient.GetAsync("/health-checks");
 
         if (!response.IsSuccessStatusCode)
         {
