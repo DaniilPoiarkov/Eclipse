@@ -30,9 +30,9 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 
     private static void AddWarmupJob(QuartzOptions options)
     {
-        var jobKey = JobKey.Create(nameof(WarmupJob));
+        var jobKey = JobKey.Create(nameof(HealthCheckJob));
 
-        options.AddJob<WarmupJob>(b => b.WithIdentity(jobKey))
+        options.AddJob<HealthCheckJob>(b => b.WithIdentity(jobKey))
             .AddTrigger(b => b.ForJob(jobKey)
                 .StartNow()
                 .WithSimpleSchedule(s =>
