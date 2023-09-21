@@ -10,7 +10,7 @@ public class SendMessageModelValidator : AbstractValidator<SendMessageModel>
     {
         RuleFor(m => m.Message)
             .NotEmpty()
-            .WithMessage("Message can not be empty");
+            .WithMessage(TelegramErrors.Messages.MessageCannotBeEmpty);
 
         RuleFor(m => m.ChatId)
             .NotEqual(0);
