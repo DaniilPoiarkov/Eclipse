@@ -8,6 +8,7 @@ using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Telegram;
+using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
@@ -48,6 +49,16 @@ builder.Services
             Credentials = configuration["Google:Credentials"]!
         };
     });
+
+builder.Services.AddLocalizationSupport(builder =>
+{
+    var path = "EmbeddedResources/Localizations/";
+
+    builder.AddJsonFile($"{path}en.json")
+        .AddJsonFile($"{path}ua.json");
+
+    builder.DefaultLocalization = "ua";
+});
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(
     builder.Configuration.GetSection("Authorization")

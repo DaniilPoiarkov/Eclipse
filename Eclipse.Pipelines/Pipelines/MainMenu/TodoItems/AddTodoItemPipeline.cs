@@ -3,6 +3,7 @@ using Eclipse.Application.Exceptions;
 using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Localization.Localizers;
 
 using Serilog;
 
@@ -15,10 +16,13 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private readonly ILogger _logger;
 
-    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
+    private readonly ILocalizer _localizer;
+
+    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger, ILocalizer localizer)
     {
         _todoItemService = todoItemService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     protected override void Initialize()
@@ -51,8 +55,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         }
         catch (EclipseValidationException ex)
         {
-            return Menu(TodoItemMenuButtons, $"🥺It looks like I forgot to tell you that {string.Join(", ", ex.Errors)}.{Environment.NewLine}" +
-                $"Click 'Add item' and try again");
+            return Menu(TodoItemMenuButtons, _localizer.FormatLocalizedException(ex));
         }
         catch (Exception ex)
         {
