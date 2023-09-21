@@ -1,0 +1,27 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
+    "Telegram:MessageCannotBeEmpty": "Message can not be empty",
+
+    "TodoItem:AlreadyFinished": "TodoItem {0} already finished",
+    "TodoItem:Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",
+
+    "Eclipse:ValidationFailed": "🥺It looks like I forgot to tell you that {0}.\n\rClick 'Add item' and try again",
+
+    "BotCommand:CommandMinLength": "Command cant be less then 1 symbol",
+    "BotCommand:CommandManLength": "Command cant be more then 24 symbols",
+    "BotCommand:DescriptionMinLength": "Description cant be less then 10 symbols",
+    "BotCommand:DescriptionMaxLength": "Description cant be more then 256 symbols",
+
+    "Pipelines:MainMenu": "Yep, we are here",
+
+    "Pipelines:Suggest": "{0}! Feel free to describe your idea or write /cancel to return",
+    "Pipelines:Suggest:Greetings": "Hey;Glad to head that;Wow;Awesome",
+    "Pipelines:Suggest:AsYouWish": "As you wish",
+    "Pipelines:Suggest:Error": "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊",
+    "Pipelines:Suggest:Success": "Thank you for suggestion! I'll think about it",
+
+    "Pipelines:TodoItems": "Let's take a look what do we have here..\n\r\n\rNote: This feature is in preview version. Some features can work inaccurate"
+  }
+}
