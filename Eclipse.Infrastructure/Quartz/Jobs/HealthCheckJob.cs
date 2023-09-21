@@ -4,7 +4,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Infrastructure.Quartz.Jobs;
 
-internal class WarmupJob : IJob
+internal class HealthCheckJob : IJob
 {
     private readonly HttpClient _httpClient;
 
@@ -12,7 +12,7 @@ internal class WarmupJob : IJob
 
     private readonly InfrastructureOptions _options;
 
-    public WarmupJob(HttpClient httpClient, ITelegramBotClient botClient, InfrastructureOptions options)
+    public HealthCheckJob(HttpClient httpClient, ITelegramBotClient botClient, InfrastructureOptions options)
     {
         _httpClient = httpClient;
         _botClient = botClient;
