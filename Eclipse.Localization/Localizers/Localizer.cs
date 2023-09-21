@@ -1,4 +1,6 @@
-﻿namespace Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Exceptions;
+
+namespace Eclipse.Localization.Localizers;
 
 internal class Localizer : ILocalizer
 {
@@ -23,5 +25,11 @@ internal class Localizer : ILocalizer
                 ? localization
                 : key;
         }
+    }
+
+    public string FormatLocalizedException(LocalizedException exception, string? culture = null)
+    {
+        var message = this[exception.Message, culture];
+        return string.Format(message, exception.Args);
     }
 }

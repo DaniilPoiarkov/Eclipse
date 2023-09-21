@@ -1,4 +1,6 @@
-﻿namespace Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Exceptions;
+
+namespace Eclipse.Localization.Localizers;
 
 /// <summary>
 /// Provides api to localize string
@@ -6,4 +8,6 @@
 public interface ILocalizer
 {
     string this[string key, string? culture = null] { get; }
+
+    string FormatLocalizedException(LocalizedException exception, string? culture = null);
 }
