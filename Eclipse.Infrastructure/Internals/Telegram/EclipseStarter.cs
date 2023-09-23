@@ -3,6 +3,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot;
 using Serilog;
 using Eclipse.Infrastructure.Exceptions;
+using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Infrastructure.Internals.Telegram;
 

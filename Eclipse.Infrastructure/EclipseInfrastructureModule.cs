@@ -25,6 +25,7 @@ using Polly;
 using Polly.Contrib.WaitAndRetry;
 
 using FluentValidation;
+using Eclipse.Infrastructure.Internals.Quartz;
 
 namespace Eclipse.Infrastructure;
 
@@ -88,11 +89,18 @@ public static class EclipseInfrastructureModule
                 Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseDelay), _retryCount)
             ));
 
-        services.AddQuartz();
+        services.AddQuartz(cfg =>
+        {
+            cfg.InterruptJobsOnShutdown = true;
+            cfg.SchedulerName = "EclipseScheduler";
+        });
+
         services.AddQuartzHostedService(cfg =>
         {
             cfg.WaitForJobsToComplete = true;
         });
+
+        services.AddTransient<IEclipseScheduler, EclipseScheduler>();
 
         return services;
     }
