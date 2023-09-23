@@ -5,7 +5,7 @@ using Eclipse.Infrastructure.Telegram;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
-[Route("Send to all", "/send_to_all")]
+[Route("Menu:AdminMenu:SendToAll", "/send_to_all")]
 internal class SendMessageToAllPipeline : AdminPipelineBase
 {
     private readonly ITelegramUserRepository _telegramUserRepository;

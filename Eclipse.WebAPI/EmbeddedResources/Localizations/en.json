@@ -39,9 +39,26 @@
     "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",
     "Pipelines:TodoItems:AddItem:Error": "Oops, something went wrong. Try again a bit later",
 
+    "Pipelines:AdminMenu": "Switched to admin mode",
+    "Pipelines:AdminMenu:SendToUser:SendUserId": "Send user chat Id",
+    "Pipelines:AdminMenu:SendToUser:SendContent": "Send message content",
+    "Pipelines:AdminMenu:SendToUser:UnableToParse": "Unable to parse value. Pipeline interrupted",
+    "Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty": "Content cannot be empty. All data rolled back",
+
+    "Pipelines:AdminMenu:Confirm": "Send /confirm to send message or /cancel to go back",
+    "Pipelines:AdminMenu:ConfirmationFailed": "Confirmation failed",
+    "Pipelines:AdminMenu:SentSuccessfully": "Sent successfully",
+    "Pipelines:AdminMenu:Error": "Error occured",
+
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",
     "Menu:MainMenu:MyToDos": "My To dos",
+
+    "Menu:AdminMenu:ViewSuggestions": "View suggestions",
+    "Menu:AdminMenu:ViewUsers": "View users",
+    "Menu:AdminMenu:SendToUser": "Send to user",
+    "Menu:AdminMenu:SendToAll": "Send to all",
+    "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 
     "Menu:TodoItemsMenu:AddItem": "Add item",
     "Menu:TodoItemsMenu:MyList": "My list"

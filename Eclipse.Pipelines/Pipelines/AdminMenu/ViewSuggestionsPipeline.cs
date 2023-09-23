@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("View suggestions", "/suggestions_all")]
+[Route("Menu:AdminMenu:ViewSuggestions", "/suggestions_all")]
 internal class ViewSuggestionsPipeline : AdminPipelineBase
 {
     private readonly ISuggestionsService _suggestionsService;

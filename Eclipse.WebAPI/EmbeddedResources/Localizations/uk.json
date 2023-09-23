@@ -34,14 +34,31 @@
 
     "Pipelines:TodoItems:MyList:Empty": "🫣 Схоже у тебе нема ніяких планів!\r\nЩо до того щоб додати трохи?😏",
     "Pipelines:TodoItems:MyList:Error": "Хмм, схоже щось пішло не так. Я поки спробую розібратись, а ти поки можеш спробувати ще раз щось додати у список своїх планів і рухатись далі до своїх мрій",
-    
+
     "Pipelines:TodoItems:AddItem:DiscribeWhatToAdd": "Опиши що ти хочеш додати",
     "Pipelines:TodoItems:AddItem:NewItemAdded": "План записано!",
     "Pipelines:TodoItems:AddItem:Error": "Упс, Щось пішло не так. Спробуй ще раз трошки пізніше",
 
+    "Pipelines:AdminMenu": "Включено режим адміна",
+    "Pipelines:AdminMenu:SendToUser:SendUserId": "Відправте ідентифікатор користовуча",
+    "Pipelines:AdminMenu:SendToUser:SendContent": "Відправте повідомлення",
+    "Pipelines:AdminMenu:SendToUser:UnableToParse": "Не вдалося обробити значення. Виконання припинено",
+    "Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty": "Контент не може бути пустим. Виконання припинено",
+
+    "Pipelines:AdminMenu:Confirm": "Відправте /confirm щоб відправити повідомлення або /cancel щоб повернутися назад",
+    "Pipelines:AdminMenu:ConfirmationFailed": "Підтвердження скасовано",
+    "Pipelines:AdminMenu:SentSuccessfully": "Успішно відправлено",
+    "Pipelines:AdminMenu:Error": "Сталась помилка",
+
     "Menu:MainMenu": "Головне меню",
     "Menu:MainMenu:Suggest": "Запропонувати",
     "Menu:MainMenu:MyToDos": "Мої плани",
+
+    "Menu:AdminMenu:ViewSuggestions": "Переглянути пропозиції",
+    "Menu:AdminMenu:ViewUsers": "Переглянути користувачів",
+    "Menu:AdminMenu:SendToUser": "Відправити користувачу",
+    "Menu:AdminMenu:SendToAll": "Відправити всім",
+    "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
     "Menu:TodoItemsMenu:AddItem": "Запланувати",
     "Menu:TodoItemsMenu:MyList": "Мій список"
