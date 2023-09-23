@@ -32,6 +32,9 @@
     "Pipelines:TodoItems:YouDidEmAll": "You did em all!\r\nMy congratulations 🥳",
     "Pipelines:TodoItems:YouAreDoingGreat": "Horray! You are doing great!",
 
+    "Pipelines:TodoItems:MyList:Empty": "🫣 It seems to me that you have no plans!\r\nAnyway, what about to add some?😏",
+    "Pipelines:TodoItems:MyList:Error": "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can use menu to help yourself go further to your dreams",
+
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",
     "Menu:MainMenu:MyToDos": "My To dos",
