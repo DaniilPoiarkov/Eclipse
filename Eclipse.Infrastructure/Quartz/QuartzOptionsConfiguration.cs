@@ -1,4 +1,4 @@
-﻿using Eclipse.Infrastructure.Quartz.Jobs;
+﻿using Eclipse.Infrastructure.Internals.Quartz.Jobs;
 using Microsoft.Extensions.Options;
 using Quartz;
 

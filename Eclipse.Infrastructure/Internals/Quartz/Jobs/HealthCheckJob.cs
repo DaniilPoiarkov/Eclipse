@@ -2,7 +2,7 @@
 using Quartz;
 using Telegram.Bot;
 
-namespace Eclipse.Infrastructure.Quartz.Jobs;
+namespace Eclipse.Infrastructure.Internals.Quartz.Jobs;
 
 internal class HealthCheckJob : IJob
 {

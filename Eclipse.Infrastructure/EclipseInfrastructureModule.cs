@@ -2,19 +2,20 @@
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
+using Eclipse.Infrastructure.Quartz;
+using Eclipse.Infrastructure.Telegram;
 using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Google;
 using Eclipse.Infrastructure.Internals.Google.Sheets;
 using Eclipse.Infrastructure.Internals.Telegram;
-using Eclipse.Infrastructure.Quartz;
-using Eclipse.Infrastructure.Quartz.Jobs;
-using Eclipse.Infrastructure.Telegram;
+using Eclipse.Infrastructure.Internals.Quartz.Jobs;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Quartz;
+using Quartz.Logging;
 
 using Serilog;
 
@@ -22,8 +23,8 @@ using Telegram.Bot;
 
 using Polly;
 using Polly.Contrib.WaitAndRetry;
+
 using FluentValidation;
-using Quartz.Logging;
 
 namespace Eclipse.Infrastructure;
 
