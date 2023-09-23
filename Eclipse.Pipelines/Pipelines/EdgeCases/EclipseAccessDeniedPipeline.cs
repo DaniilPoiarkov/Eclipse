@@ -12,6 +12,6 @@ internal class EclipseAccessDeniedPipeline : EclipsePipelineBase, IAccessDeniedP
 
     protected override void Initialize()
     {
-        RegisterStage(_ => Text("Oh, I don't know what you want. Are you sure that you used buttons below?"));
+        RegisterStage(_ => Text(Localizer["Pipelines:NotFound"]));
     }
 }

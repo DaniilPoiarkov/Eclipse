@@ -3,22 +3,26 @@ using Eclipse.Application.Exceptions;
 using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Localization.Localizers;
 
 using Serilog;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
-[Route("Add item", "/todos_add")]
+[Route("Menu:TodoItemsMenu:AddItem", "/todos_add")]
 internal class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
     private readonly ILogger _logger;
 
-    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
+    private readonly ILocalizer _localizer;
+
+    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger, ILocalizer localizer)
     {
         _todoItemService = todoItemService;
         _logger = logger;
+        _localizer = localizer;
     }
 
     protected override void Initialize()
@@ -29,7 +33,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private static IResult SendInfo(MessageContext context)
     {
-        return Text("Describe what do you wanna to add");
+        return Text(Localizer["Pipelines:TodoItems:AddItem:DiscribeWhatToAdd"]);
     }
 
     private IResult SaveNewTodoItem(MessageContext context)
@@ -43,7 +47,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         try
         {
             _todoItemService.AddItem(createNewItemModel);
-            return Menu(TodoItemMenuButtons, "New item added!");
+            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:NewItemAdded"]);
         }
         catch(TodoItemLimitException ex)
         {
@@ -51,13 +55,12 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         }
         catch (EclipseValidationException ex)
         {
-            return Menu(TodoItemMenuButtons, $"🥺It looks like I forgot to tell you that {string.Join(", ", ex.Errors)}.{Environment.NewLine}" +
-                $"Click 'Add item' and try again");
+            return Menu(TodoItemMenuButtons, _localizer.FormatLocalizedException(ex));
         }
         catch (Exception ex)
         {
             _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex.Message);
-            return Menu(TodoItemMenuButtons, "Oops, something went wrong. Try again a bit later");
+            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:Error"]);
         }
     }
 }

@@ -4,7 +4,7 @@ using Eclipse.Infrastructure.Telegram;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
-[Route("Send to user", "/send_to_user")]
+[Route("Menu:AdminMenu:SendToUser", "/send_to_user")]
 internal class SendMessageToUserPipeline : AdminPipelineBase
 {
     private readonly ITelegramService _telegramService;
@@ -26,7 +26,7 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
 
     private static IResult AskUserId(MessageContext context)
     {
-        return Text("Send user chat Id");
+        return Text(Localizer["Pipelines:AdminMenu:SendToUser:SendUserId"]);
     }
 
     private IResult AskForMessage(MessageContext context)
@@ -34,12 +34,11 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
         if (long.TryParse(context.Value, out var chatId))
         {
             MessageModel.ChatId = chatId;
-            return Text("Send message content");
+            return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
         }
 
         FinishPipeline();
-
-        return Text("Unable to parse value. Pipeline interrupted");
+        return Text(Localizer["Pipelines:AdminMenu:SendToUser:UnableToParse"]);
     }
 
     private IResult Confirm(MessageContext context)
@@ -47,29 +46,29 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
         if (string.IsNullOrEmpty(context.Value))
         {
             FinishPipeline();
-            return Menu(AdminMenuButtons, "Content cannot be empty. All data rolled back");
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
         MessageModel.Message = context.Value;
-        return Text("Send /confirm to send message or /cancel to go back");
+        return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> SendMessage(MessageContext context, CancellationToken cancellationToken)
     {
         if (!context.Value.Equals("/confirm", StringComparison.CurrentCultureIgnoreCase))
         {
-            return Menu(AdminMenuButtons, "Message not sent. Confirmation failed");
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
         try
         {
             await _telegramService.Send(MessageModel, cancellationToken);
 
-            return Menu(AdminMenuButtons, "Sent successfully");
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
         catch (Exception ex)
         {
-            return Menu(AdminMenuButtons, $"Message not sent:{Environment.NewLine}" +
+            return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}" +
                 $"{ex.Message}");
         }
     }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("View suggestions", "/suggestions_all")]
+[Route("Menu:AdminMenu:ViewSuggestions", "/suggestions_all")]
 internal class ViewSuggestionsPipeline : AdminPipelineBase
 {
     private readonly ISuggestionsService _suggestionsService;
@@ -28,7 +28,7 @@ internal class ViewSuggestionsPipeline : AdminPipelineBase
         
         var tabs = new string('=', 5);
 
-        var sb = new StringBuilder($"{tabs} SUGGESTIONS {tabs}")
+        var sb = new StringBuilder($"{tabs} {Localizer["Suggestions"].ToUpper()} {tabs}")
             .AppendLine()
             .AppendLine();
 
@@ -41,7 +41,7 @@ internal class ViewSuggestionsPipeline : AdminPipelineBase
                 sb.AppendLine($"{suggestion.User.Id} | {suggestion.User.Name} {suggestion.User.Username.FormattedOrEmpty(s => $"| @{s}")}");
             }
 
-            sb.AppendLine($"Created at: {suggestion.CreatedAt.ToString("dd.MM - HH:mm")}");
+            sb.AppendLine($"{Localizer["CreatedAt"]}: {suggestion.CreatedAt.ToString("dd.MM - HH:mm")}");
             sb.AppendLine();
         }
 

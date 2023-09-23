@@ -5,7 +5,7 @@ using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("View users", "/users")]
+[Route("Menu:AdminMenu:ViewUsers", "/users")]
 internal class ViewUsersPipeline : AdminPipelineBase
 {
     private readonly ITelegramUserRepository _userRepository;

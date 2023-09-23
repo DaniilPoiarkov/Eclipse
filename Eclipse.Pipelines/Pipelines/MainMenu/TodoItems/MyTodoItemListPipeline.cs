@@ -6,14 +6,14 @@ using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
-[Route("My list", "/todos_my")]
+[Route("Menu:TodoItemsMenu:MyList", "/todos_my")]
 internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
     private readonly IMessageStore _messageStore;
 
-    private static readonly string _errorMessage = "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can use menu to help yourself go further to your dreams";
+    private static readonly string _errorMessage = "Pipelines:TodoItems:MyList:Error";
 
     public MyTodoItemListPipeline(ITodoItemService todoItemService, IMessageStore messageStore)
     {
@@ -36,9 +36,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
         if (items.Count == 0)
         {
             FinishPipeline();
-
-            return Menu(TodoItemMenuButtons, $"🫣 It seems to me that you have no plans!{Environment.NewLine}" +
-                $"Anyway, what about to add some?😏");
+            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:MyList:Empty"]);
         }
 
         var message = BuildMessage(items);

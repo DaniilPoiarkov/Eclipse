@@ -7,10 +7,10 @@ namespace Eclipse.Pipelines.Pipelines;
 [AdminOnly]
 public abstract class AdminPipelineBase : EclipsePipelineBase
 {
-    protected static readonly IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> AdminMenuButtons = new List<KeyboardButton[]>
+    protected static IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> AdminMenuButtons => new List<KeyboardButton[]>
     {
-        new[] { new KeyboardButton("View suggestions"), new KeyboardButton("View users") },
-        new[] { new KeyboardButton("Send to user"), new KeyboardButton("Send to all") },
-        new[] { new KeyboardButton("Switch to user mode") },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:ViewSuggestions"]), new KeyboardButton(Localizer["Menu:AdminMenu:ViewUsers"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:SendToUser"]), new KeyboardButton(Localizer["Menu:AdminMenu:SendToAll"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:SwitchToUserMode"]) },
     };
 }
