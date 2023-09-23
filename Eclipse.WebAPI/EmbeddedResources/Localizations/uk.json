@@ -58,9 +58,16 @@
 
     "Pipelines:NotFound": "Я нічого про це не знаю. Це точно якась кнопочка з меню?",
 
+    "Pipelines:Language:English": "Англійська 🇺🇸",
+    "Pipelines:Language:Ukrainian": "Українська 🇺🇦",
+    "Pipelines:Language:Choose": "Обери мову",
+    "Pipelines:Language:Unsupported": "Ця мова не підтримується",
+    "Pipelines:Language:Changed": "Мова успішно змінена!",
+
     "Menu:MainMenu": "Головне меню",
     "Menu:MainMenu:Suggest": "Запропонувати",
     "Menu:MainMenu:MyToDos": "Мої плани",
+    "Menu:MainMenu:Language": "Змінити мову 🌐",
 
     "Menu:AdminMenu:ViewSuggestions": "Переглянути пропозиції",
     "Menu:AdminMenu:ViewUsers": "Переглянути користувачів",

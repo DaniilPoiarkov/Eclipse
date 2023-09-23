@@ -11,6 +11,7 @@ using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Localization.Localizers;
+using Eclipse.Application.Contracts.Localizations;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -30,7 +31,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IMessageStore _messageStore;
 
-    private readonly ILocalizer _localizer;
+    private readonly IEclipseLocalizer _localizer;
 
     private readonly InfrastructureOptions _options;
 
@@ -48,7 +49,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
-        ILocalizer localizer,
+        IEclipseLocalizer localizer,
         InfrastructureOptions options)
     {
         _logger = logger;
@@ -87,6 +88,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         _currentUser.SetCurrentUser(context.User);
+        _localizer.SetCulture(context.ChatId);
 
         var key = new PipelineKey(context.ChatId);
 

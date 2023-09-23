@@ -24,7 +24,7 @@ public static class EclipseApplicationErrors
 
         public static class Messages
         {
-            public static readonly string Limit = "Limit";
+            public static readonly string Limit = $"{_prefix}:Limit";
         }
     }
 }

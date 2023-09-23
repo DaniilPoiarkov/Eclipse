@@ -54,13 +54,20 @@
 
     "Pipelines:Common:About": "Hi, {name}!\r\nMy name is Eclipse and I'm your small helper😊. Use /help to get some addition info",
     "Pipelines:Common:Help": "Here what I can do",
-    "Pipelines:Common:Start": "Hello, {name}, I'm Eclipse. Right now I'm studing different things, so if you don't mind to help me become better you can press 'Suggest' button and describe your thoughts.\nSee you 🌒",
+    "Pipelines:Common:Start": "Hello, {name}, I'm Eclipse. Right now I'm studying different things, so if you don't mind helping me become better you can click the 'Suggest' button and describe your thoughts.\nSee you 🌒",
 
     "Pipelines:NotFound": "Oh, I don't know what you want. Are you sure that you used buttons below?",
+
+    "Pipelines:Language:English": "English 🇺🇸",
+    "Pipelines:Language:Ukrainian": "Ukrainian 🇺🇦",
+    "Pipelines:Language:Choose": "Select a language",
+    "Pipelines:Language:Unsupported": "This language is unsupported",
+    "Pipelines:Language:Changed": "Language changed successfully!",
 
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",
     "Menu:MainMenu:MyToDos": "My To dos",
+    "Menu:MainMenu:Language": "Change language 🌐",
 
     "Menu:AdminMenu:ViewSuggestions": "View suggestions",
     "Menu:AdminMenu:ViewUsers": "View users",
