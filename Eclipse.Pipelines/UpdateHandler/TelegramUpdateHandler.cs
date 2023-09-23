@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eclipse.Pipelines.CachedServices;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -26,6 +28,7 @@ internal class TelegramUpdateHandler : ITelegramUpdateHandler
     {
         using var scope = _serviceProvider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<IEclipseUpdateHandler>();
+        CachedServiceProvider.SetServiceProvider(_serviceProvider);
 
         try
         {

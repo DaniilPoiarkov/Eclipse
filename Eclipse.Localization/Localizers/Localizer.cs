@@ -32,4 +32,12 @@ internal class Localizer : ILocalizer
         var message = this[exception.Message, culture];
         return string.Format(message, exception.Args.Select(a => this[a]));
     }
+
+    public string ToLocalizableString(string value)
+    {
+        var localization = _localizations.FirstOrDefault(l => l.Texts.ContainsValue(value))
+            ?? throw new LocalizationNotFoundException(value, nameof(value));
+
+        return localization.Texts.First(t => t.Value.Equals(value)).Key;
+    }
 }

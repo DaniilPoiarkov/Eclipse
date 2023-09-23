@@ -10,7 +10,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
-[Route("Suggest", "/suggest")]
+[Route("Menu:MainMenu:Suggest", "/suggest")]
 public class SuggestPipeline : EclipsePipelineBase
 {
     private readonly ITelegramBotClient _botClient;

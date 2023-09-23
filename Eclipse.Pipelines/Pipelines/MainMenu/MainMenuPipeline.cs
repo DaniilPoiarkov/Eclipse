@@ -3,7 +3,7 @@ using Eclipse.Localization.Localizers;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
-[Route("Main menu", "/main_menu")]
+[Route("Menu:MainMenu", "/main_menu")]
 internal class MainMenuPipeline : EclipsePipelineBase
 {
     private static readonly string _message = "Pipelines:MainMenu";
