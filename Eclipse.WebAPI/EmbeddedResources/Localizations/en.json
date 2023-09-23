@@ -1,6 +1,9 @@
 {
   "Localization": "en",
   "Texts": {
+    "GoBack": "Go back",
+    "WhateverYouWant": "Whatever you want",
+
     "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
     "Telegram:MessageCannotBeEmpty": "Message can not be empty",
 
@@ -23,6 +26,11 @@
     "Pipelines:Suggest:Success": "Thank you for suggestion! I'll think about it",
 
     "Pipelines:TodoItems": "Let's take a look what do we have here..\n\r\n\rNote: This feature is in preview version. Some features can work inaccurate",
+    "Pipelines:TodoItems:YourToDos": "📝 Your to dos:",
+    "Pipelines:TodoItems:CreatedAt": "Created at:",
+    "Pipelines:TodoItems:FinishOrGoBack": "Select to mark item as finished! Or press \\'Go back\\' button to return 😊",
+    "Pipelines:TodoItems:YouDidEmAll": "You did em all!\r\nMy congratulations 🥳",
+    "Pipelines:TodoItems:YouAreDoingGreat": "Horray! You are doing great!",
 
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",

@@ -21,19 +21,19 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     protected static string BuildMessage(IEnumerable<TodoItemDto> items)
     {
-        var sb = new StringBuilder("📝 Your to dos:")
+        var sb = new StringBuilder(Localizer["Pipelines:TodoItems:YourToDos"])
             .AppendLine()
             .AppendLine();
 
         foreach (var item in items)
         {
             sb.AppendLine($"⬜️ {item.Text}")
-                .AppendLine($"Created at: {item.CreatedAt.ToString("dd.MM, HH:mm")}")
+                .AppendLine($"{Localizer["Pipelines:TodoItems:CreatedAt"]} {item.CreatedAt.ToString("dd.MM, HH:mm")}")
                 .AppendLine();
         }
 
         return sb.AppendLine()
-            .AppendLine("Select to mark item as finished! Or press \'Go back\' button to return 😊")
+            .AppendLine(Localizer["Pipelines:TodoItems:FinishOrGoBack"])
             .ToString();
     }
 
@@ -47,7 +47,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
             .Select(button => new InlineKeyboardButton[] { button })
             .ToList();
 
-        buttons.Add(new InlineKeyboardButton[] { InlineKeyboardButton.WithCallbackData("Go back", "go_back") });
+        buttons.Add(new InlineKeyboardButton[] { InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back") });
 
         return buttons;
     }
@@ -58,8 +58,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     protected static IResult AllItemsFinishedResult(Message? message)
     {
-        var text = $"You did em all!{Environment.NewLine}" +
-            $"My congratulations 🥳";
+        var text = Localizer["Pipelines:TodoItems:YouDidEmAll"];
 
         if (message is null)
         {
@@ -73,7 +72,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
     {
         var buttons = BuildButtons(leftover);
 
-        var text = $"Horray! You are doing great!" +
+        var text = $"{Localizer["Pipelines:TodoItems:YouAreDoingGreat"]}" +
             $"{Environment.NewLine}{Environment.NewLine}" +
             $"{BuildMessage(leftover)}";
 
@@ -83,7 +82,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
     }
 
     protected static IResult GoBackResult(Message? message) =>
-        MenuOrMultipleResult(message, "Whatever you want");
+        MenuOrMultipleResult(message, Localizer["WhateverYouWant"]);
 
     protected static IResult InterruptedResult(Message? message, string text) =>
         MenuOrMultipleResult(message, text);
