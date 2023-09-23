@@ -8,8 +8,6 @@ namespace Eclipse.Pipelines.Pipelines.Common;
 [Route("", "/help")]
 public sealed class HelpPipeline : EclipsePipelineBase
 {
-    private static readonly string _info = "Here what I can do:\r\n\r\n";
-
     private readonly ICommandService _commandService;
 
     public HelpPipeline(ICommandService commandService)
@@ -26,7 +24,9 @@ public sealed class HelpPipeline : EclipsePipelineBase
     {
         var commands = await _commandService.GetList(cancellationToken);
 
-        var sb = new StringBuilder(_info);
+        var sb = new StringBuilder($"{Localizer["Pipelines:Common:Help"]}:")
+            .AppendLine()
+            .AppendLine();
 
         foreach (var command in commands)
         {

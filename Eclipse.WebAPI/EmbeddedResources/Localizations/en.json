@@ -52,6 +52,10 @@
     "Pipelines:AdminMenu:Error": "Error occured",
     "Pipelines:AdminMenu:UserMode": "Switched to user mode",
 
+    "Pipelines:Common:About": "Hi, {name}!\r\nMy name is Eclipse and I'm your small helper😊. Use /help to get some addition info",
+    "Pipelines:Common:Help": "Here what I can do",
+    "Pipelines:Common:Start": "Hello, {name}, I'm Eclipse. Right now I'm studing different things, so if you don't mind to help me become better you can press 'Suggest' button and describe your thoughts.\nSee you 🌒",
+
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",
     "Menu:MainMenu:MyToDos": "My To dos",

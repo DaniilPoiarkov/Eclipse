@@ -52,6 +52,10 @@
     "Pipelines:AdminMenu:Error": "Сталась помилка",
     "Pipelines:AdminMenu:UserMode": "Включено режим користувача",
 
+    "Pipelines:Common:About": "Привіт, {name}!\r\nМене звати Eclipse і я твій маленький помічник😊.\n\rМожеш скористатися командою /help щоб отримати щоб отримати додаткову інформацю",
+    "Pipelines:Common:Help": "Here what I can do",
+    "Pipelines:Common:Start": "Hello, {name}, I'm Eclipse. Right now I'm studing different things, so if you don't mind to help me become better you can press 'Suggest' button and describe your thoughts.\nSee you 🌒",
+
     "Menu:MainMenu": "Головне меню",
     "Menu:MainMenu:Suggest": "Запропонувати",
     "Menu:MainMenu:MyToDos": "Мої плани",
