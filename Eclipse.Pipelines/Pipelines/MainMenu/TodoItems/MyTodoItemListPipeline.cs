@@ -58,7 +58,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         if (id == Guid.Empty)
         {
-            return InterruptedResult(message, _errorMessage);
+            return InterruptedResult(message, Localizer[_errorMessage]);
         }
 
         try
@@ -83,7 +83,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
         }
         catch
         {
-            return InterruptedResult(message, _errorMessage);
+            return InterruptedResult(message, Localizer[_errorMessage]);
         }
     }
 }
