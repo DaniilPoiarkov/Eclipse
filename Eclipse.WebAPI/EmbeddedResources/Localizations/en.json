@@ -26,6 +26,9 @@
 
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",
-    "Menu:MainMenu:MyToDos": "My To dos"
+    "Menu:MainMenu:MyToDos": "My To dos",
+
+    "Menu:TodoItemsMenu:AddItem": "Add item",
+    "Menu:TodoItemsMenu:MyList": "My list"
   }
 }

@@ -9,7 +9,7 @@ using Serilog;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
-[Route("Add item", "/todos_add")]
+[Route("Menu:TodoItemsMenu:AddItem", "/todos_add")]
 internal class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;

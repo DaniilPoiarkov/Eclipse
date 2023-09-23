@@ -26,6 +26,9 @@
 
     "Menu:MainMenu": "Головне меню",
     "Menu:MainMenu:Suggest": "Запропонувати",
-    "Menu:MainMenu:MyToDos": "Мої плани"
+    "Menu:MainMenu:MyToDos": "Мої плани",
+
+    "Menu:TodoItemsMenu:AddItem": "Запланувати",
+    "Menu:TodoItemsMenu:MyList": "Мій список"
   }
 }

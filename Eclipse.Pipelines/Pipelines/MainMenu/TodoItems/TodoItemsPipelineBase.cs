@@ -12,9 +12,9 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
     protected static readonly IEnumerable<KeyboardButton> TodoItemMenuButtons = new KeyboardButton[]
     {
-        new KeyboardButton("My list"),
-        new KeyboardButton("Add item"),
-        new KeyboardButton("Main menu"),
+        new KeyboardButton(Localizer?["Menu:TodoItemsMenu:MyList"] ?? "My list"),
+        new KeyboardButton(Localizer?["Menu:TodoItemsMenu:AddItem"] ?? "Add item"),
+        new KeyboardButton(Localizer?["Menu:MainMenu"] ?? "Main menu"),
     };
 
     #region Helpers

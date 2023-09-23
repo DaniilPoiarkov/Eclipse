@@ -4,7 +4,7 @@ using Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
-[Route("Menu:MainMenu:MyToDos", "/my_todos")]
+[Route("Menu:MainMenu:MyToDos", "/todos")]
 internal class TodoItemsMenuPipeline : TodoItemsPipelineBase
 {
     private readonly ILocalizer _localizer;

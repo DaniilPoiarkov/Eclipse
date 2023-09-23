@@ -6,7 +6,7 @@ using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
-[Route("My list", "/todos_my")]
+[Route("Menu:TodoItemsMenu:MyList", "/todos_my")]
 internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
