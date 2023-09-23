@@ -33,7 +33,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private static IResult SendInfo(MessageContext context)
     {
-        return Text("Describe what do you wanna to add");
+        return Text(Localizer["Pipelines:TodoItems:AddItem:DiscribeWhatToAdd"]);
     }
 
     private IResult SaveNewTodoItem(MessageContext context)
@@ -47,7 +47,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         try
         {
             _todoItemService.AddItem(createNewItemModel);
-            return Menu(TodoItemMenuButtons, "New item added!");
+            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:NewItemAdded"]);
         }
         catch(TodoItemLimitException ex)
         {
@@ -60,7 +60,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         catch (Exception ex)
         {
             _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex.Message);
-            return Menu(TodoItemMenuButtons, "Oops, something went wrong. Try again a bit later");
+            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:Error"]);
         }
     }
 }
