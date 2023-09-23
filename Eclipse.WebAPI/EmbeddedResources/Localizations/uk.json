@@ -56,6 +56,8 @@
     "Pipelines:Common:Help": "Here what I can do",
     "Pipelines:Common:Start": "Hello, {name}, I'm Eclipse. Right now I'm studing different things, so if you don't mind to help me become better you can press 'Suggest' button and describe your thoughts.\nSee you 🌒",
 
+    "Pipelines:NotFound": "Я нічого про це не знаю. Це точно якась кнопочка з меню?",
+
     "Menu:MainMenu": "Головне меню",
     "Menu:MainMenu:Suggest": "Запропонувати",
     "Menu:MainMenu:MyToDos": "Мої плани",
