@@ -9,7 +9,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
-[Route("Suggest", "/suggest")]
+[Route("Menu:MainMenu:Suggest", "/suggest")]
 public class SuggestPipeline : EclipsePipelineBase
 {
     private readonly ITelegramBotClient _botClient;
@@ -25,13 +25,6 @@ public class SuggestPipeline : EclipsePipelineBase
         _sheetsService = sheetsService;
     }
 
-    private static readonly string[] _greetings = new[]
-    {
-        "Hey!", "Glad to head that!", "Wow!", "Awesome!"
-    };
-
-    private static readonly string _info = "{greeting} Feel free to describe your idea or write /cancel to return";
-
     protected override void Initialize()
     {
         RegisterStage(SendInfo);
@@ -40,20 +33,22 @@ public class SuggestPipeline : EclipsePipelineBase
 
     protected static IResult SendInfo(MessageContext context)
     {
-        var greeting = _greetings[Random.Shared.Next(0, _greetings.Length)];
-        return Text(_info.Replace("{greeting}", greeting));
+        var greetings = Localizer!["Pipelines:Suggest:Greetings"].Split(';', StringSplitOptions.RemoveEmptyEntries);
+        var greeting = greetings[Random.Shared.Next(0, greetings.Length)];
+
+        return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
     }
 
     protected async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.Equals("/cancel", StringComparison.CurrentCultureIgnoreCase))
         {
-            return Menu(MainMenuButtons, "As you wish");
+            return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:AsYouWish"]);
         }
 
         if (string.IsNullOrEmpty(context.Value))
         {
-            return Menu(MainMenuButtons, "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊");
+            return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Error"]);
         }
 
         var options = _options.TelegramOptions;
@@ -73,6 +68,6 @@ public class SuggestPipeline : EclipsePipelineBase
 
         await _botClient.SendTextMessageAsync(options.Chat, message, cancellationToken: cancellationToken);
 
-        return Menu(MainMenuButtons, "Thank you for suggestion! I'll think about it");
+        return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Success"]);
     }
 }

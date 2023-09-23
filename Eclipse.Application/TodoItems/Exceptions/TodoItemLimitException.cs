@@ -1,9 +1,9 @@
-﻿namespace Eclipse.Application.TodoItems.Exceptions;
+﻿using Eclipse.Localization.Exceptions;
 
-public class TodoItemLimitException : Exception
+namespace Eclipse.Application.TodoItems.Exceptions;
+
+public class TodoItemLimitException : LocalizedException
 {
-    public TodoItemLimitException(int limit) : base(
-        $"Not so fast cowboy😳{Environment.NewLine}" +
-        $"You already have {limit} items. " +
-        $"Don't you think it's time to finish at least one before planning something more? 🤔") { }
+    public TodoItemLimitException(int limit)
+        : base("TodoItem:Limit", $"{limit}") { }
 }

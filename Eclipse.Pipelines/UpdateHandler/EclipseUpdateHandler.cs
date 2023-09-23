@@ -10,6 +10,7 @@ using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Telegram.Messages;
+using Eclipse.Application.Contracts.Localizations;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -29,6 +30,8 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IMessageStore _messageStore;
 
+    private readonly IEclipseLocalizer _localizer;
+
     private readonly InfrastructureOptions _options;
 
 
@@ -44,8 +47,9 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         ITelegramUserRepository userRepository,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
-        InfrastructureOptions options,
-        IMessageStore messageStore)
+        IMessageStore messageStore,
+        IEclipseLocalizer localizer,
+        InfrastructureOptions options)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
@@ -53,8 +57,9 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         _userRepository = userRepository;
         _currentUser = currentUser;
         _updateParser = updateParser;
-        _options = options;
         _messageStore = messageStore;
+        _localizer = localizer;
+        _options = options;
     }
 
     public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -86,10 +91,12 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         var key = new PipelineKey(context.ChatId);
 
         var pipeline = _pipelineStore.GetOrDefault(key)
-            ?? _pipelineProvider.Get(context.Value);
+            ?? _pipelineProvider.Get(context.Value.StartsWith('/')
+                ? context.Value
+                : _localizer.ToLocalizableString(context.Value));
 
         _pipelineStore.Remove(key);
-
+        
         var result = await pipeline.RunNext(context, cancellationToken);
 
         var message = await result.SendAsync(botClient, cancellationToken);

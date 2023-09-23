@@ -13,6 +13,6 @@ internal class AdminModePipeline : AdminPipelineBase
 
     private IResult SendAdminMenu(MessageContext context)
     {
-        return Menu(AdminMenuButtons, "Switched to admin mode");
+        return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu"]);
     }
 }
