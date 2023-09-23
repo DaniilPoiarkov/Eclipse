@@ -3,6 +3,8 @@
   "Texts": {
     "GoBack": "Go back",
     "WhateverYouWant": "Whatever you want",
+    "Suggestions": "Suggestions",
+    "CreatedAt": "Created at",
 
     "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
     "Telegram:MessageCannotBeEmpty": "Message can not be empty",
@@ -27,7 +29,6 @@
 
     "Pipelines:TodoItems": "Let's take a look what do we have here..\n\r\n\rNote: This feature is in preview version. Some features can work inaccurate",
     "Pipelines:TodoItems:YourToDos": "📝 Your to dos:",
-    "Pipelines:TodoItems:CreatedAt": "Created at:",
     "Pipelines:TodoItems:FinishOrGoBack": "Select to mark item as finished! Or press 'Go back' button to return 😊",
     "Pipelines:TodoItems:YouDidEmAll": "You did em all!\r\nMy congratulations 🥳",
     "Pipelines:TodoItems:YouAreDoingGreat": "Horray! You are doing great!",
@@ -43,12 +44,13 @@
     "Pipelines:AdminMenu:SendToUser:SendUserId": "Send user chat Id",
     "Pipelines:AdminMenu:SendToUser:UnableToParse": "Unable to parse value. Pipeline interrupted",
     "Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty": "Content cannot be empty. All data rolled back",
-    
+
     "Pipelines:AdminMenu:SendContent": "Send message content",
     "Pipelines:AdminMenu:Confirm": "Send /confirm to send message or /cancel to go back",
     "Pipelines:AdminMenu:ConfirmationFailed": "Confirmation failed",
     "Pipelines:AdminMenu:SentSuccessfully": "Sent successfully",
     "Pipelines:AdminMenu:Error": "Error occured",
+    "Pipelines:AdminMenu:UserMode": "Switched to user mode",
 
     "Menu:MainMenu": "Main menu",
     "Menu:MainMenu:Suggest": "Suggest",

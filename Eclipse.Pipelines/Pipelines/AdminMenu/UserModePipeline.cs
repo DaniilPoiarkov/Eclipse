@@ -7,6 +7,6 @@ internal class UserModePipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {
-        RegisterStage(_ => Menu(MainMenuButtons, "Switched to user mode"));
+        RegisterStage(_ => Menu(MainMenuButtons, Localizer["Pipelines:AdminMenu:UserMode"]));
     }
 }

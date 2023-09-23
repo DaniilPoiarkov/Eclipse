@@ -28,7 +28,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         foreach (var item in items)
         {
             sb.AppendLine($"⬜️ {item.Text}")
-                .AppendLine($"{Localizer["Pipelines:TodoItems:CreatedAt"]} {item.CreatedAt.ToString("dd.MM, HH:mm")}")
+                .AppendLine($"{Localizer["CreatedAt"]}: {item.CreatedAt.ToString("dd.MM, HH:mm")}")
                 .AppendLine();
         }
 
