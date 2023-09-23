@@ -10,18 +10,18 @@ namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
-    protected static ILocalizer? Localizer => GetService<ILocalizer>();
+    protected static ILocalizer Localizer => GetService<ILocalizer>();
 
     protected static IReadOnlyCollection<KeyboardButton> MainMenuButtons => new KeyboardButton[]
     {
-        new KeyboardButton(Localizer?["Menu:MainMenu:Suggest"] ?? "Main menu"),
-        new KeyboardButton(Localizer?["Menu:MainMenu:MyToDos"] ?? "My To dos")
+        new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]),
+        new KeyboardButton(Localizer["Menu:MainMenu:MyToDos"])
     };
 
-    private static TService? GetService<TService>()
+    private static TService GetService<TService>()
         where TService : class
     {
-        using var scope = CachedServiceProvider.Services?.CreateScope();
-        return scope?.ServiceProvider.GetRequiredService<TService>();
+        using var scope = CachedServiceProvider.Services.CreateScope();
+        return scope.ServiceProvider.GetRequiredService<TService>();
     }
 }

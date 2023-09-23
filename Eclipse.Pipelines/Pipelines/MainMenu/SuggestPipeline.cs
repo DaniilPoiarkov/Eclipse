@@ -4,7 +4,6 @@ using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Localization.Localizers;
 
 using Telegram.Bot;
 
@@ -19,14 +18,11 @@ public class SuggestPipeline : EclipsePipelineBase
 
     private readonly ISuggestionsSheetsService _sheetsService;
 
-    private readonly ILocalizer _localizer;
-
-    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options, ISuggestionsSheetsService sheetsService, ILocalizer localizer)
+    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options, ISuggestionsSheetsService sheetsService)
     {
         _botClient = botClient;
         _options = options;
         _sheetsService = sheetsService;
-        _localizer = localizer;
     }
 
     protected override void Initialize()
@@ -35,24 +31,24 @@ public class SuggestPipeline : EclipsePipelineBase
         RegisterStage(RecieveIdea);
     }
 
-    protected IResult SendInfo(MessageContext context)
+    protected static IResult SendInfo(MessageContext context)
     {
-        var greetings = _localizer["Pipelines:Suggest:Greetings"].Split(';', StringSplitOptions.RemoveEmptyEntries);
+        var greetings = Localizer!["Pipelines:Suggest:Greetings"].Split(';', StringSplitOptions.RemoveEmptyEntries);
         var greeting = greetings[Random.Shared.Next(0, greetings.Length)];
 
-        return Text(string.Format(_localizer["Pipelines:Suggest"], greeting));
+        return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
     }
 
     protected async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.Equals("/cancel", StringComparison.CurrentCultureIgnoreCase))
         {
-            return Menu(MainMenuButtons, _localizer["Pipelines:Suggest:AsYouWish"]);
+            return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:AsYouWish"]);
         }
 
         if (string.IsNullOrEmpty(context.Value))
         {
-            return Menu(MainMenuButtons, _localizer["Pipelines:Suggest:Error"]);
+            return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Error"]);
         }
 
         var options = _options.TelegramOptions;
@@ -72,6 +68,6 @@ public class SuggestPipeline : EclipsePipelineBase
 
         await _botClient.SendTextMessageAsync(options.Chat, message, cancellationToken: cancellationToken);
 
-        return Menu(MainMenuButtons, _localizer["Pipelines:Suggest:Success"]);
+        return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Success"]);
     }
 }
