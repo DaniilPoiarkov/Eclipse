@@ -34,7 +34,7 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
         if (long.TryParse(context.Value, out var chatId))
         {
             MessageModel.ChatId = chatId;
-            return Text(Localizer["Pipelines:AdminMenu:SendToUser:SendContent"]);
+            return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
         }
 
         FinishPipeline();

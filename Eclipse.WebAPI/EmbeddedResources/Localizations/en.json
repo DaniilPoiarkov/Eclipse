@@ -41,10 +41,10 @@
 
     "Pipelines:AdminMenu": "Switched to admin mode",
     "Pipelines:AdminMenu:SendToUser:SendUserId": "Send user chat Id",
-    "Pipelines:AdminMenu:SendToUser:SendContent": "Send message content",
     "Pipelines:AdminMenu:SendToUser:UnableToParse": "Unable to parse value. Pipeline interrupted",
     "Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty": "Content cannot be empty. All data rolled back",
-
+    
+    "Pipelines:AdminMenu:SendContent": "Send message content",
     "Pipelines:AdminMenu:Confirm": "Send /confirm to send message or /cancel to go back",
     "Pipelines:AdminMenu:ConfirmationFailed": "Confirmation failed",
     "Pipelines:AdminMenu:SentSuccessfully": "Sent successfully",

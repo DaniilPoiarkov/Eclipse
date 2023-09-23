@@ -41,10 +41,10 @@
 
     "Pipelines:AdminMenu": "Включено режим адміна",
     "Pipelines:AdminMenu:SendToUser:SendUserId": "Відправте ідентифікатор користовуча",
-    "Pipelines:AdminMenu:SendToUser:SendContent": "Відправте повідомлення",
     "Pipelines:AdminMenu:SendToUser:UnableToParse": "Не вдалося обробити значення. Виконання припинено",
     "Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty": "Контент не може бути пустим. Виконання припинено",
 
+    "Pipelines:AdminMenu:SendContent": "Відправте повідомлення",
     "Pipelines:AdminMenu:Confirm": "Відправте /confirm щоб відправити повідомлення або /cancel щоб повернутися назад",
     "Pipelines:AdminMenu:ConfirmationFailed": "Підтвердження скасовано",
     "Pipelines:AdminMenu:SentSuccessfully": "Успішно відправлено",

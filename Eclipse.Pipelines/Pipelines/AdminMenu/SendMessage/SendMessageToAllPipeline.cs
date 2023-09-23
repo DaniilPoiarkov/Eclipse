@@ -29,7 +29,7 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
 
     private IResult AskForMessage(MessageContext context)
     {
-        return Text("Send message content");
+        return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
     }
 
     private IResult Confirm(MessageContext context)
@@ -37,18 +37,18 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
         if (string.IsNullOrEmpty(context.Value))
         {
             FinishPipeline();
-            return Menu(AdminMenuButtons, "Content cannot be empty. All data rolled back");
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
         Content = context.Value;
-        return Text("Send /confirm to send message or /cancel to go back");
+        return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
         if (!context.Value.Equals("/confirm", StringComparison.CurrentCultureIgnoreCase))
         {
-            return Menu(AdminMenuButtons, "Message not sent. Confirmation failed");
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
         try
@@ -63,11 +63,11 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
 
             await Task.WhenAll(notifications);
 
-            return Menu(AdminMenuButtons, "Sent successfully");
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
         catch (Exception ex)
         {
-            return Menu(AdminMenuButtons, $"Message not sent:" +
+            return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:" +
                 $"{Environment.NewLine}{ex.Message}");
         }
     }
