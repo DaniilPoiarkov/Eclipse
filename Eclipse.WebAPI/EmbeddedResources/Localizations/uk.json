@@ -50,7 +50,7 @@
     "Pipelines:AdminMenu:ConfirmationFailed": "Підтвердження скасовано",
     "Pipelines:AdminMenu:SentSuccessfully": "Успішно відправлено",
     "Pipelines:AdminMenu:Error": "Сталась помилка",
-    "Pipelines:AdminMenu:UserMode": "Включено роль користувача",
+    "Pipelines:AdminMenu:UserMode": "Включено режим користувача",
 
     "Menu:MainMenu": "Головне меню",
     "Menu:MainMenu:Suggest": "Запропонувати",
