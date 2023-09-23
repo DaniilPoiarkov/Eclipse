@@ -12,6 +12,8 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
 
     private readonly ITelegramService _telegramService;
 
+    private string Content { get; set; } = string.Empty;
+
     public SendMessageToAllPipeline(ITelegramUserRepository telegramUserRepository, ITelegramService telegramService)
     {
         _telegramUserRepository = telegramUserRepository;
@@ -21,6 +23,7 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
     protected override void Initialize()
     {
         RegisterStage(AskForMessage);
+        RegisterStage(Confirm);
         RegisterStage(InformUsers);
     }
 
@@ -29,15 +32,32 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
         return Text("Send message content");
     }
 
+    private IResult Confirm(MessageContext context)
+    {
+        if (string.IsNullOrEmpty(context.Value))
+        {
+            FinishPipeline();
+            return Menu(AdminMenuButtons, "Content cannot be empty. All data rolled back");
+        }
+
+        Content = context.Value;
+        return Text("Send /confirm to send message or /cancel to go back");
+    }
+
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
+        if (!context.Value.Equals("/confirm", StringComparison.CurrentCultureIgnoreCase))
+        {
+            return Menu(AdminMenuButtons, "Message not sent. Confirmation failed");
+        }
+
         try
         {
             var notifications = _telegramUserRepository.GetAll()
             .Select(u => new SendMessageModel
             {
                 ChatId = u.Id,
-                Message = context.Value
+                Message = Content
             })
             .Select(m => _telegramService.Send(m, cancellationToken));
 
