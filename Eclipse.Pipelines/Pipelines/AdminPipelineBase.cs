@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Pipelines.Attributes;
+﻿using Eclipse.Pipelines.Attributes;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

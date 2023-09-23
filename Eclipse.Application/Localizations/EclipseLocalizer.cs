@@ -19,13 +19,7 @@ internal class EclipseLocalizer : IEclipseLocalizer
         _cacheService = cacheService;
     }
 
-    public string this[string key]
-    {
-        get
-        {
-            return _localizer[key, Culture];
-        }
-    }
+    public string this[string key] => _localizer[key, Culture];
 
     public void CheckCulture(long chatId)
     {

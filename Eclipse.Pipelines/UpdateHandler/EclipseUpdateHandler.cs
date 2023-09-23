@@ -87,7 +87,6 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         _currentUser.SetCurrentUser(context.User);
-        //_localizer.CheckCulture(context.ChatId);
 
         var key = new PipelineKey(context.ChatId);
 
