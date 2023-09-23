@@ -34,7 +34,7 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
         _cacheService.Delete(key);
         _cacheService.Set(key, context.Value);
 
-        Localizer.SetCulture(context.ChatId);
+        Localizer.CheckCulture(context.ChatId);
 
         return Menu(MainMenuButtons, Localizer["Pipelines:Language:Changed"]);
 

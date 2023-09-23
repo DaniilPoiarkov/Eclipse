@@ -10,7 +10,7 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
-    protected static readonly IEnumerable<KeyboardButton> TodoItemMenuButtons = new KeyboardButton[]
+    protected static IEnumerable<KeyboardButton> TodoItemMenuButtons => new KeyboardButton[]
     {
         new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]),
         new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]),

@@ -27,7 +27,7 @@ internal class EclipseLocalizer : IEclipseLocalizer
         }
     }
 
-    public void SetCulture(long chatId)
+    public void CheckCulture(long chatId)
     {
         Culture = _cacheService.Get<string>(new CacheKey($"lang-{chatId}")) ?? "uk";
     }

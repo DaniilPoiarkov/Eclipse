@@ -10,7 +10,6 @@ using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Telegram.Messages;
-using Eclipse.Localization.Localizers;
 using Eclipse.Application.Contracts.Localizations;
 
 namespace Eclipse.Pipelines.UpdateHandler;
@@ -88,7 +87,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         _currentUser.SetCurrentUser(context.User);
-        _localizer.SetCulture(context.ChatId);
+        //_localizer.CheckCulture(context.ChatId);
 
         var key = new PipelineKey(context.ChatId);
 
@@ -98,7 +97,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
                 : _localizer.ToLocalizableString(context.Value));
 
         _pipelineStore.Remove(key);
-
+        
         var result = await pipeline.RunNext(context, cancellationToken);
 
         var message = await result.SendAsync(botClient, cancellationToken);

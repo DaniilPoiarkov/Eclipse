@@ -8,7 +8,7 @@ public interface IEclipseLocalizer
 
     string ToLocalizableString(string value);
 
-    void SetCulture(long id);
+    void CheckCulture(long id);
 
     string FormatLocalizedException(LocalizedException exception, string? culture = null);
 }
