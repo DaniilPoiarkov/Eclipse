@@ -39,7 +39,7 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
 
         FinishPipeline();
 
-        return Text("Unable too parse value. Pipeline interrupted");
+        return Text("Unable to parse value. Pipeline interrupted");
     }
 
     private IResult Confirm(MessageContext context)
