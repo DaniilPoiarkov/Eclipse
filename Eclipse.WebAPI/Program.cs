@@ -58,9 +58,9 @@ builder.Services.AddLocalizationSupport(builder =>
     var path = "EmbeddedResources/Localizations/";
 
     builder.AddJsonFile($"{path}en.json")
-        .AddJsonFile($"{path}ua.json");
+        .AddJsonFile($"{path}uk.json");
 
-    builder.DefaultLocalization = "ua";
+    builder.DefaultLocalization = "uk";
 });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(
