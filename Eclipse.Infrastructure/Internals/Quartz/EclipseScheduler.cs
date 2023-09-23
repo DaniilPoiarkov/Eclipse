@@ -1,8 +1,6 @@
 ﻿using Eclipse.Infrastructure.Quartz;
-using Eclipse.Infrastructure.Telegram;
 
 using Quartz;
-using Quartz.Impl.Matchers;
 
 namespace Eclipse.Infrastructure.Internals.Quartz;
 
@@ -15,48 +13,19 @@ internal class EclipseScheduler : IEclipseScheduler
         _schedulerFactory = schedulerFactory;
     }
 
-    public async Task Test(long id)
+    public async Task ScheduleJob(IJobConfiguration configuration)
     {
-        var sched = await _schedulerFactory.GetScheduler();
-        
-        var keys = await sched.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
+        var job = configuration.BuildJob();
+        var trigger = configuration.BuildTrigger();
 
-        var key = JobKey.Create(nameof(TestJob), $"{id}");
+        var scheduler = await _schedulerFactory.GetScheduler();
 
-        var job = JobBuilder.Create<TestJob>().WithIdentity(key)
-            .UsingJobData("id", id)
-            .Build();
-
-        var trigger = TriggerBuilder.Create()
-            .WithSimpleSchedule(s => s.WithIntervalInSeconds(5).RepeatForever())
-            .StartNow()
-            .Build();
-
-        await sched.ScheduleJob(job, trigger);
-
-        await Task.Delay(11_000);
-
-        await sched.DeleteJob(key);
+        await scheduler.ScheduleJob(job, trigger);
     }
 
-    private class TestJob : IJob
+    public async Task DeleteJob(JobKey key)
     {
-        private readonly ITelegramService _telegramService;
-
-        public TestJob(ITelegramService telegramService)
-        {
-            _telegramService = telegramService;
-        }
-
-        public async Task Execute(IJobExecutionContext context)
-        {
-            var id = context.JobDetail.JobDataMap.GetLong("id");
-
-            await _telegramService.Send(new SendMessageModel
-            {
-                ChatId = id,
-                Message = "Test"
-            }, context.CancellationToken);
-        }
+        var scheduler = await _schedulerFactory.GetScheduler();
+        await scheduler.DeleteJob(key);
     }
 }

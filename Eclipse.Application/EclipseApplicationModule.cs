@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.Google.Sheets.Users;
+using Eclipse.Application.Contracts.Notifications;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.Telegram.Messages;
@@ -12,6 +13,7 @@ using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
 using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.Google.Sheets.Users;
+using Eclipse.Application.Notifications;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.Telegram.Messages;
@@ -56,7 +58,8 @@ public static class EclipseApplicationModule
 
         services.AddTransient<IUsersSheetsService, UsersSheetsService>()
             .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()
-            .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>();
+            .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>()
+            .AddTransient<INotificationService, NotificationsService>();
 
         return services;
     }

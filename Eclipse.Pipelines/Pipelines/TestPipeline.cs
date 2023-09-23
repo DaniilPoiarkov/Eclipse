@@ -1,4 +1,5 @@
-﻿using Eclipse.Core.Attributes;
+﻿using Eclipse.Application.Contracts.Notifications;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Quartz;
 
@@ -7,11 +8,11 @@ namespace Eclipse.Pipelines.Pipelines;
 [Route("Test")]
 internal class TestPipeline : EclipsePipelineBase
 {
-    private readonly IEclipseScheduler _scheduler;
+    private readonly INotificationService _notificationService;
 
-    public TestPipeline(IEclipseScheduler scheduler)
+    public TestPipeline(INotificationService notificationService)
     {
-        _scheduler = scheduler;
+        _notificationService = notificationService;
     }
 
     protected override void Initialize()
@@ -21,7 +22,7 @@ internal class TestPipeline : EclipsePipelineBase
 
     private async Task<IResult> Test(MessageContext context, CancellationToken token)
     {
-        await _scheduler.Test(context.ChatId);
+        await _notificationService.AddTestJob(context.ChatId, TimeZoneInfo.Utc);
         return Empty();
     }
 }

@@ -1,6 +1,10 @@
-﻿namespace Eclipse.Infrastructure.Quartz;
+﻿using Quartz;
+
+namespace Eclipse.Infrastructure.Quartz;
 
 public interface IJobConfiguration
 {
-    Task Schedule();
+    IJobDetail BuildJob();
+
+    ITrigger BuildTrigger();
 }

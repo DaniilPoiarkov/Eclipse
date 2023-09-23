@@ -1,6 +1,10 @@
-﻿namespace Eclipse.Infrastructure.Quartz;
+﻿using Quartz;
+
+namespace Eclipse.Infrastructure.Quartz;
 
 public interface IEclipseScheduler
 {
-    Task Test(long id);
+    Task ScheduleJob(IJobConfiguration configuration);
+
+    Task DeleteJob(JobKey key);
 }
