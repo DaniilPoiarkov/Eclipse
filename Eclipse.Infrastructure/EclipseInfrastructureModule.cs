@@ -23,6 +23,7 @@ using Telegram.Bot;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
 using FluentValidation;
+using Quartz.Logging;
 
 namespace Eclipse.Infrastructure;
 
@@ -73,9 +74,11 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddQuartzIntegration(this IServiceCollection services)
     {
+        LogProvider.IsDisabled = true;
+
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 
-        services.AddHttpClient<WarmupJob>((sp, client) =>
+        services.AddHttpClient<HealthCheckJob>((sp, client) =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             client.BaseAddress = new(config["App:SelfUrl"]!);
