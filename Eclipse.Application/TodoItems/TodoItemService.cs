@@ -37,9 +37,9 @@ internal class TodoItemService : ITodoItemService
         {
             var errors = result.Errors.Select(e => e.ErrorMessage)
                 .Distinct()
-                .ToList();
+                .ToArray();
 
-            throw new EclipseValidationException(errors);
+            throw new TodoItemValidationException(errors);
         }
 
         var userItems = _todoItemRepository.GetByExpression(i => i.TelegramUserId == input.UserId);

@@ -11,6 +11,8 @@
 
     "TodoItem:AlreadyFinished": "TodoItem {0} already finished",
     "TodoItem:Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",
+    "TodoItem:Empty": "To do item cannot be empty",
+    "TodoItem:MaxLength": "To do item cannot be more than 125 characters",
 
     "Eclipse:ValidationFailed": "🥺It looks like I forgot to tell you that {0}.\n\rClick 'Add item' and try again",
 
@@ -38,7 +40,6 @@
 
     "Pipelines:TodoItems:AddItem:DiscribeWhatToAdd": "Describe what do you wanna to add",
     "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",
-    "Pipelines:TodoItems:AddItem:ContentEmpty": "🥺It looks like I forgot to tell you that only letters are available now.\n\rClick 'Add item' and try again",
     "Pipelines:TodoItems:AddItem:Error": "Oops, something went wrong. Try again a bit later",
 
     "Pipelines:AdminMenu": "Switched to admin mode",
