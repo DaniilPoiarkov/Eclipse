@@ -11,6 +11,8 @@ using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Core.Pipelines;
+using Eclipse.Localization.Exceptions;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -90,10 +92,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = _pipelineStore.GetOrDefault(key)
-            ?? _pipelineProvider.Get(context.Value.StartsWith('/')
-                ? context.Value
-                : _localizer.ToLocalizableString(context.Value));
+        var pipeline = GetPipeline(context, key);
 
         _pipelineStore.Remove(key);
         
@@ -103,7 +102,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (message is not null)
         {
-            _messageStore.SaveMessage(new MessageKey(context.ChatId), message);
+            _messageStore.Set(new MessageKey(context.ChatId), message);
         }
 
         if (!pipeline.IsFinished)
@@ -112,5 +111,31 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         _userRepository.EnshureAdded(context.User);
+    }
+
+    private PipelineBase GetPipeline(MessageContext context, PipelineKey key)
+    {
+        var pipeline = _pipelineStore.GetOrDefault(key);
+
+        if (pipeline is not null)
+        {
+            return pipeline;
+        }
+
+        if (context.Value.StartsWith('/'))
+        {
+            return _pipelineProvider.Get(context.Value);
+        }
+
+        try
+        {
+            return _pipelineProvider.Get(
+                _localizer.ToLocalizableString(context.Value));
+        }
+        catch (LocalizationNotFoundException)
+        {
+            // Retrieve INotFoundPipeline
+            return _pipelineProvider.Get(string.Empty);
+        }
     }
 }

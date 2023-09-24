@@ -17,7 +17,7 @@ internal class MessageStore : IMessageStore
     public Message? GetMessage(MessageKey key) =>
         _cacheService.GetAndDelete<Message>(CreateKey(key));
 
-    public void SaveMessage(MessageKey key, Message message) =>
+    public void Set(MessageKey key, Message message) =>
         _cacheService.Set(CreateKey(key), message);
 
     private static CacheKey CreateKey(MessageKey key) =>
