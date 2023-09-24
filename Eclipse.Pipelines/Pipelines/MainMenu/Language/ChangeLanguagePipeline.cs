@@ -22,6 +22,17 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
         RegisterStage(SetLanguage);
     }
 
+    private IResult SendAvailableLanguages(MessageContext context)
+    {
+        var buttons = new List<InlineKeyboardButton>
+        {
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Language:English"], "en"),
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Language:Ukrainian"], "uk"),
+        };
+
+        return Menu(buttons, Localizer["Pipelines:Language:Choose"]);
+    }
+
     private IResult SetLanguage(MessageContext context)
     {
         if (!SupportedLanguage(context))
@@ -43,17 +54,4 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
             return context.Value.Equals("en") || context.Value.Equals("uk");
         }
     }
-
-    private IResult SendAvailableLanguages(MessageContext context)
-    {
-        var buttons = new List<InlineKeyboardButton>
-        {
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Language:English"], "en"),
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Language:Ukrainian"], "uk"),
-        };
-
-        return Menu(buttons, Localizer["Pipelines:Language:Choose"]);
-    }
-
-    
 }
