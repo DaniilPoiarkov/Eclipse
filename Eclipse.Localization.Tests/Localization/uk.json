@@ -1,0 +1,9 @@
+{
+  "Localization": "uk",
+  "Texts": {
+    "Test": "Тест",
+
+    "ExMessage": "Помилка {0}",
+    "ExArg": "Аргумент"
+  }
+}
