@@ -1,9 +1,7 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.Exceptions;
-using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Localization.Localizers;
+using Eclipse.Localization.Exceptions;
 
 using Serilog;
 
@@ -16,13 +14,10 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private readonly ILogger _logger;
 
-    private readonly ILocalizer _localizer;
-
-    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger, ILocalizer localizer)
+    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
     {
         _todoItemService = todoItemService;
         _logger = logger;
-        _localizer = localizer;
     }
 
     protected override void Initialize()
@@ -49,13 +44,9 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
             _todoItemService.AddItem(createNewItemModel);
             return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:NewItemAdded"]);
         }
-        catch(TodoItemLimitException ex)
+        catch (LocalizedException ex)
         {
-            return Menu(TodoItemMenuButtons, ex.Message);
-        }
-        catch (EclipseValidationException ex)
-        {
-            return Menu(TodoItemMenuButtons, _localizer.FormatLocalizedException(ex));
+            return Menu(TodoItemMenuButtons, Localizer.FormatLocalizedException(ex));
         }
         catch (Exception ex)
         {

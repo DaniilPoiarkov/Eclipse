@@ -1,6 +1,6 @@
-﻿using Eclipse.Core.Attributes;
+﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Telegram;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
