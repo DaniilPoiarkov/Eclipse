@@ -17,20 +17,22 @@ public class PipelineProviderTests
         {
             new Test1Pipeline(),
             new Test2Pipeline(),
-            new TestAccessPipeline(),
+            new TestAccessFailsPipeline(),
+            new TestAccessPassedPipeline(),
         };
 
         var serviceProvider = new ServiceCollection()
             .AddCoreModule()
             .AddSingleton<Test1Pipeline>()
             .AddSingleton<Test2Pipeline>()
-            .AddSingleton<TestAccessPipeline>()
+            .AddSingleton<TestAccessFailsPipeline>()
+            .AddSingleton<TestAccessPassedPipeline>()
             .BuildServiceProvider();
 
         var currentUser = Substitute.For<ICurrentTelegramUser>();
         currentUser.GetCurrentUser().Returns(new TelegramUser());
 
-        _pipelineProvider = new PipelineProvider(pipelines, serviceProvider, currentUser );
+        _pipelineProvider = new PipelineProvider(pipelines, serviceProvider, currentUser);
     }
 
     [Fact]
@@ -57,7 +59,7 @@ public class PipelineProviderTests
     [Fact]
     public void Get_WhenPipelineHasValidationAttribute_AndValidationFailes_ThenAccessDeniedPipelineReturned()
     {
-        var pipeline = _pipelineProvider.Get("TestAccess");
+        var pipeline = _pipelineProvider.Get("TestAccessFails");
         pipeline.As<IAccessDeniedPipeline>().Should().NotBeNull();
     }
 
@@ -66,5 +68,12 @@ public class PipelineProviderTests
     {
         var pipeline = _pipelineProvider.Get("/test1");
         pipeline.As<Test1Pipeline>().Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Get_WhenPipelineHasValidationAttribute_AndValidationPasses_ThenPipelineReturned()
+    {
+        var pipeline = _pipelineProvider.Get("TestAccessPassed");
+        pipeline.As<TestAccessPassedPipeline>().Should().NotBeNull();
     }
 }

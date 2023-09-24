@@ -4,9 +4,9 @@ using Eclipse.Core.Tests.Attributes;
 
 namespace Eclipse.Core.Tests.Pipelines;
 
-[Route("TestAccess", "/test_access")]
-[ValidationFailed]
-internal class TestAccessPipeline : PipelineBase
+[ValidationPassed]
+[Route("TestAccessPassed", "/test_access_pass")]
+internal class TestAccessPassedPipeline : PipelineBase
 {
     protected override void Initialize()
     {
