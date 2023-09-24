@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Notifications;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Quartz;
 
 namespace Eclipse.Pipelines.Pipelines;
 
