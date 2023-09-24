@@ -24,6 +24,11 @@ internal class LocalizationBuilder : ILocalizationBuilder
         var localizationResource = JsonConvert.DeserializeObject<CultureInfo>(json)
             ?? throw new UnableToParseLocalizationResourceException(path);
 
+        if (localizationResource.Localization.Equals(string.Empty))
+        {
+            throw new UnableToParseLocalizationResourceException(path);
+        }
+
         _localizations.Add(localizationResource);
 
         return this;

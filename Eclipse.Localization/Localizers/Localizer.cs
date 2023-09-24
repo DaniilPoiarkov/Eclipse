@@ -30,7 +30,7 @@ internal class Localizer : ILocalizer
     public string FormatLocalizedException(LocalizedException exception, string? culture = null)
     {
         var message = this[exception.Message, culture];
-        return string.Format(message, exception.Args.Select(a => this[a]));
+        return string.Format(message, exception.Args.Select(a => this[a]).ToArray());
     }
 
     public string ToLocalizableString(string value)
