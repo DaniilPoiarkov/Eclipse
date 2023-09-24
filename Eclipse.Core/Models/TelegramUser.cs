@@ -14,4 +14,6 @@ public class TelegramUser
         Name = name;
         Username = username;
     }
+
+    public TelegramUser() { }
 }

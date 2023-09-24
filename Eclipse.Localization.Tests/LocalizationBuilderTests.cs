@@ -12,7 +12,7 @@ public class LocalizationBuilderTests
     }
 
     [Fact]
-    public void AddJobFile_WhenFileNotExist_ThenExceptionThrows()
+    public void AddJsonFile_WhenFileNotExist_ThenExceptionThrows()
     {
         var action = () => _builder.AddJsonFile("de.json");
         action.Should().Throw<LocalizationFileNotExistException>();

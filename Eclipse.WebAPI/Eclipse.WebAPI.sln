@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Localization.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Tests", "..\Eclipse.Tests\Eclipse.Tests.csproj", "{1AAC556A-83B9-4D6A-A5C5-BCE12E22707C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Application.Tests", "..\Eclipse.Application.Tests\Eclipse.Application.Tests.csproj", "{4BB694AB-F13E-4C2D-92C7-3BAC22E9680A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{1AAC556A-83B9-4D6A-A5C5-BCE12E22707C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AAC556A-83B9-4D6A-A5C5-BCE12E22707C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AAC556A-83B9-4D6A-A5C5-BCE12E22707C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BB694AB-F13E-4C2D-92C7-3BAC22E9680A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BB694AB-F13E-4C2D-92C7-3BAC22E9680A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BB694AB-F13E-4C2D-92C7-3BAC22E9680A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BB694AB-F13E-4C2D-92C7-3BAC22E9680A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{FE13D702-00A3-4FC3-A53A-C7C87FEF4320} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
 		{1AAC556A-83B9-4D6A-A5C5-BCE12E22707C} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
+		{4BB694AB-F13E-4C2D-92C7-3BAC22E9680A} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F191F42F-E73C-400D-B0EF-2E6CD7145C57}
