@@ -2,8 +2,6 @@
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Eclipse.Localization.Tests;
 
 public class LocalizerTests
