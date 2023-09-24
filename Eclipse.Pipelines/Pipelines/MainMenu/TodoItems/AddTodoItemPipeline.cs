@@ -38,6 +38,11 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private IResult SaveNewTodoItem(MessageContext context)
     {
+        if (string.IsNullOrEmpty(context.Value))
+        {
+            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:ContentEmpty"]);
+        }
+
         var createNewItemModel = new CreateTodoItemDto
         {
             Text = context.Value,

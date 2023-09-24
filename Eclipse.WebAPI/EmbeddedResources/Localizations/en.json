@@ -38,6 +38,7 @@
 
     "Pipelines:TodoItems:AddItem:DiscribeWhatToAdd": "Describe what do you wanna to add",
     "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",
+    "Pipelines:TodoItems:AddItem:ContentEmpty": "🥺It looks like I forgot to tell you that only letters are available now.\n\rClick 'Add item' and try again",
     "Pipelines:TodoItems:AddItem:Error": "Oops, something went wrong. Try again a bit later",
 
     "Pipelines:AdminMenu": "Switched to admin mode",

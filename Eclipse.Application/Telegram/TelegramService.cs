@@ -1,10 +1,10 @@
-﻿using Eclipse.Infrastructure.Telegram;
+﻿using Eclipse.Application.Contracts.Telegram;
 
 using FluentValidation;
 
 using Telegram.Bot;
 
-namespace Eclipse.Infrastructure.Internals.Telegram;
+namespace Eclipse.Application.Telegram;
 
 internal class TelegramService : ITelegramService
 {

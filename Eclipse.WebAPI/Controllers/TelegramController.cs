@@ -1,6 +1,7 @@
-﻿using Eclipse.Application.Contracts.Telegram.TelegramUsers;
-using Eclipse.Infrastructure.Telegram;
+﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.WebAPI.Filters;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eclipse.WebAPI.Controllers;

@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Infrastructure.Telegram;
+﻿namespace Eclipse.Application.Contracts.Telegram;
 
 public class SendMessageModel
 {
