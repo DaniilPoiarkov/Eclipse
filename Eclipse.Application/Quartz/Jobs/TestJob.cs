@@ -1,4 +1,4 @@
-﻿using Eclipse.Infrastructure.Telegram;
+﻿using Eclipse.Application.Contracts.Telegram;
 
 using Quartz;
 

@@ -23,6 +23,7 @@ using Telegram.Bot;
 
 using Polly;
 using Polly.Contrib.WaitAndRetry;
+using Eclipse.Infrastructure.Internals.Quartz;
 
 namespace Eclipse.Infrastructure;
 
