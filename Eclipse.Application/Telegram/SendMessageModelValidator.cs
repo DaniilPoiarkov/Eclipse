@@ -1,8 +1,8 @@
-﻿using Eclipse.Infrastructure.Telegram;
+﻿using Eclipse.Application.Contracts.Telegram;
 
 using FluentValidation;
 
-namespace Eclipse.Infrastructure.Internals.Telegram;
+namespace Eclipse.Application.Telegram;
 
 public class SendMessageModelValidator : AbstractValidator<SendMessageModel>
 {

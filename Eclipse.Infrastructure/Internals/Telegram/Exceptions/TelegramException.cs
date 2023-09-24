@@ -1,10 +1,8 @@
-﻿using Eclipse.Localization.Exceptions;
+﻿namespace Eclipse.Infrastructure.Internals.Telegram.Exceptions;
 
-namespace Eclipse.Infrastructure.Internals.Telegram.Exceptions;
-
-internal class TelegramException : LocalizedException
+internal class TelegramException : Exception
 {
-    public TelegramException(string message, params string[] args) : base(message, args)
+    public TelegramException(string message) : base(message)
     {
     }
 }

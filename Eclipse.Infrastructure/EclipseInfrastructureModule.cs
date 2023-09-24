@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Quartz;
+using Quartz.Logging;
 
 using Serilog;
 
@@ -22,8 +23,6 @@ using Telegram.Bot;
 
 using Polly;
 using Polly.Contrib.WaitAndRetry;
-using FluentValidation;
-using Quartz.Logging;
 
 namespace Eclipse.Infrastructure;
 
@@ -44,8 +43,7 @@ public static class EclipseInfrastructureModule
 
         var config = builder.Build();
 
-        services.AddSingleton(config)
-            .AddValidatorsFromAssemblyContaining<SendMessageModelValidator>(ServiceLifetime.Transient);
+        services.AddSingleton(config);
 
         services
             .AddSerilogIntegration()
@@ -99,7 +97,6 @@ public static class EclipseInfrastructureModule
     private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
     {
         services.AddSingleton<IEclipseStarter, EclipseStarter>();
-        services.TryAddTransient<ITelegramService, TelegramService>();
 
         services.AddSingleton<ITelegramBotClient>(sp =>
         {
