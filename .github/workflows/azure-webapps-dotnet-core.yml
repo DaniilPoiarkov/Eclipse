@@ -57,15 +57,18 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
+        
+      - name: Run tests
+        run: dotnet test ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./Eclipse.WebAPI/Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./Eclipse.WebAPI/Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/eclipse
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.DOTNET_ROOT}}/eclipse
 
   deploy:
     permissions:
