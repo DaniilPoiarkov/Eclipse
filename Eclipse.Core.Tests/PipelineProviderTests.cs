@@ -3,11 +3,7 @@ using Eclipse.Core.Models;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Tests.Pipelines;
 
-using FluentAssertions;
-
 using Microsoft.Extensions.DependencyInjection;
-
-using NSubstitute;
 
 namespace Eclipse.Core.Tests;
 

@@ -1,7 +1,6 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Tests.Pipelines;
-using FluentAssertions;
 
 namespace Eclipse.Core.Tests;
 
