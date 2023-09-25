@@ -4,7 +4,7 @@ using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
-[Route("Menu:AdminMenu:SendToUser", "/send_to_user")]
+[Route("Menu:AdminMenu:Send:User", "/admin_send_user")]
 internal class SendMessageToUserPipeline : AdminPipelineBase
 {
     private readonly ITelegramService _telegramService;

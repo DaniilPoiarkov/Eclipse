@@ -24,7 +24,7 @@ internal class MultipleActionsResult : ResultBase
             messages.Add(await result.SendAsync(botClient, cancellationToken));
         }
 
-        if (messages is null)
+        if (messages.Count == 0)
         {
             return null;
         }

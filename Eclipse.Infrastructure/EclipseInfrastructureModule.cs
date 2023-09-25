@@ -2,13 +2,14 @@
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
+using Eclipse.Infrastructure.Quartz;
+using Eclipse.Infrastructure.Telegram;
 using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Google;
 using Eclipse.Infrastructure.Internals.Google.Sheets;
 using Eclipse.Infrastructure.Internals.Telegram;
-using Eclipse.Infrastructure.Quartz;
-using Eclipse.Infrastructure.Quartz.Jobs;
-using Eclipse.Infrastructure.Telegram;
+using Eclipse.Infrastructure.Internals.Quartz;
+using Eclipse.Infrastructure.Internals.Quartz.Jobs;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -85,11 +86,18 @@ public static class EclipseInfrastructureModule
                 Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseDelay), _retryCount)
             ));
 
-        services.AddQuartz();
+        services.AddQuartz(cfg =>
+        {
+            cfg.InterruptJobsOnShutdown = true;
+            cfg.SchedulerName = "EclipseScheduler";
+        });
+
         services.AddQuartzHostedService(cfg =>
         {
             cfg.WaitForJobsToComplete = true;
         });
+
+        services.AddTransient<IEclipseScheduler, EclipseScheduler>();
 
         return services;
     }

@@ -4,7 +4,7 @@ namespace Eclipse.Application.Contracts.Telegram.Messages;
 
 public interface IMessageStore
 {
-    void SaveMessage(MessageKey key, Message message);
+    void Set(MessageKey key, Message message);
 
     Message? GetMessage(MessageKey key);
 }

@@ -61,7 +61,7 @@ internal class PipelineProvider : IPipelineProvider
 
     private PipelineBase ResolveAndValidate(Type pipelineType)
     {
-        var results = Validate(pipelineType!, out var isValid);
+        var results = Validate(pipelineType, out var isValid);
 
         if (!isValid)
         {

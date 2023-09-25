@@ -1,4 +1,4 @@
-﻿using Eclipse.Infrastructure.Quartz.Jobs;
+﻿using Eclipse.Infrastructure.Internals.Quartz.Jobs;
 using Microsoft.Extensions.Options;
 using Quartz;
 
@@ -12,7 +12,7 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 
     public void Configure(QuartzOptions options)
     {
-        AddWarmupJob(options);
+        AddHealthCheckJob(options);
         AddBotHealthCheckJob(options);
     }
 
@@ -28,7 +28,7 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
                         .RepeatForever()));
     }
 
-    private static void AddWarmupJob(QuartzOptions options)
+    private static void AddHealthCheckJob(QuartzOptions options)
     {
         var jobKey = JobKey.Create(nameof(HealthCheckJob));
 

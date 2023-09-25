@@ -1,5 +1,6 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
@@ -26,6 +27,11 @@ public static class EclipsePipelinesModule
             .AddClasses(c => c.AssignableTo<PipelineBase>())
             .As<PipelineBase>()
             .AsSelf()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
+            .AddClasses()
+            .AsImplementedInterfaces()
             .WithTransientLifetime());
         
         return services;
