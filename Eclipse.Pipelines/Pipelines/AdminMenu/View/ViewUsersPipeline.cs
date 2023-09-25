@@ -3,9 +3,9 @@ using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
-namespace Eclipse.Pipelines.Pipelines.AdminMenu;
+namespace Eclipse.Pipelines.Pipelines.AdminMenu.View;
 
-[Route("Menu:AdminMenu:ViewUsers", "/users")]
+[Route("Menu:AdminMenu:View:Users", "/admin_view_users")]
 internal class ViewUsersPipeline : AdminPipelineBase
 {
     private readonly ITelegramUserRepository _userRepository;

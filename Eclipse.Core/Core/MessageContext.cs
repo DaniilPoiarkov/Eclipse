@@ -13,7 +13,7 @@ public class MessageContext
 
     public TelegramUser User { get; }
 
-    internal MessageContext(long chatId, string value, TelegramUser user)
+    public MessageContext(long chatId, string value, TelegramUser user)
     {
         ArgumentNullException.ThrowIfNull(user, nameof(user));
         ChatId = chatId;
