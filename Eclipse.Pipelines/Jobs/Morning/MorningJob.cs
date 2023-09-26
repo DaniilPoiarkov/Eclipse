@@ -5,6 +5,8 @@ using Eclipse.Infrastructure.Cache;
 
 using Quartz;
 
+using Telegram.Bot;
+
 namespace Eclipse.Pipelines.Jobs.Morning;
 
 internal class MorningJob : EclipseJobBase
@@ -17,23 +19,27 @@ internal class MorningJob : EclipseJobBase
 
     private readonly IPipelineProvider _pipelineProvider;
 
+    private readonly ITelegramBotClient _botClient;
+
     public MorningJob(
         ICacheService cacheService,
         ITelegramUserRepository userRepository,
         IPipelineStore pipelineStore,
-        IPipelineProvider pipelineProvider)
+        IPipelineProvider pipelineProvider,
+        ITelegramBotClient botClient)
     {
         _cacheService = cacheService;
         _userRepository = userRepository;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
+        _botClient = botClient;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
         var users = _userRepository.GetAll();
 
-        var notifications = new List<Task>(users.Count);
+        var notifications = new List<Task<IResult>>(users.Count);
 
         foreach (var user in users)
         {
@@ -56,6 +62,8 @@ internal class MorningJob : EclipseJobBase
             _pipelineStore.Set(pipeline, key);
         }
 
-        await Task.WhenAll(notifications);
+        var results = await Task.WhenAll(notifications);
+
+        await Task.WhenAll(results.Select(s => s.SendAsync(_botClient, context.CancellationToken)));
     }
 }

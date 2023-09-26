@@ -26,7 +26,15 @@ internal class EnableMorningNotificationPipeline : AdminPipelineBase
 
     private async Task<IResult> EnableMorningNotifications(MessageContext context)
     {
-        _cacheService.Set(new CacheKey($"notifications-enabled-{context.ChatId}"), true);
+        var key = new CacheKey($"notifications-enabled-{context.ChatId}");
+
+        if (_cacheService.Get<bool>(key))
+        {
+            return Text(Localizer["Pipelines:AdminMenu:MorningNotificationAlreadyEnabled"]);
+        }
+
+        _cacheService.Set(key, true);
+
         var config = new MorningJobConfiguration();
         await _scheduler.ScheduleJob(config);
         

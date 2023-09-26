@@ -55,6 +55,7 @@
     "Pipelines:AdminMenu:UserMode": "Switched to user mode",
 
     "Pipelines:AdminMenu:MorningNotificationEnabled": "Morning notifications enabled",
+    "Pipelines:AdminMenu:MorningNotificationAlreadyEnabled": "Morning notifications already enabled",
 
     "Pipelines:AdminMenu:View": "View menu",
     "Pipelines:AdminMenu:Send": "Send menu",
