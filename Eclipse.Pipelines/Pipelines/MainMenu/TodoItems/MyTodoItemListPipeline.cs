@@ -27,9 +27,9 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
         RegisterStage(HandleUpdate);
     }
 
-    private IResult SendList(MessageContext context)
+    private async Task<IResult> SendList(MessageContext context, CancellationToken cancellationToken)
     {
-        var items = _todoItemService.GetUserItems(context.User.Id)
+        var items = (await _todoItemService.GetUserItemsAsync(context.User.Id, cancellationToken))
             .Where(item => !item.IsFinished)
             .ToList();
 
@@ -45,7 +45,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
         return Menu(buttons, message);
     }
 
-    private IResult HandleUpdate(MessageContext context)
+    private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
         var message = _messageStore.GetMessage(new MessageKey(context.ChatId));
 
@@ -63,9 +63,9 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         try
         {
-            _todoItemService.FinishItem(id);
+            await _todoItemService.FinishItemAsync(id, cancellationToken);
 
-            var items = _todoItemService.GetUserItems(context.ChatId);
+            var items = await _todoItemService.GetUserItemsAsync(context.ChatId, cancellationToken);
 
             if (items.Count == 0)
             {
@@ -76,7 +76,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
             if (message is null)
             {
-                return SendList(context);
+                return await SendList(context, cancellationToken);
             }
 
             return ItemFinishedResult(items, message);

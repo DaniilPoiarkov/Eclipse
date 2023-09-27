@@ -1,8 +1,8 @@
-﻿using Eclipse.Domain.Base;
+﻿using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.TodoItems;
 
-namespace Eclipse.DataAccess.DbContext;
+namespace Eclipse.DataAccess.InMemoryDb;
 
 public class InMemoryDbContext : IDbContext
 {
@@ -29,6 +29,6 @@ public class InMemoryDbContext : IDbContext
     public virtual void Update<TEntity>(TEntity entity)
         where TEntity : Entity
     {
-        
+
     }
 }

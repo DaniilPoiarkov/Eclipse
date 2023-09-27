@@ -31,7 +31,13 @@ builder.Services
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()
-    .AddDataAccessModule()
+    .AddDataAccessModule(builder =>
+    {
+        builder.CosmosOptions.ConnectionString = configuration["Azure:CosmosDb:ConnectionString"]!;
+        builder.CosmosOptions.DatabaseId = configuration["Azure:CosmosDb:DatabaseId"]!;
+    });
+
+builder.Services
     .AddInfrastructureModule(config =>
     {
         config.TelegramOptions = new TelegramOptions

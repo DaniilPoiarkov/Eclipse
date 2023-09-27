@@ -1,6 +1,6 @@
-﻿using Eclipse.Domain.Base;
+﻿using Eclipse.Domain.Shared.Entities;
 
-namespace Eclipse.DataAccess.DbContext;
+namespace Eclipse.DataAccess.InMemoryDb;
 
 public interface IDbContext
 {

@@ -31,7 +31,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         return Text(Localizer["Pipelines:TodoItems:AddItem:DiscribeWhatToAdd"]);
     }
 
-    private IResult SaveNewTodoItem(MessageContext context)
+    private async Task<IResult> SaveNewTodoItem(MessageContext context, CancellationToken cancellationToken)
     {
         var createNewItemModel = new CreateTodoItemDto
         {
@@ -41,7 +41,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
         try
         {
-            _todoItemService.AddItem(createNewItemModel);
+            await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
             return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:NewItemAdded"]);
         }
         catch (LocalizedException ex)
