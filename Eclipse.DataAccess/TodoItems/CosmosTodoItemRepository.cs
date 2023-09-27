@@ -4,8 +4,8 @@ using Eclipse.Domain.TodoItems;
 
 namespace Eclipse.DataAccess.TodoItems;
 
-internal class CosmosTodoItemRepository : CosmosRepository<TodoItem>,ITodoItemRepository
+internal class CosmosTodoItemRepository : CosmosRepository<TodoItem>, ITodoItemRepository
 {
     public CosmosTodoItemRepository(EclipseCosmosDbContext context)
-        : base(context, $"{nameof(TodoItem)}s") { }
+        : base(context.TodoItems) { }
 }

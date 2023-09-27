@@ -11,9 +11,9 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 {
     protected readonly IContainer<TEntity> Container;
 
-    public CosmosRepository(EclipseCosmosDbContext context, string containerName)
+    public CosmosRepository(IContainer<TEntity> container)
     {
-        Container = context.Container<TEntity>(containerName);
+        Container = container;
     }
 
     public virtual Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default) =>
