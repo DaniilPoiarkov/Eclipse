@@ -2,6 +2,10 @@
 using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Models;
 
+using FluentAssertions;
+
+using Xunit;
+
 namespace Eclipse.Core.Tests;
 
 public class CurrentTelegramUserTests

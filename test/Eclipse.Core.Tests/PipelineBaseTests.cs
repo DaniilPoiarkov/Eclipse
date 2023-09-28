@@ -2,6 +2,10 @@
 using Eclipse.Core.Models;
 using Eclipse.Core.Tests.Pipelines;
 
+using FluentAssertions;
+
+using Xunit;
+
 namespace Eclipse.Core.Tests;
 
 public class PipelineBaseTests
