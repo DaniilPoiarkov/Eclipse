@@ -4,6 +4,12 @@ using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Suggestions;
 using Eclipse.Tests.Builders;
 
+using FluentAssertions;
+
+using NSubstitute;
+
+using Xunit;
+
 namespace Eclipse.Application.Tests.Suggestions;
 
 public class SuggestionServiceTests

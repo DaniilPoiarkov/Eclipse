@@ -2,6 +2,10 @@
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 
+using FluentAssertions;
+
+using Xunit;
+
 namespace Eclipse.Localization.Tests;
 
 public class LocalizerTests

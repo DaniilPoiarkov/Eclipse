@@ -1,5 +1,9 @@
 ﻿using Eclipse.Localization.Builder;
 
+using FluentAssertions;
+
+using Xunit;
+
 namespace Eclipse.Localization.Tests;
 
 public class LocalizationBuilderTests
