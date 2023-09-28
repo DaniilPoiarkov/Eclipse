@@ -7,7 +7,6 @@ using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Infrastructure.Telegram;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;

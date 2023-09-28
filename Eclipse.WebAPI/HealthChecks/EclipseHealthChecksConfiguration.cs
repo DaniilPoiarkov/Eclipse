@@ -8,8 +8,7 @@ public static class EclipseHealthChecksConfiguration
     public static IServiceCollection AddEclipseHealthChecks(this IServiceCollection services)
     {
         services.AddHealthChecks()
-            .AddCheck<StarterHealthCheck>("starter", HealthStatus.Unhealthy, new[] { "telegram-bot" })
-            .AddCheck<BotHealthCheck>("bot", HealthStatus.Unhealthy, new[] { "telegram-bot" });
+            .AddCheck<StarterHealthCheck>("starter", HealthStatus.Unhealthy, new[] { "telegram-bot" });
 
         return services;
     }

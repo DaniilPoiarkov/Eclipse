@@ -1,15 +1,17 @@
 ﻿using Eclipse.Infrastructure.Telegram;
 
-using ILogger = Serilog.ILogger;
+using Microsoft.Extensions.Hosting;
 
-namespace Eclipse.WebAPI.Hosted;
+using Serilog;
 
-public class EclipseBotHostedService : IHostedService
+namespace Eclipse.Pipelines.Hosted;
+
+internal class EclipsePipelinesInitializationService : IHostedService
 {
     private readonly IEclipseStarter _eclipseStarter;
     private readonly ILogger _logger;
 
-    public EclipseBotHostedService(IEclipseStarter eclipseStarter, ILogger logger)
+    public EclipsePipelinesInitializationService(IEclipseStarter eclipseStarter, ILogger logger)
     {
         _eclipseStarter = eclipseStarter;
         _logger = logger;
@@ -17,8 +19,11 @@ public class EclipseBotHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.Information("Initialization of {service}", nameof(IEclipseStarter));
+        _logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
+
         await _eclipseStarter.StartAsync();
+
+        _logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

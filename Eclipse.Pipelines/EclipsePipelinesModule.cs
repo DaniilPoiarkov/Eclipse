@@ -1,5 +1,6 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Pipelines.Hosted;
 using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
@@ -33,6 +34,8 @@ public static class EclipsePipelinesModule
             .AddClasses()
             .AsImplementedInterfaces()
             .WithTransientLifetime());
+
+        services.AddHostedService<EclipsePipelinesInitializationService>();
         
         return services;
     }

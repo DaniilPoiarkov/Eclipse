@@ -62,14 +62,12 @@ internal class TodoItemService : ITodoItemService
 
         item.MarkAsFinished();
 
-        await _todoItemRepository.UpdateAsync(item, cancellationToken);
         await _todoItemRepository.DeleteAsync(itemId, cancellationToken);
     }
 
     public async Task<IReadOnlyList<TodoItemDto>> GetUserItemsAsync(long userId, CancellationToken cancellationToken = default)
     {
-        var items = (await _todoItemRepository.GetAllAsync(cancellationToken))
-            .Where(item => item.TelegramUserId == userId)
+        var items = (await _todoItemRepository.GetByExpressionAsync(item => item.TelegramUserId == userId, cancellationToken))
             .Select(_mapper.Map)
             .ToList();
 
