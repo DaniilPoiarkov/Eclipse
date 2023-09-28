@@ -8,24 +8,9 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 {
     private static readonly int _hoursDelay = 1;
 
-    private static readonly int _minutesDelay = 5;
-
     public void Configure(QuartzOptions options)
     {
         AddHealthCheckJob(options);
-        AddBotHealthCheckJob(options);
-    }
-
-    private static void AddBotHealthCheckJob(QuartzOptions options)
-    {
-        var jobKey = JobKey.Create(nameof(BotHealthCheckJob));
-
-        options.AddJob<BotHealthCheckJob>(b => b.WithIdentity(jobKey))
-            .AddTrigger(b => b.ForJob(jobKey)
-                .StartNow()
-                .WithSimpleSchedule(s =>
-                    s.WithIntervalInMinutes(_minutesDelay)
-                        .RepeatForever()));
     }
 
     private static void AddHealthCheckJob(QuartzOptions options)

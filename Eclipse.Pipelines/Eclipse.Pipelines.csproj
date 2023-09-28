@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eclipse.Application\Eclipse.Application.csproj" />
+    <ProjectReference Include="..\Eclipse.DataAccess\Eclipse.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

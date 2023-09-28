@@ -2,9 +2,9 @@
 
 public interface ITodoItemService
 {
-    IReadOnlyList<TodoItemDto> GetUserItems(long userId);
+    Task<IReadOnlyList<TodoItemDto>> GetUserItemsAsync(long userId, CancellationToken cancellationToken = default);
 
-    TodoItemDto AddItem(CreateTodoItemDto input);
+    Task<TodoItemDto> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default);
 
-    void FinishItem(Guid itemId);
+    Task FinishItemAsync(Guid itemId, CancellationToken cancellationToken = default);
 }

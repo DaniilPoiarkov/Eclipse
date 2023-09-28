@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Base;
+﻿namespace Eclipse.Application.Contracts.Entities;
 
 public class EntityDto
 {

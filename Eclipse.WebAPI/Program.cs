@@ -7,7 +7,6 @@ using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Infrastructure.Telegram;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
@@ -31,7 +30,13 @@ builder.Services
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()
-    .AddDataAccessModule()
+    .AddDataAccessModule(builder =>
+    {
+        builder.CosmosOptions.ConnectionString = configuration["Azure:CosmosDb:ConnectionString"]!;
+        builder.CosmosOptions.DatabaseId = configuration["Azure:CosmosDb:DatabaseId"]!;
+    });
+
+builder.Services
     .AddInfrastructureModule(config =>
     {
         config.TelegramOptions = new TelegramOptions
@@ -73,9 +78,6 @@ builder.Host.UseSerilog((_, config) =>
 });
 
 var app = builder.Build();
-
-var starter = app.Services.GetRequiredService<IEclipseStarter>();
-await starter.StartAsync();
 
 app.UseSwagger();
 app.UseSwaggerUI();

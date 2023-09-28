@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Base;
+﻿using Eclipse.Application.Contracts.Entities;
 
 namespace Eclipse.Application.Contracts.TodoItems;
 

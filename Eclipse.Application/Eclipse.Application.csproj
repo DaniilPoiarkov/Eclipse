@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eclipse.Application.Contracts\Eclipse.Application.Contracts.csproj" />
-    <ProjectReference Include="..\Eclipse.DataAccess\Eclipse.DataAccess.csproj" />
+    <ProjectReference Include="..\Eclipse.Domain\Eclipse.Domain.csproj" />
   </ItemGroup>
 
 </Project>

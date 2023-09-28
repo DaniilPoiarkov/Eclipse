@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
 using Eclipse.Application.TodoItems.Exceptions;
-using Eclipse.DataAccess.TodoItems;
 using Eclipse.Domain.TodoItems;
 
 using FluentValidation;
@@ -29,7 +28,7 @@ internal class TodoItemService : ITodoItemService
         _mapper = mapper;
     }
 
-    public TodoItemDto AddItem(CreateTodoItemDto input)
+    public async Task<TodoItemDto> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
     {
         var result = _validator.Validate(input);
 
@@ -42,7 +41,7 @@ internal class TodoItemService : ITodoItemService
             throw new TodoItemValidationException(errors);
         }
 
-        var userItems = _todoItemRepository.GetByExpression(i => i.TelegramUserId == input.UserId);
+        var userItems = await _todoItemRepository.GetByExpressionAsync(i => i.TelegramUserId == input.UserId, cancellationToken);
 
         if (userItems.Count == _limit)
         {
@@ -51,26 +50,24 @@ internal class TodoItemService : ITodoItemService
 
         var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!);
 
-        _todoItemRepository.Add(todoItem);
+        await _todoItemRepository.CreateAsync(todoItem, cancellationToken);
 
         return _mapper.Map(todoItem);
     }
 
-    public void FinishItem(Guid itemId)
+    public async Task FinishItemAsync(Guid itemId, CancellationToken cancellationToken = default)
     {
-        var item = _todoItemRepository.GetById(itemId)
+        var item = await _todoItemRepository.FindAsync(itemId, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(TodoItem));
 
         item.MarkAsFinished();
 
-        _todoItemRepository.Update(item);
-        _todoItemRepository.Delete(itemId);
+        await _todoItemRepository.DeleteAsync(itemId, cancellationToken);
     }
 
-    public IReadOnlyList<TodoItemDto> GetUserItems(long userId)
+    public async Task<IReadOnlyList<TodoItemDto>> GetUserItemsAsync(long userId, CancellationToken cancellationToken = default)
     {
-        var items = _todoItemRepository.GetAll()
-            .Where(item => item.TelegramUserId == userId)
+        var items = (await _todoItemRepository.GetByExpressionAsync(item => item.TelegramUserId == userId, cancellationToken))
             .Select(_mapper.Map)
             .ToList();
 

@@ -1,4 +1,4 @@
-﻿using Eclipse.Domain.Base;
+﻿using Eclipse.Domain.Shared.Entities;
 
 namespace Eclipse.Domain.TodoItems;
 

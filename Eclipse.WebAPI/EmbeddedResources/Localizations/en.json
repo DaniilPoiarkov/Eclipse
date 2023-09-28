@@ -29,7 +29,7 @@
     "Pipelines:Suggest:Error": "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊",
     "Pipelines:Suggest:Success": "Thank you for suggestion! I'll think about it",
 
-    "Pipelines:TodoItems": "Let's take a look what do we have here..\n\r\n\rNote: This feature is in preview version. Some features can work inaccurate",
+    "Pipelines:TodoItems": "Let's take a look what do we have here..",
     "Pipelines:TodoItems:YourToDos": "📝 Your to dos:",
     "Pipelines:TodoItems:FinishOrGoBack": "Select to mark item as finished! Or press 'Go back' button to return 😊",
     "Pipelines:TodoItems:YouDidEmAll": "You did em all!\r\nMy congratulations 🥳",

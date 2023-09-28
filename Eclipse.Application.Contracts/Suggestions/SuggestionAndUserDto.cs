@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Base;
+﻿using Eclipse.Application.Contracts.Entities;
 using Eclipse.Core.Models;
 
 namespace Eclipse.Application.Contracts.Suggestions;
