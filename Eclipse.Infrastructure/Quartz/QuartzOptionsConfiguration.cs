@@ -1,5 +1,7 @@
-﻿using Eclipse.Infrastructure.Internals.Quartz.Jobs;
+﻿using Eclipse.Infrastructure.Internals.Quartz;
+
 using Microsoft.Extensions.Options;
+
 using Quartz;
 
 namespace Eclipse.Infrastructure.Quartz;

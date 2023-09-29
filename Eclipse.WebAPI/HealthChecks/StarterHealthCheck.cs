@@ -1,38 +1,25 @@
-﻿using Eclipse.Infrastructure.Telegram;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-
-using ILogger = Serilog.ILogger;
+using Telegram.Bot;
 
 namespace Eclipse.WebAPI.HealthChecks;
 
 public class StarterHealthCheck : IHealthCheck
 {
-    private readonly IEclipseStarter _eclipseStarter;
+    private readonly ITelegramBotClient _botClient;
 
-    private readonly ILogger _logger;
-
-    public StarterHealthCheck(IEclipseStarter eclipseStarter, ILogger logger)
+    public StarterHealthCheck(ITelegramBotClient botClient)
     {
-        _eclipseStarter = eclipseStarter;
-        _logger = logger;
+        _botClient = botClient;
     }
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        try
+        if (!await _botClient.TestApiAsync(cancellationToken))
         {
-            if (!_eclipseStarter.IsStarted)
-            {
-                _logger.Warning("Starter status is {status}", _eclipseStarter.IsStarted);
-                await _eclipseStarter.StartAsync();
-            }
+            return HealthCheckResult.Unhealthy("Bot API Token is invalid");
+        }
 
-            return HealthCheckResult.Healthy();
-        }
-        catch (Exception ex)
-        {
-            return HealthCheckResult.Unhealthy("Exception during starter health-check", ex);
-        }
+        return HealthCheckResult.Healthy();
     }
 }
