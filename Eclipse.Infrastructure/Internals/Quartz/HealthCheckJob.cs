@@ -27,10 +27,10 @@ internal class HealthCheckJob : IJob
 
         if (me is null || !await _botClient.TestApiAsync(context.CancellationToken))
         {
-            _logger.Error("Bot not responding. Me is {isNull}", me?.Username ?? "NULL");
+            _logger.Error("Bot not responding. Me is {username}", me?.Username ?? "NULL");
         }
 
-        var response = await _client.GetAsync("/health-check", context.CancellationToken);
+        var response = await _client.GetAsync("/health-checks", context.CancellationToken);
         var content = await response.Content.ReadAsStringAsync(cancellationToken: context.CancellationToken);
 
         _logger.Information("Health check result: {health}", content);
