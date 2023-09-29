@@ -17,8 +17,6 @@ using Eclipse.WebAPI.Middlewares;
 
 using Serilog;
 
-using Telegram.Bot;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;

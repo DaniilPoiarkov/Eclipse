@@ -12,10 +12,13 @@ internal class HealthCheckJob : IJob
 
     private readonly ILogger _logger;
 
-    public HealthCheckJob(ITelegramBotClient botClient, ILogger logger)
+    private readonly HttpClient _client;
+
+    public HealthCheckJob(ITelegramBotClient botClient, ILogger logger, HttpClient client)
     {
         _botClient = botClient;
         _logger = logger;
+        _client = client;
     }
 
     public async Task Execute(IJobExecutionContext context)
@@ -26,5 +29,10 @@ internal class HealthCheckJob : IJob
         {
             _logger.Error("Bot not responding. Me is {isNull}", me?.Username ?? "NULL");
         }
+
+        var response = await _client.GetAsync("/health-check", context.CancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken: context.CancellationToken);
+
+        _logger.Information("Health check result: {health}", content);
     }
 }
