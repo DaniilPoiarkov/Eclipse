@@ -21,7 +21,7 @@ internal class DataAccessModuleInitializationService : IHostedService
     {
         _logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
 
-        _logger.Information("Initializing database");
+        _logger.Information("\tInitializing database");
         await _context.InitializeAsync(cancellationToken);
 
         _logger.Information("{module} module initialized successfully", nameof(EclipseDataAccessModule));

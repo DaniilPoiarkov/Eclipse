@@ -9,9 +9,6 @@ using Eclipse.Infrastructure.Internals.Google;
 using Eclipse.Infrastructure.Internals.Google.Sheets;
 using Eclipse.Infrastructure.Internals.Telegram;
 using Eclipse.Infrastructure.Internals.Quartz;
-using Eclipse.Infrastructure.Internals.Quartz.Jobs;
-
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -22,9 +19,6 @@ using Serilog;
 
 using Telegram.Bot;
 
-using Polly;
-using Polly.Contrib.WaitAndRetry;
-
 namespace Eclipse.Infrastructure;
 
 /// <summary>
@@ -32,10 +26,6 @@ namespace Eclipse.Infrastructure;
 /// </summary>
 public static class EclipseInfrastructureModule
 {
-    private static readonly int _baseDelay = 1;
-
-    private static readonly int _retryCount = 5;
-
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, Action<InfrastructureOptionsBuilder> options)
     {
         var builder = new InfrastructureOptionsBuilder(services);
@@ -76,15 +66,6 @@ public static class EclipseInfrastructureModule
         LogProvider.IsDisabled = true;
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
-
-        services.AddHttpClient<HealthCheckJob>((sp, client) =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            client.BaseAddress = new(config["App:SelfUrl"]!);
-        }).AddTransientHttpErrorPolicy(pb => 
-            pb.WaitAndRetryAsync(
-                Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseDelay), _retryCount)
-            ));
 
         services.AddQuartz(cfg =>
         {
