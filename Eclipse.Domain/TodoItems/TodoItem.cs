@@ -4,12 +4,14 @@ namespace Eclipse.Domain.TodoItems;
 
 public class TodoItem : Entity
 {
-    public TodoItem(Guid id, long telegramUserId, string text)
+    public TodoItem(Guid id, long telegramUserId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
         : base(id)
     {
         TelegramUserId = telegramUserId;
         Text = text;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = createdAt;
+        FinishedAt = finishedAt;
+        IsFinished = isFinished;
     }
 
     private TodoItem() { }

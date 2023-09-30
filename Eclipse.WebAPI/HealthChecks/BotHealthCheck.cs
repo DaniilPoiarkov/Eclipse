@@ -15,11 +15,20 @@ public class BotHealthCheck : IHealthCheck
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        if (!await _botClient.TestApiAsync(cancellationToken))
+        var me = await _botClient.GetMeAsync(cancellationToken);
+        var apiCallResult = await _botClient.TestApiAsync(cancellationToken);
+
+        if (me is not null && apiCallResult)
         {
-            return HealthCheckResult.Unhealthy("Bot API Token is invalid");
+            return HealthCheckResult.Healthy();
         }
 
-        return HealthCheckResult.Healthy();
+        return HealthCheckResult.Unhealthy(
+            description: "Bot not responding",
+            data: new Dictionary<string, object>()
+            {
+                ["Username"] = me?.Username ?? "NULL",
+                ["Api call"] = apiCallResult ? "Passed" : "Failed"
+            });
     }
 }

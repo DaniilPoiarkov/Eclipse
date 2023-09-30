@@ -1,38 +1,50 @@
-﻿using Quartz;
+﻿using Eclipse.Infrastructure.Internals.Quartz.Models;
+
+using HealthChecks.UI.Core;
+
+using Newtonsoft.Json;
+
+using Quartz;
 
 using Serilog;
-
-using Telegram.Bot;
 
 namespace Eclipse.Infrastructure.Internals.Quartz;
 
 internal class HealthCheckJob : IJob
 {
-    private readonly ITelegramBotClient _botClient;
-
     private readonly ILogger _logger;
 
     private readonly HttpClient _client;
 
-    public HealthCheckJob(ITelegramBotClient botClient, ILogger logger, HttpClient client)
+    public HealthCheckJob(ILogger logger, HttpClient client)
     {
-        _botClient = botClient;
         _logger = logger;
         _client = client;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var me = await _botClient.GetMeAsync(context.CancellationToken);
+        var response = await _client.GetAsync("/_health-checks", context.CancellationToken);
+        var json = await response.Content.ReadAsStringAsync(context.CancellationToken);
 
-        if (me is null || !await _botClient.TestApiAsync(context.CancellationToken))
+        var result = JsonConvert.DeserializeObject<HealthCheckResultModel>(json);
+
+        if (result is null)
         {
-            _logger.Error("Bot not responding. Me is {username}", me?.Username ?? "NULL");
+            _logger.Error("Health check result is not available");
+            return;
         }
 
-        var response = await _client.GetAsync("/health-checks", context.CancellationToken);
-        var content = await response.Content.ReadAsStringAsync(cancellationToken: context.CancellationToken);
+        if (result.Status == UIHealthStatus.Healthy)
+        {
+            _logger.Information("Health status is {status}", result.Status);
+            return;
+        }
 
-        _logger.Information("Health check result: {health}", content);
+        var data = result.Entries
+            .Where(e => e.Value.Status != UIHealthStatus.Healthy)
+            .Select(e => $"{e.Key}: {e.Value}");
+
+        _logger.Warning("Health status is {health}\n\r\n\rData: {data}", result.Status, string.Join(Environment.NewLine, data));
     }
 }

@@ -13,7 +13,7 @@ public static class TodoItemsBuilder
 
         for (int i = 0; i < count; i++)
         {
-            results.Add(new TodoItem(Guid.NewGuid(), userId, faker.Lorem.Word()));
+            results.Add(new TodoItem(Guid.NewGuid(), userId, faker.Lorem.Word(), faker.Date.Past()));
         }
 
         return results;
