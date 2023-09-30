@@ -92,7 +92,7 @@ public static class EclipseInfrastructureModule
 
         services.AddQuartzHostedService(cfg =>
         {
-            cfg.WaitForJobsToComplete = true;
+            cfg.WaitForJobsToComplete = false;
         });
 
         services.AddTransient<IEclipseScheduler, EclipseScheduler>();

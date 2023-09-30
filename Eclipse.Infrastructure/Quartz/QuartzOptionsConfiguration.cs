@@ -8,7 +8,7 @@ namespace Eclipse.Infrastructure.Quartz;
 
 internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 {
-    private static readonly int _hoursDelay = 1;
+    private static readonly int _minutesDelay = 30;
 
     public void Configure(QuartzOptions options)
     {
@@ -23,7 +23,7 @@ internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
             .AddTrigger(b => b.ForJob(jobKey)
                 .StartNow()
                 .WithSimpleSchedule(s =>
-                    s.WithIntervalInHours(_hoursDelay)
+                    s.WithIntervalInMinutes(_minutesDelay)
                     .RepeatForever()));
     }
 }
