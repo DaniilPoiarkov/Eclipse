@@ -16,7 +16,7 @@ internal class TelegramUserRepository : ITelegramUserRepository
         _sheetsService = sheetsService;
     }
 
-    public void EnshureAdded(TelegramUser user)
+    public void EnsureAdded(TelegramUser user)
     {
         if (_userStore.GetUsers().Any(u => u.Id == user.Id))
         {

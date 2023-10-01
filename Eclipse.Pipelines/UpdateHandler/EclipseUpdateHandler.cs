@@ -110,7 +110,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
             _pipelineStore.Set(pipeline, key);
         }
 
-        _userRepository.EnshureAdded(context.User);
+        _userRepository.EnsureAdded(context.User);
     }
 
     private PipelineBase GetPipeline(MessageContext context, PipelineKey key)

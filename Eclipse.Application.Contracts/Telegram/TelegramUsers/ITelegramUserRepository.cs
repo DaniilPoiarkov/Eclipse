@@ -6,5 +6,5 @@ public interface ITelegramUserRepository
 {
     IReadOnlyList<TelegramUser> GetAll();
 
-    void EnshureAdded(TelegramUser user);
+    void EnsureAdded(TelegramUser user);
 }
