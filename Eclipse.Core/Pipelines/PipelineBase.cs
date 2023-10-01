@@ -14,7 +14,7 @@ public abstract class PipelineBase : Pipeline
         Initialize();
     }
 
-    public async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
+    public virtual async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (IsFinished)
         {
