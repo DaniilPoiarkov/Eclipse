@@ -1,5 +1,6 @@
 ﻿using Eclipse.DataAccess.CosmosDb;
 using Eclipse.Domain.TodoItems;
+using Eclipse.Domain.IdentityUsers;
 
 using Microsoft.Azure.Cosmos;
 
@@ -8,6 +9,8 @@ namespace Eclipse.DataAccess.EclipseCosmosDb;
 public class EclipseCosmosDbContext : CosmosDbContext
 {
     public IContainer<TodoItem> TodoItems => Container<TodoItem>($"{nameof(TodoItem)}s");
+
+    public IContainer<IdentityUser> IdentityUsers => Container<IdentityUser>($"{nameof(IdentityUser)}s");
 
     public EclipseCosmosDbContext(CosmosClient client, CosmosDbContextOptions options)
         : base(client, options) { }
@@ -18,6 +21,10 @@ public class EclipseCosmosDbContext : CosmosDbContext
 
         await databaseResponse.Database.CreateContainerIfNotExistsAsync(
             new ContainerProperties($"{nameof(TodoItem)}s", "/todoitems"),
+            cancellationToken: cancellationToken);
+
+        await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+            new ContainerProperties($"{nameof(IdentityUser)}s", "/identityUsers"),
             cancellationToken: cancellationToken);
     }
 }

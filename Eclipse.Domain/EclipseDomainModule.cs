@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eclipse.Domain.IdentityUsers;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Domain;
 
@@ -10,6 +12,8 @@ public static class EclipseDomainModule
     public static IServiceCollection AddDomainModule(this IServiceCollection services)
     {
         //TODO: Add domain services, managers etc
+        services.AddTransient<IdentityUserManager>();
+
         return services;
     }
 }
