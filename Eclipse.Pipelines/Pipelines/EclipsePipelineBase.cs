@@ -29,7 +29,8 @@ public abstract class EclipsePipelineBase : PipelineBase
         using var scope = CachedServiceProvider.Services.CreateScope();
         return scope.ServiceProvider.GetRequiredService<TService>();
     }
-
+    
+    // TODO: Provide middleware concept
     public override async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
     {
         var cache = GetService<ICacheService>();
