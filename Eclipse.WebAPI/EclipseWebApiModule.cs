@@ -1,4 +1,6 @@
 ﻿using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Middlewares;
+
 using Microsoft.OpenApi.Models;
 
 namespace Eclipse.WebAPI;
@@ -61,6 +63,8 @@ public static class EclipseWebApiModule
 
             options.AddSecurityRequirement(requirement);
         });
+
+        services.AddScoped<ExceptionHandlerMiddleware>();
 
         return services;
     }

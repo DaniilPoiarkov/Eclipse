@@ -1,5 +1,7 @@
-﻿using Eclipse.Core.Attributes;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Shared.IdentityUsers;
 using Eclipse.Infrastructure.Cache;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -11,9 +13,12 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
 {
     private readonly ICacheService _cacheService;
 
-    public ChangeLanguagePipeline(ICacheService cacheService)
+    private readonly IIdentityUserService _identityUserService;
+
+    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService)
     {
         _cacheService = cacheService;
+        _identityUserService = identityUserService;
     }
 
     protected override void Initialize()
@@ -33,12 +38,20 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
         return Menu(buttons, Localizer["Pipelines:Language:Choose"]);
     }
 
-    private IResult SetLanguage(MessageContext context)
+    private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (!SupportedLanguage(context))
         {
             return Menu(MainMenuButtons, Localizer["Pipelines:Language:Unsupported"]);
         }
+
+        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var updateDto = new IdentityUserUpdateDto
+        {
+            Culture = context.Value,
+        };
+
+        await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
         var key = new CacheKey($"lang-{context.ChatId}");
 

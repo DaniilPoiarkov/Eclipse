@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Entities;
-using Eclipse.Core.Models;
+using Eclipse.Application.Contracts.IdentityUsers;
 
 namespace Eclipse.Application.Contracts.Suggestions;
 
@@ -9,5 +9,5 @@ public class SuggestionAndUserDto : EntityDto
 
     public DateTime CreatedAt { get; set; }
 
-    public TelegramUser? User { get; set; }
+    public IdentityUserDto? User { get; set; }
 }

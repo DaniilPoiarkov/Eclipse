@@ -6,7 +6,7 @@ using Serilog;
 
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Telegram.Messages;
@@ -20,7 +20,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly ITelegramUserRepository _userRepository;
+    private readonly IIdentityUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -46,7 +46,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         ILogger logger,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        ITelegramUserRepository userRepository,
+        IIdentityUserStore userStore,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
@@ -56,7 +56,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         _logger = logger;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
-        _userRepository = userRepository;
+        _userStore = userStore;
         _currentUser = currentUser;
         _updateParser = updateParser;
         _messageStore = messageStore;
@@ -110,7 +110,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
             _pipelineStore.Set(pipeline, key);
         }
 
-        _userRepository.EnshureAdded(context.User);
+        await _userStore.EnsureAdded(context.User, cancellationToken);
     }
 
     private PipelineBase GetPipeline(MessageContext context, PipelineKey key)

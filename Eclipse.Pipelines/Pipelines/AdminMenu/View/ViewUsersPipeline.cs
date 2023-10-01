@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
@@ -8,11 +8,11 @@ namespace Eclipse.Pipelines.Pipelines.AdminMenu.View;
 [Route("Menu:AdminMenu:View:Users", "/admin_view_users")]
 internal class ViewUsersPipeline : AdminPipelineBase
 {
-    private readonly ITelegramUserRepository _userRepository;
+    private readonly IIdentityUserStore _userStore;
 
-    public ViewUsersPipeline(ITelegramUserRepository userRepository)
+    public ViewUsersPipeline(IIdentityUserStore userStore)
     {
-        _userRepository = userRepository;
+        _userStore = userStore;
     }
 
     protected override void Initialize()
@@ -20,10 +20,10 @@ internal class ViewUsersPipeline : AdminPipelineBase
         RegisterStage(GetUserInfo);
     }
 
-    private IResult GetUserInfo(MessageContext context)
+    private async Task<IResult> GetUserInfo(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var usersInfo = _userRepository.GetAll()
-            .Select((user, index) => $"{++index} | {user.Id} | {user.Name} {user.Username.FormattedOrEmpty(s => $"| @{s}")}");
+        var usersInfo = (await _userStore.GetAllAsync(cancellationToken))
+            .Select((user, index) => $"{++index} | {user.ChatId} | {user.Name} {user.Username.FormattedOrEmpty(s => $"| @{s}")}");
 
         return Text(string.Join(Environment.NewLine, usersInfo));
     }

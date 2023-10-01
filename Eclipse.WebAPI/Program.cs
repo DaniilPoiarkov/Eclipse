@@ -1,8 +1,8 @@
 using Eclipse.Application;
 using Eclipse.Application.Contracts;
-using Eclipse.Application.Extensions;
 using Eclipse.Core;
 using Eclipse.DataAccess;
+using Eclipse.DataAccess.CosmosDb;
 using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
@@ -32,18 +32,15 @@ builder.Services
     .AddWebApiModule()
     .AddDataAccessModule(builder =>
     {
-        builder.CosmosOptions.ConnectionString = configuration["Azure:CosmosDb:ConnectionString"]!;
-        builder.CosmosOptions.DatabaseId = configuration["Azure:CosmosDb:DatabaseId"]!;
+        builder.CosmosOptions = configuration.GetSection("Azure:CosmosDb")
+            .Get<CosmosDbContextOptions>()!;
     });
 
 builder.Services
     .AddInfrastructureModule(config =>
     {
-        config.TelegramOptions = new TelegramOptions
-        {
-            Token = configuration["Telegram:Token"]!,
-            Chat = configuration["Telegram:Chat"]!.ToLong(),
-        };
+        config.TelegramOptions = configuration.GetSection("Telegram")
+            .Get<TelegramOptions>();
 
         config.UseTelegramHandler<ITelegramUpdateHandler>();
 

@@ -15,8 +15,10 @@ public class CallbackQueryParseStrategy : IParseStrategy
         var callback = update.CallbackQuery!;
         var from = callback.From;
 
-        var name = $"{from.FirstName} {from.LastName}".Trim();
-        var user = new TelegramUser(from.Id, name, from.Username ?? string.Empty);
+        var name = from.FirstName;
+        var surname = from.LastName ?? string.Empty;
+
+        var user = new TelegramUser(from.Id, name, surname, from.Username ?? string.Empty);
 
         var value = callback.Data ?? string.Empty;
 

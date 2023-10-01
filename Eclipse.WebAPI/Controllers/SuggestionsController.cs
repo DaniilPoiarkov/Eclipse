@@ -18,8 +18,8 @@ public class SuggestionsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        return Ok(_suggestionsService.GetWithUserInfo());
+        return Ok(await _suggestionsService.GetWithUserInfo(cancellationToken));
     }
 }

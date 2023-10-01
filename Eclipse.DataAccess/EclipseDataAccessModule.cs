@@ -1,8 +1,10 @@
 ﻿using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Hosted;
+using Eclipse.DataAccess.IdentityUsers;
 using Eclipse.DataAccess.InMemoryDb;
 using Eclipse.DataAccess.TodoItems;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.TodoItems;
 
 using Microsoft.Azure.Cosmos;
@@ -22,7 +24,8 @@ public static class EclipseDataAccessModule
 
         services
             .AddSingleton<IDbContext, InMemoryDbContext>()
-            .AddScoped<ITodoItemRepository, CosmosTodoItemRepository>();
+            .AddScoped<ITodoItemRepository, CosmosTodoItemRepository>()
+            .AddScoped<IIdentityUserRepository, IdentityUserRepository>();
 
         services.AddHostedService<DataAccessModuleInitializationService>();
 
@@ -39,7 +42,7 @@ public static class EclipseDataAccessModule
         {
             var options = sp.GetRequiredService<IOptions<DataAccessModuleBuilder>>().Value;
 
-            // TODO: Use Default credentials instead of connection string
+            // TODO: Use RBAC instead of connection string
             //return new CosmosClient(
             //    accountEndpoint: options.CosmosOptions.Endpoint,
             //    tokenCredential: new DefaultAzureCredential());
