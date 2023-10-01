@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Pipelines;
-using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Core;
+using Eclipse.Core.Models;
 using Eclipse.Infrastructure.Cache;
 
 using Quartz;
@@ -13,7 +14,7 @@ internal class MorningJob : EclipseJobBase
 {
     private readonly ICacheService _cacheService;
 
-    private readonly ITelegramUserRepository _userRepository;
+    private readonly IIdentityUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -23,13 +24,13 @@ internal class MorningJob : EclipseJobBase
 
     public MorningJob(
         ICacheService cacheService,
-        ITelegramUserRepository userRepository,
+        IIdentityUserStore userStore,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient)
     {
         _cacheService = cacheService;
-        _userRepository = userRepository;
+        _userStore = userStore;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
@@ -37,7 +38,7 @@ internal class MorningJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var users = _userRepository.GetAll();
+        var users = await _userStore.GetAllAsync(context.CancellationToken);
 
         var notifications = new List<Task<IResult>>(users.Count);
 
@@ -52,11 +53,11 @@ internal class MorningJob : EclipseJobBase
 
             var pipeline = _pipelineProvider.Get("/daily_morning");
 
-            var messageContext = new MessageContext(user.Id, string.Empty, user);
+            var messageContext = new MessageContext(user.ChatId, string.Empty, new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username));
 
             notifications.Add(pipeline.RunNext(messageContext, context.CancellationToken));
 
-            var key = new PipelineKey(user.Id);
+            var key = new PipelineKey(user.ChatId);
 
             _pipelineStore.Remove(key);
             _pipelineStore.Set(pipeline, key);

@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.WebAPI.Filters;
 
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +13,12 @@ public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;
 
-    private readonly ITelegramUserRepository _userRepositoy;
+    private readonly IIdentityUserStore _userStore;
 
-    public TelegramController(ITelegramService telegramService, ITelegramUserRepository userRepositoy)
+    public TelegramController(ITelegramService telegramService, IIdentityUserStore userStore)
     {
         _telegramService = telegramService;
-        _userRepositoy = userRepositoy;
+        _userStore = userStore;
     }
 
     [HttpPost]
@@ -31,6 +31,6 @@ public class TelegramController : ControllerBase
     [HttpGet("users")]
     public IActionResult GetUsers()
     {
-        return Ok(_userRepositoy.GetAll());
+        return Ok(_userStore.GetAllAsync());
     }
 }

@@ -22,9 +22,9 @@ internal class ViewSuggestionsPipeline : AdminPipelineBase
         RegisterStage(GetInfo);
     }
 
-    private IResult GetInfo(MessageContext context)
+    private async Task<IResult> GetInfo(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var suggestions = _suggestionsService.GetWithUserInfo();
+        var suggestions = await _suggestionsService.GetWithUserInfo(cancellationToken);
 
         var tabs = new string('=', 5);
 
@@ -38,7 +38,7 @@ internal class ViewSuggestionsPipeline : AdminPipelineBase
 
             if (suggestion.User is not null)
             {
-                sb.AppendLine($"{suggestion.User.Id} | {suggestion.User.Name} {suggestion.User.Username.FormattedOrEmpty(s => $"| @{s}")}");
+                sb.AppendLine($"{suggestion.User.ChatId} | {suggestion.User.Name} {suggestion.User.Username.FormattedOrEmpty(s => $"| @{s}")}");
             }
 
             sb.AppendLine($"{Localizer["CreatedAt"]}: {suggestion.CreatedAt.ToString("dd.MM - HH:mm")}");

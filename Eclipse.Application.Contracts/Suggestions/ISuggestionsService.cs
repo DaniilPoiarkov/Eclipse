@@ -2,5 +2,5 @@
 
 public interface ISuggestionsService
 {
-    IReadOnlyList<SuggestionAndUserDto> GetWithUserInfo();
+    Task<IReadOnlyList<SuggestionAndUserDto>> GetWithUserInfo(CancellationToken cancellationToken = default);
 }

@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Application.Contracts.Telegram.TelegramUsers;
+using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -8,15 +8,15 @@ namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 [Route("Menu:AdminMenu:Send:All", "/admin_send_all")]
 internal class SendMessageToAllPipeline : AdminPipelineBase
 {
-    private readonly ITelegramUserRepository _telegramUserRepository;
+    private readonly IIdentityUserStore _userStore;
 
     private readonly ITelegramService _telegramService;
 
     private string Content { get; set; } = string.Empty;
 
-    public SendMessageToAllPipeline(ITelegramUserRepository telegramUserRepository, ITelegramService telegramService)
+    public SendMessageToAllPipeline(IIdentityUserStore userStore, ITelegramService telegramService)
     {
-        _telegramUserRepository = telegramUserRepository;
+        _userStore = userStore;
         _telegramService = telegramService;
     }
 
@@ -53,13 +53,13 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
 
         try
         {
-            var notifications = _telegramUserRepository.GetAll()
-            .Select(u => new SendMessageModel
-            {
-                ChatId = u.Id,
-                Message = Content
-            })
-            .Select(m => _telegramService.Send(m, cancellationToken));
+            var notifications = (await _userStore.GetAllAsync(cancellationToken))
+                .Select(u => new SendMessageModel
+                {
+                    ChatId = u.ChatId,
+                    Message = Content
+                })
+                .Select(m => _telegramService.Send(m, cancellationToken));
 
             await Task.WhenAll(notifications);
 

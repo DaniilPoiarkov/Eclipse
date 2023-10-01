@@ -61,4 +61,9 @@ public class IdentityUserManager
         return (await _identityUserRepository.GetByExpressionAsync(u => u.Username == username, cancellationToken))
             .SingleOrDefault();
     }
+    public async Task<IdentityUser?> FindByChatId(long chatId, CancellationToken cancellationToken = default)
+    {
+        return (await _identityUserRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
+            .SingleOrDefault();
+    }
 }

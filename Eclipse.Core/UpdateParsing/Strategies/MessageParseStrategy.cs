@@ -18,10 +18,12 @@ internal class MessageParseStrategy : IParseStrategy
         var value = message.Text ?? string.Empty;
         var from = message.From!;
 
-        var name = $"{from.FirstName} {from.LastName}".Trim();
+        var name = from.FirstName;
+        var surname = from.LastName ?? string.Empty;
+
         var username = from.Username ?? string.Empty;
 
-        var user = new TelegramUser(chatId, name, username);
+        var user = new TelegramUser(chatId, name, surname, username);
 
         return new MessageContext(chatId, value, user);
     }

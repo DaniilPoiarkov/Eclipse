@@ -21,7 +21,7 @@ public class TelegramUserObjectParser : IObjectParser<TelegramUser>
             ? values[2].ToString()
             : string.Empty;
 
-        return new TelegramUser(id, name ?? string.Empty, userName ?? string.Empty);
+        return new TelegramUser(id, name ?? string.Empty, string.Empty, userName ?? string.Empty);
     }
 
     public IList<object> Parse(TelegramUser value)

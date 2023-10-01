@@ -9,7 +9,6 @@ using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
-using Eclipse.Application.Contracts.Telegram.TelegramUsers;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
@@ -22,7 +21,6 @@ using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.Telegram.Messages;
 using Eclipse.Application.Telegram.Pipelines;
-using Eclipse.Application.Telegram.TelegramUsers;
 using Eclipse.Application.TodoItems;
 using Eclipse.Infrastructure.Google.Sheets;
 
@@ -40,11 +38,11 @@ public static class EclipseApplicationModule
     public static IServiceCollection AddApplicationModule(this IServiceCollection services)
     {
         services
-            .AddSingleton<ITelegramUserStore, TelegramUserStore>()
+            .AddSingleton<IIdentityUserCache, IdentityUserCache>()
             .AddSingleton<IPipelineStore, PipelineStore>()
             .AddSingleton<IMessageStore, MessageStore>()
                 .AddTransient<ICommandService, CommandService>()
-                .AddTransient<ITelegramUserRepository, TelegramUserRepository>()
+                .AddTransient<IIdentityUserStore, IdentityUserStore>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
