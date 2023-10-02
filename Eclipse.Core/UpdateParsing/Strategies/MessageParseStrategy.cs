@@ -10,6 +10,13 @@ internal class MessageParseStrategy : IParseStrategy
 {
     public UpdateType Type => UpdateType.Message;
 
+    private readonly IServiceProvider _serviceProvider;
+
+    public MessageParseStrategy(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public MessageContext? Parse(Update update)
     {
         var message = update.Message!;
@@ -25,6 +32,9 @@ internal class MessageParseStrategy : IParseStrategy
 
         var user = new TelegramUser(chatId, name, surname, username);
 
-        return new MessageContext(chatId, value, user);
+        return new MessageContext(chatId, value, user)
+        {
+            Services = _serviceProvider
+        };
     }
 }

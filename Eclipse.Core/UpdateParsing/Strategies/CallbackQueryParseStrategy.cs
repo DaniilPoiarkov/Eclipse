@@ -10,6 +10,13 @@ public class CallbackQueryParseStrategy : IParseStrategy
 {
     public UpdateType Type => UpdateType.CallbackQuery;
 
+    private readonly IServiceProvider _serviceProvider;
+
+    public CallbackQueryParseStrategy(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     public MessageContext? Parse(Update update)
     {
         var callback = update.CallbackQuery!;
@@ -22,6 +29,9 @@ public class CallbackQueryParseStrategy : IParseStrategy
 
         var value = callback.Data ?? string.Empty;
 
-        return new MessageContext(from.Id, value, user);
+        return new MessageContext(from.Id, value, user)
+        {
+            Services = _serviceProvider
+        };
     }
 }

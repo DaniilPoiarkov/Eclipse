@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Localizations;
+﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.CachedServices;
 
@@ -13,8 +13,21 @@ namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
-    private static readonly Lazy<IEclipseLocalizer> _localizer = new(GetService<IEclipseLocalizer>);
-    protected static IEclipseLocalizer Localizer => _localizer.Value;
+    protected static IEclipseLocalizer Localizer
+    {
+        get
+        {
+            var currentUser = GetService<ICurrentTelegramUser>().GetCurrentUser();
+            var localizer = GetService<IEclipseLocalizer>();
+            
+            if (currentUser is not null)
+            {
+                localizer.CheckCulture(currentUser.Id);
+            }
+
+            return localizer;
+        }
+    }
 
     protected static IReadOnlyCollection<KeyboardButton> MainMenuButtons => new KeyboardButton[]
     {
@@ -30,30 +43,30 @@ public abstract class EclipsePipelineBase : PipelineBase
         return scope.ServiceProvider.GetRequiredService<TService>();
     }
     
-    // TODO: Provide middleware concept
-    public override async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
-    {
-        var cache = GetService<ICacheService>();
+    // TODO: Enhance this
+    //public override async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
+    //{
+    //    var cache = GetService<ICacheService>();
 
-        var key = new CacheKey($"lang-{context.ChatId}");
+    //    var key = new CacheKey($"lang-{context.ChatId}");
 
-        var culture = cache.Get<string>(key);
+    //    var culture = cache.Get<string>(key);
 
-        if (culture is not null)
-        {
-            return await base.RunNext(context, cancellationToken);
-        }
+    //    if (culture is not null)
+    //    {
+    //        return await base.RunNext(context, cancellationToken);
+    //    }
 
-        var identityService = GetService<IIdentityUserService>();
+    //    var userManager = GetService<IdentityUserManager>();
         
-        try
-        {
-            var user = await identityService.GetByChatIdAsync(context.ChatId, cancellationToken);
-            cache.Set(key, user.Culture);
-            Localizer.CheckCulture(user.ChatId);
-        }
-        catch (Exception) { }
+    //    var user = await userManager.FindByChatId(context.ChatId, cancellationToken);
 
-        return await base.RunNext(context, cancellationToken);
-    }
+    //    if (user is not null)
+    //    {
+    //        cache.Set(key, user.Culture);
+    //        Localizer.CheckCulture(user.ChatId);
+    //    }
+
+    //    return await base.RunNext(context, cancellationToken);
+    //}
 }

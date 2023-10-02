@@ -13,6 +13,8 @@ public class MessageContext
 
     public TelegramUser User { get; }
 
+    internal IServiceProvider Services { get; set; } = null!;
+
     public MessageContext(long chatId, string value, TelegramUser user)
     {
         ArgumentNullException.ThrowIfNull(user, nameof(user));
