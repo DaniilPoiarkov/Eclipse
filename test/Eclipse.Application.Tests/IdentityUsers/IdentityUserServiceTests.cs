@@ -3,8 +3,7 @@ using Eclipse.Application.Exceptions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.IdentityUsers;
-using Eclipse.Tests.Builders;
-
+using Eclipse.Tests.Generators;
 using FluentAssertions;
 
 using NSubstitute;

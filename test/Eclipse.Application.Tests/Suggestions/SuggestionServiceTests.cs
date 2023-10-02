@@ -2,13 +2,13 @@
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Suggestions;
-using Eclipse.Tests.Builders;
 
 using FluentAssertions;
 
 using NSubstitute;
 
 using Xunit;
+using Eclipse.Tests.Generators;
 
 namespace Eclipse.Application.Tests.Suggestions;
 
@@ -19,12 +19,12 @@ public class SuggestionServiceTests
     public SuggestionServiceTests()
     {
         var suggestionsSheetsService = Substitute.For<ISuggestionsSheetsService>();
-        var suggestions = SuggestionsBuilder.Generate(5, 1);
+        var suggestions = SuggestionsGenerator.Generate(5, 1);
 
         suggestionsSheetsService.GetAll().Returns(suggestions);
 
         var userRepository = Substitute.For<IIdentityUserStore>();
-        var users = IdentityUserDtoBuilder.GenerateUsers(1, 5);
+        var users = IdentityUserDtoGenerator.GenerateUsers(1, 5);
 
         userRepository.GetAllAsync().Returns(users);
 

@@ -2,8 +2,7 @@
 using Eclipse.Application.TodoItems;
 using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.Domain.TodoItems;
-using Eclipse.Tests.Builders;
-
+using Eclipse.Tests.Generators;
 using FluentAssertions;
 
 using NSubstitute;
@@ -51,7 +50,7 @@ public class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItems_ThenExceptionThrown()
     {
-        _repository.GetByExpressionAsync(i => i.TelegramUserId == 2).ReturnsForAnyArgs(TodoItemsBuilder.Generate(2, 7));
+        _repository.GetByExpressionAsync(i => i.TelegramUserId == 2).ReturnsForAnyArgs(TodoItemsGenerator.Generate(2, 7));
 
         var createModel = new CreateTodoItemDto
         {
@@ -87,7 +86,7 @@ public class TodoItemsServiceTests
     [Fact]
     public async Task GetUserItemsAsync_WhenUserHasFiveItems_ThenListOfFiveItems_Returned()
     {
-        _repository.GetByExpressionAsync(i => i.TelegramUserId == 3).ReturnsForAnyArgs(TodoItemsBuilder.Generate(3, 5));
+        _repository.GetByExpressionAsync(i => i.TelegramUserId == 3).ReturnsForAnyArgs(TodoItemsGenerator.Generate(3, 5));
 
         var result = await Sut.GetUserItemsAsync(3);
 

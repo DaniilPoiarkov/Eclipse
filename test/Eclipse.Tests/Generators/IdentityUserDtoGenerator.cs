@@ -2,9 +2,9 @@
 
 using Eclipse.Application.Contracts.IdentityUsers;
 
-namespace Eclipse.Tests.Builders;
+namespace Eclipse.Tests.Generators;
 
-public static class IdentityUserDtoBuilder
+public static class IdentityUserDtoGenerator
 {
     public static List<IdentityUserDto> GenerateUsers(long baseId, int count)
     {

@@ -2,7 +2,7 @@
 
 using Eclipse.Domain.IdentityUsers;
 
-namespace Eclipse.Tests.Builders;
+namespace Eclipse.Tests.Generators;
 
 public static class IdentityUserGenerator
 {
