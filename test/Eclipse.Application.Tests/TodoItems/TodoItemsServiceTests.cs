@@ -14,13 +14,25 @@ namespace Eclipse.Application.Tests.TodoItems;
 
 public class TodoItemsServiceTests
 {
+    private readonly ITodoItemRepository _repository;
+
+    private readonly Lazy<ITodoItemService> _lazySut;
+
+    private ITodoItemService Sut => _lazySut.Value;
+
+    public TodoItemsServiceTests()
+    {
+        var validator = new CreateTodoItemValidator();
+        var mapper = new TodoItemMapper();
+
+        _repository = Substitute.For<ITodoItemRepository>();
+        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(_repository, validator, mapper));
+    }
+
     [Fact]
     public async Task CreateAsync_WhenInputValid_ThenCreatedSuccessfully()
     {
-        var repository = Substitute.For<ITodoItemRepository>();
-        repository.GetByExpressionAsync(i => i.TelegramUserId == 1).ReturnsForAnyArgs(new List<TodoItem>());
-
-        var sut = CreateSut(repository);
+        _repository.GetByExpressionAsync(i => i.TelegramUserId == 1).ReturnsForAnyArgs(new List<TodoItem>());
 
         var createModel = new CreateTodoItemDto
         {
@@ -28,7 +40,7 @@ public class TodoItemsServiceTests
             UserId = 1,
         };
 
-        var result = await sut.CreateAsync(createModel);
+        var result = await Sut.CreateAsync(createModel);
 
         result.Should().NotBeNull();
         result.Text.Should().Be(createModel.Text);
@@ -39,10 +51,7 @@ public class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItems_ThenExceptionThrown()
     {
-        var repository = Substitute.For<ITodoItemRepository>();
-        repository.GetByExpressionAsync(i => i.TelegramUserId == 2).ReturnsForAnyArgs(TodoItemsBuilder.Generate(2, 7));
-
-        var sut = CreateSut(repository);
+        _repository.GetByExpressionAsync(i => i.TelegramUserId == 2).ReturnsForAnyArgs(TodoItemsBuilder.Generate(2, 7));
 
         var createModel = new CreateTodoItemDto
         {
@@ -52,7 +61,7 @@ public class TodoItemsServiceTests
 
         var action = async () =>
         {
-            await sut.CreateAsync(createModel);
+            await Sut.CreateAsync(createModel);
         };
 
         await action.Should().ThrowAsync<TodoItemLimitException>();
@@ -61,9 +70,6 @@ public class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenTestIsEmpty_ThenValidationFails()
     {
-        var repository = Substitute.For<ITodoItemRepository>();
-        var sut = CreateSut(repository);
-
         var createModel = new CreateTodoItemDto
         {
             Text = string.Empty,
@@ -72,7 +78,7 @@ public class TodoItemsServiceTests
 
         var action = async () =>
         {
-            await sut.CreateAsync(createModel);
+            await Sut.CreateAsync(createModel);
         };
 
         await action.Should().ThrowAsync<TodoItemValidationException>();
@@ -81,22 +87,11 @@ public class TodoItemsServiceTests
     [Fact]
     public async Task GetUserItemsAsync_WhenUserHasFiveItems_ThenListOfFiveItems_Returned()
     {
-        var repository = Substitute.For<ITodoItemRepository>();
-        repository.GetByExpressionAsync(i => i.TelegramUserId == 3).ReturnsForAnyArgs(TodoItemsBuilder.Generate(3, 5));
+        _repository.GetByExpressionAsync(i => i.TelegramUserId == 3).ReturnsForAnyArgs(TodoItemsBuilder.Generate(3, 5));
 
-        var sut = CreateSut(repository);
-
-        var result = await sut.GetUserItemsAsync(3);
+        var result = await Sut.GetUserItemsAsync(3);
 
         result.Count.Should().Be(5);
         result.All(i => i.TelegramUserId == 3).Should().BeTrue();
-    }
-
-    private static ITodoItemService CreateSut(ITodoItemRepository repository)
-    {
-        var validator = new CreateTodoItemValidator();
-        var mapper = new TodoItemMapper();
-
-        return new TodoItemService(repository, validator, mapper);
     }
 }
