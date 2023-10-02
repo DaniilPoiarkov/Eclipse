@@ -1,8 +1,6 @@
 ﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Cache;
-using Eclipse.Infrastructure.Quartz;
-using Eclipse.Pipelines.Jobs.Morning;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
@@ -11,12 +9,9 @@ internal class EnableMorningNotificationPipeline : AdminPipelineBase
 {
     private readonly ICacheService _cacheService;
 
-    private readonly IEclipseScheduler _scheduler;
-
-    public EnableMorningNotificationPipeline(ICacheService cacheService, IEclipseScheduler scheduler)
+    public EnableMorningNotificationPipeline(ICacheService cacheService)
     {
         _cacheService = cacheService;
-        _scheduler = scheduler;
     }
 
     protected override void Initialize()
@@ -24,7 +19,7 @@ internal class EnableMorningNotificationPipeline : AdminPipelineBase
         RegisterStage(EnableMorningNotifications);
     }
 
-    private async Task<IResult> EnableMorningNotifications(MessageContext context)
+    private IResult EnableMorningNotifications(MessageContext context)
     {
         var key = new CacheKey($"notifications-enabled-{context.ChatId}");
 
@@ -34,9 +29,6 @@ internal class EnableMorningNotificationPipeline : AdminPipelineBase
         }
 
         _cacheService.Set(key, true);
-
-        var config = new MorningJobConfiguration();
-        await _scheduler.ScheduleJob(config);
         
         return Text(Localizer["Pipelines:AdminMenu:MorningNotificationEnabled"]);
     }
