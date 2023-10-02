@@ -34,7 +34,7 @@ public static class EclipsePipelinesModule
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
-            .AddClasses()
+            .AddClasses(c => c.AssignableTo<EclipseJobBase>())
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 

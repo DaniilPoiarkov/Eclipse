@@ -1,4 +1,5 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Core.Builder;
+using Eclipse.Core.Core;
 using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.UpdateParsing;
@@ -13,14 +14,19 @@ namespace Eclipse.Core;
 /// </summary>
 public static class EclipseCoreModule
 {
-    public static IServiceCollection AddCoreModule(this IServiceCollection services)
+    public static IServiceCollection AddCoreModule(this IServiceCollection services, Action<CoreBuilder>? builder = null)
     {
+        var coreBuilder = new CoreBuilder(services);
+
+        builder?.Invoke(coreBuilder);
+
         services.AddTransient<INotFoundPipeline, NotFoundPipeline>()
             .AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()
             .AddTransient<IPipelineProvider, PipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
-            .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>();
+                .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>()
+                .AddScoped<ICoreDecorator, NullCoreDecorator>();
 
         services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
             .AddClasses(c => c.AssignableTo<IParseStrategy>())

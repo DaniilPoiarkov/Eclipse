@@ -9,6 +9,7 @@ using Eclipse.Infrastructure;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
+using Eclipse.Pipelines.Decorations;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters;
@@ -26,7 +27,7 @@ builder.Services
     .AddApplicationModule()
     .AddDomainSharedModule()
     .AddDomainModule()
-    .AddCoreModule()
+    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()

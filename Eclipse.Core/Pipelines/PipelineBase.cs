@@ -1,5 +1,8 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Core.Builder;
+using Eclipse.Core.Core;
 using Eclipse.Core.Results;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Core.Pipelines;
 
@@ -15,6 +18,25 @@ public abstract class PipelineBase : Pipeline
     }
 
     public virtual async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
+    {
+        var decorations = context.Services.GetServices<ICoreDecorator>();
+
+        Func<MessageContext, CancellationToken, Task<IResult>> execution = RunAsync;
+
+        foreach (var stage in decorations)
+        {
+            var inner = execution;
+
+            execution = async (context, token) =>
+            {
+                return await stage.Decorate(inner, context, token);
+            };
+        }
+
+        return await execution(context, cancellationToken);
+    }
+
+    private async Task<IResult> RunAsync(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (IsFinished)
         {
