@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Localizations;
+﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.CachedServices;
 
@@ -44,15 +44,15 @@ public abstract class EclipsePipelineBase : PipelineBase
             return await base.RunNext(context, cancellationToken);
         }
 
-        var identityService = GetService<IIdentityUserService>();
+        var identityService = GetService<IdentityUserManager>();
+
+        var user = await identityService.FindByChatIdAsync(context.ChatId, cancellationToken);
         
-        try
+        if (user is not null)
         {
-            var user = await identityService.GetByChatIdAsync(context.ChatId, cancellationToken);
             cache.Set(key, user.Culture);
             Localizer.CheckCulture(user.ChatId);
         }
-        catch (Exception) { }
 
         return await base.RunNext(context, cancellationToken);
     }

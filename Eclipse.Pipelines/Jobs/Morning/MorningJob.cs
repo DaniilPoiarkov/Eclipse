@@ -14,7 +14,7 @@ internal class MorningJob : EclipseJobBase
 {
     private readonly ICacheService _cacheService;
 
-    private readonly IIdentityUserStore _userStore;
+    private readonly IIdentityUserService _userService;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -24,13 +24,13 @@ internal class MorningJob : EclipseJobBase
 
     public MorningJob(
         ICacheService cacheService,
-        IIdentityUserStore userStore,
+        IIdentityUserService userService,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient)
     {
         _cacheService = cacheService;
-        _userStore = userStore;
+        _userService = userService;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
@@ -38,7 +38,9 @@ internal class MorningJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var users = await _userStore.GetAllAsync(context.CancellationToken);
+        var users = (await _userService.GetAllAsync(context.CancellationToken))
+            .Where(u => u.NotificationsEnabled)
+            .ToList();
 
         var notifications = new List<Task<IResult>>(users.Count);
 

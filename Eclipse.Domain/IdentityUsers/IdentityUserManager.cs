@@ -56,12 +56,12 @@ public class IdentityUserManager
         return await _identityUserRepository.FindAsync(id, cancellationToken);
     }
 
-    public async Task<IdentityUser?> FindByUsername(string username, CancellationToken cancellationToken = default)
+    public async Task<IdentityUser?> FindByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         return (await _identityUserRepository.GetByExpressionAsync(u => u.Username == username, cancellationToken))
             .SingleOrDefault();
     }
-    public async Task<IdentityUser?> FindByChatId(long chatId, CancellationToken cancellationToken = default)
+    public async Task<IdentityUser?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return (await _identityUserRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
             .SingleOrDefault();
