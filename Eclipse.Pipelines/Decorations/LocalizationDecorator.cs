@@ -6,7 +6,7 @@ using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Pipelines.Decorations;
 
-public class LocalizerDecoration : ICoreDecorator
+public class LocalizationDecorator : ICoreDecorator
 {
     private readonly IdentityUserManager _userManager;
 
@@ -14,7 +14,7 @@ public class LocalizerDecoration : ICoreDecorator
 
     private readonly IEclipseLocalizer _localizer;
 
-    public LocalizerDecoration(IdentityUserManager userManager, ICacheService cacheService, IEclipseLocalizer localizer)
+    public LocalizationDecorator(IdentityUserManager userManager, ICacheService cacheService, IEclipseLocalizer localizer)
     {
         _userManager = userManager;
         _cacheService = cacheService;
@@ -23,13 +23,20 @@ public class LocalizerDecoration : ICoreDecorator
 
     public async Task<IResult> Decorate(Func<MessageContext, CancellationToken, Task<IResult>> execution, MessageContext context, CancellationToken cancellationToken = default)
     {
+        await CheckLocalizationAsync(context, cancellationToken);
+
+        return await execution(context, cancellationToken);
+    }
+
+    private async Task CheckLocalizationAsync(MessageContext context, CancellationToken cancellationToken)
+    {
         var key = new CacheKey($"lang-{context.ChatId}");
 
         var culture = _cacheService.Get<string>(key);
 
         if (culture is not null)
         {
-            return await execution(context, cancellationToken);
+            return;
         }
 
         var user = await _userManager.FindByChatIdAsync(context.ChatId, cancellationToken);
@@ -39,7 +46,5 @@ public class LocalizerDecoration : ICoreDecorator
             _cacheService.Set(key, user.Culture);
             _localizer.CheckCulture(user.ChatId);
         }
-
-        return await execution(context, cancellationToken);
     }
 }

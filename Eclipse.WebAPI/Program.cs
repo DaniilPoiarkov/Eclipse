@@ -27,7 +27,7 @@ builder.Services
     .AddApplicationModule()
     .AddDomainSharedModule()
     .AddDomainModule()
-    .AddCoreModule(builder => builder.Decorate<LocalizerDecoration>())
+    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()
