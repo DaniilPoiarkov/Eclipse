@@ -25,7 +25,8 @@ public static class EclipseCoreModule
             .AddTransient<IPipelineProvider, PipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
-            .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>();
+                .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>()
+                .AddScoped<ICoreDecorator, NullCoreDecorator>();
 
         services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
             .AddClasses(c => c.AssignableTo<IParseStrategy>())

@@ -1,6 +1,4 @@
-﻿using Eclipse.Core.Core;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Core.Builder;
 
@@ -19,9 +17,4 @@ public class CoreBuilder
         _services.AddTransient<ICoreDecorator, TCoreDecorator>();
         return this;
     }
-}
-
-public interface ICoreDecorator
-{
-    Task<IResult> Decorate(Func<MessageContext, CancellationToken, Task<IResult>> execution, MessageContext context, CancellationToken cancellationToken = default);
 }
