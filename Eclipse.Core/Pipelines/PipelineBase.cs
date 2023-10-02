@@ -4,8 +4,6 @@ using Eclipse.Core.Results;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using System.Threading;
-
 namespace Eclipse.Core.Pipelines;
 
 public abstract class PipelineBase : Pipeline
@@ -36,23 +34,6 @@ public abstract class PipelineBase : Pipeline
         }
 
         return await execution(context, cancellationToken);
-
-        //if (IsFinished)
-        //{
-        //    return new EmptyResult()
-        //    {
-        //        ChatId = context.ChatId
-        //    };
-        //}
-
-        //var next = _stages.Dequeue();
-
-        //var result = await next.RunAsync(context, cancellationToken) as ResultBase
-        //    ?? new EmptyResult();
-
-        //result.ChatId = context.ChatId;
-
-        //return result;
     }
 
     private async Task<IResult> RunAsync(MessageContext context, CancellationToken cancellationToken = default)
