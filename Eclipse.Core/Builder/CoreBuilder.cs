@@ -16,7 +16,7 @@ public class CoreBuilder
     public CoreBuilder Decorate<TCoreDecorator>()
         where TCoreDecorator : class, ICoreDecorator
     {
-        _services.AddScoped<ICoreDecorator, TCoreDecorator>();
+        _services.AddTransient<ICoreDecorator, TCoreDecorator>();
         return this;
     }
 }

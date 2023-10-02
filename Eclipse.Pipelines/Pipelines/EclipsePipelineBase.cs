@@ -1,8 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
-using Eclipse.Domain.IdentityUsers;
-using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.CachedServices;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -39,39 +37,6 @@ public abstract class EclipsePipelineBase : PipelineBase
     private static TService GetService<TService>()
         where TService : class
     {
-        using var scope = CachedServiceProvider.Services.CreateScope();
-        return scope.ServiceProvider.GetRequiredService<TService>();
+        return CachedServiceProvider.Services.GetRequiredService<TService>();
     }
-
-    // TODO: Enhance this
-    //public override async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
-    //{
-    //    var cache = GetService<ICacheService>();
-
-    //    var key = new CacheKey($"lang-{context.ChatId}");
-
-    //    var culture = cache.Get<string>(key);
-
-    //    if (culture is not null)
-    //    {
-    //        return await base.RunNext(context, cancellationToken);
-    //    }
-
-    //    if (culture is not null)
-    //    {
-    //        return await base.RunNext(context, cancellationToken);
-    //    }
-
-    //    var identityService = GetService<IdentityUserManager>();
-
-    //    var user = await identityService.FindByChatIdAsync(context.ChatId, cancellationToken);
-        
-    //    if (user is not null)
-    //    {
-    //        cache.Set(key, user.Culture);
-    //        Localizer.CheckCulture(user.ChatId);
-    //    }
-
-    //    return await base.RunNext(context, cancellationToken);
-    //}
 }
