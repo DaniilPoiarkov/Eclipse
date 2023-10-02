@@ -2,9 +2,9 @@
 
 using Eclipse.Application.Contracts.Suggestions;
 
-namespace Eclipse.Tests.Builders;
+namespace Eclipse.Tests.Generators;
 
-public static class SuggestionsBuilder
+public static class SuggestionsGenerator
 {
     public static List<SuggestionDto> Generate(int count, long baseUserId)
     {

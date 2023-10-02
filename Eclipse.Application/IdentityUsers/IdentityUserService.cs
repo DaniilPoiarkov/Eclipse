@@ -37,7 +37,7 @@ internal class IdentityUserService : IIdentityUserService
 
     public async Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatId(chatId, cancellationToken)
+        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
         return _mapper.Map(user);

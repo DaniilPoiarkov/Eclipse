@@ -2,9 +2,9 @@
 
 using Eclipse.Domain.TodoItems;
 
-namespace Eclipse.Tests.Builders;
+namespace Eclipse.Tests.Generators;
 
-public static class TodoItemsBuilder
+public static class TodoItemsGenerator
 {
     public static List<TodoItem> Generate(long userId, int count)
     {

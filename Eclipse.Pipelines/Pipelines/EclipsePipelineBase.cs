@@ -42,7 +42,7 @@ public abstract class EclipsePipelineBase : PipelineBase
         using var scope = CachedServiceProvider.Services.CreateScope();
         return scope.ServiceProvider.GetRequiredService<TService>();
     }
-    
+
     // TODO: Enhance this
     //public override async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
     //{
@@ -57,10 +57,15 @@ public abstract class EclipsePipelineBase : PipelineBase
     //        return await base.RunNext(context, cancellationToken);
     //    }
 
-    //    var userManager = GetService<IdentityUserManager>();
-        
-    //    var user = await userManager.FindByChatId(context.ChatId, cancellationToken);
+    //    if (culture is not null)
+    //    {
+    //        return await base.RunNext(context, cancellationToken);
+    //    }
 
+    //    var identityService = GetService<IdentityUserManager>();
+
+    //    var user = await identityService.FindByChatIdAsync(context.ChatId, cancellationToken);
+        
     //    if (user is not null)
     //    {
     //        cache.Set(key, user.Culture);
