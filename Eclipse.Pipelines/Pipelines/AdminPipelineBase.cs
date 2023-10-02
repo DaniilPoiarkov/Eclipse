@@ -10,7 +10,7 @@ public abstract class AdminPipelineBase : EclipsePipelineBase
     protected static IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> AdminMenuButtons => new List<KeyboardButton[]>
     {
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:View"]), new KeyboardButton(Localizer["Menu:AdminMenu:Send"]) },
-        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Morning"]) },
+        //new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Morning"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:SwitchToUserMode"]) },
     };
 
