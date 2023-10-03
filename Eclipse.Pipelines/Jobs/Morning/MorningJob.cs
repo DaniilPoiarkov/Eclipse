@@ -1,8 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Pipelines;
-using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Domain.IdentityUsers;
 
 using Quartz;
 
@@ -12,47 +11,33 @@ namespace Eclipse.Pipelines.Jobs.Morning;
 
 internal class MorningJob : EclipseJobBase
 {
-    private readonly ICacheService _cacheService;
-
-    private readonly IIdentityUserService _userService;
-
     private readonly IPipelineStore _pipelineStore;
 
     private readonly IPipelineProvider _pipelineProvider;
 
     private readonly ITelegramBotClient _botClient;
 
+    private readonly IIdentityUserRepository _identityUserRepository;
+
     public MorningJob(
-        ICacheService cacheService,
-        IIdentityUserService userService,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        ITelegramBotClient botClient)
+        ITelegramBotClient botClient,
+        IIdentityUserRepository identityUserRepository)
     {
-        _cacheService = cacheService;
-        _userService = userService;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
+        _identityUserRepository = identityUserRepository;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var users = (await _userService.GetAllAsync(context.CancellationToken))
-            .Where(u => u.NotificationsEnabled)
-            .ToList();
-
+        var users = await _identityUserRepository.GetByExpressionAsync(u => u.NotificationsEnabled, context.CancellationToken);
         var notifications = new List<Task<IResult>>(users.Count);
 
         foreach (var user in users)
         {
-            var isEnabled = _cacheService.Get<bool>(new CacheKey($"notifications-enabled-{user.Id}"));
-
-            if (!isEnabled)
-            {
-                continue;
-            }
-
             var pipeline = _pipelineProvider.Get("/daily_morning");
 
             var messageContext = new MessageContext(user.ChatId, string.Empty, new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username));

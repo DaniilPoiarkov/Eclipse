@@ -27,11 +27,10 @@ public abstract class EclipsePipelineBase : PipelineBase
         }
     }
 
-    protected static IReadOnlyCollection<KeyboardButton> MainMenuButtons => new KeyboardButton[]
+    protected static IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> MainMenuButtons => new List<KeyboardButton[]>
     {
-        new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]),
-        new KeyboardButton(Localizer["Menu:MainMenu:MyToDos"]),
-        new KeyboardButton(Localizer["Menu:MainMenu:Language"]),
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:MyToDos"]) },
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]), new KeyboardButton(Localizer["Menu:MainMenu:Settings"]) }
     };
 
     private static TService GetService<TService>()
