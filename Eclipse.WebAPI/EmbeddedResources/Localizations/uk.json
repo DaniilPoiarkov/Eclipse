@@ -5,6 +5,8 @@
     "WhateverYouWant": "Як побажаєш",
     "Suggestions": "Пропозиції",
     "CreatedAt": "Створено о",
+    "Enable": "Включити",
+    "Disable": "Виключити",
 
     "Telegram:BotAlreadyRunning": "Неможливо запустити бота оскільки він вже працює",
     "Telegram:MessageCannotBeEmpty": "Повідомлення не може бути пустим",
@@ -54,9 +56,6 @@
     "Pipelines:AdminMenu:Error": "Сталась помилка",
     "Pipelines:AdminMenu:UserMode": "Включено режим користувача",
 
-    "Pipelines:AdminMenu:MorningNotificationEnabled": "Ранкові нотифікації включені",
-    "Pipelines:AdminMenu:MorningNotificationAlreadyEnabled": "Ранкові нотифікації вже включено",
-
     "Pipelines:AdminMenu:View": "Меню перегляду",
     "Pipelines:AdminMenu:Send": "Меню надсилань",
 
@@ -66,25 +65,36 @@
 
     "Pipelines:NotFound": "Я нічого про це не знаю. Це точно якась кнопочка з меню?",
 
-    "Pipelines:Language:English": "Англійська 🇺🇸",
-    "Pipelines:Language:Ukrainian": "Українська 🇺🇦",
-    "Pipelines:Language:Choose": "Обери мову",
-    "Pipelines:Language:Unsupported": "Ця мова не підтримується",
-    "Pipelines:Language:Changed": "Мова успішно змінена!",
+    "Pipelines:Settings": "Налаштування",
+    "Pipelines:Settings:Language:English": "Англійська 🇺🇸",
+    "Pipelines:Settings:Language:Ukrainian": "Українська 🇺🇦",
+    "Pipelines:Settings:Language:Choose": "Обери мову",
+    "Pipelines:Settings:Language:Unsupported": "Ця мова не підтримується",
+    "Pipelines:Settings:Language:Changed": "Мова успішно змінена!",
+
+    "Pipelines:Settings:Notifications:Enabled": "Сповіщення включено",
+    "Pipelines:Settings:Notifications:Disabled": "Сповіщення виключено",
+    "Pipelines:Settings:Notifications:AlreadyEnabled": "Сповіщення вже включені",
+    "Pipelines:Settings:Notifications:AlreadyDisabled": "Сповіщення вже виключені",
+    "Pipelines:Settings:Notifications:Error": "Хмм.. щось пішло не так, спробуй трошки пізніше ще раз",
+    "Pipelines:Settings:Notifications:Message": "І ми тут",
 
     "Pipelines:Morning:AskMood": "Добрий ранок🌖\n\rЯк справи?😊",
     "Pipelines:Morning:GoodMood": "Це дуже добре!\n\rБажаю тобі гарного дня😊",
     "Pipelines:Morning:BadMood": "Це нормально, ніхто не буває завжди у гарному настрої🤗\n\rСподіваюсь цей день пройде чудово😊",
     "Pipelines:Morning:NotDefined": "Я не зовсім розумію, але я дуже сподіваюсь, що це значить так😅\n\rУ будь якому випадку я сподіваюсь, що ти знайдеш причину посміхнутись😊",
 
+
     "Menu:MainMenu": "Головне меню",
+
     "Menu:MainMenu:Suggest": "Запропонувати 💡",
     "Menu:MainMenu:MyToDos": "Мої плани 📝",
-    "Menu:MainMenu:Language": "Змінити мову 🌐",
+    "Menu:MainMenu:Settings": "Налаштування ⚙️",
+
+    "Menu:Settings:Language": "Змінити мову 🌐",
+    "Menu:Settings:Notifications": "Сповіщення 🔈",
 
     "Menu:AdminMenu": "Меню адміністратора",
-
-    "Menu:AdminMenu:Morning": "Включити ранкові нотифікації",
 
     "Menu:AdminMenu:View": "Перегляд",
     "Menu:AdminMenu:View:Suggestions": "Переглянути пропозиції",
