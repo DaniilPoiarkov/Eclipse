@@ -3,13 +3,14 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Domain.Shared.IdentityUsers;
 using Eclipse.Infrastructure.Cache;
+using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Language;
 
-[Route("Menu:MainMenu:Language", "/language")]
-internal class ChangeLanguagePipeline : EclipsePipelineBase
+[Route("Menu:Settings:Language", "/settings_language")]
+internal class ChangeLanguagePipeline : SettingsPipelineBase
 {
     private readonly ICacheService _cacheService;
 
@@ -31,21 +32,27 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
     {
         var buttons = new List<InlineKeyboardButton>
         {
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Language:English"], "en"),
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Language:Ukrainian"], "uk"),
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Settings:Language:English"], "en"),
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Settings:Language:Ukrainian"], "uk"),
         };
 
-        return Menu(buttons, Localizer["Pipelines:Language:Choose"]);
+        return Menu(buttons, Localizer["Pipelines:Settings:Language:Choose"]);
     }
 
     private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (!SupportedLanguage(context))
         {
-            return Menu(MainMenuButtons, Localizer["Pipelines:Language:Unsupported"]);
+            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Unsupported"]);
         }
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (user.Culture == context.Value)
+        {
+            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Changed"]);
+        }
+
         var updateDto = new IdentityUserUpdateDto
         {
             Culture = context.Value,
@@ -60,7 +67,7 @@ internal class ChangeLanguagePipeline : EclipsePipelineBase
 
         Localizer.CheckCulture(context.ChatId);
 
-        return Menu(MainMenuButtons, Localizer["Pipelines:Language:Changed"]);
+        return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Changed"]);
 
         static bool SupportedLanguage(MessageContext context)
         {
