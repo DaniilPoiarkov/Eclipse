@@ -17,9 +17,7 @@ internal class LocalizationConsole
 
         services.AddLocalizationSupport(builder =>
         {
-            builder
-                .AddJsonFile("Resources/en.json")
-                .AddJsonFile("Resources/ua.json");
+            builder.AddJsonFiles("Resources");
 
             builder.DefaultLocalization = "ua";
         });

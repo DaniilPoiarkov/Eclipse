@@ -10,6 +10,8 @@ internal class LocalizationBuilder : ILocalizationBuilder
 
     public string DefaultLocalization { get; set; } = "en";
 
+    public LocalizationBuilder() { }
+
     public ILocalizationBuilder AddJsonFile(string path)
     {
         var fullPath = Path.GetFullPath(path);
@@ -30,6 +32,33 @@ internal class LocalizationBuilder : ILocalizationBuilder
         }
 
         _localizations.Add(localizationResource);
+
+        return this;
+    }
+
+    public ILocalizationBuilder AddJsonFiles(string path)
+    {
+        var fullPath = Path.GetFullPath(path);
+
+        var cultureInfos = Directory.GetFiles(fullPath, "*.json")
+            .Select(File.ReadAllText)
+            .Select(JsonConvert.DeserializeObject<CultureInfo>)
+            .Where(cultureInfo => cultureInfo is not null);
+
+        foreach (var cultureInfo in cultureInfos)
+        {
+            var existing = _localizations.FirstOrDefault(l => l.Localization == cultureInfo!.Localization);
+
+            if (existing is null)
+            {
+                _localizations.Add(cultureInfo!);
+                continue;
+            }
+
+            existing.Texts = existing.Texts
+                .Concat(cultureInfo!.Texts)
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+        }
 
         return this;
     }
