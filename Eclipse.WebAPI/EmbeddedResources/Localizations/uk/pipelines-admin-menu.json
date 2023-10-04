@@ -1,0 +1,19 @@
+{
+  "Localization": "uk",
+  "Texts": {
+    "Pipelines:AdminMenu": "Включено режим адміністратора",
+    "Pipelines:AdminMenu:SendToUser:SendUserId": "Відправте ідентифікатор користовуча",
+    "Pipelines:AdminMenu:SendToUser:UnableToParse": "Не вдалося обробити значення. Виконання припинено",
+    "Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty": "Контент не може бути пустим. Виконання припинено",
+
+    "Pipelines:AdminMenu:SendContent": "Відправте повідомлення",
+    "Pipelines:AdminMenu:Confirm": "Відправте /confirm щоб відправити повідомлення або /cancel щоб повернутися назад",
+    "Pipelines:AdminMenu:ConfirmationFailed": "Підтвердження скасовано",
+    "Pipelines:AdminMenu:SentSuccessfully": "Успішно відправлено",
+    "Pipelines:AdminMenu:Error": "Сталась помилка",
+    "Pipelines:AdminMenu:UserMode": "Включено режим користувача",
+
+    "Pipelines:AdminMenu:View": "Меню перегляду",
+    "Pipelines:AdminMenu:Send": "Меню надсилань"
+  }
+}

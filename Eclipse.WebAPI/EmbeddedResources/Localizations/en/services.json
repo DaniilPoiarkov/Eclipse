@@ -1,0 +1,19 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
+    "Telegram:MessageCannotBeEmpty": "Message can not be empty",
+
+    "TodoItem:AlreadyFinished": "TodoItem {0} already finished",
+    "TodoItem:Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",
+    "TodoItem:Empty": "To do item cannot be empty",
+    "TodoItem:MaxLength": "To do item cannot be more than 125 characters",
+
+    "Eclipse:ValidationFailed": "🥺It looks like I forgot to tell you that {0}.\n\rClick 'Add item' and try again",
+
+    "BotCommand:CommandMinLength": "Command cant be less then 1 symbol",
+    "BotCommand:CommandManLength": "Command cant be more then 24 symbols",
+    "BotCommand:DescriptionMinLength": "Description cant be less then 10 symbols",
+    "BotCommand:DescriptionMaxLength": "Description cant be more then 256 symbols"
+  }
+}

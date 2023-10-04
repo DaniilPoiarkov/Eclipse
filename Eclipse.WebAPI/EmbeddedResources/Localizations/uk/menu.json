@@ -1,0 +1,28 @@
+{
+  "Localization": "uk",
+  "Texts": {
+    "Menu:MainMenu": "Головне меню",
+
+    "Menu:MainMenu:Suggest": "Запропонувати 💡",
+    "Menu:MainMenu:MyToDos": "Мої плани 📝",
+    "Menu:MainMenu:Settings": "Налаштування ⚙️",
+
+    "Menu:Settings:Language": "Змінити мову 🌐",
+    "Menu:Settings:Notifications": "Сповіщення 🔈",
+
+    "Menu:AdminMenu": "Меню адміністратора",
+
+    "Menu:AdminMenu:View": "Перегляд",
+    "Menu:AdminMenu:View:Suggestions": "Переглянути пропозиції",
+    "Menu:AdminMenu:View:Users": "Переглянути користувачів",
+
+    "Menu:AdminMenu:Send": "Відправити",
+    "Menu:AdminMenu:Send:User": "Відправити користувачу",
+    "Menu:AdminMenu:Send:All": "Відправити всім",
+
+    "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
+
+    "Menu:TodoItemsMenu:AddItem": "Запланувати",
+    "Menu:TodoItemsMenu:MyList": "Мій список"
+  }
+}

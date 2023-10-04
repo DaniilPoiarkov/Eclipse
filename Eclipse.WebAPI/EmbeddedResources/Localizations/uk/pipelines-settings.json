@@ -1,0 +1,18 @@
+{
+  "Localization": "uk",
+  "Texts": {
+    "Pipelines:Settings": "Налаштування",
+    "Pipelines:Settings:Language:English": "Англійська 🇺🇸",
+    "Pipelines:Settings:Language:Ukrainian": "Українська 🇺🇦",
+    "Pipelines:Settings:Language:Choose": "Обери мову",
+    "Pipelines:Settings:Language:Unsupported": "Ця мова не підтримується",
+    "Pipelines:Settings:Language:Changed": "Мова успішно змінена!",
+
+    "Pipelines:Settings:Notifications:Enabled": "Сповіщення включено",
+    "Pipelines:Settings:Notifications:Disabled": "Сповіщення виключено",
+    "Pipelines:Settings:Notifications:AlreadyEnabled": "Сповіщення вже включені",
+    "Pipelines:Settings:Notifications:AlreadyDisabled": "Сповіщення вже виключені",
+    "Pipelines:Settings:Notifications:Error": "Хмм.. щось пішло не так, спробуй трошки пізніше ще раз",
+    "Pipelines:Settings:Notifications:Message": "І ми тут"
+  }
+}
