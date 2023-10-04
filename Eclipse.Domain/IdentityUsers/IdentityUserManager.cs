@@ -1,5 +1,4 @@
 ﻿using Eclipse.Domain.IdentityUsers.Exceptions;
-using Eclipse.Domain.Shared.IdentityUsers;
 
 namespace Eclipse.Domain.IdentityUsers;
 
@@ -12,31 +11,23 @@ public class IdentityUserManager
         _identityUserRepository = identityUserRepository;
     }
 
-    public async Task<IdentityUser?> CreateAsync(IdentityUserCreateDto createUserDto, CancellationToken cancellationToken = default)
+    public async Task<IdentityUser?> CreateAsync(
+        string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(createUserDto, nameof(createUserDto));
-
         var withSameData = await _identityUserRepository.GetByExpressionAsync(
-            expression: u => u.ChatId == createUserDto.ChatId || u.Username == createUserDto.Username,
+            expression: u => u.ChatId == chatId || u.Username == username,
             cancellationToken: cancellationToken);
 
         if (withSameData.Count != 0)
         {
-            var withSameId = withSameData.FirstOrDefault(u => u.ChatId == createUserDto.ChatId);
+            var withSameId = withSameData.FirstOrDefault(u => u.ChatId == chatId);
 
             return withSameId is not null
-                ? throw new DuplicateDataException(nameof(createUserDto.ChatId), createUserDto.ChatId)
-                : throw new DuplicateDataException(nameof(createUserDto.Username), createUserDto.Username);
+                ? throw new DuplicateDataException(nameof(chatId), chatId)
+                : throw new DuplicateDataException(nameof(username), username);
         }
 
-        var identityUser = new IdentityUser(
-                Guid.NewGuid(),
-                createUserDto.Name,
-                createUserDto.Surname,
-                createUserDto.Username,
-                createUserDto.ChatId,
-                createUserDto.Culture,
-                createUserDto.NotificationsEnabled);
+        var identityUser = new IdentityUser(Guid.NewGuid(), name, surname, username, chatId, culture, notificationsEnabled);
 
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }

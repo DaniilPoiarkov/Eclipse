@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Exceptions;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -20,7 +19,9 @@ internal class IdentityUserService : IIdentityUserService
 
     public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var identity = await _userManager.CreateAsync(createDto, cancellationToken)
+        var identity = await _userManager.CreateAsync(
+            createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, createDto.Culture, createDto.NotificationsEnabled,
+            cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
         return _mapper.Map(identity);

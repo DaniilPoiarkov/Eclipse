@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
-using Eclipse.Domain.Shared.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
 

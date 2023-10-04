@@ -1,6 +1,5 @@
 ﻿using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.IdentityUsers.Exceptions;
-using Eclipse.Domain.Shared.IdentityUsers;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -25,33 +24,30 @@ public class IdentityUserManagerTests
     [Fact]
     public async Task CreateAsync_WhenModelValid_THenCreatedUserReturned()
     {
-        var createDto = new IdentityUserCreateDto
-        {
-            Name = "Name",
-            Surname = "Surname",
-            ChatId = 1,
-            Culture = "en",
-            NotificationsEnabled = false,
-        };
+        var name = "Name";
+        var surname = "Surname";
+        var chatId = 1;
+        var culture = "en";
+        var notificationsEnabled = false;
 
         var identityUser = new IdentityUser(
             Guid.NewGuid(),
-            createDto.Name,
-            createDto.Surname,
-            createDto.Username,
-            createDto.ChatId,
-            createDto.Culture,
-            createDto.NotificationsEnabled);
+            name,
+            surname,
+            string.Empty,
+            chatId,
+            culture,
+            notificationsEnabled);
 
         _repository.CreateAsync(IdentityUserGenerator.Generate(1).First()).ReturnsForAnyArgs(identityUser);
 
-        var result = await Sut.CreateAsync(createDto);
+        var result = await Sut.CreateAsync(name, surname, string.Empty, chatId, culture, notificationsEnabled);
 
         result.Should().NotBeNull();
-        result!.Name.Should().Be(createDto.Name);
-        result.Surname.Should().Be(createDto.Surname);
-        result.Culture.Should().Be(createDto.Culture);
-        result.ChatId.Should().Be(createDto.ChatId);
+        result!.Name.Should().Be(name);
+        result.Surname.Should().Be(surname);
+        result.Culture.Should().Be(culture);
+        result.ChatId.Should().Be(chatId);
         result.Id.Should().NotBeEmpty();
     }
 
@@ -65,19 +61,9 @@ public class IdentityUserManagerTests
 
         var duplicatedData = returnData.First();
 
-        var createDto = new IdentityUserCreateDto
-        {
-            Name = "Name",
-            Surname = "Surname",
-            ChatId = duplicatedData.ChatId,
-            Culture = "en",
-            NotificationsEnabled = false,
-            Username = duplicatedData.Username,
-        };
-
         var action = async () =>
         {
-            await Sut.CreateAsync(createDto);
+            await Sut.CreateAsync("Name", "Surname", duplicatedData.Username, duplicatedData.ChatId, "en", false);
         };
 
         await action.Should().ThrowAsync<DuplicateDataException>();
