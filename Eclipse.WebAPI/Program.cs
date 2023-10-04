@@ -60,8 +60,8 @@ builder.Services.AddLocalizationSupport(builder =>
 {
     var path = "EmbeddedResources/Localizations/";
 
-    builder.AddJsonFile($"{path}en.json")
-        .AddJsonFile($"{path}uk.json");
+    builder.AddJsonFiles($"{path}en")
+        .AddJsonFiles($"{path}uk");
 
     builder.DefaultLocalization = "uk";
 });

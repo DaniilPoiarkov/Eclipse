@@ -1,0 +1,10 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Pipelines:Suggest": "{0}! Feel free to describe your idea or write /cancel to return",
+    "Pipelines:Suggest:Greetings": "Hey;Glad to head that;Wow;Awesome",
+    "Pipelines:Suggest:AsYouWish": "As you wish",
+    "Pipelines:Suggest:Error": "I'm sure that you have excellent thoughts, unfortunately I can understand only text, so I'll appreciate well-known letters😊",
+    "Pipelines:Suggest:Success": "Thank you for suggestion! I'll think about it"
+  }
+}

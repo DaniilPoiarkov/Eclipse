@@ -1,0 +1,18 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Pipelines:Settings": "Settings menu",
+    "Pipelines:Settings:Language:English": "English 🇺🇸",
+    "Pipelines:Settings:Language:Ukrainian": "Ukrainian 🇺🇦",
+    "Pipelines:Settings:Language:Choose": "Select a language",
+    "Pipelines:Settings:Language:Unsupported": "This language is unsupported",
+    "Pipelines:Settings:Language:Changed": "Language changed successfully!",
+
+    "Pipelines:Settings:Notifications:Enabled": "Notifications enabled",
+    "Pipelines:Settings:Notifications:Disabled": "Notifications disabled",
+    "Pipelines:Settings:Notifications:AlreadyEnabled": "Notifications already enabled",
+    "Pipelines:Settings:Notifications:AlreadyDisabled": "Notifications already disabled",
+    "Pipelines:Settings:Notifications:Error": "Something went wrong, try again a bit later",
+    "Pipelines:Settings:Notifications:Message": "Here we go"
+  }
+}

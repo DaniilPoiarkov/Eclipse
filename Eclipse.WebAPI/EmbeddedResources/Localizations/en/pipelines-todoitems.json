@@ -1,0 +1,17 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Pipelines:TodoItems": "Let's take a look what do we have here..",
+    "Pipelines:TodoItems:YourToDos": "📝 Your to dos:",
+    "Pipelines:TodoItems:FinishOrGoBack": "Select to mark item as finished! Or press 'Go back' button to return 😊",
+    "Pipelines:TodoItems:YouDidEmAll": "You did em all!\r\nMy congratulations 🥳",
+    "Pipelines:TodoItems:YouAreDoingGreat": "Horray! You are doing great!",
+
+    "Pipelines:TodoItems:MyList:Empty": "🫣 It seems to me that you have no plans!\r\nAnyway, what about to add some?😏",
+    "Pipelines:TodoItems:MyList:Error": "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can use menu to help yourself go further to your dreams",
+
+    "Pipelines:TodoItems:AddItem:DiscribeWhatToAdd": "Describe what do you wanna to add",
+    "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",
+    "Pipelines:TodoItems:AddItem:Error": "Oops, something went wrong. Try again a bit later"
+  }
+}
