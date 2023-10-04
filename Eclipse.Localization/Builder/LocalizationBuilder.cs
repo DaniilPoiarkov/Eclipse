@@ -10,8 +10,6 @@ internal class LocalizationBuilder : ILocalizationBuilder
 
     public string DefaultLocalization { get; set; } = "en";
 
-    public LocalizationBuilder() { }
-
     public ILocalizationBuilder AddJsonFile(string path)
     {
         var fullPath = Path.GetFullPath(path);
