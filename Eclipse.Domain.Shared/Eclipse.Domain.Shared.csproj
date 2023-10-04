@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Eclipse.Localization\Eclipse.Localization.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IdentityUsers\" />
-  </ItemGroup>
-
 </Project>
