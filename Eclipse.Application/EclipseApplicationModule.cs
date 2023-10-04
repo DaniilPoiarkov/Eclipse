@@ -50,7 +50,7 @@ public static class EclipseApplicationModule
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IEclipseLocalizer, EclipseLocalizer>()
                 .AddTransient<IIdentityUserService, IdentityUserService>()
-                .AddTransient<INotificationService, NotificationsService>();
+                .AddTransient<INotificationService, NotificationService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
