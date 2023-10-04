@@ -24,7 +24,7 @@ public class NotificationManager
         return _notificationRepository.DeleteAsync(notificationId, cancellationToken);
     }
 
-    public Task<IReadOnlyList<Notification>> GetByUserChatId(long userChatId, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<Notification>> GetByUserChatIdAsync(long userChatId, CancellationToken cancellationToken = default)
     {
         return _notificationRepository.GetByExpressionAsync(n => n.UserChatId == userChatId, cancellationToken);
     }

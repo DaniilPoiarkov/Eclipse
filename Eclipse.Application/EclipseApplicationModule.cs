@@ -4,6 +4,7 @@ using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.Google.Sheets.Users;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Application.Contracts.Notifications;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
@@ -16,6 +17,7 @@ using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.Google.Sheets.Users;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.Localizations;
+using Eclipse.Application.Notifications;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
@@ -47,7 +49,8 @@ public static class EclipseApplicationModule
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IEclipseLocalizer, EclipseLocalizer>()
-                .AddTransient<IIdentityUserService, IdentityUserService>();
+                .AddTransient<IIdentityUserService, IdentityUserService>()
+                .AddTransient<INotificationService, NotificationsService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
