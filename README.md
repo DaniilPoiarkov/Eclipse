@@ -16,7 +16,11 @@
 Basicly controllers and health-checks
 
 ### Pipelines
-Contain logic with telegram interaction. Other words it is available for end user functionality
+Contain logic with telegram interaction. In other words it is available for end user functionality
+
+This diagram shows how pipeline concept works and how user message proccedes
+
+![Eclipse-pipeline-flow drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/38c678c7-864c-4232-98e2-f809da031109)
 
 ### Application.Contracts
 Provides public API for application use cases
