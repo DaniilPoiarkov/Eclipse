@@ -32,19 +32,19 @@ public class IdentityUserManager
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }
 
-    public async Task<IdentityUser?> UpdateAsync(IdentityUser identityUser, CancellationToken cancellationToken = default)
+    public Task<IdentityUser?> UpdateAsync(IdentityUser identityUser, CancellationToken cancellationToken = default)
     {
-        return await _identityUserRepository.UpdateAsync(identityUser, cancellationToken);
+        return _identityUserRepository.UpdateAsync(identityUser, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<IdentityUser>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUser>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _identityUserRepository.GetAllAsync(cancellationToken);
+        return _identityUserRepository.GetAllAsync(cancellationToken);
     }
 
-    public async Task<IdentityUser?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<IdentityUser?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _identityUserRepository.FindAsync(id, cancellationToken);
+        return _identityUserRepository.FindAsync(id, cancellationToken);
     }
 
     public async Task<IdentityUser?> FindByUsernameAsync(string username, CancellationToken cancellationToken = default)
