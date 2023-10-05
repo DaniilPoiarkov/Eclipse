@@ -1,5 +1,5 @@
 ﻿using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Notifications;
+using Eclipse.Domain.Reminders;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +14,7 @@ public static class EclipseDomainModule
     {
         services
             .AddTransient<IdentityUserManager>()
-            .AddTransient<NotificationManager>();
+            .AddTransient<ReminderManager>();
 
         return services;
     }

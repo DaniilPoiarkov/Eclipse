@@ -23,6 +23,9 @@
     "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 
     "Menu:TodoItemsMenu:AddItem": "Add item",
-    "Menu:TodoItemsMenu:MyList": "My list"
+    "Menu:TodoItemsMenu:MyList": "My list",
+
+    "Menu:Remidners": "Reminders",
+    "Menu:Reminders:Add": "Remind me!"
   }
 }

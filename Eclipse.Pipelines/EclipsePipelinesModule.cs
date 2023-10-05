@@ -1,16 +1,14 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Hosted;
 using Eclipse.Pipelines.Jobs;
-using Eclipse.Pipelines.Jobs.Morning;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using Quartz;
 
 namespace Eclipse.Pipelines;
 
@@ -40,24 +38,8 @@ public static class EclipsePipelinesModule
 
         services.AddHostedService<EclipsePipelinesInitializationService>();
 
-        services.Configure<QuartzOptions>(options =>
-        {
-            options.AddMorningJob();
-        });
+        services.ConfigureOptions<QuatzOptionsConfiguration>();
         
         return services;
-    }
-
-    private static void AddMorningJob(this QuartzOptions options)
-    {
-        var key = JobKey.Create(nameof(MorningJob));
-        var tzi = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
-
-        options.AddJob<MorningJob>(job => job.WithIdentity(key))
-            .AddTrigger(trigger => trigger.ForJob(key)
-                .WithSchedule(
-                    CronScheduleBuilder
-                        .DailyAtHourAndMinute(9, 0)
-                        .InTimeZone(tzi)));
     }
 }
