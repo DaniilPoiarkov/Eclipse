@@ -7,7 +7,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Jobs.Reminders;
 
-public class SendRemindersJob : IJob
+internal class SendRemindersJob : EclipseJobBase
 {
     private readonly IReminderService _reminderService;
 
@@ -22,7 +22,7 @@ public class SendRemindersJob : IJob
         _localizer = localizer;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public override async Task Execute(IJobExecutionContext context)
     {
         var reminders = await _reminderService.GetForSpecifiedTimeAsync(TimeOnly.FromDateTime(DateTime.UtcNow), context.CancellationToken);
 

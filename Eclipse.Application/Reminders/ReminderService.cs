@@ -43,7 +43,6 @@ internal class ReminderService : IReminderService
         var users = await _identityUserService.GetAllAsync(cancellationToken);
 
         return reminders
-            .Select(_mapper.Map)
             .Join(users, r => r.UserId, u => u.Id, (reminder, user) => new ReminderWithUserDto
             {
                 NotifyAt = reminder.NotifyAt,
