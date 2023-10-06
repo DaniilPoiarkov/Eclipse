@@ -11,8 +11,6 @@ public class InMemoryDbContext : IDbContext
 
     public List<TodoItem> TodoItems { get; set; } = new();
 
-    public List<Reminder> Reminders { get; set; } = new();
-
     public virtual IList<TEntity> Set<TEntity>()
         where TEntity : Entity
     {
@@ -24,11 +22,6 @@ public class InMemoryDbContext : IDbContext
         if (TodoItems is List<TEntity> todoItems)
         {
             return todoItems;
-        }
-
-        if (Reminders is List<TEntity> reminders)
-        {
-            return reminders;
         }
 
         return new List<TEntity>();
