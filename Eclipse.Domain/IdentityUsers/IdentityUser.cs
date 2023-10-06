@@ -8,7 +8,7 @@ namespace Eclipse.Domain.IdentityUsers;
 public class IdentityUser : AggregateRoot
 {
     [JsonConstructor]
-    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, List<Reminder> reminders)
+    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, List<Reminder>? reminders = null)
         : base(id)
     {
         Name = name;
@@ -17,7 +17,7 @@ public class IdentityUser : AggregateRoot
         ChatId = chatId;
         Culture = culture;
         NotificationsEnabled = notificationsEnabled;
-        Reminders = reminders;
+        Reminders = reminders ?? new List<Reminder>();
     }
 
     public string Name { get; set; }
@@ -32,8 +32,7 @@ public class IdentityUser : AggregateRoot
 
     public bool NotificationsEnabled { get; private set; }
 
-
-    private List<Reminder> Reminders { get; set; }
+    public List<Reminder> Reminders { get; set; }
 
 
     public void SetCulture(string culture) => Culture = culture;
@@ -43,7 +42,7 @@ public class IdentityUser : AggregateRoot
 
     public void AddReminder(Reminder reminder) => Reminders.Add(reminder);
 
-    public IReadOnlyList<Reminder> GetForTime(TimeOnly time) => Reminders.Where(r => r.NotifyAt == time).ToList();
+    public IReadOnlyList<Reminder> GetRemindersForTime(TimeOnly time) => Reminders.Where(r => r.NotifyAt == time).ToList();
 
     public IReadOnlyList<Reminder> GetReminders() => Reminders;
 

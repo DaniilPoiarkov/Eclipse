@@ -24,7 +24,9 @@ internal class SendRemindersJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var time = TimeOnly.FromDateTime(DateTime.UtcNow);
+        var utc = DateTime.UtcNow;
+        var time = new TimeOnly(utc.Hour, utc.Minute);
+
         var users = await _userManager.GetUsersWithRemindersInSpecifiedTime(time, context.CancellationToken);
 
         if (users.Count == 0)
@@ -38,7 +40,7 @@ internal class SendRemindersJob : EclipseJobBase
         {
             _localizer.CheckCulture(user.ChatId);
 
-            var reminders = user.GetForTime(time);
+            var reminders = user.GetRemindersForTime(time);
 
             var messageSendings = reminders
                 .Select(reminder => $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}")

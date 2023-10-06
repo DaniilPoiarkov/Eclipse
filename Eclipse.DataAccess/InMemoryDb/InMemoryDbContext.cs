@@ -1,5 +1,4 @@
-﻿using Eclipse.Domain.Reminders;
-using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.TodoItems;
 
