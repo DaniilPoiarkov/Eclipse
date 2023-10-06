@@ -6,8 +6,14 @@ namespace Eclipse.DataAccess.Reminders;
 
 internal class ReminderRepository : CosmosRepository<Reminder>, IReminderRepository
 {
-    public ReminderRepository(EclipseCosmosDbContext context) : base(context.Reminders)
-    {
+    // TODO: Throughout limit violation
 
+    //public ReminderRepository(EclipseCosmosDbContext context) : base(context.Reminders)
+    //{
+
+    //}
+
+    public ReminderRepository(IContainer<Reminder> container) : base(container)
+    {
     }
 }

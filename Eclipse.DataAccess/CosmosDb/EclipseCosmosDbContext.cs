@@ -1,7 +1,6 @@
 ﻿using Eclipse.DataAccess.CosmosDb;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Reminders;
 
 using Microsoft.Azure.Cosmos;
 
@@ -12,8 +11,6 @@ public class EclipseCosmosDbContext : CosmosDbContext
     public IContainer<TodoItem> TodoItems => Container<TodoItem>($"{nameof(TodoItem)}s");
 
     public IContainer<IdentityUser> IdentityUsers => Container<IdentityUser>($"{nameof(IdentityUser)}s");
-
-    public IContainer<Reminder> Reminders => Container<Reminder>($"{nameof(Reminder)}s");
 
     public EclipseCosmosDbContext(CosmosClient client, CosmosDbContextOptions options)
         : base(client, options) { }
@@ -28,10 +25,6 @@ public class EclipseCosmosDbContext : CosmosDbContext
 
         await response.Database.CreateContainerIfNotExistsAsync(
             new ContainerProperties($"{nameof(IdentityUser)}s", "/identityUsers"),
-            cancellationToken: cancellationToken);
-
-        await response.Database.CreateContainerIfNotExistsAsync(
-            new ContainerProperties($"{nameof(Reminder)}s", "/reminders"),
             cancellationToken: cancellationToken);
     }
 }

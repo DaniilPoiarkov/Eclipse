@@ -28,7 +28,7 @@ public static class EclipseDataAccessModule
             .AddSingleton<IDbContext, InMemoryDbContext>()
             .AddScoped<ITodoItemRepository, CosmosTodoItemRepository>()
             .AddScoped<IIdentityUserRepository, IdentityUserRepository>()
-            .AddScoped<IReminderRepository, ReminderRepository>();
+            .AddScoped<IReminderRepository, InMemoryRemiderRepository>();
 
         services.AddHostedService<DataAccessModuleInitializationService>();
 
