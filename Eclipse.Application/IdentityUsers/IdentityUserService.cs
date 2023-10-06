@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Exceptions;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Reminders;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -25,6 +26,20 @@ internal class IdentityUserService : IIdentityUserService
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
         return _mapper.Map(identity);
+    }
+
+    public async Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId, cancellationToken)
+            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+
+        var reminder = new Reminder(Guid.NewGuid(), userId, createReminderDto.Text, createReminderDto.NotifyAt);
+
+        user.AddReminder(reminder);
+
+        await _userManager.UpdateAsync(user, cancellationToken);
+
+        return _mapper.Map(user);
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)

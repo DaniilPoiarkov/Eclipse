@@ -1,5 +1,4 @@
 ﻿using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Reminders;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,9 +11,7 @@ public static class EclipseDomainModule
 {
     public static IServiceCollection AddDomainModule(this IServiceCollection services)
     {
-        services
-            .AddTransient<IdentityUserManager>()
-            .AddTransient<ReminderManager>();
+        services.AddTransient<IdentityUserManager>();
 
         return services;
     }

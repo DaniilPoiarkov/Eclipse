@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Domain.IdentityUsers;
 
 using Quartz;
 
@@ -9,41 +9,48 @@ namespace Eclipse.Pipelines.Jobs.Reminders;
 
 internal class SendRemindersJob : EclipseJobBase
 {
-    private readonly IReminderService _reminderService;
-
     private readonly ITelegramBotClient _botClient;
 
     private readonly IEclipseLocalizer _localizer;
 
-    public SendRemindersJob(IReminderService reminderService, ITelegramBotClient botClient, IEclipseLocalizer localizer)
+    private readonly IdentityUserManager _userManager;
+
+    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IdentityUserManager reminderManager)
     {
-        _reminderService = reminderService;
         _botClient = botClient;
         _localizer = localizer;
+        _userManager = reminderManager;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var reminders = await _reminderService.GetForSpecifiedTimeAsync(TimeOnly.FromDateTime(DateTime.UtcNow), context.CancellationToken);
+        var time = TimeOnly.FromDateTime(DateTime.UtcNow);
+        var users = await _userManager.GetUsersWithRemindersInSpecifiedTime(time, context.CancellationToken);
 
-        if (reminders.Count == 0)
+        if (users.Count == 0)
         {
             return;
         }
 
-        var messageSendings = new List<Task>(reminders.Count);
+        var operations = new List<Task>(users.Count);
 
-        foreach (var reminder in reminders)
+        foreach (var user in users)
         {
-            _localizer.CheckCulture(reminder.User.ChatId);
+            _localizer.CheckCulture(user.ChatId);
 
-            var message = $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}";
+            var reminders = user.GetForTime(time);
 
-            var sending = _botClient.SendTextMessageAsync(reminder.User.ChatId, message, cancellationToken: context.CancellationToken);
+            var messageSendings = reminders
+                .Select(reminder => $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}")
+                .Select(message => _botClient.SendTextMessageAsync(user.ChatId, message, cancellationToken: context.CancellationToken));
 
-            messageSendings.Add(sending);
+            operations.AddRange(messageSendings);
+
+            user.RemoveReminders(reminders);
+
+            await _userManager.UpdateAsync(user, context.CancellationToken);
         }
 
-        await Task.WhenAll(messageSendings);
+        await Task.WhenAll(operations);
     }
 }

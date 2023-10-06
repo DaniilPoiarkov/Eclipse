@@ -1,9 +1,7 @@
-﻿namespace Eclipse.Application.Contracts.Reminders;
+﻿namespace Eclipse.Application.Contracts.IdentityUsers;
 
 public class ReminderCreateDto
 {
-    public Guid UserId { get; set; }
-
     public string Text { get; set; } = string.Empty;
 
     public TimeOnly NotifyAt { get; set; }

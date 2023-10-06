@@ -1,5 +1,6 @@
 ﻿using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.IdentityUsers.Exceptions;
+using Eclipse.Domain.Reminders;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -37,7 +38,8 @@ public class IdentityUserManagerTests
             string.Empty,
             chatId,
             culture,
-            notificationsEnabled);
+            notificationsEnabled,
+            new List<Reminder>());
 
         _repository.CreateAsync(IdentityUserGenerator.Generate(1).First()).ReturnsForAnyArgs(identityUser);
 

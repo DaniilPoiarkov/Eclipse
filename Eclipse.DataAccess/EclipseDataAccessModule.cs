@@ -3,10 +3,8 @@ using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Hosted;
 using Eclipse.DataAccess.IdentityUsers;
 using Eclipse.DataAccess.InMemoryDb;
-using Eclipse.DataAccess.Reminders;
 using Eclipse.DataAccess.TodoItems;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Reminders;
 using Eclipse.Domain.TodoItems;
 
 using Microsoft.Azure.Cosmos;
@@ -27,8 +25,7 @@ public static class EclipseDataAccessModule
         services
             .AddSingleton<IDbContext, InMemoryDbContext>()
             .AddScoped<ITodoItemRepository, CosmosTodoItemRepository>()
-            .AddScoped<IIdentityUserRepository, IdentityUserRepository>()
-            .AddScoped<IReminderRepository, InMemoryRemiderRepository>();
+            .AddScoped<IIdentityUserRepository, IdentityUserRepository>();
 
         services.AddHostedService<DataAccessModuleInitializationService>();
 

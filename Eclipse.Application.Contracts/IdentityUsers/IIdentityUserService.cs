@@ -11,4 +11,6 @@ public interface IIdentityUserService
     Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default);
+
+    Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default);
 }

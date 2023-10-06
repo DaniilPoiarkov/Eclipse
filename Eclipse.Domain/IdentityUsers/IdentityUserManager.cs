@@ -1,4 +1,5 @@
 ﻿using Eclipse.Domain.IdentityUsers.Exceptions;
+using Eclipse.Domain.Reminders;
 
 namespace Eclipse.Domain.IdentityUsers;
 
@@ -27,7 +28,7 @@ public class IdentityUserManager
                 : throw new DuplicateDataException(nameof(username), username);
         }
 
-        var identityUser = new IdentityUser(Guid.NewGuid(), name, surname, username, chatId, culture, notificationsEnabled);
+        var identityUser = new IdentityUser(Guid.NewGuid(), name, surname, username, chatId, culture, notificationsEnabled, new List<Reminder>());
 
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }
@@ -57,5 +58,10 @@ public class IdentityUserManager
     {
         return (await _identityUserRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
             .SingleOrDefault();
+    }
+
+    public Task<IReadOnlyList<IdentityUser>> GetUsersWithRemindersInSpecifiedTime(TimeOnly time, CancellationToken cancellationToken = default)
+    {
+        return _identityUserRepository.GetByExpressionAsync(u => u.GetForTime(time).Any(), cancellationToken);
     }
 }
