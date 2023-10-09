@@ -4,6 +4,9 @@ using System.Linq.Expressions;
 
 namespace Eclipse.Application.Contracts.Reminders;
 
+/// <summary>
+/// Filtration via NotifyAt property
+/// </summary>
 public class ReminderDtoNotifyAtSpecification : Specification<ReminderDto>
 {
     private readonly TimeOnly _time;
