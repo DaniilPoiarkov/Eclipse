@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.IdentityUsers;
 
 namespace Eclipse.Application.Reminders;
 
