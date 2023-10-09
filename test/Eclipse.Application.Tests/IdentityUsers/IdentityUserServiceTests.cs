@@ -24,7 +24,7 @@ public class IdentityUserServiceTests
         _manager = Substitute.For<IdentityUserManager>(
             Substitute.For<IIdentityUserRepository>());
 
-        _lazySut = new Lazy<IIdentityUserService>(() => new IdentityUserService(new IdentityUserMapper(), _manager));
+        _lazySut = new Lazy<IIdentityUserService>(() => new IdentityUserInternalService(new IdentityUserMapper(), _manager));
     }
 
     [Fact]
