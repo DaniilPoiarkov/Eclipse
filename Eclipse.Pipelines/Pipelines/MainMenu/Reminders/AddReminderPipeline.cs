@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Cache;
@@ -12,10 +13,13 @@ public class AddReminderPipeline : RemindersPipelineBase
 
     private readonly IIdentityUserService _identityUserService;
 
-    public AddReminderPipeline(ICacheService cacheService, IIdentityUserService identityUserService)
+    private readonly IReminderService _reminderService;
+
+    public AddReminderPipeline(ICacheService cacheService, IIdentityUserService identityUserService, IReminderService reminderService)
     {
         _cacheService = cacheService;
         _identityUserService = identityUserService;
+        _reminderService = reminderService;
     }
 
     protected override void Initialize()
@@ -57,7 +61,7 @@ public class AddReminderPipeline : RemindersPipelineBase
             NotifyAt = time
         };
         
-        await _identityUserService.CreateReminderAsync(user.Id, reminderCreateDto, cancellationToken);
+        await _reminderService.CreateReminderAsync(user.Id, reminderCreateDto, cancellationToken);
 
         return Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders:Created"]);
     }

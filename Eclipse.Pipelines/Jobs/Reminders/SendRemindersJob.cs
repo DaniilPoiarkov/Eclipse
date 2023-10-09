@@ -1,5 +1,7 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Domain.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Domain.Reminders;
 
 using Quartz;
 
@@ -13,13 +15,16 @@ internal class SendRemindersJob : EclipseJobBase
 
     private readonly IEclipseLocalizer _localizer;
 
-    private readonly IdentityUserManager _userManager;
+    private readonly IIdentityUserStore _identityUserStore;
 
-    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IdentityUserManager reminderManager)
+    private readonly ReminderManager _reminderManager;
+
+    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IIdentityUserStore identityUserStore, ReminderManager reminderManager)
     {
         _botClient = botClient;
         _localizer = localizer;
-        _userManager = reminderManager;
+        _identityUserStore = identityUserStore;
+        _reminderManager = reminderManager;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -27,7 +32,11 @@ internal class SendRemindersJob : EclipseJobBase
         var utc = DateTime.UtcNow;
         var time = new TimeOnly(utc.Hour, utc.Minute);
 
-        var users = await _userManager.GetUsersWithRemindersInSpecifiedTime(time, context.CancellationToken);
+        var dtoSpecification = new ReminderDtoNotifyAtSpecification(time);
+
+        var users = _identityUserStore.GetCachedUsers()
+            .Where(u => u.Reminders.Any(dtoSpecification))
+            .ToList();
 
         if (users.Count == 0)
         {
@@ -40,7 +49,7 @@ internal class SendRemindersJob : EclipseJobBase
         {
             _localizer.CheckCulture(user.ChatId);
 
-            var reminders = user.GetRemindersForTime(time);
+            var reminders = user.Reminders.Where(dtoSpecification);
 
             var messageSendings = reminders
                 .Select(reminder => $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}")
@@ -48,9 +57,7 @@ internal class SendRemindersJob : EclipseJobBase
 
             operations.AddRange(messageSendings);
 
-            user.RemoveReminders(reminders);
-
-            await _userManager.UpdateAsync(user, context.CancellationToken);
+            await _reminderManager.RemoveRemindersForTime(user.Id, time, context.CancellationToken);
         }
 
         await Task.WhenAll(operations);
