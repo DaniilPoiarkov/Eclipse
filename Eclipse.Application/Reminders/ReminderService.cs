@@ -3,7 +3,6 @@ using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Exceptions;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Reminders;
 
 namespace Eclipse.Application.Reminders;
 
