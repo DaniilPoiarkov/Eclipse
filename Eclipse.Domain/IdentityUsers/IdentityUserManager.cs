@@ -59,9 +59,4 @@ public class IdentityUserManager
         return (await _identityUserRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
             .SingleOrDefault();
     }
-
-    public Task<IReadOnlyList<IdentityUser>> GetUsersWithRemindersInSpecifiedTime(TimeOnly time, CancellationToken cancellationToken = default)
-    {
-        return _identityUserRepository.GetByExpressionAsync(u => u.Reminders.Any(r => r.NotifyAt == time), cancellationToken);
-    }
 }
