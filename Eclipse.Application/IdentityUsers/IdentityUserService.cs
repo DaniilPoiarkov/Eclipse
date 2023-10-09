@@ -1,98 +1,80 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Exceptions;
-using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Reminders;
+using Eclipse.Core.Models;
 
 namespace Eclipse.Application.IdentityUsers;
 
 internal class IdentityUserService : IIdentityUserService
 {
-    private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
+    private readonly IIdentityUserCache _userCache;
 
-    private readonly IdentityUserManager _userManager;
+    private readonly IIdentityUserInternalService _identityUserService;
 
-    public IdentityUserService(IMapper<IdentityUser, IdentityUserDto> mapper, IdentityUserManager userManager)
+    public IdentityUserService(IIdentityUserCache userCache, IIdentityUserInternalService identityUserService)
     {
-        _mapper = mapper;
-        _userManager = userManager;
+        _userCache = userCache;
+        _identityUserService = identityUserService;
     }
 
     public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var identity = await _userManager.CreateAsync(
-            createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, createDto.Culture, createDto.NotificationsEnabled,
-            cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+        var user = await _identityUserService.CreateAsync(createDto, cancellationToken);
 
-        return _mapper.Map(identity);
-    }
+        _userCache.AddOrUpdate(user);
 
-    public async Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
-    {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
-
-        var reminder = new Reminder(Guid.NewGuid(), userId, createReminderDto.Text, createReminderDto.NotifyAt);
-
-        user.AddReminder(reminder);
-
-        await _userManager.UpdateAsync(user, cancellationToken);
-
-        return _mapper.Map(user);
+        return user;
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userManager.GetAllAsync(cancellationToken);
-        
-        return users
-            .Select(_mapper.Map)
-            .ToList();
+        var users = await _identityUserService.GetAllAsync(cancellationToken);
+
+        foreach (var user in users)
+        {
+            _userCache.AddOrUpdate(user);
+        }
+
+        return users;
     }
 
     public async Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+        var user = _userCache.GetByChatId(chatId);
 
-        return _mapper.Map(user);
+        if (user is not null)
+        {
+            return user;
+        }
+
+        user = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+
+        _userCache.AddOrUpdate(user);
+
+        return user;
     }
 
     public async Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+        var user = _userCache.GetByUserId(id);
 
-        return _mapper.Map(user);
+        if (user is not null)
+        {
+            return user;
+        }
+
+        user = await _identityUserService.GetByIdAsync(id, cancellationToken);
+
+        _userCache.AddOrUpdate(user);
+
+        return user;
     }
 
     public async Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+        var user = await _identityUserService.UpdateAsync(id, updateDto, cancellationToken);
 
-        user.Name = updateDto.Name is null
-            ? user.Name
-            : updateDto.Name;
+        _userCache.AddOrUpdate(user);
 
-        user.Surname = updateDto.Surname is null
-            ? user.Surname
-            : updateDto.Surname;
-
-        if (!string.IsNullOrEmpty(updateDto.Culture))
-        {
-            user.SetCulture(updateDto.Culture);
-        }
-
-        if (updateDto.NotificationsEnabled.HasValue)
-        {
-            user.SwitchNotifications(updateDto.NotificationsEnabled.Value);
-        }
-
-        var updated = await _userManager.UpdateAsync(user, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
-
-        return _mapper.Map(updated);
+        return user;
     }
 }

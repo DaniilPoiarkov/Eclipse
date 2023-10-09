@@ -8,18 +8,18 @@ internal class SuggestionsService : ISuggestionsService
 {
     private readonly ISuggestionsSheetsService _sheetsService;
 
-    private readonly IIdentityUserStore _userStore;
+    private readonly IIdentityUserService _userService;
 
-    public SuggestionsService(ISuggestionsSheetsService sheetsService, IIdentityUserStore userStore)
+    public SuggestionsService(ISuggestionsSheetsService sheetsService, IIdentityUserService userService)
     {
         _sheetsService = sheetsService;
-        _userStore = userStore;
+        _userService = userService;
     }
 
     public async Task<IReadOnlyList<SuggestionAndUserDto>> GetWithUserInfo(CancellationToken cancellationToken = default)
     {
         var suggestions = _sheetsService.GetAll();
-        var users = await _userStore.GetAllAsync(cancellationToken);
+        var users = await _userService.GetAllAsync(cancellationToken);
 
         return suggestions.Join(users, s => s.TelegramUserId, u => u.ChatId, (suggestion, user) => new SuggestionAndUserDto
         {

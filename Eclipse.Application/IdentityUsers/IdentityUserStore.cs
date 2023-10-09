@@ -6,14 +6,14 @@ namespace Eclipse.Application.IdentityUsers;
 
 internal class IdentityUserStore : IIdentityUserStore
 {
-    private readonly IIdentityUserCache _userCache;
-
     private readonly IIdentityUserService _identityUserService;
 
-    public IdentityUserStore(IIdentityUserCache userCache, IIdentityUserService identityUserService)
+    private readonly IIdentityUserCache _userCache;
+
+    public IdentityUserStore(IIdentityUserService identityUserService, IIdentityUserCache userCache)
     {
-        _userCache = userCache;
         _identityUserService = identityUserService;
+        _userCache = userCache;
     }
 
     public async Task EnsureAdded(TelegramUser user, CancellationToken cancellationToken = default)
@@ -40,16 +40,12 @@ internal class IdentityUserStore : IIdentityUserStore
                 ChatId = user.Id
             };
 
-            var created = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
-
-            _userCache.EnsureAdded(created!);
+            var identity = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
+            _userCache.AddOrUpdate(identity);
         }
     }
 
-    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _identityUserService.GetAllAsync(cancellationToken);
-    }
+    public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetUsers();
 
     private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser user, CancellationToken cancellationToken)
     {
@@ -57,7 +53,7 @@ internal class IdentityUserStore : IIdentityUserStore
             && identityDto.Username == user.Username
             && identityDto.Surname == user.Surname)
         {
-            _userCache.EnsureAdded(identityDto);
+            _userCache.AddOrUpdate(identityDto);
             return;
         }
 
@@ -68,7 +64,6 @@ internal class IdentityUserStore : IIdentityUserStore
             Surname = user.Surname
         };
 
-        var updated = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
-        _userCache.EnsureAdded(updated!);
+        await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
     }
 }

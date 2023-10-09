@@ -4,6 +4,7 @@ using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.Google.Sheets.Users;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
@@ -14,8 +15,10 @@ using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
 using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.Google.Sheets.Users;
+using Eclipse.Application.Hosted;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.Localizations;
+using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
@@ -42,12 +45,14 @@ public static class EclipseApplicationModule
             .AddSingleton<IPipelineStore, PipelineStore>()
             .AddSingleton<IMessageStore, MessageStore>()
                 .AddTransient<ICommandService, CommandService>()
-                .AddTransient<IIdentityUserStore, IdentityUserStore>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IEclipseLocalizer, EclipseLocalizer>()
-                .AddTransient<IIdentityUserService, IdentityUserService>();
+                .AddTransient<IIdentityUserInternalService, IdentityUserInternalService>()
+                .AddTransient<IIdentityUserService, IdentityUserService>()
+                .AddTransient<IIdentityUserStore, IdentityUserStore>()
+                .AddTransient<IReminderService, ReminderService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
@@ -64,6 +69,8 @@ public static class EclipseApplicationModule
         services.AddTransient<IUsersSheetsService, UsersSheetsService>()
             .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()
             .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>();
+
+        services.AddHostedService<ApplicationInizializerHostedService>();
 
         return services;
     }
