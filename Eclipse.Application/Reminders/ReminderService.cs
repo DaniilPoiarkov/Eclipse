@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Exceptions;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Reminders;
 
@@ -10,15 +9,12 @@ namespace Eclipse.Application.Reminders;
 
 internal class ReminderService : IReminderService
 {
-    private readonly IIdentityUserCache _identityUserCache;
-
     private readonly IdentityUserManager _userManager;
 
     private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
 
-    public ReminderService(IIdentityUserCache identityUserCache, IdentityUserManager userManager, IMapper<IdentityUser, IdentityUserDto> mapper)
+    public ReminderService(IdentityUserManager userManager, IMapper<IdentityUser, IdentityUserDto> mapper)
     {
-        _identityUserCache = identityUserCache;
         _userManager = userManager;
         _mapper = mapper;
     }
@@ -28,16 +24,22 @@ internal class ReminderService : IReminderService
         var user = await _userManager.FindByIdAsync(userId, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
-        var reminder = new Reminder(Guid.NewGuid(), userId, createReminderDto.Text, createReminderDto.NotifyAt);
-
-        user.AddReminder(reminder);
+        user.AddReminder(createReminderDto.Text, createReminderDto.NotifyAt);
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        var dto = _mapper.Map(user);
+        return _mapper.Map(user);
+    }
 
-        _identityUserCache.AddOrUpdate(dto);
+    public async Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId, cancellationToken)
+            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
-        return dto;
+        user.RemoveRemindersForTime(time);
+
+        await _userManager.UpdateAsync(user, cancellationToken);
+
+        return _mapper.Map(user);
     }
 }

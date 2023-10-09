@@ -19,7 +19,7 @@ public class IdentityUserMapper : IMapper<IdentityUser, IdentityUserDto>
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled,
 
-            Reminders = value.GetReminders()
+            Reminders = value.Reminders
                 .Select(r => new ReminderDto
                 {
                     Id = r.Id,

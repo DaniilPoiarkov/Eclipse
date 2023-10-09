@@ -6,9 +6,9 @@ internal interface IIdentityUserCache
 {
     void AddOrUpdate(IdentityUserDto user);
 
-    IReadOnlyList<IdentityUserDto> GetUsers();
+    IReadOnlyList<IdentityUserDto> GetAll();
 
     IdentityUserDto? GetByChatId(long chatId);
 
-    IdentityUserDto? GetByUserId(Guid userId);
+    IdentityUserDto? GetById(Guid userId);
 }

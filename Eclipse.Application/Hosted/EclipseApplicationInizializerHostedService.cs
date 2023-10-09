@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.IdentityUsers;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +28,7 @@ internal class EclipseApplicationInizializerHostedService : IHostedService
 
         _logger.Information("\tRetrieving services");
 
-        var userService = scope.ServiceProvider.GetRequiredService<IIdentityUserInternalService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IIdentityUserService>();
         var userCache = scope.ServiceProvider.GetRequiredService<IIdentityUserCache>();
 
         _logger.Information("\t\tRetrieving data");

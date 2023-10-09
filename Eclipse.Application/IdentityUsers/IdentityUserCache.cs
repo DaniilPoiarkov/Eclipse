@@ -35,12 +35,12 @@ internal class IdentityUserCache : IIdentityUserCache
         return GetList().FirstOrDefault(u => u.ChatId == chatId);
     }
 
-    public IdentityUserDto? GetByUserId(Guid userId)
+    public IdentityUserDto? GetById(Guid userId)
     {
         return GetList().FirstOrDefault(u => u.Id == userId);
     }
 
-    public IReadOnlyList<IdentityUserDto> GetUsers() => GetList();
+    public IReadOnlyList<IdentityUserDto> GetAll() => GetList();
 
     private List<IdentityUserDto> GetList()
     {

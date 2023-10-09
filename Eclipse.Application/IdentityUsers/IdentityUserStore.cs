@@ -16,9 +16,9 @@ internal class IdentityUserStore : IIdentityUserStore
         _userCache = userCache;
     }
 
-    public async Task EnsureAdded(TelegramUser user, CancellationToken cancellationToken = default)
+    public async Task AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
     {
-        var cached = _userCache.GetUsers().FirstOrDefault(u => u.ChatId == user.Id);
+        var cached = _userCache.GetAll().FirstOrDefault(u => u.ChatId == user.Id);
 
         if (cached is not null)
         {
@@ -45,7 +45,7 @@ internal class IdentityUserStore : IIdentityUserStore
         }
     }
 
-    public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetUsers();
+    public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetAll();
 
     private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser user, CancellationToken cancellationToken)
     {

@@ -49,7 +49,6 @@ public static class EclipseApplicationModule
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IEclipseLocalizer, EclipseLocalizer>()
-                .AddTransient<IIdentityUserInternalService, IdentityUserInternalService>()
                 .AddTransient<IIdentityUserService, IdentityUserService>()
                 .AddTransient<IIdentityUserStore, IdentityUserStore>()
                 .AddTransient<IReminderService, ReminderService>();
@@ -70,7 +69,11 @@ public static class EclipseApplicationModule
             .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()
             .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>();
 
-        services.AddHostedService<ApplicationInizializerHostedService>();
+        services.AddHostedService<EclipseApplicationInizializerHostedService>();
+
+        services
+            .Decorate<IReminderService, CachedReminderService>()
+            .Decorate<IIdentityUserService, CachedIdentityUserService>();
 
         return services;
     }
