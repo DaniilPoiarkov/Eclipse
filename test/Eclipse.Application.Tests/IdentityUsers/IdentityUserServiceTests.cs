@@ -2,7 +2,6 @@
 using Eclipse.Application.Exceptions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.IdentityUsers;
 using Eclipse.Tests.Generators;
 using FluentAssertions;
 
@@ -29,7 +28,7 @@ public class IdentityUserServiceTests
     }
 
     [Fact]
-    public async Task GetAllAsync_WhenUsersExists_THenProperDataReturned()
+    public async Task GetAllAsync_WhenUsersExists_ThenProperDataReturned()
     {
         var count = 5;
         var users = IdentityUserGenerator.Generate(count);
@@ -50,5 +49,6 @@ public class IdentityUserServiceTests
         };
 
         await action.Should().ThrowAsync<ObjectNotFoundException>();
+        await _manager.DidNotReceive().UpdateAsync(default!);
     }
 }

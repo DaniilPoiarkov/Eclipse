@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Shared.IdentityUsers;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

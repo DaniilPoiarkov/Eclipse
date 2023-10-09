@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Domain.Shared.IdentityUsers;
+﻿namespace Eclipse.Application.Contracts.IdentityUsers;
 
 public class IdentityUserUpdateDto
 {

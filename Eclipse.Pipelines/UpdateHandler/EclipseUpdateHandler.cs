@@ -110,7 +110,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
             _pipelineStore.Set(pipeline, key);
         }
 
-        await _userStore.EnsureAdded(context.User, cancellationToken);
+        await _userStore.AddOrUpdate(context.User, cancellationToken);
     }
 
     private PipelineBase GetPipeline(MessageContext context, PipelineKey key)

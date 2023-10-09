@@ -1,0 +1,11 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Pipelines:Reminders": "Let's take a look to our reminders!",
+    "Pipelines:Reminders:AskForText": "Describe what do you want me to remind you",
+    "Pipelines:Reminders:ValueCannotBeEmpty": "I can't remind you this😢\r\nNow we need to start from the begginтing😔",
+    "Pipelines:Reminders:AskForTime": "To remind you this write time in forman 'hh:mm'. Right now I can send you reminders only based on utc time, so be sure please everything matches time zones. It might be not relevant if you'll recieve a reminder when you are sleeping😅",
+    "Pipelines:Reminders:Created": "Soo..yeah!\r\nI'll send a reminder when time comes😊",
+    "Pipelines:Reminders:CannotParseTime": "Oh, I can't understand which time I should to remind you.\r\nNow we need to start from the beginning😔"
+  }
+}

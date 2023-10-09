@@ -17,13 +17,13 @@ public class EclipseCosmosDbContext : CosmosDbContext
 
     internal override async Task InitializeAsync(CancellationToken cancellationToken)
     {
-        var databaseResponse = await Client.CreateDatabaseIfNotExistsAsync(Options.DatabaseId, cancellationToken: cancellationToken);
+        var response = await Client.CreateDatabaseIfNotExistsAsync(Options.DatabaseId, cancellationToken: cancellationToken);
 
-        await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+        await response.Database.CreateContainerIfNotExistsAsync(
             new ContainerProperties($"{nameof(TodoItem)}s", "/todoitems"),
             cancellationToken: cancellationToken);
 
-        await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+        await response.Database.CreateContainerIfNotExistsAsync(
             new ContainerProperties($"{nameof(IdentityUser)}s", "/identityUsers"),
             cancellationToken: cancellationToken);
     }

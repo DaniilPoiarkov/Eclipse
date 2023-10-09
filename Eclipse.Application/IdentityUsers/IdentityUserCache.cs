@@ -7,36 +7,44 @@ internal class IdentityUserCache : IIdentityUserCache
 {
     private readonly ICacheService _cacheService;
 
-    private static readonly string Key = "Identity-Users";
+    private static readonly CacheKey Key = new("Identity-Users");
 
     public IdentityUserCache(ICacheService cacheService)
     {
         _cacheService = cacheService;
     }
 
-    public void EnsureAdded(IdentityUserDto user)
+    public void AddOrUpdate(IdentityUserDto user)
     {
-        var key = new CacheKey(Key);
+        var users = GetList();
 
-        var users = _cacheService.GetAndDelete<List<IdentityUserDto>>(key)
-            ?? new List<IdentityUserDto>();
+        var existing = users.FirstOrDefault(u => u.Id == user.Id);
 
-        if (users.Exists(u => u.Id == user.Id))
+        if (existing is not null)
         {
-            var cached = users.First(u => u.Id == user.Id);
-            users.Remove(cached);
+            users.Remove(existing);
         }
 
         users.Add(user);
 
-        _cacheService.Set(key, users);
+        _cacheService.Set(Key, users);
     }
 
-    public IReadOnlyList<IdentityUserDto> GetUsers()
+    public IdentityUserDto? GetByChatId(long chatId)
     {
-        var key = new CacheKey(Key);
+        return GetList().FirstOrDefault(u => u.ChatId == chatId);
+    }
 
-        return _cacheService.Get<List<IdentityUserDto>>(key)
+    public IdentityUserDto? GetById(Guid userId)
+    {
+        return GetList().FirstOrDefault(u => u.Id == userId);
+    }
+
+    public IReadOnlyList<IdentityUserDto> GetAll() => GetList();
+
+    private List<IdentityUserDto> GetList()
+    {
+        return _cacheService.Get<List<IdentityUserDto>>(Key)
             ?? new List<IdentityUserDto>();
     }
 }

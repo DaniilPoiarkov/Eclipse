@@ -1,6 +1,7 @@
 ﻿using Bogus;
 
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Reminders;
 
 namespace Eclipse.Tests.Generators;
 
@@ -14,7 +15,15 @@ public static class IdentityUserGenerator
 
         for (int i = 0; i < count; i++)
         {
-            result.Add(new IdentityUser(Guid.NewGuid(), faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, i, "en", i % 2 == 0));
+            result.Add(new IdentityUser(
+                Guid.NewGuid(),
+                faker.Person.FirstName,
+                faker.Person.LastName,
+                faker.Person.UserName,
+                chatId: i,
+                culture: "en",
+                notificationsEnabled: i % 2 == 0,
+                new List<Reminder>()));
         }
 
         return result;

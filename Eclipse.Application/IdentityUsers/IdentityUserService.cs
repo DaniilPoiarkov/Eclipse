@@ -2,7 +2,7 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Exceptions;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.IdentityUsers;
+using Eclipse.Domain.Reminders;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -20,7 +20,9 @@ internal class IdentityUserService : IIdentityUserService
 
     public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var identity = await _userManager.CreateAsync(createDto, cancellationToken)
+        var identity = await _userManager.CreateAsync(
+            createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, createDto.Culture, createDto.NotificationsEnabled,
+            cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
         return _mapper.Map(identity);
@@ -66,12 +68,12 @@ internal class IdentityUserService : IIdentityUserService
 
         if (!string.IsNullOrEmpty(updateDto.Culture))
         {
-            user.SetCulture(updateDto.Culture);
+            user.Culture = updateDto.Culture;
         }
 
         if (updateDto.NotificationsEnabled.HasValue)
         {
-            user.SwitchNotifications(updateDto.NotificationsEnabled.Value);
+            user.NotificationsEnabled = updateDto.NotificationsEnabled.Value;
         }
 
         var updated = await _userManager.UpdateAsync(user, cancellationToken)

@@ -13,12 +13,12 @@ public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;
 
-    private readonly IIdentityUserStore _userStore;
+    private readonly IIdentityUserService _userService;
 
-    public TelegramController(ITelegramService telegramService, IIdentityUserStore userStore)
+    public TelegramController(ITelegramService telegramService, IIdentityUserService userService)
     {
         _telegramService = telegramService;
-        _userStore = userStore;
+        _userService = userService;
     }
 
     [HttpPost]
@@ -29,8 +29,8 @@ public class TelegramController : ControllerBase
     }
 
     [HttpGet("users")]
-    public IActionResult GetUsers()
+    public IActionResult GetUsers(CancellationToken cancellationToken)
     {
-        return Ok(_userStore.GetAllAsync());
+        return Ok(_userService.GetAllAsync(cancellationToken));
     }
 }

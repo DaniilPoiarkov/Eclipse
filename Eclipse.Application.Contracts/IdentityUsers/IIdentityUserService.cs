@@ -1,6 +1,4 @@
-﻿using Eclipse.Domain.Shared.IdentityUsers;
-
-namespace Eclipse.Application.Contracts.IdentityUsers;
+﻿namespace Eclipse.Application.Contracts.IdentityUsers;
 
 public interface IIdentityUserService
 {

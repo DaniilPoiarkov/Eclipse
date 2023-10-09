@@ -6,6 +6,7 @@
     "Menu:MainMenu:Suggest": "Запропонувати 💡",
     "Menu:MainMenu:MyToDos": "Мої плани 📝",
     "Menu:MainMenu:Settings": "Налаштування ⚙️",
+    "Menu:MainMenu:Reminders": "Нагадування 🔈",
 
     "Menu:Settings:Language": "Змінити мову 🌐",
     "Menu:Settings:Notifications": "Сповіщення 🔈",
@@ -23,6 +24,8 @@
     "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
     "Menu:TodoItemsMenu:AddItem": "Запланувати",
-    "Menu:TodoItemsMenu:MyList": "Мій список"
+    "Menu:TodoItemsMenu:MyList": "Мій список",
+
+    "Menu:Reminders:Add": "Нагадай мені!"
   }
 }

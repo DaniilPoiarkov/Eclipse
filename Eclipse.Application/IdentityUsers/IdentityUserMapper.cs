@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -17,6 +18,16 @@ public class IdentityUserMapper : IMapper<IdentityUser, IdentityUserDto>
             ChatId = value.ChatId,
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled,
+
+            Reminders = value.Reminders
+                .Select(r => new ReminderDto
+                {
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    Text = r.Text,
+                    NotifyAt = r.NotifyAt
+                })
+                .ToList()
         };
     }
 }

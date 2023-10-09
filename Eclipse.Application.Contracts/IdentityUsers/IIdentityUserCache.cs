@@ -2,7 +2,11 @@
 
 public interface IIdentityUserCache
 {
-    void EnsureAdded(IdentityUserDto user);
+    void AddOrUpdate(IdentityUserDto user);
 
-    IReadOnlyList<IdentityUserDto> GetUsers();
+    IReadOnlyList<IdentityUserDto> GetAll();
+
+    IdentityUserDto? GetByChatId(long chatId);
+
+    IdentityUserDto? GetById(Guid userId);
 }

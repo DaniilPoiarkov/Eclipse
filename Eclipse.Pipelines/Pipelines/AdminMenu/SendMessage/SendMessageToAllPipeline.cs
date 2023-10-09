@@ -8,15 +8,15 @@ namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 [Route("Menu:AdminMenu:Send:All", "/admin_send_all")]
 internal class SendMessageToAllPipeline : AdminPipelineBase
 {
-    private readonly IIdentityUserStore _userStore;
+    private readonly IIdentityUserService _userService;
 
     private readonly ITelegramService _telegramService;
 
     private string Content { get; set; } = string.Empty;
 
-    public SendMessageToAllPipeline(IIdentityUserStore userStore, ITelegramService telegramService)
+    public SendMessageToAllPipeline(IIdentityUserService userService, ITelegramService telegramService)
     {
-        _userStore = userStore;
+        _userService = userService;
         _telegramService = telegramService;
     }
 
@@ -53,7 +53,7 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
 
         try
         {
-            var notifications = (await _userStore.GetAllAsync(cancellationToken))
+            var notifications = (await _userService.GetAllAsync(cancellationToken))
                 .Select(u => new SendMessageModel
                 {
                     ChatId = u.ChatId,
