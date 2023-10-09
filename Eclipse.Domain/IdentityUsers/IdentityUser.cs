@@ -17,8 +17,11 @@ public class IdentityUser : AggregateRoot
         ChatId = chatId;
         Culture = culture;
         NotificationsEnabled = notificationsEnabled;
-        Reminders = reminders ?? new List<Reminder>();
+
+        _reminders = reminders ?? new List<Reminder>();
     }
+
+    private readonly List<Reminder> _reminders;
 
     public string Name { get; set; }
 
@@ -28,29 +31,44 @@ public class IdentityUser : AggregateRoot
 
     public long ChatId { get; init; }
 
-    public string Culture { get; private set; }
+    public string Culture { get; set; }
 
-    public bool NotificationsEnabled { get; private set; }
+    public bool NotificationsEnabled { get; set; }
 
-    public List<Reminder> Reminders { get; set; }
+    public IReadOnlyCollection<Reminder> Reminders => _reminders;
 
-
-    public void SetCulture(string culture) => Culture = culture;
-
-    public void SwitchNotifications(bool notificationsEnabled) => NotificationsEnabled = notificationsEnabled;
-
-
-    public void AddReminder(Reminder reminder) => Reminders.Add(reminder);
-
-    public IReadOnlyList<Reminder> GetRemindersForTime(TimeOnly time) => Reminders.Where(r => r.NotifyAt == time).ToList();
-
-    public IReadOnlyList<Reminder> GetReminders() => Reminders;
-
-    public void RemoveReminders(IEnumerable<Reminder> reminders)
+    /// <summary>
+    /// Creates reminder for user and returns it
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="notifyAt"></param>
+    /// <returns cref="Reminder"></returns>
+    public Reminder AddReminder(string text, TimeOnly notifyAt)
     {
-        foreach (Reminder reminder in reminders)
+        var reminder = new Reminder(Guid.NewGuid(), Id, text, notifyAt);
+        _reminders.Add(reminder);
+
+        return reminder;
+    }
+
+    /// <summary>
+    /// Removes reminders and returns those which match specified time
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    public IReadOnlyList<Reminder> RemoveRemindersForTime(TimeOnly time)
+    {
+        var specification = new ReminderNotifyAtSpecification(time);
+
+        var reminders = _reminders
+            .Where(specification)
+            .ToList();
+
+        foreach (var reminder in reminders)
         {
-            Reminders.Remove(reminder);
+            _reminders.Remove(reminder);
         }
+
+        return reminders;
     }
 }

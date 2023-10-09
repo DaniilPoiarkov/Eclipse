@@ -13,7 +13,7 @@ public class Reminder : Entity
     public TimeOnly NotifyAt { get; private set; }
 
     [JsonConstructor]
-    public Reminder(Guid id, Guid userId, string text, TimeOnly notifyAt) : base(id)
+    internal Reminder(Guid id, Guid userId, string text, TimeOnly notifyAt) : base(id)
     {
         UserId = userId;
         Text = text;

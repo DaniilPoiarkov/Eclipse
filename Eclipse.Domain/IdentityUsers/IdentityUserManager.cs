@@ -12,6 +12,18 @@ public class IdentityUserManager
         _identityUserRepository = identityUserRepository;
     }
 
+    /// <summary>
+    /// Creates user with specified parameters
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="surname"></param>
+    /// <param name="username"></param>
+    /// <param name="chatId"></param>
+    /// <param name="culture"></param>
+    /// <param name="notificationsEnabled"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="DuplicateDataException"></exception>
     public async Task<IdentityUser?> CreateAsync(
         string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, CancellationToken cancellationToken = default)
     {
