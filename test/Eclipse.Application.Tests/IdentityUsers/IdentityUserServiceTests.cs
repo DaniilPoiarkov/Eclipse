@@ -49,5 +49,6 @@ public class IdentityUserServiceTests
         };
 
         await action.Should().ThrowAsync<ObjectNotFoundException>();
+        await _manager.DidNotReceive().UpdateAsync(default!);
     }
 }

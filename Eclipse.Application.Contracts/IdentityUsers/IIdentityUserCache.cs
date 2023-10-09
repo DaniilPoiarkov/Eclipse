@@ -1,8 +1,6 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿namespace Eclipse.Application.Contracts.IdentityUsers;
 
-namespace Eclipse.Application.IdentityUsers;
-
-internal interface IIdentityUserCache
+public interface IIdentityUserCache
 {
     void AddOrUpdate(IdentityUserDto user);
 

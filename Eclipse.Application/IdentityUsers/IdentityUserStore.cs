@@ -37,6 +37,7 @@ internal class IdentityUserStore : IIdentityUserStore
             {
                 Name = user.Name,
                 Username = user.Username ?? string.Empty,
+                Surname = user.Surname,
                 ChatId = user.Id
             };
 
@@ -64,6 +65,7 @@ internal class IdentityUserStore : IIdentityUserStore
             Surname = user.Surname
         };
 
-        await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
+        var identity = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
+        _userCache.AddOrUpdate(identity);
     }
 }
