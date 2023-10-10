@@ -56,7 +56,7 @@ internal class TodoItemService : ITodoItemService
             throw new TodoItemLimitException(_limit);
         }
 
-        var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!, DateTime.UtcNow.Add(user.Gmt * -1));
+        var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!, DateTime.UtcNow.Add(user.Gmt));
 
         await _todoItemRepository.CreateAsync(todoItem, cancellationToken);
 
