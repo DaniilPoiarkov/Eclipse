@@ -13,6 +13,10 @@
     "Pipelines:Settings:Notifications:AlreadyEnabled": "Notifications already enabled",
     "Pipelines:Settings:Notifications:AlreadyDisabled": "Notifications already disabled",
     "Pipelines:Settings:Notifications:Error": "Something went wrong, try again a bit later",
-    "Pipelines:Settings:Notifications:Message": "Here we go"
+    "Pipelines:Settings:Notifications:Message": "Here we go",
+
+    "Pipelines:Settings:SetGmt:Info": "Send me your time if format 'HH:mm' to set your current time. It will help me to understand when to send you reminders😊 \r\nNow it seems to me that your time is {0}, isn't it?",
+    "Pipelines:Settings:SetGmt:CannotParseTime": "Oh, I can't understand this format, did you specified it properly?",
+    "Pipelines:Settings:SetGmt:Success": "Time updated successfully!"
   }
 }

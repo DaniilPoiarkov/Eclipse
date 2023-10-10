@@ -39,7 +39,7 @@ internal class SetGmtPipeline : SettingsPipelineBase
     {
         if (context.Value.Equals("/cancel"))
         {
-            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:SetGmt:Canceled"]);
+            return Menu(SettingsMenuButtons, Localizer["Okay"]);
         }
 
         if (!context.Value.TryParseAsTimeOnly(out var time))
