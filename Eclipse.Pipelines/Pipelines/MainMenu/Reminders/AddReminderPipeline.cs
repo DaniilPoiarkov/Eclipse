@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Cache;
@@ -44,7 +45,7 @@ public class AddReminderPipeline : RemindersPipelineBase
 
     private async Task<IResult> SaveReminder(MessageContext context, CancellationToken cancellationToken = default)
     {
-        if (!TryParseTime(context.Value, out var time))
+        if (!context.Value.TryParseAsTimeOnly(out var time))
         {
             return Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders:CannotParseTime"]);
         }
