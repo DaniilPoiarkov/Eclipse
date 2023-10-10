@@ -70,7 +70,7 @@ public class IdentityUserStoreTests
             ChatId = User.Id,
         };
 
-        _identityUserCache.GetAll().Returns(new[] { dto });
+        _identityUserCache.GetByChatId(User.Id).Returns(dto);
 
         await Sut.AddOrUpdate(User);
 
@@ -88,7 +88,7 @@ public class IdentityUserStoreTests
     [Fact]
     public async Task AddOrUpdate_WhenUserHasNewData_ThenCallsService_AndUpdatesCache()
     {
-        _identityUserCache.GetAll().Returns(new[] { UserDtoToUpdate });
+        _identityUserCache.GetByChatId(User.Id).Returns(UserDtoToUpdate);
 
         await Sut.AddOrUpdate(User);
 
