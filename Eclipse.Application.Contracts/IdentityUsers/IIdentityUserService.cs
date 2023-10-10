@@ -11,4 +11,6 @@ public interface IIdentityUserService
     Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default);
+
+    Task<IdentityUserDto> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default);
 }
