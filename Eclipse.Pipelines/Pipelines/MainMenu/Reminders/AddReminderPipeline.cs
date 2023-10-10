@@ -59,7 +59,7 @@ public class AddReminderPipeline : RemindersPipelineBase
         var reminderCreateDto = new ReminderCreateDto
         {
             Text = text,
-            NotifyAt = time
+            NotifyAt = time.Add(user.Gmt * -1)
         };
         
         await _reminderService.CreateReminderAsync(user.Id, reminderCreateDto, cancellationToken);
