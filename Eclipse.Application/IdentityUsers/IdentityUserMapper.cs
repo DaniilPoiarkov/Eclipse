@@ -18,6 +18,7 @@ public class IdentityUserMapper : IMapper<IdentityUser, IdentityUserDto>
             ChatId = value.ChatId,
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled,
+            Gmt = value.Gmt,
 
             Reminders = value.Reminders
                 .Select(r => new ReminderDto
