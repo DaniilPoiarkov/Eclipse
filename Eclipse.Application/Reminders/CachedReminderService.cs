@@ -15,18 +15,19 @@ internal class CachedReminderService : IReminderService
         _reminderService = reminderService;
     }
 
-    public async Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
+    public Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
     {
-        var user = await _reminderService.CreateReminderAsync(userId, createReminderDto, cancellationToken);
-
-        _userCache.AddOrUpdate(user);
-
-        return user;
+        return WithCachingAsync(() => _reminderService.CreateReminderAsync(userId, createReminderDto, cancellationToken));
     }
 
-    public async Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
+    public Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
     {
-        var user = await _reminderService.RemoveRemindersForTime(userId, time, cancellationToken);
+        return WithCachingAsync(() => _reminderService.RemoveRemindersForTime(userId, time, cancellationToken));
+    }
+
+    private async Task<IdentityUserDto> WithCachingAsync(Func<Task<IdentityUserDto>> action)
+    {
+        var user = await action();
 
         _userCache.AddOrUpdate(user);
 

@@ -18,7 +18,7 @@ internal class IdentityUserStore : IIdentityUserStore
 
     public async Task AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
     {
-        var cached = _userCache.GetAll().FirstOrDefault(u => u.ChatId == user.Id);
+        var cached = _userCache.GetByChatId(user.Id);
 
         if (cached is not null)
         {
@@ -48,11 +48,11 @@ internal class IdentityUserStore : IIdentityUserStore
 
     public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetAll();
 
-    private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser user, CancellationToken cancellationToken)
+    private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
     {
-        if (identityDto.Name == user.Name
-            && identityDto.Username == user.Username
-            && identityDto.Surname == user.Surname)
+        if (identityDto.Name == telegramUser.Name
+            && identityDto.Username == telegramUser.Username
+            && identityDto.Surname == telegramUser.Surname)
         {
             _userCache.AddOrUpdate(identityDto);
             return;
@@ -60,12 +60,12 @@ internal class IdentityUserStore : IIdentityUserStore
 
         var updateDto = new IdentityUserUpdateDto
         {
-            Name = user.Name,
-            Username = user.Username,
-            Surname = user.Surname
+            Name = telegramUser.Name,
+            Username = telegramUser.Username,
+            Surname = telegramUser.Surname
         };
 
-        var identity = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
-        _userCache.AddOrUpdate(identity);
+        var user = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
+        _userCache.AddOrUpdate(user);
     }
 }

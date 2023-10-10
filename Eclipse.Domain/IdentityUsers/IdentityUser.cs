@@ -8,7 +8,16 @@ namespace Eclipse.Domain.IdentityUsers;
 public class IdentityUser : AggregateRoot
 {
     [JsonConstructor]
-    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, List<Reminder>? reminders = null)
+    internal IdentityUser(
+        Guid id,
+        string name,
+        string surname,
+        string username,
+        long chatId,
+        string culture,
+        bool notificationsEnabled,
+        List<Reminder>? reminders = null,
+        TimeSpan gmt = default)
         : base(id)
     {
         Name = name;
@@ -17,6 +26,7 @@ public class IdentityUser : AggregateRoot
         ChatId = chatId;
         Culture = culture;
         NotificationsEnabled = notificationsEnabled;
+        Gmt = gmt;
 
         _reminders = reminders ?? new List<Reminder>();
     }
@@ -34,6 +44,8 @@ public class IdentityUser : AggregateRoot
     public string Culture { get; set; }
 
     public bool NotificationsEnabled { get; set; }
+
+    public TimeSpan Gmt { get; private set; }
 
     public IReadOnlyCollection<Reminder> Reminders => _reminders;
 
@@ -70,5 +82,19 @@ public class IdentityUser : AggregateRoot
         }
 
         return reminders;
+    }
+
+    /// <summary>
+    /// Calculates GMT using curernt user time and utc now
+    /// </summary>
+    /// <param name="currentUserTime"></param>
+    public void SetGmt(TimeOnly currentUserTime)
+    {
+        var utc = DateTime.UtcNow;
+        var now = new TimeOnly(utc.Hour, utc.Minute);
+
+        Gmt = currentUserTime > now
+            ? currentUserTime - now
+            : (now - currentUserTime) * -1;
     }
 }

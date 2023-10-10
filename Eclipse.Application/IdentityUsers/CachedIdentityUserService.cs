@@ -16,13 +16,9 @@ internal class CachedIdentityUserService : IIdentityUserService
         _identityUserService = identityUserService;
     }
 
-    public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var user = await _identityUserService.CreateAsync(createDto, cancellationToken);
-
-        _userCache.AddOrUpdate(user);
-
-        return user;
+        return WithCachingAsync(() => _identityUserService.CreateAsync(createDto, cancellationToken));
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -37,41 +33,43 @@ internal class CachedIdentityUserService : IIdentityUserService
         return users;
     }
 
-    public async Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         var user = _userCache.GetByChatId(chatId);
 
         if (user is not null)
         {
-            return user;
+            return Task.FromResult(user);
         }
 
-        user = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
-
-        _userCache.AddOrUpdate(user);
-
-        return user;
+        return WithCachingAsync(() => _identityUserService.GetByChatIdAsync(chatId, cancellationToken));
     }
 
-    public async Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var user = _userCache.GetById(id);
 
         if (user is not null)
         {
-            return user;
+            return Task.FromResult(user);
         }
 
-        user = await _identityUserService.GetByIdAsync(id, cancellationToken);
-
-        _userCache.AddOrUpdate(user);
-
-        return user;
+        return WithCachingAsync(() => _identityUserService.GetByIdAsync(id, cancellationToken));
     }
 
-    public async Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<IdentityUserDto> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
-        var user = await _identityUserService.UpdateAsync(id, updateDto, cancellationToken);
+        return WithCachingAsync(() => _identityUserService.SetUserGmtTimeAsync(userId, currentUserTime, cancellationToken));
+    }
+
+    public Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    {
+        return WithCachingAsync(() => _identityUserService.UpdateAsync(id, updateDto, cancellationToken));
+    }
+
+    private async Task<IdentityUserDto> WithCachingAsync(Func<Task<IdentityUserDto>> action)
+    {
+        var user = await action();
 
         _userCache.AddOrUpdate(user);
 

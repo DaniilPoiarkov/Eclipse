@@ -58,5 +58,28 @@ public static class PrimitivesExtensions
         return format(str);
     }
 
+    public static bool TryParseAsTimeOnly(this string str, out TimeOnly parsed)
+    {
+        parsed = default;
+
+        var values = str.Split(':').ToArray();
+
+        if (values.Length != 2)
+        {
+            return false;
+        }
+
+        if (!TryParse(values[0], out var hours) || !TryParse(values[1], out var minutes))
+        {
+            return false;
+        }
+
+        parsed = new TimeOnly(hours, minutes);
+
+        return true;
+
+        static bool TryParse(string value, out int num) => int.TryParse(value, out num);
+    }
+
     #endregion
 }

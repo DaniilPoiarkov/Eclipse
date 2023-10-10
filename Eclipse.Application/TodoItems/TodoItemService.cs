@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
 using Eclipse.Application.TodoItems.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.TodoItems;
 
 using FluentValidation;
@@ -14,16 +15,20 @@ internal class TodoItemService : ITodoItemService
 
     private readonly ITodoItemRepository _todoItemRepository;
 
+    private readonly IdentityUserManager _userManager;
+
     private readonly IValidator<CreateTodoItemDto> _validator;
 
     private readonly IMapper<TodoItem, TodoItemDto> _mapper;
 
     public TodoItemService(
         ITodoItemRepository todoItemRepository,
+        IdentityUserManager userManager,
         IValidator<CreateTodoItemDto> validator,
         IMapper<TodoItem, TodoItemDto> mapper)
     {
         _todoItemRepository = todoItemRepository;
+        _userManager = userManager;
         _validator = validator;
         _mapper = mapper;
     }
@@ -41,6 +46,9 @@ internal class TodoItemService : ITodoItemService
             throw new TodoItemValidationException(errors);
         }
 
+        var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken)
+            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+
         var userItems = await _todoItemRepository.GetByExpressionAsync(i => i.TelegramUserId == input.UserId, cancellationToken);
 
         if (userItems.Count == _limit)
@@ -48,7 +56,7 @@ internal class TodoItemService : ITodoItemService
             throw new TodoItemLimitException(_limit);
         }
 
-        var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!, DateTime.UtcNow);
+        var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!, DateTime.UtcNow.Add(user.Gmt));
 
         await _todoItemRepository.CreateAsync(todoItem, cancellationToken);
 

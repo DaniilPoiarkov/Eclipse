@@ -17,5 +17,7 @@ public class IdentityUserDto : AggregateRootDto
 
     public bool NotificationsEnabled { get; set; }
 
+    public TimeSpan Gmt {  get; set; }
+
     public IReadOnlyList<ReminderDto> Reminders { get; set; } = new List<ReminderDto>();
 }
