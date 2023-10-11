@@ -14,6 +14,8 @@
     "BotCommand:CommandMinLength": "Команда не може бути меншою за 1 символ",
     "BotCommand:CommandManLength": "Команда не може бути більшою за 24 симлова",
     "BotCommand:DescriptionMinLength": "Опис не може бути меншим за 10 символів",
-    "BotCommand:DescriptionMaxLength": "Опис не може бути більшим за 256 символів"
+    "BotCommand:DescriptionMaxLength": "Опис не може бути більшим за 256 символів",
+    
+    "Entity:NotFound": "Сутність типу {0} не знайдено"
   }
 }

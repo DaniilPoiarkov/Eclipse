@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Telegram.Messages;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
@@ -11,13 +12,16 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
+    private readonly IIdentityUserService _identityUserService;
+
     private readonly IMessageStore _messageStore;
 
     private static readonly string _errorMessage = "Pipelines:TodoItems:MyList:Error";
 
-    public MyTodoItemListPipeline(ITodoItemService todoItemService, IMessageStore messageStore)
+    public MyTodoItemListPipeline(ITodoItemService todoItemService, IIdentityUserService identityUserService, IMessageStore messageStore)
     {
         _todoItemService = todoItemService;
+        _identityUserService = identityUserService;
         _messageStore = messageStore;
     }
 
@@ -29,9 +33,8 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> SendList(MessageContext context, CancellationToken cancellationToken)
     {
-        var items = (await _todoItemService.GetUserItemsAsync(context.User.Id, cancellationToken))
-            .Where(item => !item.IsFinished)
-            .ToList();
+        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var items = user.TodoItems;
 
         if (items.Count == 0)
         {
@@ -63,9 +66,10 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         try
         {
-            await _todoItemService.FinishItemAsync(id, cancellationToken);
-
-            var items = await _todoItemService.GetUserItemsAsync(context.ChatId, cancellationToken);
+            await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
+            
+            var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+            var items = user.TodoItems;
 
             if (items.Count == 0)
             {

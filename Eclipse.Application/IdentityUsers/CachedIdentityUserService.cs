@@ -1,18 +1,14 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Exceptions;
-using Eclipse.Core.Models;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
 
-internal class CachedIdentityUserService : IIdentityUserService
+internal class CachedIdentityUserService : IdentityUserCachingFixture, IIdentityUserService
 {
-    private readonly IIdentityUserCache _userCache;
-
     private readonly IIdentityUserService _identityUserService;
 
-    public CachedIdentityUserService(IIdentityUserCache userCache, IIdentityUserService identityUserService)
+    public CachedIdentityUserService(IIdentityUserCache userCache, IIdentityUserService identityUserService) : base(userCache)
     {
-        _userCache = userCache;
         _identityUserService = identityUserService;
     }
 
@@ -27,7 +23,7 @@ internal class CachedIdentityUserService : IIdentityUserService
 
         foreach (var user in users)
         {
-            _userCache.AddOrUpdate(user);
+            UserCache.AddOrUpdate(user);
         }
 
         return users;
@@ -35,7 +31,7 @@ internal class CachedIdentityUserService : IIdentityUserService
 
     public Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = _userCache.GetByChatId(chatId);
+        var user = UserCache.GetByChatId(chatId);
 
         if (user is not null)
         {
@@ -47,7 +43,7 @@ internal class CachedIdentityUserService : IIdentityUserService
 
     public Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = _userCache.GetById(id);
+        var user = UserCache.GetById(id);
 
         if (user is not null)
         {
@@ -65,14 +61,5 @@ internal class CachedIdentityUserService : IIdentityUserService
     public Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _identityUserService.UpdateAsync(id, updateDto, cancellationToken));
-    }
-
-    private async Task<IdentityUserDto> WithCachingAsync(Func<Task<IdentityUserDto>> action)
-    {
-        var user = await action();
-
-        _userCache.AddOrUpdate(user);
-
-        return user;
     }
 }

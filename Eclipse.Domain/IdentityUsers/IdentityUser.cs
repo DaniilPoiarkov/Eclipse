@@ -1,5 +1,6 @@
 ﻿using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Exceptions;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 
@@ -132,5 +133,27 @@ public class IdentityUser : AggregateRoot
         var todoItem = new TodoItem(Guid.NewGuid(), this, text, DateTime.UtcNow.Add(Gmt));
         _todoItems.Add(todoItem);
         return todoItem;
+    }
+
+    /// <summary>
+    /// Removes item with given Id from user list of TodoItems
+    /// </summary>
+    /// <param name="todoItemId"></param>
+    /// <exception cref="EntityNotFoundException"></exception>
+    public void FinishItem(Guid todoItemId)
+    {
+        var item = _todoItems.FirstOrDefault(i => i.Id == todoItemId)
+            ?? throw new EntityNotFoundException(typeof(TodoItem));
+
+        _todoItems.Remove(item);
+    }
+
+    // TODO: REMOVE AFTER MIGRATION!!!
+    public void MigrateTodoItems(IEnumerable<TodoItem> todoItems)
+    {
+        foreach(var todoItem in todoItems)
+        {
+            _todoItems.Add(todoItem);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
+using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.TodoItems;
@@ -28,7 +29,7 @@ public class TodoItemsServiceTests
 
     public TodoItemsServiceTests()
     {
-        var mapper = new TodoItemMapper();
+        var mapper = new IdentityUserMapper();
 
         _repository = Substitute.For<ITodoItemRepository>();
         _userManager = Substitute.For<IdentityUserManager>(Substitute.For<IIdentityUserRepository>());
@@ -53,9 +54,14 @@ public class TodoItemsServiceTests
         var result = await Sut.CreateAsync(createModel);
 
         result.Should().NotBeNull();
-        result.Text.Should().Be(createModel.Text);
-        result.TelegramUserId.Should().Be(user.ChatId);
-        result.Id.Should().NotBeEmpty();
+
+        result.TodoItems.Count.Should().Be(1);
+
+        var todoItem = result.TodoItems[0];
+
+        todoItem.Text.Should().Be(createModel.Text);
+        todoItem.TelegramUserId.Should().Be(user.ChatId);
+        todoItem.Id.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -106,17 +112,6 @@ public class TodoItemsServiceTests
         };
 
         await action.Should().ThrowAsync<TodoItemValidationException>();
-    }
-
-    [Fact]
-    public async Task GetUserItemsAsync_WhenUserHasFiveItems_ThenListOfFiveItems_Returned()
-    {
-        _repository.GetByExpressionAsync(i => i.TelegramUserId == 3).ReturnsForAnyArgs(TodoItemsGenerator.Generate(3, 5));
-
-        var result = await Sut.GetUserItemsAsync(3);
-
-        result.Count.Should().Be(5);
-        result.All(i => i.TelegramUserId == 3).Should().BeTrue();
     }
 
     [Fact]
