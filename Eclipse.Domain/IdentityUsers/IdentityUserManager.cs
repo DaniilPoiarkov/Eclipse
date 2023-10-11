@@ -1,5 +1,5 @@
-﻿using Eclipse.Domain.IdentityUsers.Exceptions;
-using Eclipse.Domain.Reminders;
+﻿using Eclipse.Domain.Reminders;
+using Eclipse.Domain.Shared.IdentityUsers;
 
 namespace Eclipse.Domain.IdentityUsers;
 
@@ -40,7 +40,7 @@ public class IdentityUserManager
                 : throw new DuplicateDataException(nameof(username), username);
         }
 
-        var identityUser = new IdentityUser(Guid.NewGuid(), name, surname, username, chatId, culture, notificationsEnabled, new List<Reminder>());
+        var identityUser = new IdentityUser(Guid.NewGuid(), name, surname, username, chatId, culture, notificationsEnabled);
 
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }

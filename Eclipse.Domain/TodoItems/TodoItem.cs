@@ -1,23 +1,36 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.TodoItems;
+
+using Newtonsoft.Json;
 
 namespace Eclipse.Domain.TodoItems;
 
 public class TodoItem : Entity
 {
-    public TodoItem(Guid id, long telegramUserId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
+    [JsonConstructor]
+    internal TodoItem(Guid id, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
         : base(id)
-    {
-        TelegramUserId = telegramUserId;
+    { 
         Text = text;
         CreatedAt = createdAt;
         FinishedAt = finishedAt;
         IsFinished = isFinished;
     }
 
+    internal TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
+    {
+        UserId = userId;
+        Text = text;
+        CreatedAt = createdAt;
+        IsFinished = isFinished;
+        FinishedAt = finishedAt;
+    }
+
     private TodoItem() { }
 
-    public long TelegramUserId { get; private set; }
-
+    public Guid UserId { get; set; }
+    
     public string Text { get; private set; } = string.Empty;
 
     public bool IsFinished { get; private set; } = false;
@@ -30,7 +43,7 @@ public class TodoItem : Entity
     {
         if (IsFinished)
         {
-            throw new TodoItemAlreadyFinishedException(this);
+            throw new TodoItemAlreadyFinishedException(Text);
         }
 
         IsFinished = true;

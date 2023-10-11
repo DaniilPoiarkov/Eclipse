@@ -74,6 +74,10 @@ internal class IdentityUserService : IIdentityUserService
             ? user.Surname
             : updateDto.Surname;
 
+        user.Username = updateDto.Username is null
+            ? user.Username
+            : updateDto.Username;
+
         if (!string.IsNullOrEmpty(updateDto.Culture))
         {
             user.Culture = updateDto.Culture;

@@ -1,23 +1,17 @@
 ﻿using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Exceptions;
+using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.TodoItems;
 
 using Newtonsoft.Json;
 
 namespace Eclipse.Domain.IdentityUsers;
 
+#pragma warning disable CS8618
 public class IdentityUser : AggregateRoot
 {
-    [JsonConstructor]
-    internal IdentityUser(
-        Guid id,
-        string name,
-        string surname,
-        string username,
-        long chatId,
-        string culture,
-        bool notificationsEnabled,
-        List<Reminder>? reminders = null,
-        TimeSpan gmt = default)
+    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled)
         : base(id)
     {
         Name = name;
@@ -26,18 +20,30 @@ public class IdentityUser : AggregateRoot
         ChatId = chatId;
         Culture = culture;
         NotificationsEnabled = notificationsEnabled;
-        Gmt = gmt;
+        
+        Gmt = default;
 
-        _reminders = reminders ?? new List<Reminder>();
+        _reminders = new List<Reminder>();
+        _todoItems = new List<TodoItem>();
     }
 
+    [JsonConstructor]
+    private IdentityUser()
+    {
+        
+    }
+
+    [JsonProperty(nameof(Reminders))]
     private readonly List<Reminder> _reminders;
+
+    [JsonProperty(nameof(TodoItems))]
+    private readonly List<TodoItem> _todoItems;
 
     public string Name { get; set; }
 
     public string Surname { get; set; }
 
-    public string Username { get; internal set; }
+    public string Username { get; set; }
 
     public long ChatId { get; init; }
 
@@ -45,9 +51,14 @@ public class IdentityUser : AggregateRoot
 
     public bool NotificationsEnabled { get; set; }
 
+    [JsonProperty]
     public TimeSpan Gmt { get; private set; }
 
+    [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders;
+    
+    [JsonIgnore]
+    public IReadOnlyCollection<TodoItem> TodoItems => _todoItems;
 
     /// <summary>
     /// Creates reminder for user and returns it
@@ -96,5 +107,61 @@ public class IdentityUser : AggregateRoot
         Gmt = currentUserTime > now
             ? currentUserTime - now
             : (now - currentUserTime) * -1;
+
+        var day = new TimeSpan(24, 0, 0);
+
+        if (Gmt < new TimeSpan(-12, 0, 0))
+        {
+            Gmt += day;
+        }
+        if (Gmt > new TimeSpan(12, 0, 0))
+        {
+            Gmt -= day;
+        }
+    }
+
+    /// <summary>
+    /// Creates new todo item to user
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    /// <exception cref="TodoItemLimitException"></exception>
+    public TodoItem AddTodoItem(string? text)
+    {
+        if (_todoItems.Count == TodoItemConstants.Limit)
+        {
+            throw new TodoItemLimitException(TodoItemConstants.Limit);
+        }
+
+        if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
+        {
+            throw new TodoItemValidationException(TodoItemErrors.Messages.Empty);
+        }
+
+        if (text.Length > TodoItemConstants.MaxLength)
+        {
+            throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength);
+        }
+
+        var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        _todoItems.Add(todoItem);
+        return todoItem;
+    }
+
+    /// <summary>
+    /// Removes item with given Id from user list of TodoItems and retuns it
+    /// </summary>
+    /// <param name="todoItemId"></param>
+    /// <returns></returns>
+    /// <exception cref="EntityNotFoundException"></exception>
+    public TodoItem FinishItem(Guid todoItemId)
+    {
+        var item = _todoItems.FirstOrDefault(i => i.Id == todoItemId)
+            ?? throw new EntityNotFoundException(typeof(TodoItem));
+
+        _todoItems.Remove(item);
+
+        return item;
     }
 }
+#pragma warning restore CS8618

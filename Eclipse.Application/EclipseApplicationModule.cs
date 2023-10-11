@@ -73,7 +73,8 @@ public static class EclipseApplicationModule
 
         services
             .Decorate<IReminderService, CachedReminderService>()
-            .Decorate<IIdentityUserService, CachedIdentityUserService>();
+            .Decorate<IIdentityUserService, CachedIdentityUserService>()
+            .Decorate<ITodoItemService, CachedTodoItemsService>();
 
         return services;
     }

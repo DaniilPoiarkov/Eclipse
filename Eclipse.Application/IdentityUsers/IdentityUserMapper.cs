@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -28,7 +29,19 @@ public class IdentityUserMapper : IMapper<IdentityUser, IdentityUserDto>
                     Text = r.Text,
                     NotifyAt = r.NotifyAt
                 })
-                .ToList()
+                .ToList(),
+
+            TodoItems = value.TodoItems
+                .Select(i => new TodoItemDto
+                {
+                    Id = i.Id,
+                    UserId = i.UserId,
+                    Text = i.Text,
+                    CreatedAt = i.CreatedAt,
+                    IsFinished = i.IsFinished,
+                    FinishedAt = i.FinishedAt,
+                })
+                .ToList(),
         };
     }
 }

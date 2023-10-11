@@ -6,7 +6,7 @@ namespace Eclipse.Tests.Generators;
 
 public static class TodoItemsGenerator
 {
-    public static List<TodoItem> Generate(long userId, int count)
+    public static List<TodoItem> Generate(Guid userId, int count)
     {
         var results = new List<TodoItem>(count);
         var faker = new Faker();

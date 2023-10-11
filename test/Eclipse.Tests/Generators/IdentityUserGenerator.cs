@@ -1,7 +1,6 @@
 ﻿using Bogus;
 
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Reminders;
 
 namespace Eclipse.Tests.Generators;
 
@@ -22,8 +21,7 @@ public static class IdentityUserGenerator
                 faker.Person.UserName,
                 chatId: i,
                 culture: "en",
-                notificationsEnabled: i % 2 == 0,
-                new List<Reminder>()));
+                notificationsEnabled: i % 2 == 0));
         }
 
         return result;

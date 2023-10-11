@@ -3,9 +3,7 @@ using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Hosted;
 using Eclipse.DataAccess.IdentityUsers;
 using Eclipse.DataAccess.InMemoryDb;
-using Eclipse.DataAccess.TodoItems;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.TodoItems;
 
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +22,6 @@ public static class EclipseDataAccessModule
 
         services
             .AddSingleton<IDbContext, InMemoryDbContext>()
-            .AddScoped<ITodoItemRepository, CosmosTodoItemRepository>()
             .AddScoped<IIdentityUserRepository, IdentityUserRepository>();
 
         services.AddHostedService<DataAccessModuleInitializationService>();
