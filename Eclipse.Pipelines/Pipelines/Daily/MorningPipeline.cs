@@ -24,8 +24,6 @@ internal class MorningPipeline : EclipsePipelineBase
 
     private IResult AskMood(MessageContext context)
     {
-        var text = Localizer["Pipelines:Morning:AskMood"];
-
         var buttons = new InlineKeyboardButton[]
         {
             InlineKeyboardButton.WithCallbackData("👍"),
@@ -34,7 +32,7 @@ internal class MorningPipeline : EclipsePipelineBase
 
         var message = _messageStore.GetMessage(new MessageKey(context.ChatId));
 
-        var menu = Menu(buttons, text);
+        var menu = Menu(buttons, Localizer["Pipelines:Morning:AskMood"]);
 
         if (message is null || message.ReplyMarkup is null)
         {
