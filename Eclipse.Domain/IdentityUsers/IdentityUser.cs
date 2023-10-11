@@ -8,20 +8,10 @@ using Newtonsoft.Json;
 
 namespace Eclipse.Domain.IdentityUsers;
 
+#pragma warning disable CS8618
 public class IdentityUser : AggregateRoot
 {
-    [JsonConstructor]
-    internal IdentityUser(
-        Guid id,
-        string name,
-        string surname,
-        string username,
-        long chatId,
-        string culture,
-        bool notificationsEnabled,
-        List<Reminder>? reminders = null,
-        TimeSpan gmt = default,
-        List<TodoItem>? todoItems = null)
+    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled)
         : base(id)
     {
         Name = name;
@@ -30,21 +20,30 @@ public class IdentityUser : AggregateRoot
         ChatId = chatId;
         Culture = culture;
         NotificationsEnabled = notificationsEnabled;
-        Gmt = gmt;
+        
+        Gmt = default;
 
-        _reminders = reminders ?? new List<Reminder>();
-        _todoItems = todoItems ?? new List<TodoItem>();
+        _reminders = new List<Reminder>();
+        _todoItems = new List<TodoItem>();
     }
 
+    [JsonConstructor]
+    private IdentityUser()
+    {
+        
+    }
+
+    [JsonProperty(nameof(Reminders))]
     private readonly List<Reminder> _reminders;
 
+    [JsonProperty(nameof(TodoItems))]
     private readonly List<TodoItem> _todoItems;
 
     public string Name { get; set; }
 
     public string Surname { get; set; }
 
-    public string Username { get; internal set; }
+    public string Username { get; set; }
 
     public long ChatId { get; init; }
 
@@ -52,10 +51,13 @@ public class IdentityUser : AggregateRoot
 
     public bool NotificationsEnabled { get; set; }
 
+    [JsonProperty]
     public TimeSpan Gmt { get; private set; }
 
+    [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders;
-
+    
+    [JsonIgnore]
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems;
 
     /// <summary>
@@ -102,9 +104,20 @@ public class IdentityUser : AggregateRoot
         var utc = DateTime.UtcNow;
         var now = new TimeOnly(utc.Hour, utc.Minute);
 
-        Gmt = currentUserTime > now
+        var gmt = currentUserTime > now
             ? currentUserTime - now
             : (now - currentUserTime) * -1;
+
+        var day = new TimeSpan(24, 0, 0);
+
+        if (gmt < new TimeSpan(-12, 0, 0))
+        {
+            Gmt = gmt + day;
+        }
+        if (gmt > new TimeSpan(12, 0, 0))
+        {
+            Gmt = gmt - day;
+        }
     }
 
     /// <summary>
@@ -151,3 +164,4 @@ public class IdentityUser : AggregateRoot
         return item;
     }
 }
+#pragma warning restore CS8618

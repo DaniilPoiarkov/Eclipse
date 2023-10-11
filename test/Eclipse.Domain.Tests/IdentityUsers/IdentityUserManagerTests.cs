@@ -38,8 +38,7 @@ public class IdentityUserManagerTests
             string.Empty,
             chatId,
             culture,
-            notificationsEnabled,
-            new List<Reminder>());
+            notificationsEnabled);
 
         _repository.CreateAsync(IdentityUserGenerator.Generate(1).First()).ReturnsForAnyArgs(identityUser);
 
