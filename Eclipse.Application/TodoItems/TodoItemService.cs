@@ -9,18 +9,14 @@ namespace Eclipse.Application.TodoItems;
 
 internal class TodoItemService : ITodoItemService
 {
-    private readonly ITodoItemRepository _todoItemRepository;
-
     private readonly IdentityUserManager _userManager;
 
     private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
 
     public TodoItemService(
-        ITodoItemRepository todoItemRepository,
         IdentityUserManager userManager,
         IMapper<IdentityUser, IdentityUserDto> mapper)
     {
-        _todoItemRepository = todoItemRepository;
         _userManager = userManager;
         _mapper = mapper;
     }

@@ -6,7 +6,6 @@ using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.TodoItems;
-using Eclipse.Domain.TodoItems;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -19,8 +18,6 @@ namespace Eclipse.Application.Tests.TodoItems;
 
 public class TodoItemsServiceTests
 {
-    private readonly ITodoItemRepository _repository;
-
     private readonly IdentityUserManager _userManager;
 
     private readonly Lazy<ITodoItemService> _lazySut;
@@ -31,9 +28,8 @@ public class TodoItemsServiceTests
     {
         var mapper = new IdentityUserMapper();
 
-        _repository = Substitute.For<ITodoItemRepository>();
         _userManager = Substitute.For<IdentityUserManager>(Substitute.For<IIdentityUserRepository>());
-        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(_repository, _userManager, mapper));
+        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(_userManager, mapper));
     }
 
     [Fact]
