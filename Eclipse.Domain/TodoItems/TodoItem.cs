@@ -9,7 +9,7 @@ namespace Eclipse.Domain.TodoItems;
 public class TodoItem : Entity
 {
     [JsonConstructor]
-    public TodoItem(Guid id, long telegramUserId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
+    internal TodoItem(Guid id, long telegramUserId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
         : base(id)
     {
         TelegramUserId = telegramUserId;
@@ -19,7 +19,7 @@ public class TodoItem : Entity
         IsFinished = isFinished;
     }
 
-    public TodoItem(Guid id, IdentityUser user, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
+    internal TodoItem(Guid id, IdentityUser user, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
     {
         UserId = user.Id;
         TelegramUserId = user.ChatId;
