@@ -1,5 +1,5 @@
-﻿using Eclipse.Domain.IdentityUsers.Exceptions;
-using Eclipse.Domain.Reminders;
+﻿using Eclipse.Domain.Reminders;
+using Eclipse.Domain.Shared.IdentityUsers;
 
 namespace Eclipse.Domain.IdentityUsers;
 

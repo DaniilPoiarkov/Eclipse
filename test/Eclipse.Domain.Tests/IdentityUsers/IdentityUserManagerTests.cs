@@ -1,6 +1,6 @@
 ﻿using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.IdentityUsers.Exceptions;
 using Eclipse.Domain.Reminders;
+using Eclipse.Domain.Shared.IdentityUsers;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

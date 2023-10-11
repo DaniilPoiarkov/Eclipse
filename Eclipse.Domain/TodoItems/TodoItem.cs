@@ -1,5 +1,6 @@
 ﻿using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.TodoItems;
 
 using Newtonsoft.Json;
 
@@ -46,7 +47,7 @@ public class TodoItem : Entity
     {
         if (IsFinished)
         {
-            throw new TodoItemAlreadyFinishedException(this);
+            throw new TodoItemAlreadyFinishedException(Text);
         }
 
         IsFinished = true;

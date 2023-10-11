@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Entities;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.TodoItems;
 
 namespace Eclipse.Application.Contracts.IdentityUsers;
 
@@ -20,4 +21,6 @@ public class IdentityUserDto : AggregateRootDto
     public TimeSpan Gmt {  get; set; }
 
     public IReadOnlyList<ReminderDto> Reminders { get; set; } = new List<ReminderDto>();
+
+    public IReadOnlyList<TodoItemDto> TodoItems { get; set; } = new List<TodoItemDto>();
 }
