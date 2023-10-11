@@ -51,4 +51,26 @@ public class IdentityUserServiceTests
         await action.Should().ThrowAsync<ObjectNotFoundException>();
         await _manager.DidNotReceive().UpdateAsync(default!);
     }
+
+    [Fact]
+    public async Task UpdateAsync_WhenUsernameChanged_ThenUserUpdated()
+    {
+        var user = IdentityUserGenerator.Generate(1).First();
+
+        _manager.FindByIdAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
+        _manager.UpdateAsync(user).Returns(Task.FromResult<IdentityUser?>(user));
+
+        var updateDto = new IdentityUserUpdateDto
+        {
+            Username = "new_username",
+            Name = "new_name",
+            Surname = "new_surname"
+        };
+
+        var result = await Sut.UpdateAsync(user.Id, updateDto);
+
+        result.Username.Should().Be(updateDto.Username);
+        result.Name.Should().Be(updateDto.Name);
+        result.Surname.Should().Be(updateDto.Surname);
+    }
 }
