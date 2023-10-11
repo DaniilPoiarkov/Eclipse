@@ -23,7 +23,7 @@ public class IdentityUserTests
 
         var hour = utc.Hour + 3 > 23
             ? utc.Hour - 21
-            : utc.Hour;
+            : utc.Hour + 3;
 
         var currentUserTime = new TimeOnly(hour, utc.Minute);
         var expected = new TimeSpan(3, 0, 0);
@@ -38,7 +38,11 @@ public class IdentityUserTests
     {
         var utc = DateTime.UtcNow;
 
-        var currentUserTime = new TimeOnly(utc.Hour - 4, utc.Minute);
+        var hour = utc.Hour - 4 < 0
+            ? utc.Hour + 20
+            : utc.Hour - 4;
+
+        var currentUserTime = new TimeOnly(hour, utc.Minute);
 
         var expected = new TimeSpan(-4, 0, 0);
 
