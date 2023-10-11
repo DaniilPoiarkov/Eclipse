@@ -21,7 +21,11 @@ public class IdentityUserTests
     {
         var utc = DateTime.UtcNow;
 
-        var currentUserTime = new TimeOnly(utc.Hour + 3, utc.Minute);
+        var hour = utc.Hour + 3 > 23
+            ? utc.Hour - 21
+            : utc.Hour;
+
+        var currentUserTime = new TimeOnly(hour, utc.Minute);
         var expected = new TimeSpan(3, 0, 0);
 
         _sut.SetGmt(currentUserTime);

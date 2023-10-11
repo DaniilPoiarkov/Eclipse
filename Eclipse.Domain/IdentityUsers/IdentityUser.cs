@@ -104,19 +104,19 @@ public class IdentityUser : AggregateRoot
         var utc = DateTime.UtcNow;
         var now = new TimeOnly(utc.Hour, utc.Minute);
 
-        var gmt = currentUserTime > now
+        Gmt = currentUserTime > now
             ? currentUserTime - now
             : (now - currentUserTime) * -1;
 
         var day = new TimeSpan(24, 0, 0);
 
-        if (gmt < new TimeSpan(-12, 0, 0))
+        if (Gmt < new TimeSpan(-12, 0, 0))
         {
-            Gmt = gmt + day;
+            Gmt += day;
         }
-        if (gmt > new TimeSpan(12, 0, 0))
+        if (Gmt > new TimeSpan(12, 0, 0))
         {
-            Gmt = gmt - day;
+            Gmt -= day;
         }
     }
 
