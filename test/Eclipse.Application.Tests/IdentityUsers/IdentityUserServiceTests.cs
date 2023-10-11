@@ -72,5 +72,8 @@ public class IdentityUserServiceTests
         result.Username.Should().Be(updateDto.Username);
         result.Name.Should().Be(updateDto.Name);
         result.Surname.Should().Be(updateDto.Surname);
+
+        await _manager.Received().FindByIdAsync(user.Id);
+        await _manager.Received().UpdateAsync(user);
     }
 }
