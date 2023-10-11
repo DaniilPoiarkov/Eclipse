@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
-using Eclipse.Application.TodoItems.Exceptions;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 
 using FluentValidation;

@@ -11,16 +11,16 @@ public class CreateTodoItemValidator : AbstractValidator<CreateTodoItemDto>
     {
         RuleFor(i => i.Text)
             .NotNull()
-                .WithErrorCode(TodoItemError.Codes.Null)
-                .WithMessage(TodoItemError.Messages.Empty)
+                .WithErrorCode(TodoItemErrors.Codes.Null)
+                .WithMessage(TodoItemErrors.Messages.Empty)
             .NotEmpty()
-                .WithErrorCode(TodoItemError.Codes.Empty)
-                .WithMessage(TodoItemError.Messages.Empty)
+                .WithErrorCode(TodoItemErrors.Codes.Empty)
+                .WithMessage(TodoItemErrors.Messages.Empty)
             .MinimumLength(TodoItemConstants.MinLength)
-                .WithErrorCode(TodoItemError.Codes.MinLength)
-                .WithMessage(TodoItemError.Messages.Empty)
+                .WithErrorCode(TodoItemErrors.Codes.MinLength)
+                .WithMessage(TodoItemErrors.Messages.Empty)
             .MaximumLength(TodoItemConstants.MaxLength)
-                .WithErrorCode(TodoItemError.Codes.MaxLength)
-                .WithMessage(TodoItemError.Messages.MaxLength);
+                .WithErrorCode(TodoItemErrors.Codes.MaxLength)
+                .WithMessage(TodoItemErrors.Messages.MaxLength);
     }
 }

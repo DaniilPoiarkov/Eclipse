@@ -1,9 +1,13 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Entities;
+
+using Newtonsoft.Json;
 
 namespace Eclipse.Domain.TodoItems;
 
 public class TodoItem : Entity
 {
+    [JsonConstructor]
     public TodoItem(Guid id, long telegramUserId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
         : base(id)
     {
@@ -14,7 +18,19 @@ public class TodoItem : Entity
         IsFinished = isFinished;
     }
 
+    public TodoItem(Guid id, IdentityUser user, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
+    {
+        UserId = user.Id;
+        TelegramUserId = user.ChatId;
+        Text = text;
+        CreatedAt = createdAt;
+        IsFinished = isFinished;
+        FinishedAt = finishedAt;
+    }
+
     private TodoItem() { }
+
+    public Guid UserId { get; set; }
 
     public long TelegramUserId { get; private set; }
 

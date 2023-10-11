@@ -1,5 +1,7 @@
 ﻿using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.TodoItems;
 
 using Newtonsoft.Json;
 
@@ -17,7 +19,8 @@ public class IdentityUser : AggregateRoot
         string culture,
         bool notificationsEnabled,
         List<Reminder>? reminders = null,
-        TimeSpan gmt = default)
+        TimeSpan gmt = default,
+        List<TodoItem>? todoItems = null)
         : base(id)
     {
         Name = name;
@@ -29,9 +32,12 @@ public class IdentityUser : AggregateRoot
         Gmt = gmt;
 
         _reminders = reminders ?? new List<Reminder>();
+        _todoItems = todoItems ?? new List<TodoItem>();
     }
 
     private readonly List<Reminder> _reminders;
+
+    private readonly List<TodoItem> _todoItems;
 
     public string Name { get; set; }
 
@@ -48,6 +54,8 @@ public class IdentityUser : AggregateRoot
     public TimeSpan Gmt { get; private set; }
 
     public IReadOnlyCollection<Reminder> Reminders => _reminders;
+
+    public IReadOnlyCollection<TodoItem> TodoItems => _todoItems;
 
     /// <summary>
     /// Creates reminder for user and returns it
@@ -96,5 +104,33 @@ public class IdentityUser : AggregateRoot
         Gmt = currentUserTime > now
             ? currentUserTime - now
             : (now - currentUserTime) * -1;
+    }
+
+    /// <summary>
+    /// Creates new todo item to user
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    /// <exception cref="TodoItemLimitException"></exception>
+    public TodoItem AddTodoItem(string text)
+    {
+        if (_todoItems.Count == TodoItemConstants.Limit)
+        {
+            throw new TodoItemLimitException(TodoItemConstants.Limit);
+        }
+
+        if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
+        {
+            throw new TodoItemValidationException(TodoItemErrors.Messages.Empty);
+        }
+
+        if (text.Length > TodoItemConstants.MaxLength)
+        {
+            throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength);
+        }
+
+        var todoItem = new TodoItem(Guid.NewGuid(), this, text, DateTime.UtcNow.Add(Gmt));
+        _todoItems.Add(todoItem);
+        return todoItem;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.Shared.TodoItems;
 
 namespace Eclipse.Domain.TodoItems;
 
