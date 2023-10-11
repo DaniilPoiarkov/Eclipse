@@ -112,7 +112,7 @@ public class IdentityUser : AggregateRoot
     /// <param name="text"></param>
     /// <returns></returns>
     /// <exception cref="TodoItemLimitException"></exception>
-    public TodoItem AddTodoItem(string text)
+    public TodoItem AddTodoItem(string? text)
     {
         if (_todoItems.Count == TodoItemConstants.Limit)
         {

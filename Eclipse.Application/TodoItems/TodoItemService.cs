@@ -2,61 +2,34 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
-
-using FluentValidation;
 
 namespace Eclipse.Application.TodoItems;
 
 internal class TodoItemService : ITodoItemService
 {
-    private static readonly int _limit = 7;
-
     private readonly ITodoItemRepository _todoItemRepository;
 
     private readonly IdentityUserManager _userManager;
-
-    private readonly IValidator<CreateTodoItemDto> _validator;
 
     private readonly IMapper<TodoItem, TodoItemDto> _mapper;
 
     public TodoItemService(
         ITodoItemRepository todoItemRepository,
         IdentityUserManager userManager,
-        IValidator<CreateTodoItemDto> validator,
         IMapper<TodoItem, TodoItemDto> mapper)
     {
         _todoItemRepository = todoItemRepository;
         _userManager = userManager;
-        _validator = validator;
         _mapper = mapper;
     }
 
     public async Task<TodoItemDto> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
     {
-        var result = _validator.Validate(input);
-
-        if (!result.IsValid)
-        {
-            var errors = result.Errors.Select(e => e.ErrorMessage)
-                .Distinct()
-                .ToArray();
-
-            throw new TodoItemValidationException(errors);
-        }
-
         var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
-        var userItems = await _todoItemRepository.GetByExpressionAsync(i => i.TelegramUserId == input.UserId, cancellationToken);
-
-        if (userItems.Count == _limit)
-        {
-            throw new TodoItemLimitException(_limit);
-        }
-
-        var todoItem = new TodoItem(Guid.NewGuid(), input.UserId, input.Text!, DateTime.UtcNow.Add(user.Gmt));
+        var todoItem = user.AddTodoItem(input.Text);
 
         await _todoItemRepository.CreateAsync(todoItem, cancellationToken);
 

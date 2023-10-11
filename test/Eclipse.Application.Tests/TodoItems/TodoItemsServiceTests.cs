@@ -1,4 +1,6 @@
-﻿using Eclipse.Application.Contracts.TodoItems;
+﻿using Bogus;
+
+using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
 using Eclipse.Application.TodoItems;
 using Eclipse.Domain.IdentityUsers;
@@ -26,12 +28,11 @@ public class TodoItemsServiceTests
 
     public TodoItemsServiceTests()
     {
-        var validator = new CreateTodoItemValidator();
         var mapper = new TodoItemMapper();
 
         _repository = Substitute.For<ITodoItemRepository>();
         _userManager = Substitute.For<IdentityUserManager>(Substitute.For<IIdentityUserRepository>());
-        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(_repository, _userManager, validator, mapper));
+        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(_repository, _userManager, mapper));
     }
 
     [Fact]
@@ -41,35 +42,41 @@ public class TodoItemsServiceTests
         
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _userManager.FindByChatIdAsync(1).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
+        _userManager.FindByChatIdAsync(user.ChatId).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
 
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
-            UserId = 1,
+            UserId = user.ChatId,
         };
 
         var result = await Sut.CreateAsync(createModel);
 
         result.Should().NotBeNull();
         result.Text.Should().Be(createModel.Text);
-        result.TelegramUserId.Should().Be(createModel.UserId);
+        result.TelegramUserId.Should().Be(user.ChatId);
         result.Id.Should().NotBeEmpty();
     }
 
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItems_ThenExceptionThrown()
     {
-        _repository.GetByExpressionAsync(i => i.TelegramUserId == 2).ReturnsForAnyArgs(TodoItemsGenerator.Generate(2, 7));
-
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _userManager.FindByChatIdAsync(2).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
+        var faker = new Faker();
+
+        for (int i = 0; i < 7; i++)
+        {
+            user.AddTodoItem(faker.Lorem.Word());
+        }
+
+        _repository.GetByExpressionAsync(i => i.TelegramUserId == user.ChatId).ReturnsForAnyArgs(TodoItemsGenerator.Generate(user.ChatId, 7));
+        _userManager.FindByChatIdAsync(user.ChatId).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
 
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
-            UserId = 2,
+            UserId = user.ChatId,
         };
 
         var action = async () =>
@@ -83,10 +90,14 @@ public class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenTestIsEmpty_ThenValidationFails()
     {
+        var user = IdentityUserGenerator.Generate(1).First();
+
+        _userManager.FindByChatIdAsync(user.ChatId).Returns(Task.FromResult<IdentityUser?>(user));
+
         var createModel = new CreateTodoItemDto
         {
             Text = string.Empty,
-            UserId = 2,
+            UserId = user.ChatId,
         };
 
         var action = async () =>
