@@ -30,9 +30,9 @@ internal class TodoItemService : ITodoItemService
         var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
-        var todoItem = user.AddTodoItem(input.Text);
+        user.AddTodoItem(input.Text);
 
-        await _todoItemRepository.CreateAsync(todoItem, cancellationToken);
+        await _userManager.UpdateAsync(user, cancellationToken);
 
         return _mapper.Map(user);
     }

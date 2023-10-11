@@ -6,8 +6,6 @@ public class TodoItemDto : EntityDto
 {
     public Guid UserId { get; set; }
 
-    public long TelegramUserId { get; set; }
-
     public string Text { get; set; } = string.Empty;
 
     public bool IsFinished { get; set; } = false;

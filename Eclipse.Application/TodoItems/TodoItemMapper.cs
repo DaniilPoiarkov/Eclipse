@@ -14,7 +14,6 @@ public class TodoItemMapper : IMapper<TodoItem, TodoItemDto>
             CreatedAt = value.CreatedAt,
             FinishedAt = value.FinishedAt,
             IsFinished = value.IsFinished,
-            TelegramUserId = value.TelegramUserId,
             Text = value.Text,
         };
     }

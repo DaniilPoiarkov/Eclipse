@@ -9,20 +9,18 @@ namespace Eclipse.Domain.TodoItems;
 public class TodoItem : Entity
 {
     [JsonConstructor]
-    internal TodoItem(Guid id, long telegramUserId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
+    internal TodoItem(Guid id, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
         : base(id)
-    {
-        TelegramUserId = telegramUserId;
+    { 
         Text = text;
         CreatedAt = createdAt;
         FinishedAt = finishedAt;
         IsFinished = isFinished;
     }
 
-    internal TodoItem(Guid id, IdentityUser user, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
+    internal TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
     {
-        UserId = user.Id;
-        TelegramUserId = user.ChatId;
+        UserId = userId;
         Text = text;
         CreatedAt = createdAt;
         IsFinished = isFinished;
@@ -32,9 +30,7 @@ public class TodoItem : Entity
     private TodoItem() { }
 
     public Guid UserId { get; set; }
-
-    public long TelegramUserId { get; private set; }
-
+    
     public string Text { get; private set; } = string.Empty;
 
     public bool IsFinished { get; private set; } = false;

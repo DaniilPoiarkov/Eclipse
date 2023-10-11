@@ -66,9 +66,8 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         try
         {
-            await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
-            
-            var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+            var user = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
+
             var items = user.TodoItems;
 
             if (items.Count == 0)

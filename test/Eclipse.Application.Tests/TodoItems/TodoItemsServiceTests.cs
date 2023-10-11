@@ -38,9 +38,7 @@ public class TodoItemsServiceTests
 
     [Fact]
     public async Task CreateAsync_WhenInputValid_ThenCreatedSuccessfully()
-    {
-        _repository.GetByExpressionAsync(i => i.TelegramUserId == 1).ReturnsForAnyArgs(new List<TodoItem>());
-        
+    {   
         var user = IdentityUserGenerator.Generate(1).First();
 
         _userManager.FindByChatIdAsync(user.ChatId).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
@@ -60,7 +58,7 @@ public class TodoItemsServiceTests
         var todoItem = result.TodoItems[0];
 
         todoItem.Text.Should().Be(createModel.Text);
-        todoItem.TelegramUserId.Should().Be(user.ChatId);
+        todoItem.UserId.Should().Be(user.Id);
         todoItem.Id.Should().NotBeEmpty();
     }
 
@@ -76,7 +74,6 @@ public class TodoItemsServiceTests
             user.AddTodoItem(faker.Lorem.Word());
         }
 
-        _repository.GetByExpressionAsync(i => i.TelegramUserId == user.ChatId).ReturnsForAnyArgs(TodoItemsGenerator.Generate(user.ChatId, 7));
         _userManager.FindByChatIdAsync(user.ChatId).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
 
         var createModel = new CreateTodoItemDto

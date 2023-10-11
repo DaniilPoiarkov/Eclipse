@@ -130,30 +130,24 @@ public class IdentityUser : AggregateRoot
             throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength);
         }
 
-        var todoItem = new TodoItem(Guid.NewGuid(), this, text, DateTime.UtcNow.Add(Gmt));
+        var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
         _todoItems.Add(todoItem);
         return todoItem;
     }
 
     /// <summary>
-    /// Removes item with given Id from user list of TodoItems
+    /// Removes item with given Id from user list of TodoItems and retuns it
     /// </summary>
     /// <param name="todoItemId"></param>
+    /// <returns></returns>
     /// <exception cref="EntityNotFoundException"></exception>
-    public void FinishItem(Guid todoItemId)
+    public TodoItem FinishItem(Guid todoItemId)
     {
         var item = _todoItems.FirstOrDefault(i => i.Id == todoItemId)
             ?? throw new EntityNotFoundException(typeof(TodoItem));
 
         _todoItems.Remove(item);
-    }
 
-    // TODO: REMOVE AFTER MIGRATION!!!
-    public void MigrateTodoItems(IEnumerable<TodoItem> todoItems)
-    {
-        foreach(var todoItem in todoItems)
-        {
-            _todoItems.Add(todoItem);
-        }
+        return item;
     }
 }
