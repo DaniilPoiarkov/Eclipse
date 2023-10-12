@@ -24,14 +24,18 @@ public abstract class PipelineTestFixture<TPipeline>
 
     protected readonly TPipeline Sut;
 
-    public PipelineTestFixture()
+    private readonly Func<TPipeline> _factory;
+
+    public PipelineTestFixture(Func<TPipeline> factory)
     {
+        _factory = factory;
+
         BotClient = Substitute.For<ITelegramBotClient>();
         CurrentTelegramUser = Substitute.For<ICurrentTelegramUser>();
         Localizer = Substitute.For<IEclipseLocalizer>();
 
         var services = new ServiceCollection()
-            .AddSingleton<TPipeline>();
+            .AddSingleton(_factory());
 
         ConfigureServices(services);
 

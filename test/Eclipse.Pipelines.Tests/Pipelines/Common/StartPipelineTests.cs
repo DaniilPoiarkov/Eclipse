@@ -14,7 +14,7 @@ namespace Eclipse.Pipelines.Tests.Pipelines.Common;
 
 public class StartPipelineTests : PipelineTestFixture<StartPipeline>
 {
-    public StartPipelineTests()
+    public StartPipelineTests() : base(() => new StartPipeline())
     {
         Localizer[""].ReturnsForAnyArgs("{name}");
     }
