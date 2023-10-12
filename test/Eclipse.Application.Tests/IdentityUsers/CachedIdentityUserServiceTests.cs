@@ -83,6 +83,7 @@ public class CachedIdentityUserServiceTests
 
         await _userService.Received().GetByChatIdAsync(dto.ChatId);
         _userCache.Received().AddOrUpdate(dto);
+        _userCache.Received().GetByChatId(dto.ChatId);
 
         result.ChatId.Should().Be(dto.ChatId);
     }
