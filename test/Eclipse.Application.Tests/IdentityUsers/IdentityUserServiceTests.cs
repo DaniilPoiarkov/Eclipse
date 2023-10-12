@@ -6,6 +6,7 @@ using Eclipse.Tests.Generators;
 using FluentAssertions;
 
 using NSubstitute;
+using NSubstitute.ReceivedExtensions;
 
 using Xunit;
 
@@ -75,5 +76,39 @@ public class IdentityUserServiceTests
 
         await _manager.Received().FindByIdAsync(user.Id);
         await _manager.Received().UpdateAsync(user);
+    }
+
+    [Fact]
+    public async Task SetUserGmtTimeAsync_WhenTimeIsValid_ThenUpdatedSuccessfully()
+    {
+        var user = IdentityUserGenerator.Generate(1).First();
+
+        _manager.FindByIdAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
+
+        var utc = DateTime.UtcNow;
+
+        var hour = utc.Hour - 4 < 0
+            ? utc.Hour + 20
+            : utc.Hour - 4;
+
+        var currentUserTime = new TimeOnly(hour, utc.Minute);
+        var expected = new TimeSpan(-4, 0, 0);
+
+        var result = await Sut.SetUserGmtTimeAsync(user.Id, currentUserTime);
+
+        await _manager.Received().FindByIdAsync(user.Id);
+        await _manager.Received().UpdateAsync(user);
+        result.Gmt.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenExceptionTHrown()
+    {
+        var action = async () =>
+        {
+            await Sut.GetByIdAsync(Guid.NewGuid());
+        };
+
+        await action.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }
