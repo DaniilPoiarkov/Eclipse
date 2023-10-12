@@ -2,12 +2,11 @@
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
 using Eclipse.Pipelines.Pipelines.Common;
+using Eclipse.Pipelines.Tests.Fixture;
 
 using FluentAssertions;
 
 using NSubstitute;
-
-using System.Reflection;
 
 using Xunit;
 
@@ -35,7 +34,6 @@ public class StartPipelineTests : PipelineTestFixture<StartPipeline>
         
         menu.Should().NotBeNull();
 
-        var message = menu.GetType().GetField("_message", BindingFlags.NonPublic | BindingFlags.Instance);
-        message!.GetValue(menu).Should().Be(user.Name);
+        AssertResult(menu, assertion => assertion.FieldHasValue("_message", user.Name));
     }
 }

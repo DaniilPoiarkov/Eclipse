@@ -9,7 +9,7 @@ using NSubstitute;
 
 using Telegram.Bot;
 
-namespace Eclipse.Pipelines.Tests.Pipelines;
+namespace Eclipse.Pipelines.Tests.Fixture;
 
 public abstract class PipelineTestFixture<TPipeline>
     where TPipeline : EclipsePipelineBase
@@ -32,7 +32,7 @@ public abstract class PipelineTestFixture<TPipeline>
 
         var services = new ServiceCollection()
             .AddSingleton<TPipeline>();
-        
+
         ConfigureServices(services);
 
         ServiceProvider = services.BuildServiceProvider();
@@ -48,5 +48,12 @@ public abstract class PipelineTestFixture<TPipeline>
             .AddSingleton(CurrentTelegramUser)
             .AddSingleton(Localizer)
             .AddSingleton(BotClient);
+    }
+
+    protected void AssertResult<TResult>(TResult result, Action<ResultAssertion<TResult>> assertion)
+        where TResult : IResult
+    {
+        var resultAssertion = new ResultAssertion<TResult>(result);
+        assertion(resultAssertion);
     }
 }
