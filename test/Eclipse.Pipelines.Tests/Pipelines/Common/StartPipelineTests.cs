@@ -1,8 +1,7 @@
-﻿using Eclipse.Core.Core;
-using Eclipse.Core.Models;
-using Eclipse.Core.Results;
+﻿using Eclipse.Core.Results;
 using Eclipse.Pipelines.Pipelines.Common;
 using Eclipse.Pipelines.Tests.Fixture;
+using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
@@ -14,7 +13,7 @@ namespace Eclipse.Pipelines.Tests.Pipelines.Common;
 
 public class StartPipelineTests : PipelineTestFixture<StartPipeline>
 {
-    public StartPipelineTests() : base(() => new StartPipeline())
+    public StartPipelineTests()
     {
         Localizer[""].ReturnsForAnyArgs("{name}");
     }
@@ -22,11 +21,8 @@ public class StartPipelineTests : PipelineTestFixture<StartPipeline>
     [Fact]
     public async Task RunNext_WhenExecuted_ThenTextReturned()
     {
-        var user = new TelegramUser(1, "Name", "Surname", "Username");
-        var context = new MessageContext(1, "/start", user)
-        {
-            Services = ServiceProvider
-        };
+        var context = MessageContextGenerator.Generate("/start");
+        context.Services = ServiceProvider;
 
         var result = await Sut.RunNext(context);
 
@@ -34,6 +30,6 @@ public class StartPipelineTests : PipelineTestFixture<StartPipeline>
         
         menu.Should().NotBeNull();
 
-        AssertResult(menu, assertion => assertion.FieldHasValue("_message", user.Name));
+        AssertResult(menu, assertion => assertion.FieldHasValue("_message", context.User.Name));
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Core;
-using Eclipse.Pipelines.CachedServices;
 using Eclipse.Pipelines.Pipelines;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,34 +20,28 @@ public abstract class PipelineTestFixture<TPipeline>
     protected readonly IEclipseLocalizer Localizer;
 
     protected readonly IServiceProvider ServiceProvider;
-
+    
     protected readonly TPipeline Sut;
 
-    private readonly Func<TPipeline> _factory;
-
-    public PipelineTestFixture(Func<TPipeline> factory)
+    public PipelineTestFixture()
     {
-        _factory = factory;
-
         BotClient = Substitute.For<ITelegramBotClient>();
         CurrentTelegramUser = Substitute.For<ICurrentTelegramUser>();
         Localizer = Substitute.For<IEclipseLocalizer>();
 
-        var services = new ServiceCollection()
-            .AddSingleton(_factory());
-
+        var services = new ServiceCollection();
+        
         ConfigureServices(services);
 
         ServiceProvider = services.BuildServiceProvider();
-
-        CachedServiceProvider.SetServiceProvider(ServiceProvider);
-
         Sut = ServiceProvider.GetRequiredService<TPipeline>();
+        Sut.SetLocalizer(Localizer);
     }
 
     protected virtual void ConfigureServices(IServiceCollection services)
     {
         services
+            .AddSingleton<TPipeline>()
             .AddSingleton(CurrentTelegramUser)
             .AddSingleton(Localizer)
             .AddSingleton(BotClient);

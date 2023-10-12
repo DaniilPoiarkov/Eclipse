@@ -4,7 +4,7 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
 public abstract class RemindersPipelineBase : EclipsePipelineBase
 {
-    protected static IReadOnlyList<KeyboardButton> RemindersMenuButtons => new KeyboardButton[]
+    protected IReadOnlyList<KeyboardButton> RemindersMenuButtons => new KeyboardButton[]
     {
         new KeyboardButton(Localizer["Menu:Reminders:Add"]),
         new KeyboardButton(Localizer["Menu:MainMenu"]),

@@ -26,7 +26,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         RegisterStage(SaveNewTodoItem);
     }
 
-    private static IResult SendInfo(MessageContext context)
+    private IResult SendInfo(MessageContext context)
     {
         return Text(Localizer["Pipelines:TodoItems:AddItem:DiscribeWhatToAdd"]);
     }
