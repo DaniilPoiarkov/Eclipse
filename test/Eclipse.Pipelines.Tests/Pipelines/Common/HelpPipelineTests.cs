@@ -58,7 +58,7 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
             .AppendLine("/test - test")
             .ToString();
 
-        AssertResult(text, assertion => assertion.FieldHasValue("_message", "Help:\r\n\r\n/test - test\r\n"));
+        AssertResult(text, assertion => assertion.FieldHasValue("_message", expected));
         Sut.IsFinished.Should().BeTrue();
     }
 }
