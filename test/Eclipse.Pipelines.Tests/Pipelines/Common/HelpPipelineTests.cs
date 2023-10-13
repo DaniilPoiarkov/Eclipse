@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NSubstitute;
 
+using System.Text;
+
 using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Pipelines.Common;
@@ -49,6 +51,12 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
 
         var text = result.As<TextResult>();
         text.Should().NotBeNull();
+
+        var expected = new StringBuilder("Help")
+            .AppendLine()
+            .AppendLine()
+            .AppendLine("/test - test")
+            .ToString();
 
         AssertResult(text, assertion => assertion.FieldHasValue("_message", "Help:\r\n\r\n/test - test\r\n"));
         Sut.IsFinished.Should().BeTrue();
