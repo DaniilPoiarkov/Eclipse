@@ -52,7 +52,7 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
         var text = result.As<TextResult>();
         text.Should().NotBeNull();
 
-        var expected = new StringBuilder("Help")
+        var expected = new StringBuilder("Help:")
             .AppendLine()
             .AppendLine()
             .AppendLine("/test - test")
