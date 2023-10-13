@@ -1,9 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
-using Eclipse.Pipelines.CachedServices;
-
-using Microsoft.Extensions.DependencyInjection;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -11,31 +7,16 @@ namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
-    protected static IEclipseLocalizer Localizer
-    {
-        get
-        {
-            var currentUser = GetService<ICurrentTelegramUser>().GetCurrentUser();
-            var localizer = GetService<IEclipseLocalizer>();
-            
-            if (currentUser is not null)
-            {
-                localizer.CheckCulture(currentUser.Id);
-            }
+    protected IEclipseLocalizer Localizer { get; private set; } = null!;
 
-            return localizer;
-        }
-    }
-
-    protected static IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> MainMenuButtons => new List<KeyboardButton[]>
+    protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> MainMenuButtons => new List<KeyboardButton[]>
     {
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:MyToDos"]), new KeyboardButton(Localizer["Menu:MainMenu:Reminders"]) },
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]), new KeyboardButton(Localizer["Menu:MainMenu:Settings"]) }
     };
 
-    private static TService GetService<TService>()
-        where TService : class
+    internal void SetLocalizer(IEclipseLocalizer localizer)
     {
-        return CachedServiceProvider.Services.GetRequiredService<TService>();
+        Localizer = localizer;
     }
 }

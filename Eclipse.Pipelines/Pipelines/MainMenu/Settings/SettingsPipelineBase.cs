@@ -4,7 +4,7 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 public abstract class SettingsPipelineBase : EclipsePipelineBase
 {
-    protected static IEnumerable<IEnumerable<KeyboardButton>> SettingsMenuButtons => new List<IList<KeyboardButton>>
+    protected IEnumerable<IEnumerable<KeyboardButton>> SettingsMenuButtons => new List<IList<KeyboardButton>>
     {
         new[] { new KeyboardButton(Localizer["Menu:Settings:Language"]), new KeyboardButton(Localizer["Menu:Settings:SetGmt"]) },
         //new[] { new KeyboardButton(Localizer["Menu:Settings:Notifications"]) },

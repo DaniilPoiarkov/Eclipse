@@ -24,7 +24,7 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
         RegisterStage(SendMessage);
     }
 
-    private static IResult AskUserId(MessageContext context)
+    private IResult AskUserId(MessageContext context)
     {
         return Text(Localizer["Pipelines:AdminMenu:SendToUser:SendUserId"]);
     }

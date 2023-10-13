@@ -13,6 +13,8 @@ using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;
+using Eclipse.Pipelines.Pipelines;
+using Eclipse.Pipelines.Pipelines.EdgeCases;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -92,10 +94,14 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = GetPipeline(context, key);
-
-        _pipelineStore.Remove(key);
+        var pipeline = GetPipeline(context, key) as EclipsePipelineBase
+            ?? new EclipseNotFoundPipeline();
         
+        _pipelineStore.Remove(key);
+
+        _localizer.CheckCulture(context.ChatId);
+        pipeline.SetLocalizer(_localizer);
+
         var result = await pipeline.RunNext(context, cancellationToken);
 
         var message = await result.SendAsync(botClient, cancellationToken);

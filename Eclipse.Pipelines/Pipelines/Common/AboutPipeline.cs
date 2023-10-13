@@ -11,7 +11,7 @@ public sealed class AboutPipeline : EclipsePipelineBase
         RegisterStage(SendAbout);
     }
 
-    public static IResult SendAbout(MessageContext context)
+    public IResult SendAbout(MessageContext context)
     {
         var about = Localizer["Pipelines:Common:About"]
             .Replace("{name}", context.User.Name.Trim());

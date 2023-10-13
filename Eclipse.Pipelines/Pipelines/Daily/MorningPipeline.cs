@@ -7,7 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Eclipse.Pipelines.Pipelines.Daily;
 
 [Route("", "/daily_morning")]
-internal class MorningPipeline : EclipsePipelineBase
+public class MorningPipeline : EclipsePipelineBase
 {
     private readonly IMessageStore _messageStore;
 

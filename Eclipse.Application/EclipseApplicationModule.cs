@@ -48,10 +48,10 @@ public static class EclipseApplicationModule
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
-                .AddTransient<IEclipseLocalizer, EclipseLocalizer>()
                 .AddTransient<IIdentityUserService, IdentityUserService>()
                 .AddTransient<IIdentityUserStore, IdentityUserStore>()
-                .AddTransient<IReminderService, ReminderService>();
+                .AddTransient<IReminderService, ReminderService>()
+            .AddScoped<IEclipseLocalizer, EclipseLocalizer>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 

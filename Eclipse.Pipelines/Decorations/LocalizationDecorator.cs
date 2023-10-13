@@ -36,6 +36,7 @@ public class LocalizationDecorator : ICoreDecorator
 
         if (culture is not null)
         {
+            _localizer.CheckCulture(context.ChatId);
             return;
         }
 

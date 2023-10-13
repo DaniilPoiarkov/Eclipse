@@ -10,7 +10,7 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
-    protected static IEnumerable<KeyboardButton> TodoItemMenuButtons => new KeyboardButton[]
+    protected IEnumerable<KeyboardButton> TodoItemMenuButtons => new KeyboardButton[]
     {
         new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]),
         new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]),
@@ -19,7 +19,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     #region Helpers
 
-    protected static string BuildMessage(IEnumerable<TodoItemDto> items)
+    protected string BuildMessage(IEnumerable<TodoItemDto> items)
     {
         var sb = new StringBuilder(Localizer["Pipelines:TodoItems:YourToDos"])
             .AppendLine()
@@ -37,7 +37,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
             .ToString();
     }
 
-    protected static IEnumerable<IEnumerable<InlineKeyboardButton>> BuildButtons(IEnumerable<TodoItemDto> items)
+    protected IEnumerable<IEnumerable<InlineKeyboardButton>> BuildButtons(IEnumerable<TodoItemDto> items)
     {
         var buttons = items
             .Select(item => InlineKeyboardButton.WithCallbackData(
@@ -56,7 +56,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     #region Results
 
-    protected static IResult AllItemsFinishedResult(Message? message)
+    protected IResult AllItemsFinishedResult(Message? message)
     {
         var text = Localizer["Pipelines:TodoItems:YouDidEmAll"];
 
@@ -68,7 +68,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         return Edit(message.MessageId, text);
     }
 
-    protected static IResult ItemFinishedResult(IEnumerable<TodoItemDto> leftover, Message message)
+    protected IResult ItemFinishedResult(IEnumerable<TodoItemDto> leftover, Message message)
     {
         var buttons = BuildButtons(leftover);
 
@@ -81,13 +81,13 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         return Edit(message.MessageId, text, menu);
     }
 
-    protected static IResult GoBackResult(Message? message) =>
+    protected IResult GoBackResult(Message? message) =>
         MenuOrMultipleResult(message, Localizer["WhateverYouWant"]);
 
-    protected static IResult InterruptedResult(Message? message, string text) =>
+    protected IResult InterruptedResult(Message? message, string text) =>
         MenuOrMultipleResult(message, text);
 
-    private static IResult MenuOrMultipleResult(Message? message, string text)
+    private IResult MenuOrMultipleResult(Message? message, string text)
     {
         var menuResult = Menu(TodoItemMenuButtons, text);
 

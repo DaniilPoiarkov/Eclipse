@@ -31,7 +31,7 @@ public class SuggestPipeline : EclipsePipelineBase
         RegisterStage(RecieveIdea);
     }
 
-    protected static IResult SendInfo(MessageContext context)
+    protected IResult SendInfo(MessageContext context)
     {
         var greetings = Localizer!["Pipelines:Suggest:Greetings"].Split(';', StringSplitOptions.RemoveEmptyEntries);
         var greeting = greetings[Random.Shared.Next(0, greetings.Length)];

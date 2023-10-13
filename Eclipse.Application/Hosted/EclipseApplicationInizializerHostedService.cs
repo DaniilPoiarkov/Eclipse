@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
+using Eclipse.Infrastructure.Cache;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,6 +31,7 @@ internal class EclipseApplicationInizializerHostedService : IHostedService
 
         var userService = scope.ServiceProvider.GetRequiredService<IIdentityUserService>();
         var userCache = scope.ServiceProvider.GetRequiredService<IIdentityUserCache>();
+        var cacheService = scope.ServiceProvider.GetRequiredService<ICacheService>();
 
         _logger.Information("\t\tRetrieving data");
 
@@ -40,6 +42,7 @@ internal class EclipseApplicationInizializerHostedService : IHostedService
         foreach (var user in users)
         {
             userCache.AddOrUpdate(user);
+            cacheService.Set(new CacheKey($"lang-{user.ChatId}"), string.IsNullOrEmpty(user.Culture) ? "uk" : user.Culture);
         }
 
         _logger.Information("{module} initialized successfully", nameof(EclipseApplicationModule));
