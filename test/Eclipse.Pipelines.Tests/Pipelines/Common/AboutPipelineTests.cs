@@ -10,22 +10,25 @@ using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Pipelines.Common;
 
-public class StartPipelineTests : PipelineTestFixture<StartPipeline>
+public class AboutPipelineTests : PipelineTestFixture<AboutPipeline>
 {
-    public StartPipelineTests()
+    public AboutPipelineTests()
     {
         Localizer[""].ReturnsForAnyArgs("{name}");
     }
 
     [Fact]
-    public async Task RunNext_WhenExecuted_ThenTextReturned()
+    public async Task WhenExecuted_ThenTextRetuned()
     {
-        var context = GetContext("/start");
+        var context = GetContext("/about");
 
         var result = await Sut.RunNext(context);
 
-        result.As<MenuResult>().Should().NotBeNull();
-        AssertResult(result, assertion => assertion.FieldHasValue("_message", context.User.Name));
+        result.As<TextResult>().Should().NotBeNull();
+        
+        AssertResult(result, assertion => assertion
+            .FieldHasValue("_message", context.User.Name));
+
         Sut.IsFinished.Should().BeTrue();
     }
 }

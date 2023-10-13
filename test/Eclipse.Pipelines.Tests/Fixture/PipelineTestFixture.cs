@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Core;
 using Eclipse.Pipelines.Pipelines;
+using Eclipse.Tests.Generators;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,7 +21,7 @@ public abstract class PipelineTestFixture<TPipeline>
     protected readonly IEclipseLocalizer Localizer;
 
     protected readonly IServiceProvider ServiceProvider;
-    
+
     protected readonly TPipeline Sut;
 
     public PipelineTestFixture()
@@ -52,5 +53,12 @@ public abstract class PipelineTestFixture<TPipeline>
     {
         var resultAssertion = new ResultAssertion<TResult>(result);
         assertion(resultAssertion);
+    }
+
+    protected MessageContext GetContext(string value)
+    {
+        var context = MessageContextGenerator.Generate(value);
+        context.Services = ServiceProvider;
+        return context;
     }
 }

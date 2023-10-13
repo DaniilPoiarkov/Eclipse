@@ -2,7 +2,6 @@
 using Eclipse.Core.Results;
 using Eclipse.Pipelines.Pipelines.Common;
 using Eclipse.Pipelines.Tests.Fixture;
-using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
@@ -44,8 +43,7 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
 
         _commandService.GetList().Returns(Task.FromResult<IReadOnlyList<CommandDto>>(commands));
 
-        var context = MessageContextGenerator.Generate("/help");
-        context.Services = ServiceProvider;
+        var context = GetContext("/help");
 
         var result = await Sut.RunNext(context);
 
@@ -53,5 +51,6 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
         text.Should().NotBeNull();
 
         AssertResult(text, assertion => assertion.FieldHasValue("_message", "Help:\r\n\r\n/test - test\r\n"));
+        Sut.IsFinished.Should().BeTrue();
     }
 }

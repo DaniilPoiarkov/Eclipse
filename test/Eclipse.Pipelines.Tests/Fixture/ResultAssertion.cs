@@ -21,10 +21,20 @@ public class ResultAssertion<TResult>
 
     public ResultAssertion<TResult> FieldHasValue<T>(string member, T value)
     {
-        var field = _type.GetField("_message", BindingFlags.NonPublic | BindingFlags.Instance)
+        var field = _type.GetField(member, BindingFlags.NonPublic | BindingFlags.Instance)
             ?? throw new InvalidOperationException($"Field with name {member} not exist");
 
-        field!.GetValue(_result).Should().Be(value);
+        field.GetValue(_result).Should().Be(value);
+
+        return this;
+    }
+
+    public ResultAssertion<TResult> PropertyHasValue<T>(string member, T value)
+    {
+        var property = _type.GetProperty(member, BindingFlags.NonPublic | BindingFlags.Instance)
+            ?? throw new InvalidOperationException($"Property with name {member} not exist");
+
+        property.GetValue(_result).Should().Be(value);
 
         return this;
     }
