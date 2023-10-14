@@ -18,17 +18,21 @@ public class BotHealthCheck : IHealthCheck
         var me = await _botClient.GetMeAsync(cancellationToken);
         var apiCallResult = await _botClient.TestApiAsync(cancellationToken);
 
+        var data = new Dictionary<string, object>()
+        {
+            ["Username"] = me?.Username ?? "NULL",
+            ["Api call"] = apiCallResult ? "Passed" : "Failed"
+        };
+
         if (me is not null && apiCallResult)
         {
-            return HealthCheckResult.Healthy();
+            return HealthCheckResult.Healthy(
+                description: "Bot responding",
+                data: data);
         }
 
         return HealthCheckResult.Unhealthy(
             description: "Bot not responding",
-            data: new Dictionary<string, object>()
-            {
-                ["Username"] = me?.Username ?? "NULL",
-                ["Api call"] = apiCallResult ? "Passed" : "Failed"
-            });
+            data: data);
     }
 }
