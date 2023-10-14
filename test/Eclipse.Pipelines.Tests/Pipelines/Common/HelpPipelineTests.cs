@@ -58,7 +58,8 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
             .AppendLine("/test - test")
             .ToString();
 
-        AssertResult(text, assertion => assertion.FieldHasValue("_message", expected));
+        text.Message.Should().Be(expected);
+        text.ChatId.Should().Be(context.User.Id);
         Sut.IsFinished.Should().BeTrue();
     }
 }

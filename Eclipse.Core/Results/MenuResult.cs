@@ -6,22 +6,22 @@ namespace Eclipse.Core.Results;
 
 public class MenuResult : ResultBase
 {
-    private readonly string _message;
+    public string Message { get; }
 
-    private readonly IReplyMarkup _menu;
+    public IReplyMarkup Menu { get; }
     
     public MenuResult(string message, IReplyMarkup menu)
     {
-        _message = message;
-        _menu = menu;
+        Message = message;
+        Menu = menu;
     }
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
         return await botClient.SendTextMessageAsync(
             chatId: ChatId,
-            text: _message,
-            replyMarkup: _menu,
+            text: Message,
+            replyMarkup: Menu,
             cancellationToken: cancellationToken);
     }
 }

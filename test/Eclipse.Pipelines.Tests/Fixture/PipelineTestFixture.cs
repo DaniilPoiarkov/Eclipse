@@ -48,13 +48,6 @@ public abstract class PipelineTestFixture<TPipeline>
             .AddSingleton(BotClient);
     }
 
-    protected void AssertResult<TResult>(TResult result, Action<ResultAssertion<TResult>> assertion)
-        where TResult : IResult
-    {
-        var resultAssertion = new ResultAssertion<TResult>(result);
-        assertion(resultAssertion);
-    }
-
     protected MessageContext GetContext(string value)
     {
         var context = MessageContextGenerator.Generate(value);

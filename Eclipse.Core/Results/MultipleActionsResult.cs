@@ -7,18 +7,18 @@ namespace Eclipse.Core.Results;
 
 internal class MultipleActionsResult : ResultBase
 {
-    private readonly IList<IResult> _results;
+    public IList<IResult> Results { get; }
 
     public MultipleActionsResult(IList<IResult> results)
     {
-        _results = results;
+        Results = results;
     }
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        var messages = new List<Message?>(_results.Count);
+        var messages = new List<Message?>(Results.Count);
 
-        foreach (var result in _results.Cast<ResultBase>())
+        foreach (var result in Results.Cast<ResultBase>())
         {
             result.ChatId = ChatId;
             messages.Add(await result.SendAsync(botClient, cancellationToken));

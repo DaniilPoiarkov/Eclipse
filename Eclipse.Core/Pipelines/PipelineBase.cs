@@ -48,10 +48,12 @@ public abstract class PipelineBase : Pipeline
 
         var next = _stages.Dequeue();
 
-        var result = await next.RunAsync(context, cancellationToken) as ResultBase
-            ?? new EmptyResult();
+        var result = await next.RunAsync(context, cancellationToken);
 
-        result.ChatId = context.ChatId;
+        if (result is ResultBase resultBase)
+        {
+            resultBase.ChatId = context.ChatId;
+        }
 
         return result;
     }

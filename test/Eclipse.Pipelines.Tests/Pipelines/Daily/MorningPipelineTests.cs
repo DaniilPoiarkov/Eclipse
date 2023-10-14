@@ -46,12 +46,15 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
         var textResult = await Sut.RunNext(context);
 
 
-        menuResult.As<MenuResult>().Should().NotBeNull();
-        AssertResult(menuResult, assertion => assertion.FieldHasValue("_message", "AskMood"));
+        var menu = menuResult.As<MenuResult>();
+
+        menu.Should().NotBeNull();
+        menu.Message.Should().Be("AskMood");
         isFinished.Should().BeFalse();
 
-        textResult.As<TextResult>().Should().NotBeNull();
-        AssertResult(textResult, assertion => assertion.FieldHasValue("_message", "Good"));
+        var text = textResult.As<TextResult>();
+        text.Should().NotBeNull();
+        text.Message.Should().Be("Good");
         Sut.IsFinished.Should().BeTrue();
     }
 
@@ -74,11 +77,14 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
         context = GetContext("test");
         var textResult = await Sut.RunNext(context);
 
-        multipleResult.As<MultipleActionsResult>().Should().NotBeNull();
+        var multiple = multipleResult.As<MultipleActionsResult>();
+        multiple.Should().NotBeNull();
+        multiple.Results.Count.Should().Be(2);
         isFinished.Should().BeFalse();
 
+        var text = textResult.As<TextResult>();
+        text.Should().NotBeNull();
+        text.Message.Should().Be("NotDefined");
         Sut.IsFinished.Should().BeTrue();
-        textResult.As<TextResult>().Should().NotBeNull();
-        AssertResult(textResult, assertion => assertion.FieldHasValue("_message", "NotDefined"));
     }
 }
