@@ -71,17 +71,21 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
         messageStore.GetMessage(default!).ReturnsForAnyArgs(message);
         var context = GetContext("/daily_morning");
 
+        // First message act
         var multipleResult = await Sut.RunNext(context);
         var isFinished = Sut.IsFinished;
 
+        // Second message act
         context = GetContext("test");
         var textResult = await Sut.RunNext(context);
 
+        // First message assertion
         var multiple = multipleResult.As<MultipleActionsResult>();
         multiple.Should().NotBeNull();
         multiple.Results.Count.Should().Be(2);
         isFinished.Should().BeFalse();
 
+        // Second message assertion
         var text = textResult.As<TextResult>();
         text.Should().NotBeNull();
         text.Message.Should().Be("NotDefined");

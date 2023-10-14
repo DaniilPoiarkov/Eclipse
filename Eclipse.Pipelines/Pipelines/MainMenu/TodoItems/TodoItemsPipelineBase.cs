@@ -10,11 +10,10 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
-    protected IEnumerable<KeyboardButton> TodoItemMenuButtons => new KeyboardButton[]
+    protected IEnumerable<IEnumerable<KeyboardButton>> TodoItemMenuButtons => new List<KeyboardButton[]>
     {
-        new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]),
-        new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]),
-        new KeyboardButton(Localizer["Menu:MainMenu"]),
+        new[] { new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]), new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]) },
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu"]) }
     };
 
     #region Helpers
@@ -27,7 +26,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
         foreach (var item in items)
         {
-            sb.AppendLine($"⬜️ {item.Text}")
+            sb.AppendLine($"📌 {item.Text}")
                 .AppendLine($"{Localizer["CreatedAt"]}: {item.CreatedAt.ToString("dd.MM, HH:mm")}")
                 .AppendLine();
         }

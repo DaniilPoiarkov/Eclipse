@@ -24,9 +24,9 @@
 
     "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
-    "Menu:TodoItemsMenu:AddItem": "Запланувати",
-    "Menu:TodoItemsMenu:MyList": "Мій список",
+    "Menu:TodoItemsMenu:AddItem": "Запланувати ✏️",
+    "Menu:TodoItemsMenu:MyList": "Мій список 🗒",
 
-    "Menu:Reminders:Add": "Нагадай мені!"
+    "Menu:Reminders:Add": "Нагадай мені 💭"
   }
 }
