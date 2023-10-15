@@ -5,15 +5,15 @@ namespace Eclipse.Core.Results;
 
 public class TextResult : ResultBase
 {
-    private readonly string _message;
+    public string Message { get; }
 
     public TextResult(string message)
     {
-        _message = message;
+        Message = message;
     }
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.SendTextMessageAsync(ChatId, _message, cancellationToken: cancellationToken);
+        return await botClient.SendTextMessageAsync(ChatId, Message, cancellationToken: cancellationToken);
     }
 }

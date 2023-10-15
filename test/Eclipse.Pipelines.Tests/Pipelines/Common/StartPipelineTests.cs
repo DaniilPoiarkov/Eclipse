@@ -24,8 +24,10 @@ public class StartPipelineTests : PipelineTestFixture<StartPipeline>
 
         var result = await Sut.RunNext(context);
 
-        result.As<MenuResult>().Should().NotBeNull();
-        AssertResult(result, assertion => assertion.FieldHasValue("_message", context.User.Name));
+        var menu = result.As<MenuResult>();
+        
+        menu.Should().NotBeNull();
+        menu.Message.Should().Be(context.User.Name);
         Sut.IsFinished.Should().BeTrue();
     }
 }

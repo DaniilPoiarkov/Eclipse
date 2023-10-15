@@ -6,18 +6,18 @@ namespace Eclipse.Core.Results;
 
 public class EditMenuResult : ResultBase
 {
-    private readonly int _messageId;
+    public int MessageId { get; }
 
-    private readonly InlineKeyboardMarkup _menu;
+    public InlineKeyboardMarkup Menu { get; }
 
     public EditMenuResult(int messageId, InlineKeyboardMarkup menu)
     {
-        _messageId = messageId;
-        _menu = menu;
+        MessageId = messageId;
+        Menu = menu;
     }
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.EditMessageReplyMarkupAsync(ChatId, _messageId, _menu, cancellationToken);
+        return await botClient.EditMessageReplyMarkupAsync(ChatId, MessageId, Menu, cancellationToken);
     }
 }

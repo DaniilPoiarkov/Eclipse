@@ -30,7 +30,11 @@ public abstract class PipelineTestFixture<TPipeline>
         CurrentTelegramUser = Substitute.For<ICurrentTelegramUser>();
         Localizer = Substitute.For<IEclipseLocalizer>();
 
-        var services = new ServiceCollection();
+        var services = new ServiceCollection()
+            .AddSingleton<TPipeline>()
+            .AddSingleton(CurrentTelegramUser)
+            .AddSingleton(Localizer)
+            .AddSingleton(BotClient);
         
         ConfigureServices(services);
 
@@ -41,18 +45,7 @@ public abstract class PipelineTestFixture<TPipeline>
 
     protected virtual void ConfigureServices(IServiceCollection services)
     {
-        services
-            .AddSingleton<TPipeline>()
-            .AddSingleton(CurrentTelegramUser)
-            .AddSingleton(Localizer)
-            .AddSingleton(BotClient);
-    }
-
-    protected void AssertResult<TResult>(TResult result, Action<ResultAssertion<TResult>> assertion)
-        where TResult : IResult
-    {
-        var resultAssertion = new ResultAssertion<TResult>(result);
-        assertion(resultAssertion);
+        
     }
 
     protected MessageContext GetContext(string value)

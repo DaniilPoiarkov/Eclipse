@@ -24,11 +24,11 @@ public class AboutPipelineTests : PipelineTestFixture<AboutPipeline>
 
         var result = await Sut.RunNext(context);
 
-        result.As<TextResult>().Should().NotBeNull();
-        
-        AssertResult(result, assertion => assertion
-            .FieldHasValue("_message", context.User.Name));
+        var text = result.As<TextResult>();
 
+        text.Should().NotBeNull();
+        text.Message.Should().Be(context.User.Name);
+        text.ChatId.Should().Be(context.User.Id);
         Sut.IsFinished.Should().BeTrue();
     }
 }

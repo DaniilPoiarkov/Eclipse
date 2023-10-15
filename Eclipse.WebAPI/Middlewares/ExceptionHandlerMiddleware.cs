@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using Eclipse.Application.Exceptions;
+using Eclipse.Domain.Shared.Exceptions;
+
+using System.Net;
 
 namespace Eclipse.WebAPI.Middlewares;
 
@@ -14,6 +17,9 @@ public class ExceptionHandlerMiddleware : IMiddleware
         {
             var status = ex switch
             {
+                DomainException => HttpStatusCode.Forbidden,
+                ObjectNotFoundException => HttpStatusCode.NotFound,
+                ApplicationException => HttpStatusCode.BadRequest,
                 _ => HttpStatusCode.InternalServerError
             };
 
