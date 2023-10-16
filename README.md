@@ -67,6 +67,7 @@ Each module has own test project.
 * XUnit
 * FluentAssertions
 * Bogus
+* Meziantou
 
 ## Deployment and CICD
 * GitHub actions
