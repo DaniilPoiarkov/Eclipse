@@ -1,5 +1,4 @@
-﻿using Eclipse.Domain.Reminders;
-using Eclipse.Domain.Shared.IdentityUsers;
+﻿using Eclipse.Domain.Shared.IdentityUsers;
 
 namespace Eclipse.Domain.IdentityUsers;
 

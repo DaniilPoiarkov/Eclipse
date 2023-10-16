@@ -3,7 +3,6 @@ using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.TodoItems;
 
 namespace Eclipse.Application.TodoItems;
 
