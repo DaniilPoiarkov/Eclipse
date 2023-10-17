@@ -3,6 +3,7 @@ using Eclipse.Core.Validation;
 using Eclipse.Infrastructure.Builder;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Eclipse.Pipelines.Attributes;
 
@@ -15,7 +16,7 @@ internal class AdminOnlyAttribute : ContextValidationAttribute
             return ValidationResult.Failure("User is null");
         }
 
-        var options = context.ServiceProvider.GetRequiredService<InfrastructureOptions>().TelegramOptions;
+        var options = context.ServiceProvider.GetRequiredService<IOptions<TelegramOptions>>().Value;
 
         if (options is null)
         {

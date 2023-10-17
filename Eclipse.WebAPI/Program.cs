@@ -6,7 +6,6 @@ using Eclipse.DataAccess.CosmosDb;
 using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
-using Eclipse.Infrastructure.Builder;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
@@ -38,23 +37,11 @@ builder.Services
     });
 
 builder.Services
-    .AddInfrastructureModule(config =>
-    {
-        config.TelegramOptions = configuration.GetSection("Telegram")
-            .Get<TelegramOptions>();
-
-        config.UseTelegramHandler<ITelegramUpdateHandler>();
-
-        config.CacheOptions = new CacheOptions
-        {
-            Expiration = new TimeSpan(1, 0, 0, 0)
-        };
-
-        config.GoogleOptions = new GoogleOptions
-        {
-            Credentials = configuration["Google:Credentials"]!
-        };
-    });
+    .AddInfrastructureModule()
+    .UseTelegramHandler<ITelegramUpdateHandler>()
+    .ConfigureCacheOptions(options => options.Expiration = new TimeSpan(3, 0, 0, 0))
+    .ConfigureGoogleOptions(options => options.Credentials = configuration["Google:Credentials"]!)
+    .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
 builder.Services.AddLocalizationSupport(builder =>
 {

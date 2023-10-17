@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Infrastructure.Cache;
 
 using Microsoft.Extensions.DependencyInjection;
