@@ -16,6 +16,8 @@ using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 
+using Microsoft.Extensions.Options;
+
 namespace Eclipse.Pipelines.UpdateHandler;
 
 internal class EclipseUpdateHandler : IEclipseUpdateHandler
@@ -36,7 +38,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IEclipseLocalizer _localizer;
 
-    private readonly InfrastructureOptions _options;
+    private readonly IOptions<TelegramOptions> _options;
 
 
     private static readonly UpdateType[] _allowedUpdateTypes = new[]
@@ -53,7 +55,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         IUpdateParser updateParser,
         IMessageStore messageStore,
         IEclipseLocalizer localizer,
-        InfrastructureOptions options)
+        IOptions<TelegramOptions> options)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
@@ -69,9 +71,8 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
     public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         _logger.Error("Telegram error: {ex}", exception.Message);
-        var options = _options.TelegramOptions;
 
-        await botClient.SendTextMessageAsync(options.Chat, exception.Message, cancellationToken: cancellationToken);
+        await botClient.SendTextMessageAsync(_options.Value.Chat, exception.Message, cancellationToken: cancellationToken);
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

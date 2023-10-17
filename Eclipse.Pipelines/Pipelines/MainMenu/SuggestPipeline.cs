@@ -5,6 +5,8 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
 
+using Microsoft.Extensions.Options;
+
 using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
@@ -14,11 +16,11 @@ public class SuggestPipeline : EclipsePipelineBase
 {
     private readonly ITelegramBotClient _botClient;
 
-    private readonly InfrastructureOptions _options;
+    private readonly IOptions<TelegramOptions> _options;
 
     private readonly ISuggestionsSheetsService _sheetsService;
 
-    public SuggestPipeline(ITelegramBotClient botClient, InfrastructureOptions options, ISuggestionsSheetsService sheetsService)
+    public SuggestPipeline(ITelegramBotClient botClient, IOptions<TelegramOptions> options, ISuggestionsSheetsService sheetsService)
     {
         _botClient = botClient;
         _options = options;
@@ -51,8 +53,6 @@ public class SuggestPipeline : EclipsePipelineBase
             return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Error"]);
         }
 
-        var options = _options.TelegramOptions;
-
         var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:" +
             $"\n{context.Value}";
 
@@ -66,7 +66,7 @@ public class SuggestPipeline : EclipsePipelineBase
 
         _sheetsService.Add(suggestionDto);
 
-        await _botClient.SendTextMessageAsync(options.Chat, message, cancellationToken: cancellationToken);
+        await _botClient.SendTextMessageAsync(_options.Value.Chat, message, cancellationToken: cancellationToken);
 
         return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Success"]);
     }

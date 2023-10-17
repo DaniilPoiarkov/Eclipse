@@ -1,6 +1,7 @@
 ﻿using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace Eclipse.Infrastructure.Internals.Cache;
 
@@ -8,9 +9,9 @@ internal class CacheService : ICacheService
 {
     private readonly IMemoryCache _memoryCache;
 
-    private readonly InfrastructureOptions _options;
+    private readonly IOptions<CacheOptions> _options;
 
-    public CacheService(IMemoryCache memoryCache, InfrastructureOptions options)
+    public CacheService(IMemoryCache memoryCache, IOptions<CacheOptions> options)
     {
         _memoryCache = memoryCache;
         _options = options;
@@ -33,6 +34,6 @@ internal class CacheService : ICacheService
 
     public void Set<T>(CacheKey key, T value)
     {
-        _memoryCache.Set(key.Key, value, _options.CacheOptions.Expiration);
+        _memoryCache.Set(key.Key, value, _options.Value.Expiration);
     }
 }

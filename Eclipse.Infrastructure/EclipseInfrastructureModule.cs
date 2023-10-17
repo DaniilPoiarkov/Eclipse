@@ -13,6 +13,7 @@ using Eclipse.Infrastructure.Internals.Quartz;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 using Quartz;
 using Quartz.Logging;
@@ -35,16 +36,8 @@ public static class EclipseInfrastructureModule
 
     private static readonly int _delay = 1;
 
-    public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, Action<InfrastructureOptionsBuilder> options)
+    public static IInfrastructureModuleBuilder AddInfrastructureModule(this IServiceCollection services)
     {
-        var builder = new InfrastructureOptionsBuilder(services);
-
-        options(builder);
-
-        var config = builder.Build();
-
-        services.AddSingleton(config);
-
         services
             .AddSerilogIntegration()
             .AddMemoryCacheIntegration()
@@ -52,14 +45,14 @@ public static class EclipseInfrastructureModule
             .AddQuartzIntegration()
             .AddGoogleIntegration();
 
-        return services;
+        return new InfrastructureModuleBuilder(services);
     }
 
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
         services.AddSingleton<IGoogleClient>(sp =>
         {
-            var options = sp.GetRequiredService<InfrastructureOptions>().GoogleOptions;
+            var options = sp.GetRequiredService<IOptions<GoogleOptions>>().Value;
             return new GoogleClient(options.Credentials);
         });
 
@@ -106,8 +99,8 @@ public static class EclipseInfrastructureModule
 
         services.AddSingleton<ITelegramBotClient>(sp =>
         {
-            var options = sp.GetRequiredService<InfrastructureOptions>();
-            return new TelegramBotClient(options.TelegramOptions.Token);
+            var options = sp.GetRequiredService<IOptions<TelegramOptions>>().Value;
+            return new TelegramBotClient(options.Token);
         });
 
         return services;
