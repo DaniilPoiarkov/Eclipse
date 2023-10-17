@@ -47,7 +47,7 @@ builder.Services
 
         config.CacheOptions = new CacheOptions
         {
-            Expiration = new TimeSpan(1, 0, 0, 0)
+            Expiration = new TimeSpan(3, 0, 0, 0)
         };
 
         config.GoogleOptions = new GoogleOptions
