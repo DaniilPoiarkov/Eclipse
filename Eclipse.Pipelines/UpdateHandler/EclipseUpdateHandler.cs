@@ -13,8 +13,8 @@ using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.User;
-using Eclipse.Pipelines.Messages;
-using Eclipse.Pipelines.Pipelines.Store;
+using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.Options;
 
@@ -28,13 +28,13 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IPipelineStore _pipelineStore;
 
+    private readonly IMessageStore _messageStore;
+
     private readonly IPipelineProvider _pipelineProvider;
 
     private readonly ICurrentTelegramUser _currentUser;
 
     private readonly IUpdateParser _updateParser;
-
-    private readonly IMessageStore _messageStore;
 
     private readonly IEclipseLocalizer _localizer;
 
@@ -114,7 +114,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (!pipeline.IsFinished)
         {
-            _pipelineStore.Set(pipeline, key);
+            _pipelineStore.Set(key, pipeline);
         }
 
         await _userStore.AddOrUpdate(context.User, cancellationToken);
