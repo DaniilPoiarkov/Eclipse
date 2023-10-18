@@ -49,7 +49,6 @@ public static class EclipseApplicationModule
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IIdentityUserService, IdentityUserService>()
-                .AddTransient<IIdentityUserStore, IdentityUserStore>()
                 .AddTransient<IReminderService, ReminderService>()
             .AddScoped<IEclipseLocalizer, EclipseLocalizer>();
 

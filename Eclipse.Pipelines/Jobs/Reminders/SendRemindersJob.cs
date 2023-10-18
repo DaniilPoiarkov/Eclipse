@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Localizations;
+﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Pipelines.Stores;
 
 using Quartz;
 
@@ -14,11 +14,11 @@ internal class SendRemindersJob : EclipseJobBase
 
     private readonly IEclipseLocalizer _localizer;
 
-    private readonly IIdentityUserStore _identityUserStore;
+    private readonly IUserStore _identityUserStore;
 
     private readonly IReminderService _reminderService;
 
-    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IIdentityUserStore identityUserStore, IReminderService reminderService)
+    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IUserStore identityUserStore, IReminderService reminderService)
     {
         _botClient = botClient;
         _localizer = localizer;

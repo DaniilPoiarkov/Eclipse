@@ -6,7 +6,6 @@ using Serilog;
 
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Telegram.Messages;
@@ -15,6 +14,7 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
+using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Options;
 
@@ -24,7 +24,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly IIdentityUserStore _userStore;
+    private readonly IUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -50,7 +50,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         ILogger logger,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        IIdentityUserStore userStore,
+        IUserStore userStore,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,

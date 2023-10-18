@@ -2,15 +2,15 @@
 using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
 
-namespace Eclipse.Application.IdentityUsers;
+namespace Eclipse.Pipelines.Stores.User;
 
-internal class IdentityUserStore : IIdentityUserStore
+internal class UserStore : IUserStore
 {
     private readonly IIdentityUserService _identityUserService;
 
     private readonly IIdentityUserCache _userCache;
 
-    public IdentityUserStore(IIdentityUserService identityUserService, IIdentityUserCache userCache)
+    public UserStore(IIdentityUserService identityUserService, IIdentityUserCache userCache)
     {
         _identityUserService = identityUserService;
         _userCache = userCache;
