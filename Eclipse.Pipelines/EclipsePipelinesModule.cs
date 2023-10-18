@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Eclipse.Pipelines.User;
 using Eclipse.Pipelines.Messages;
+using Eclipse.Pipelines.Pipelines.Store;
 
 namespace Eclipse.Pipelines;
 
@@ -27,6 +28,7 @@ public static class EclipsePipelinesModule
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
                 .AddTransient<IUserStore, UserStore>()
                 .AddTransient<IMessageStore, MessageStore>()
+                .AddTransient<IPipelineStore, PipelineStore>()
             .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()

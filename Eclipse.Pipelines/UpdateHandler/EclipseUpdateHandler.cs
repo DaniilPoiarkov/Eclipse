@@ -6,7 +6,6 @@ using Serilog;
 
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Pipelines;
@@ -15,6 +14,7 @@ using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.User;
 using Eclipse.Pipelines.Messages;
+using Eclipse.Pipelines.Pipelines.Store;
 
 using Microsoft.Extensions.Options;
 

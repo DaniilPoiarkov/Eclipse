@@ -1,6 +1,6 @@
 ﻿using Eclipse.Core.Pipelines;
 
-namespace Eclipse.Application.Contracts.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines.Store;
 
 public interface IPipelineStore
 {

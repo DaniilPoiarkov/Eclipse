@@ -8,7 +8,6 @@ using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
-using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
@@ -21,7 +20,6 @@ using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
-using Eclipse.Application.Telegram.Pipelines;
 using Eclipse.Application.TodoItems;
 using Eclipse.Infrastructure.Google.Sheets;
 
@@ -40,7 +38,6 @@ public static class EclipseApplicationModule
     {
         services
             .AddSingleton<IIdentityUserCache, IdentityUserCache>()
-            .AddSingleton<IPipelineStore, PipelineStore>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()

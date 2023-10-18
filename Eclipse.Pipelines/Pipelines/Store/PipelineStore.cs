@@ -1,8 +1,7 @@
-﻿using Eclipse.Application.Contracts.Telegram.Pipelines;
-using Eclipse.Core.Pipelines;
+﻿using Eclipse.Core.Pipelines;
 using Eclipse.Infrastructure.Cache;
 
-namespace Eclipse.Application.Telegram.Pipelines;
+namespace Eclipse.Pipelines.Pipelines.Store;
 
 internal class PipelineStore : IPipelineStore
 {
