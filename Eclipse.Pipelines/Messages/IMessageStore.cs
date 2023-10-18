@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types;
 
-namespace Eclipse.Application.Contracts.Telegram.Messages;
+namespace Eclipse.Pipelines.Messages;
 
 public interface IMessageStore
 {

@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.Telegram.Messages;
-using Eclipse.Core.Attributes;
+﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Pipelines.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

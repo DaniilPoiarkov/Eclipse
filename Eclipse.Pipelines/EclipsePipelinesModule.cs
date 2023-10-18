@@ -10,6 +10,7 @@ using Eclipse.Pipelines.UpdateHandler;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Messages;
 
 namespace Eclipse.Pipelines;
 
@@ -25,7 +26,8 @@ public static class EclipsePipelinesModule
             .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
                 .AddTransient<IUserStore, UserStore>()
-            .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>();
+            .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>()
+            .AddSingleton<IMessageStore, MessageStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())

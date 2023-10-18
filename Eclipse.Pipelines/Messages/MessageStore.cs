@@ -1,9 +1,7 @@
-﻿using Eclipse.Application.Contracts.Telegram.Messages;
-using Eclipse.Infrastructure.Cache;
-
+﻿using Eclipse.Infrastructure.Cache;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Application.Telegram.Messages;
+namespace Eclipse.Pipelines.Messages;
 
 internal class MessageStore : IMessageStore
 {

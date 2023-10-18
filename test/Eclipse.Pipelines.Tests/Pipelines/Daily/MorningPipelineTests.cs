@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Telegram.Messages;
-using Eclipse.Core.Results;
+﻿using Eclipse.Core.Results;
+using Eclipse.Pipelines.Messages;
 using Eclipse.Pipelines.Pipelines.Daily;
 using Eclipse.Pipelines.Tests.Fixture;
 

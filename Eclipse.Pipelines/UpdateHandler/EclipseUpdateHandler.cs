@@ -8,15 +8,15 @@ using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
+using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Messages;
 
 using Microsoft.Extensions.Options;
-using Eclipse.Pipelines.User;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
