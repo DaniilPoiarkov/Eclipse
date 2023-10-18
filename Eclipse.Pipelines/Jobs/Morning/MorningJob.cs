@@ -1,8 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
-using Eclipse.Pipelines.Stores;
-
+using Eclipse.Pipelines.User;
 using Quartz;
 
 using Telegram.Bot;

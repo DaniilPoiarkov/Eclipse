@@ -14,9 +14,9 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Options;
+using Eclipse.Pipelines.User;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 

@@ -2,8 +2,7 @@
 using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Pipelines.Stores;
-using Eclipse.Pipelines.Stores.User;
+using Eclipse.Pipelines.User;
 
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;

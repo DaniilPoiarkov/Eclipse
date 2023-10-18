@@ -6,11 +6,10 @@ using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
-using Eclipse.Pipelines.Stores;
-using Eclipse.Pipelines.Stores.User;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Eclipse.Pipelines.User;
 
 namespace Eclipse.Pipelines;
 

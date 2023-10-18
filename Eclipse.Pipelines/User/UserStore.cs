@@ -2,7 +2,7 @@
 using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
 
-namespace Eclipse.Pipelines.Stores.User;
+namespace Eclipse.Pipelines.User;
 
 internal class UserStore : IUserStore
 {
