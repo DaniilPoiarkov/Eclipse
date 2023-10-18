@@ -1,8 +1,9 @@
-﻿using Eclipse.Core.Models;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Core.Models;
 
-namespace Eclipse.Application.Contracts.IdentityUsers;
+namespace Eclipse.Pipelines.User;
 
-public interface IIdentityUserStore
+internal interface IUserStore
 {
     /// <summary>
     /// Creates new IdentityUser if there is no data associated with specified telegram user, otherwise checks if values are concent

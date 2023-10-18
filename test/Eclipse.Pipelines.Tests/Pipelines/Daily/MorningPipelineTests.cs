@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.Telegram.Messages;
-using Eclipse.Core.Results;
+﻿using Eclipse.Core.Results;
 using Eclipse.Pipelines.Pipelines.Daily;
+using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Tests.Fixture;
 
 using FluentAssertions;
@@ -68,7 +68,7 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
             ReplyMarkup = new InlineKeyboardMarkup(new InlineKeyboardButton("test"))
         };
 
-        messageStore.GetMessage(default!).ReturnsForAnyArgs(message);
+        messageStore.GetOrDefault(default!).ReturnsForAnyArgs(message);
         var context = GetContext("/daily_morning");
 
         // First message act

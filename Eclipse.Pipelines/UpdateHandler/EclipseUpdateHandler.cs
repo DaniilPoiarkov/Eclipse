@@ -6,15 +6,15 @@ using Serilog;
 
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Builder;
-using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Telegram.Pipelines;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
+using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.Options;
 
@@ -24,17 +24,17 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 {
     private readonly ILogger _logger;
 
-    private readonly IIdentityUserStore _userStore;
+    private readonly IUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
+
+    private readonly IMessageStore _messageStore;
 
     private readonly IPipelineProvider _pipelineProvider;
 
     private readonly ICurrentTelegramUser _currentUser;
 
     private readonly IUpdateParser _updateParser;
-
-    private readonly IMessageStore _messageStore;
 
     private readonly IEclipseLocalizer _localizer;
 
@@ -50,7 +50,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         ILogger logger,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        IIdentityUserStore userStore,
+        IUserStore userStore,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
@@ -114,7 +114,7 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (!pipeline.IsFinished)
         {
-            _pipelineStore.Set(pipeline, key);
+            _pipelineStore.Set(key, pipeline);
         }
 
         await _userStore.AddOrUpdate(context.User, cancellationToken);

@@ -2,6 +2,6 @@
 
 public class ObjectNotFoundException : ApplicationException
 {
-    internal ObjectNotFoundException(string name)
+    public ObjectNotFoundException(string name)
         : base($"Object {name} not found") { }
 }

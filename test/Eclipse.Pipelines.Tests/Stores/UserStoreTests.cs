@@ -1,26 +1,25 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Exceptions;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Core.Models;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Pipelines.User;
 
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.IdentityUsers;
+namespace Eclipse.Pipelines.Tests.Stores;
 
-public class IdentityUserStoreTests
+public class UserStoreTests
 {
     private readonly IIdentityUserService _identityUserService = Substitute.For<IIdentityUserService>();
 
     private readonly IIdentityUserCache _identityUserCache = Substitute.For<IIdentityUserCache>();
 
-    private readonly Lazy<IIdentityUserStore> _lazySut;
+    private readonly Lazy<IUserStore> _lazySut;
 
-    private IIdentityUserStore Sut => _lazySut.Value;
-
+    private IUserStore Sut => _lazySut.Value;
 
     private readonly TelegramUser User = new(1, "Name", "Surname", "Username");
 
@@ -32,10 +31,9 @@ public class IdentityUserStoreTests
         ChatId = 1,
     };
 
-
-    public IdentityUserStoreTests()
+    public UserStoreTests()
     {
-        _lazySut = new Lazy<IIdentityUserStore>(() => new IdentityUserStore(_identityUserService, _identityUserCache));
+        _lazySut = new Lazy<IUserStore>(() => new UserStore(_identityUserService, _identityUserCache));
     }
 
     [Fact]

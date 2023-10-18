@@ -6,6 +6,9 @@ using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
+using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -22,7 +25,10 @@ public static class EclipsePipelinesModule
         services
             .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>())
             .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
-            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+                .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+                .AddTransient<IUserStore, UserStore>()
+                .AddTransient<IMessageStore, MessageStore>()
+                .AddTransient<IPipelineStore, PipelineStore>()
             .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()

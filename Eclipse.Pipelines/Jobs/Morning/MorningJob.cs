@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Telegram.Pipelines;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Core;
 using Eclipse.Core.Models;
+using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.User;
 
 using Quartz;
 
@@ -17,13 +17,13 @@ internal class MorningJob : EclipseJobBase
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IIdentityUserStore _identityUserStore;
+    private readonly IUserStore _identityUserStore;
 
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
-        IIdentityUserStore identityUserStore)
+        IUserStore identityUserStore)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -50,7 +50,7 @@ internal class MorningJob : EclipseJobBase
 
             notifications.Add(pipeline.RunNext(messageContext, context.CancellationToken));
 
-            _pipelineStore.Set(pipeline, key);
+            _pipelineStore.Set(key, pipeline);
         }
 
         var results = await Task.WhenAll(notifications);

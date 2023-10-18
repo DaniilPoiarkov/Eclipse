@@ -1,7 +1,6 @@
-﻿using Eclipse.Application.Contracts.Telegram.Messages;
-using Eclipse.Core.Attributes;
+﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-
+using Eclipse.Pipelines.Stores.Messages;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Daily;
@@ -30,7 +29,7 @@ public class MorningPipeline : EclipsePipelineBase
             InlineKeyboardButton.WithCallbackData("👎"),
         };
 
-        var message = _messageStore.GetMessage(new MessageKey(context.ChatId));
+        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
 
         var menu = Menu(buttons, Localizer["Pipelines:Morning:AskMood"]);
 

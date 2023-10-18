@@ -1,9 +1,9 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Telegram.Messages;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Pipelines.Stores.Messages;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
@@ -50,7 +50,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = _messageStore.GetMessage(new MessageKey(context.ChatId));
+        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
 
         if (context.Value.Equals("go_back"))
         {
