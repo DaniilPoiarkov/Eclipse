@@ -26,8 +26,8 @@ public static class EclipsePipelinesModule
             .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
                 .AddTransient<IUserStore, UserStore>()
-            .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>()
-            .AddSingleton<IMessageStore, MessageStore>();
+                .AddTransient<IMessageStore, MessageStore>()
+            .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())
