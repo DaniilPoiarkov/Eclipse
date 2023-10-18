@@ -8,7 +8,7 @@
 - [Deployment and CICD](#deployment-and-cicd)
 
 ## Architecture diagram
-![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/193dc779-d9b1-4af5-b4cb-bded4aa6a8d7)
+![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/6a3805a6-cedc-459d-b582-2fdb22614258)
 
 ## Modules
 
