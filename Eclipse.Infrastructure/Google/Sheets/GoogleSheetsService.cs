@@ -1,9 +1,7 @@
-﻿using Eclipse.Infrastructure.Google.Sheets;
-
-using Google.Apis.Sheets.v4.Data;
+﻿using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Sheets.v4;
 
-namespace Eclipse.Infrastructure.Internals.Google.Sheets;
+namespace Eclipse.Infrastructure.Google.Sheets;
 
 internal class GoogleSheetsService : IGoogleSheetsService
 {
@@ -20,7 +18,7 @@ internal class GoogleSheetsService : IGoogleSheetsService
     {
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
         var values = request.Execute();
-        
+
         return values.Values.Skip(_namesRow).Select(parser.Parse);
     }
 

@@ -1,8 +1,6 @@
-﻿using Eclipse.Infrastructure.Quartz;
+﻿using Quartz;
 
-using Quartz;
-
-namespace Eclipse.Infrastructure.Internals.Quartz;
+namespace Eclipse.Infrastructure.Quartz;
 
 internal class EclipseScheduler : IEclipseScheduler
 {

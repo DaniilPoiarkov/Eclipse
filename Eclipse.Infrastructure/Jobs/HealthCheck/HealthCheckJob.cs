@@ -1,6 +1,4 @@
-﻿using Eclipse.Infrastructure.Internals.Quartz.Models;
-
-using HealthChecks.UI.Core;
+﻿using HealthChecks.UI.Core;
 
 using Newtonsoft.Json;
 
@@ -8,7 +6,7 @@ using Quartz;
 
 using Serilog;
 
-namespace Eclipse.Infrastructure.Internals.Quartz;
+namespace Eclipse.Infrastructure.Jobs.HealthCheck;
 
 internal class HealthCheckJob : IJob
 {

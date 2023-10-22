@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 using System.Text;
 
-namespace Eclipse.Infrastructure.Internals.Quartz.Models;
+namespace Eclipse.Infrastructure.Jobs.HealthCheck;
 
 internal class HealthCheckEntry
 {

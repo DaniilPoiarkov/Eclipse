@@ -3,10 +3,6 @@ using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
 using Eclipse.Infrastructure.Quartz;
-using Eclipse.Infrastructure.Internals.Cache;
-using Eclipse.Infrastructure.Internals.Google;
-using Eclipse.Infrastructure.Internals.Google.Sheets;
-using Eclipse.Infrastructure.Internals.Quartz;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -22,6 +18,7 @@ using Telegram.Bot;
 
 using Polly;
 using Polly.Contrib.WaitAndRetry;
+using Eclipse.Infrastructure.Jobs.HealthCheck;
 
 namespace Eclipse.Infrastructure;
 
