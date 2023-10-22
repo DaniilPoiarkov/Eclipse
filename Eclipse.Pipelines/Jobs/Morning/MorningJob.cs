@@ -37,7 +37,7 @@ internal class MorningJob : EclipseJobBase
             .Where(u => u.NotificationsEnabled)
             .ToList();
 
-        var notifications = new List<Task<IResult>>(users.Count);
+        var notifications = new List<Task>(users.Count);
 
         foreach (var user in users)
         {
@@ -48,13 +48,13 @@ internal class MorningJob : EclipseJobBase
 
             var messageContext = new MessageContext(user.ChatId, string.Empty, new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username));
 
-            notifications.Add(pipeline.RunNext(messageContext, context.CancellationToken));
+            var result = await pipeline.RunNext(messageContext, context.CancellationToken);
+
+            notifications.Add(result.SendAsync(_botClient, context.CancellationToken));
 
             _pipelineStore.Set(key, pipeline);
         }
 
-        var results = await Task.WhenAll(notifications);
-
-        await Task.WhenAll(results.Select(s => s.SendAsync(_botClient, context.CancellationToken)));
+        await Task.WhenAll(notifications);
     }
 }
