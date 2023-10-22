@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Pipelines.Stores.Pipelines;
-using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Users;
 
 using Quartz;
 

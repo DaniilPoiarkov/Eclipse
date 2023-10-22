@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Users;
 using Quartz;
 
 using Telegram.Bot;
@@ -13,15 +13,15 @@ internal class SendRemindersJob : EclipseJobBase
 
     private readonly IEclipseLocalizer _localizer;
 
-    private readonly IUserStore _identityUserStore;
+    private readonly IUserStore _userStore;
 
     private readonly IReminderService _reminderService;
 
-    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IUserStore identityUserStore, IReminderService reminderService)
+    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IUserStore userStore, IReminderService reminderService)
     {
         _botClient = botClient;
         _localizer = localizer;
-        _identityUserStore = identityUserStore;
+        _userStore = userStore;
         _reminderService = reminderService;
     }
 
@@ -32,7 +32,7 @@ internal class SendRemindersJob : EclipseJobBase
 
         var specification = new ReminderDtoNotifyAtSpecification(time);
 
-        var users = _identityUserStore.GetCachedUsers()
+        var users = _userStore.GetCachedUsers()
             .Where(u => u.Reminders.Any(specification))
             .ToList();
 
