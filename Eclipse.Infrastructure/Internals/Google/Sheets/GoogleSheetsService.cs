@@ -24,7 +24,7 @@ internal class GoogleSheetsService : IGoogleSheetsService
         return values.Values.Skip(_namesRow).Select(parser.Parse);
     }
 
-    public void Append<IObject>(string sheetId, string range, IObject value, IObjectParser<IObject> parser)
+    public void Append<TObject>(string sheetId, string range, TObject value, IObjectParser<TObject> parser)
     {
         var values = parser.Parse(value);
 

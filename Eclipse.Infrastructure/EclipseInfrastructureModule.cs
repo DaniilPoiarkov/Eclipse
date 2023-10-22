@@ -3,11 +3,9 @@ using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
 using Eclipse.Infrastructure.Quartz;
-using Eclipse.Infrastructure.Telegram;
 using Eclipse.Infrastructure.Internals.Cache;
 using Eclipse.Infrastructure.Internals.Google;
 using Eclipse.Infrastructure.Internals.Google.Sheets;
-using Eclipse.Infrastructure.Internals.Telegram;
 using Eclipse.Infrastructure.Internals.Quartz;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -95,8 +93,6 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
     {
-        services.AddSingleton<IEclipseStarter, EclipseStarter>();
-
         services.AddSingleton<ITelegramBotClient>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<TelegramOptions>>().Value;

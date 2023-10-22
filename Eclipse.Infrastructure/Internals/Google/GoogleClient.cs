@@ -22,12 +22,12 @@ internal class GoogleClient : IGoogleClient
 
     private BaseClientService.Initializer InitializeBaseClient(string scope)
     {
-        var creds = GoogleCredential.FromJson(_credentials)
+        var credentials = GoogleCredential.FromJson(_credentials)
             .CreateScoped(scope);
 
         return new BaseClientService.Initializer()
         {
-            HttpClientInitializer = creds
+            HttpClientInitializer = credentials
         };
     }
 }
