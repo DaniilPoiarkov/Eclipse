@@ -15,7 +15,7 @@ internal class LocalizationConsole
     {
         var services = new ServiceCollection();
 
-        services.AddLocalizationSupport(builder =>
+        services.AddLocalization(builder =>
         {
             builder.AddJsonFiles("Resources");
 

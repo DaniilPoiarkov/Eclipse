@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Localization.Exceptions;
+using Eclipse.Application.Exceptions;
 
 using FluentValidation;
 
@@ -25,7 +25,7 @@ internal class TelegramService : ITelegramService
 
         if (!validationResult.IsValid)
         {
-            throw new LocalizedException("Eclipse:ValidationFailed", validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
+            throw new EclipseValidationException(validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
         }
 
         await _botClient.SendTextMessageAsync(
