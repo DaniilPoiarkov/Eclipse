@@ -14,6 +14,7 @@ public interface ILocalizer
     /// <param name="culture">Cultute info</param>
     /// <returns></returns>
     string this[string key, string? culture = null] { get; }
+
     /// <summary>
     /// Converts Localizable exception to user-friendly message
     /// </summary>
