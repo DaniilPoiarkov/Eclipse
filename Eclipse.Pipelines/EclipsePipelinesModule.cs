@@ -6,7 +6,7 @@ using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.UpdateHandler;
-using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Users;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 

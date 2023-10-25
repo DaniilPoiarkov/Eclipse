@@ -39,6 +39,7 @@ internal class QuatzOptionsConfiguration : IConfigureOptions<QuartzOptions>
                 .WithSchedule(
                     CronScheduleBuilder
                         .DailyAtHourAndMinute(9, 0)
-                        .InTimeZone(_timeZone)));
+                        .InTimeZone(_timeZone))
+                .StartNow());
     }
 }

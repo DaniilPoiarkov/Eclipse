@@ -1,5 +1,4 @@
-﻿using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 
 using Newtonsoft.Json;

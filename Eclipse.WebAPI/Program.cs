@@ -43,7 +43,7 @@ builder.Services
     .ConfigureGoogleOptions(options => options.Credentials = configuration["Google:Credentials"]!)
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
-builder.Services.AddLocalizationSupport(builder =>
+builder.Services.AddLocalization(builder =>
 {
     var path = "EmbeddedResources/Localizations/";
 

@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Models;
 
-namespace Eclipse.Pipelines.User;
+namespace Eclipse.Pipelines.Users;
 
 internal interface IUserStore
 {

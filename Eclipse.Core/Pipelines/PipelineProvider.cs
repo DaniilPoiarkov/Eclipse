@@ -61,9 +61,7 @@ internal class PipelineProvider : IPipelineProvider
 
     private PipelineBase ResolveAndValidate(Type pipelineType)
     {
-        var results = Validate(pipelineType, out var isValid);
-
-        if (!isValid)
+        if (!Validate(pipelineType, out var results))
         {
             var accessDeniedPipeline = _serviceProvider.GetRequiredService<IAccessDeniedPipeline>();
             accessDeniedPipeline.SetResults(results);
@@ -73,21 +71,20 @@ internal class PipelineProvider : IPipelineProvider
         return (_serviceProvider.GetRequiredService(pipelineType) as PipelineBase)!;
     }
 
-    private IEnumerable<ValidationResult> Validate(Type pipeline, out bool isValid)
+    private bool Validate(Type pipeline, out IEnumerable<ValidationResult> results)
     {
         var validationAttributes = pipeline.GetCustomAttributes<ContextValidationAttribute>().ToList();
 
         if (validationAttributes.Count == 0)
         {
-            isValid = true;
-            return Enumerable.Empty<ValidationResult>();
+            results = Enumerable.Empty<ValidationResult>();
+            return true;
         }
 
         var context = new ValidationContext(_serviceProvider, _currentUser.GetCurrentUser());
 
-        var validationResult = validationAttributes.Select(a => a.Validate(context));
+        results = validationAttributes.Select(a => a.Validate(context));
 
-        isValid = validationResult.All(result => result.IsSucceded);
-        return validationResult;
+        return results.All(result => result.IsSucceded);
     }
 }

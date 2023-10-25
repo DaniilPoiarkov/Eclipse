@@ -1,9 +1,8 @@
 ﻿using Eclipse.Infrastructure.Builder;
-using Eclipse.Infrastructure.Cache;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.Infrastructure.Internals.Cache;
+namespace Eclipse.Infrastructure.Cache;
 
 internal class CacheService : ICacheService
 {
@@ -28,7 +27,7 @@ internal class CacheService : ICacheService
     {
         var data = _memoryCache.Get<T>(key.Key);
         _memoryCache.Remove(key.Key);
-        
+
         return data;
     }
 

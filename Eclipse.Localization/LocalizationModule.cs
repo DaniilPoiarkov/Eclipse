@@ -12,7 +12,7 @@ public static class LocalizationModule
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddLocalizationSupport(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
+    public static IServiceCollection AddLocalization(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
     {
         var builder = new LocalizationBuilder();
 

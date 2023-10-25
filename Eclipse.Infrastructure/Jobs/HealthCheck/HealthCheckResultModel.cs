@@ -1,6 +1,6 @@
 ﻿using HealthChecks.UI.Core;
 
-namespace Eclipse.Infrastructure.Internals.Quartz.Models;
+namespace Eclipse.Infrastructure.Jobs.HealthCheck;
 
 internal class HealthCheckResultModel
 {

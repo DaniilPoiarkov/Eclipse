@@ -12,7 +12,7 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.User;
+using Eclipse.Pipelines.Users;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 

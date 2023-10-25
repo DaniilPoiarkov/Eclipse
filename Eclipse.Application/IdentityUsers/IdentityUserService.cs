@@ -51,9 +51,9 @@ internal class IdentityUserService : IIdentityUserService
         return _mapper.Map(user);
     }
 
-    public async Task<IdentityUserDto> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
-        var user = await FindById(userId, cancellationToken);
+        var user = await FindById(id, cancellationToken);
 
         user.SetGmt(currentUserTime);
 
@@ -94,9 +94,9 @@ internal class IdentityUserService : IIdentityUserService
         return _mapper.Map(updated);
     }
 
-    private async Task<IdentityUser> FindById(Guid userId, CancellationToken cancellationToken = default)
+    private async Task<IdentityUser> FindById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _userManager.FindByIdAsync(userId, cancellationToken)
+        return await _userManager.FindByIdAsync(id, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
     }
 }

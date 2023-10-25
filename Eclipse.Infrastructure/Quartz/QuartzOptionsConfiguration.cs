@@ -1,5 +1,4 @@
-﻿using Eclipse.Infrastructure.Internals.Quartz;
-
+﻿using Eclipse.Infrastructure.Jobs.HealthCheck;
 using Microsoft.Extensions.Options;
 
 using Quartz;
