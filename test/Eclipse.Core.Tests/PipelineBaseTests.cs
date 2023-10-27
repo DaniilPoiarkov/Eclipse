@@ -71,7 +71,7 @@ public class PipelineBaseTests
 
         decorator.Touched += (_, _) => touched++;
 
-        _services.AddSingleton<ICoreDecorator>(decorator);
+        _services.AddSingleton<IPipelineExecutionDecorator>(decorator);
 
         while (!_pipeline1.IsFinished)
         {
@@ -94,8 +94,8 @@ public class PipelineBaseTests
         decorator2.Touched += (_, _) => touched--;
 
         _services
-            .AddSingleton<ICoreDecorator>(decorator1)
-            .AddSingleton<ICoreDecorator>(decorator2);
+            .AddSingleton<IPipelineExecutionDecorator>(decorator1)
+            .AddSingleton<IPipelineExecutionDecorator>(decorator2);
 
         while (!_pipeline1.IsFinished)
         {

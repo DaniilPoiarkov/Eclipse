@@ -3,7 +3,7 @@ using Eclipse.Core.Core;
 
 namespace Eclipse.Core.Tests.Decorations;
 
-internal class TestCoreDecorator : ICoreDecorator
+internal class TestCoreDecorator : IPipelineExecutionDecorator
 {
     internal event EventHandler? Touched;
 
