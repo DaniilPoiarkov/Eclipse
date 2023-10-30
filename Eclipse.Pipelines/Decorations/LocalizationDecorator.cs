@@ -6,7 +6,7 @@ using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Pipelines.Decorations;
 
-public class LocalizationDecorator : ICoreDecorator
+public class LocalizationDecorator : IPipelineExecutionDecorator
 {
     private readonly IdentityUserManager _userManager;
 

@@ -11,10 +11,10 @@ public class CoreBuilder
         _services = services;
     }
 
-    public CoreBuilder Decorate<TCoreDecorator>()
-        where TCoreDecorator : class, ICoreDecorator
+    public CoreBuilder Decorate<TPipelineExecutionDecorator>()
+        where TPipelineExecutionDecorator : class, IPipelineExecutionDecorator
     {
-        _services.AddTransient<ICoreDecorator, TCoreDecorator>();
+        _services.AddTransient<IPipelineExecutionDecorator, TPipelineExecutionDecorator>();
         return this;
     }
 }

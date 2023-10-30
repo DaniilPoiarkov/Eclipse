@@ -19,7 +19,7 @@ public abstract class PipelineBase : Pipeline
 
     public virtual async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var decorations = context.Services.GetServices<ICoreDecorator>();
+        var decorations = context.Services.GetServices<IPipelineExecutionDecorator>();
 
         Func<MessageContext, CancellationToken, Task<IResult>> execution = RunAsync;
 
