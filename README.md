@@ -55,6 +55,7 @@ Each module has own test project.
 * Telegram API
 
 ### Tech stack
+* ASP.NET 7
 * Quartz
 * FluentValidation
 * Azure CosmosDb
