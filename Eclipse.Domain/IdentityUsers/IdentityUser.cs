@@ -138,9 +138,7 @@ public sealed class IdentityUser : AggregateRoot
         }
 
         var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
-
         _todoItems.Add(todoItem);
-
         return todoItem;
     }
 
