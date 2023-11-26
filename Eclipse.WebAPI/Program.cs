@@ -57,8 +57,6 @@ builder.Services.Configure<ApiKeyAuthorizationOptions>(
     builder.Configuration.GetSection("Authorization")
 );
 
-builder.Services.AddExceptionHandler<ExceptionHandlerMiddleware>();
-
 builder.Host.UseSerilog((_, config) =>
 {
     config.WriteTo.Console();

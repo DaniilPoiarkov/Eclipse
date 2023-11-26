@@ -21,7 +21,9 @@ public class ExceptionHandlerMiddleware : IExceptionHandler
 
         context.Response.StatusCode = (int)status;
 
-        await context.Response.WriteAsJsonAsync(new { Error = exception.Message }, cancellationToken: cancellationToken);
+        await context.Response.WriteAsJsonAsync(
+            new { Error = exception.Message },
+            cancellationToken: cancellationToken);
         
         return true;
     }
