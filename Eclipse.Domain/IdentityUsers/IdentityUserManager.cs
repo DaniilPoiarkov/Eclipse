@@ -11,18 +11,20 @@ public class IdentityUserManager
         _identityUserRepository = identityUserRepository;
     }
 
-    /// <summary>
-    /// Creates user with specified parameters
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="surname"></param>
-    /// <param name="username"></param>
-    /// <param name="chatId"></param>
-    /// <param name="culture"></param>
-    /// <param name="notificationsEnabled"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    /// <exception cref="DuplicateDataException"></exception>
+
+    /// <summary>Creates the user asynchronous.</summary>
+    /// <param name="name">The name.</param>
+    /// <param name="surname">The surname.</param>
+    /// <param name="username">The username.</param>
+    /// <param name="chatId">The telegram chat identifier.</param>
+    /// <param name="culture">The culture.</param>
+    /// <param name="notificationsEnabled">if set to <c>true</c> [notifications enabled].</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>Created user</returns>
+    /// <exception cref="DuplicateDataException">User with given chatId
+    /// or
+    /// username
+    /// already exists</exception>
     public async Task<IdentityUser?> CreateAsync(
         string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, CancellationToken cancellationToken = default)
     {
@@ -65,6 +67,7 @@ public class IdentityUserManager
             .SingleOrDefault();
     }
 
+    // TODO: Refactor tests so this method no longer need to be virtual and class can be marked as sealed
     public virtual async Task<IdentityUser?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return (await _identityUserRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
