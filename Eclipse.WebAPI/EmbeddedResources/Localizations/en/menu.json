@@ -1,0 +1,32 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Menu:MainMenu": "Main menu",
+
+    "Menu:MainMenu:Suggest": "Suggest 💡",
+    "Menu:MainMenu:MyToDos": "My to dos 📝",
+    "Menu:MainMenu:Settings": "Settings ⚙️",
+    "Menu:MainMenu:Reminders": "Reminders 🔈",
+
+    "Menu:Settings:Language": "Change language 🌐",
+    "Menu:Settings:Notifications": "Notifications 🔈",
+    "Menu:Settings:SetGmt": "Set your current time 🌎",
+
+    "Menu:AdminMenu": "Admin menu",
+
+    "Menu:AdminMenu:View": "View",
+    "Menu:AdminMenu:View:Suggestions": "View suggestions",
+    "Menu:AdminMenu:View:Users": "View users",
+
+    "Menu:AdminMenu:Send": "Send",
+    "Menu:AdminMenu:Send:User": "Send to user",
+    "Menu:AdminMenu:Send:All": "Send to all",
+
+    "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
+
+    "Menu:TodoItemsMenu:AddItem": "Add item ✏️",
+    "Menu:TodoItemsMenu:MyList": "My list 🗒",
+
+    "Menu:Reminders:Add": "Remind me 💭"
+  }
+}

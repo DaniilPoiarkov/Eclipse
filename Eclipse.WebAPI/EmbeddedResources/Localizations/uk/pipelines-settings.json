@@ -1,0 +1,22 @@
+{
+  "Localization": "uk",
+  "Texts": {
+    "Pipelines:Settings": "Налаштування",
+    "Pipelines:Settings:Language:English": "Англійська 🇺🇸",
+    "Pipelines:Settings:Language:Ukrainian": "Українська 🇺🇦",
+    "Pipelines:Settings:Language:Choose": "Обери мову",
+    "Pipelines:Settings:Language:Unsupported": "Ця мова не підтримується",
+    "Pipelines:Settings:Language:Changed": "Мова успішно змінена!",
+
+    "Pipelines:Settings:Notifications:Enabled": "Сповіщення включено",
+    "Pipelines:Settings:Notifications:Disabled": "Сповіщення виключено",
+    "Pipelines:Settings:Notifications:AlreadyEnabled": "Сповіщення вже включені",
+    "Pipelines:Settings:Notifications:AlreadyDisabled": "Сповіщення вже виключені",
+    "Pipelines:Settings:Notifications:Error": "Хмм.. щось пішло не так, спробуй трошки пізніше ще раз",
+    "Pipelines:Settings:Notifications:Message": "І ми тут",
+
+    "Pipelines:Settings:SetGmt:Info": "Відправ свій час у форматі 'гг:хх' або /cancel щоб повернутись назад. Це допоможе мені розуміти коли відправляти нагадування😊 \r\nЗараз, якщо не помиляюсь, у тебе {0}, правильно?",
+    "Pipelines:Settings:SetGmt:CannotParseTime": "Оуу, я не моожу зрозуміти цей формат..",
+    "Pipelines:Settings:SetGmt:Success": "Час успішно оновлено!"
+  }
+}

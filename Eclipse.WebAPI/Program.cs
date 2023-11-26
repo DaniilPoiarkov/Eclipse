@@ -1,29 +1,84 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
+using Eclipse.Application;
+using Eclipse.Application.Contracts;
+using Eclipse.Core;
+using Eclipse.DataAccess;
+using Eclipse.DataAccess.CosmosDb;
+using Eclipse.Domain;
+using Eclipse.Domain.Shared;
+using Eclipse.Infrastructure;
+using Eclipse.Localization;
+using Eclipse.Pipelines;
+using Eclipse.Pipelines.Decorations;
+using Eclipse.Pipelines.UpdateHandler;
+using Eclipse.WebAPI;
+using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.HealthChecks;
+using Eclipse.WebAPI.Middlewares;
+
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services
+    .AddEclipseHealthChecks()
+    .AddApplicationModule()
+    .AddDomainSharedModule()
+    .AddDomainModule()
+    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
+    .AddApplicationContractsModule()
+    .AddPipelinesModule()
+    .AddWebApiModule()
+    .AddDataAccessModule(builder =>
+    {
+        builder.CosmosOptions = configuration.GetSection("Azure:CosmosDb")
+            .Get<CosmosDbContextOptions>()!;
+    });
+
+builder.Services
+    .AddInfrastructureModule()
+    .UseTelegramHandler<ITelegramUpdateHandler>()
+    .ConfigureCacheOptions(options => options.Expiration = new TimeSpan(3, 0, 0, 0))
+    .ConfigureGoogleOptions(options => options.Credentials = configuration["Google:Credentials"]!)
+    .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
+
+builder.Services.AddLocalization(builder =>
+{
+    var path = "EmbeddedResources/Localizations/";
+
+    builder.AddJsonFiles($"{path}en")
+        .AddJsonFiles($"{path}uk");
+
+    builder.DefaultLocalization = "uk";
+});
+
+builder.Services.Configure<ApiKeyAuthorizationOptions>(
+    builder.Configuration.GetSection("Authorization")
+);
+
+builder.Host.UseSerilog((_, config) =>
+{
+    config.WriteTo.Console();
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    ///
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseEclipseHealthCheks();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

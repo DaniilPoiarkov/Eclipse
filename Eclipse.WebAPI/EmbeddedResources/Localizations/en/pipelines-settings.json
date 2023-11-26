@@ -1,0 +1,22 @@
+{
+  "Localization": "en",
+  "Texts": {
+    "Pipelines:Settings": "Settings menu",
+    "Pipelines:Settings:Language:English": "English 🇺🇸",
+    "Pipelines:Settings:Language:Ukrainian": "Ukrainian 🇺🇦",
+    "Pipelines:Settings:Language:Choose": "Select a language",
+    "Pipelines:Settings:Language:Unsupported": "This language is unsupported",
+    "Pipelines:Settings:Language:Changed": "Language changed successfully!",
+
+    "Pipelines:Settings:Notifications:Enabled": "Notifications enabled",
+    "Pipelines:Settings:Notifications:Disabled": "Notifications disabled",
+    "Pipelines:Settings:Notifications:AlreadyEnabled": "Notifications already enabled",
+    "Pipelines:Settings:Notifications:AlreadyDisabled": "Notifications already disabled",
+    "Pipelines:Settings:Notifications:Error": "Something went wrong, try again a bit later",
+    "Pipelines:Settings:Notifications:Message": "Here we go",
+
+    "Pipelines:Settings:SetGmt:Info": "Send me your time if format 'HH:mm' to set your current time or /cancel to go back. It will help me to understand when to send you reminders😊 \r\nNow it seems to me that your time is {0}, isn't it?",
+    "Pipelines:Settings:SetGmt:CannotParseTime": "Oh, I can't understand this format, did you specified it properly?",
+    "Pipelines:Settings:SetGmt:Success": "Time updated successfully!"
+  }
+}
