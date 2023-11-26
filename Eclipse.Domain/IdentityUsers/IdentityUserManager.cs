@@ -11,7 +11,6 @@ public class IdentityUserManager
         _identityUserRepository = identityUserRepository;
     }
 
-
     /// <summary>Creates the user asynchronous.</summary>
     /// <param name="name">The name.</param>
     /// <param name="surname">The surname.</param>
