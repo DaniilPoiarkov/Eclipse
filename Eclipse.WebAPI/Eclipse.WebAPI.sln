@@ -35,7 +35,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Core.Tests", "..\te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Domain.Tests", "..\test\Eclipse.Domain.Tests\Eclipse.Domain.Tests.csproj", "{651B6D30-5B0B-419A-8A74-486AE8D5B0BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Pipelines.Tests", "..\test\Eclipse.Pipelines.Tests\Eclipse.Pipelines.Tests.csproj", "{DB78B5A1-CA74-4283-9334-8156859A9940}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Pipelines.Tests", "..\test\Eclipse.Pipelines.Tests\Eclipse.Pipelines.Tests.csproj", "{DB78B5A1-CA74-4283-9334-8156859A9940}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{54A80064-3749-444E-9A51-4BA4A90E6F6A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

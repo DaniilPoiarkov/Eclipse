@@ -64,7 +64,7 @@ public static class EclipseWebApiModule
             options.AddSecurityRequirement(requirement);
         });
 
-        services.AddScoped<ExceptionHandlerMiddleware>();
+        services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 
         return services;
     }

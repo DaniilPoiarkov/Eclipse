@@ -13,7 +13,6 @@ using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.HealthChecks;
-using Eclipse.WebAPI.Middlewares;
 
 using Serilog;
 
@@ -72,7 +71,7 @@ if (app.Environment.IsDevelopment())
     ///
 }
 
-app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
