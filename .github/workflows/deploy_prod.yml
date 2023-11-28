@@ -1,5 +1,5 @@
 
-name: Build, Test and deploy to an Azure Web App
+name: Build, Test and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-app
@@ -8,7 +8,7 @@ env:
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
+      - name: Set up dependency caching
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
@@ -37,13 +37,13 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./Eclipse.WebAPI/Eclipse.WebAPI.sln
 
-      - name: Build with dotnet
+      - name: Build
         run: dotnet build ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
         
       - name: Run tests
         run: dotnet test ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
 
-      - name: dotnet publish
+      - name: Publish
         run: dotnet publish ./Eclipse.WebAPI/Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/eclipse
 
       - name: Upload artifact for deployment job
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Development'
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -67,7 +67,7 @@ jobs:
         with:
           name: eclipse-app
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
