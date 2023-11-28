@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Pipelines.Stores.Messages;

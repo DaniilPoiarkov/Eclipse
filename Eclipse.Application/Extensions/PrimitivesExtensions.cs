@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Extensions;
+﻿namespace System;
 
 public static class PrimitivesExtensions
 {

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-using Telegram.Bot.Polling;
+﻿using Telegram.Bot.Polling;
 
 namespace Eclipse.Infrastructure.Builder;
 
