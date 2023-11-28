@@ -1,6 +1,4 @@
-﻿using Eclipse.Application.Extensions;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using Xunit;
 

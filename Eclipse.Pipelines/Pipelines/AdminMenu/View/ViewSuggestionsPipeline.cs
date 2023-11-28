@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Application.Extensions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
