@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.Infrastructure.Google;
 
-internal class GoogleClient : IGoogleClient
+internal sealed class GoogleClient : IGoogleClient
 {
     private readonly IOptions<GoogleOptions> _options;
 

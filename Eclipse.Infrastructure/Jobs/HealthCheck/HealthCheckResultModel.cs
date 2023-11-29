@@ -2,7 +2,8 @@
 
 namespace Eclipse.Infrastructure.Jobs.HealthCheck;
 
-internal class HealthCheckResultModel
+[Serializable]
+internal sealed class HealthCheckResultModel
 {
     public UIHealthStatus Status { get; set; }
 

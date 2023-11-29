@@ -1,5 +1,7 @@
 ﻿using HealthChecks.UI.Core;
 
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Newtonsoft.Json;
 
 using Quartz;
@@ -40,7 +42,7 @@ internal class HealthCheckJob : IJob
         }
 
         var data = result.Entries
-            .Where(e => e.Value.Status != UIHealthStatus.Healthy)
+            .Where(e => e.Value.Status != HealthStatus.Healthy)
             .Select(e => $"{e.Key}: {e.Value}");
 
         _logger.Warning("Health status is {health}\n\r\n\rData: {data}", result.Status, string.Join(Environment.NewLine, data));
