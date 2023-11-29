@@ -1,16 +1,20 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using Eclipse.Infrastructure.Builder;
+
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
+
+using Microsoft.Extensions.Options;
 
 namespace Eclipse.Infrastructure.Google;
 
 internal class GoogleClient : IGoogleClient
 {
-    private readonly string _credentials;
+    private readonly IOptions<GoogleOptions> _options;
 
-    public GoogleClient(string credentials)
+    public GoogleClient(IOptions<GoogleOptions> options)
     {
-        _credentials = credentials;
+        _options = options;
     }
 
     public SheetsService GetSheetsService()
@@ -21,7 +25,7 @@ internal class GoogleClient : IGoogleClient
 
     private BaseClientService.Initializer InitializeBaseClient(string scope)
     {
-        var credentials = GoogleCredential.FromJson(_credentials)
+        var credentials = GoogleCredential.FromJson(_options.Value.Credentials)
             .CreateScoped(scope);
 
         return new BaseClientService.Initializer()

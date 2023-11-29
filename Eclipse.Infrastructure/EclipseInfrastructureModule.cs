@@ -3,9 +3,9 @@ using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
 using Eclipse.Infrastructure.Quartz;
+using Eclipse.Infrastructure.Jobs.HealthCheck;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +18,6 @@ using Telegram.Bot;
 
 using Polly;
 using Polly.Contrib.WaitAndRetry;
-using Eclipse.Infrastructure.Jobs.HealthCheck;
 
 namespace Eclipse.Infrastructure;
 
@@ -45,15 +44,10 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
-        services.AddSingleton<IGoogleClient>(sp =>
-        {
-            var options = sp.GetRequiredService<IOptions<GoogleOptions>>().Value;
-            return new GoogleClient(options.Credentials);
-        });
-
-        services.AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService());
-
-        services.AddScoped<IGoogleSheetsService, GoogleSheetsService>();
+        services
+            .AddTransient<IGoogleClient, GoogleClient>()
+            .AddTransient(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
+                .AddScoped<IGoogleSheetsService, GoogleSheetsService>();
 
         return services;
     }
@@ -83,8 +77,6 @@ public static class EclipseInfrastructureModule
             cfg.WaitForJobsToComplete = false;
         });
 
-        services.AddTransient<IEclipseScheduler, EclipseScheduler>();
-
         return services;
     }
 
@@ -101,8 +93,9 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddMemoryCacheIntegration(this IServiceCollection services)
     {
-        services.AddMemoryCache()
-            .TryAddSingleton<ICacheService, CacheService>();
+        services
+            .AddMemoryCache()
+            .AddSingleton<ICacheService, CacheService>();
 
         return services;
     }
