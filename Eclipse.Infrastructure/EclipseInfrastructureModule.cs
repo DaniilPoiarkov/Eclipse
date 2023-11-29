@@ -45,8 +45,8 @@ public static class EclipseInfrastructureModule
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
         services
-            .AddTransient<IGoogleClient, GoogleClient>()
-            .AddTransient(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
+            .AddSingleton<IGoogleClient, GoogleClient>()
+            .AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
                 .AddScoped<IGoogleSheetsService, GoogleSheetsService>();
 
         return services;
