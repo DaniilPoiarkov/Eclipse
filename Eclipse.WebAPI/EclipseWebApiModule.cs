@@ -12,12 +12,6 @@ public static class EclipseWebApiModule
 {
     public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
-        services.Scan(tss =>
-            tss.FromAssemblyOf<WeatherForecast>()
-                .AddClasses()
-                .AsMatchingInterface()
-                .WithTransientLifetime());
-
         services.AddControllers();
 
         services

@@ -1,5 +1,5 @@
-﻿using Eclipse.Domain.Shared.Entities;
-using Eclipse.Domain.Shared.Exceptions;
+﻿using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.Shared.Entities;
 
 namespace System.Linq;
 

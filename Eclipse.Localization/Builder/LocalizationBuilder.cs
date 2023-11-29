@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 
 namespace Eclipse.Localization.Builder;
 
-internal class LocalizationBuilder : ILocalizationBuilder
+internal sealed class LocalizationBuilder : ILocalizationBuilder
 {
-    private readonly List<CultureInfo> _localizations = new();
+    private readonly List<CultureInfo> _localizations = [];
 
     public string DefaultLocalization { get; set; } = "en";
 

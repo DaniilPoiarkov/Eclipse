@@ -3,9 +3,10 @@
 namespace Eclipse.Localization.Localizers;
 
 [DebuggerDisplay("{Localization}")]
-internal class CultureInfo
+[Serializable]
+internal sealed class CultureInfo
 {
     public string Localization { get; set; } = string.Empty;
 
-    public Dictionary<string, string> Texts { get; set; } = new();
+    public Dictionary<string, string> Texts { get; set; } = [];
 }

@@ -1,6 +1,5 @@
 ﻿using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
-using Eclipse.Domain.Shared.Exceptions;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 
@@ -22,8 +21,8 @@ public sealed class IdentityUser : AggregateRoot
         
         Gmt = default;
 
-        _reminders = new List<Reminder>();
-        _todoItems = new List<TodoItem>();
+        _reminders = [];
+        _todoItems = [];
     }
 
     [JsonConstructor]
@@ -138,7 +137,9 @@ public sealed class IdentityUser : AggregateRoot
         }
 
         var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        
         _todoItems.Add(todoItem);
+
         return todoItem;
     }
 

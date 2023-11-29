@@ -6,7 +6,7 @@ using Serilog;
 
 namespace Eclipse.DataAccess.Hosted;
 
-internal class DataAccessModuleInitializationService : IHostedService
+internal sealed class DataAccessModuleInitializationService : IHostedService
 {
     private readonly ILogger _logger;
 

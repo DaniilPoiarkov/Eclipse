@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Eclipse.Core.Pipelines;
 
-internal class PipelineProvider : IPipelineProvider
+internal sealed class PipelineProvider : IPipelineProvider
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -35,7 +35,7 @@ internal class PipelineProvider : IPipelineProvider
             return pipeline!;
         }
 
-        if (route.StartsWith("/"))
+        if (route.StartsWith('/'))
         {
             return GetByCommand(route);
         }

@@ -1,6 +1,7 @@
-﻿using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.Exceptions;
+﻿using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.TodoItems;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

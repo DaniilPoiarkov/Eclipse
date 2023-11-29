@@ -4,7 +4,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Core.UpdateParsing.Implementations;
 
-internal class ParseStrategyProvider : IParseStrategyProvider
+internal sealed class ParseStrategyProvider : IParseStrategyProvider
 {
     private readonly Dictionary<UpdateType, IParseStrategy> _strategies;
 

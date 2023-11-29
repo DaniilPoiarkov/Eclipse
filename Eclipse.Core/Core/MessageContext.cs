@@ -5,7 +5,7 @@ namespace Eclipse.Core.Core;
 /// <summary>
 /// Contains information scoped to current request
 /// </summary>
-public class MessageContext
+public sealed class MessageContext
 {
     public string Value { get; }
 

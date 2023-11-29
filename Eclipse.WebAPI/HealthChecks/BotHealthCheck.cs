@@ -26,13 +26,9 @@ public class BotHealthCheck : IHealthCheck
 
         if (me is not null && apiCallResult)
         {
-            return HealthCheckResult.Healthy(
-                description: "Bot responding",
-                data: data);
+            return HealthCheckResult.Healthy("Bot responding", data);
         }
 
-        return HealthCheckResult.Unhealthy(
-            description: "Bot not responding",
-            data: data);
+        return HealthCheckResult.Unhealthy("Bot not responding", data: data);
     }
 }

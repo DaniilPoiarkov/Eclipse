@@ -2,7 +2,7 @@
 
 namespace Eclipse.Localization.Localizers;
 
-internal class Localizer : ILocalizer
+internal sealed class Localizer : ILocalizer
 {
     private readonly List<CultureInfo> _localizations;
 

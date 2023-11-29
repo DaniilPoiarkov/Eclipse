@@ -1,6 +1,6 @@
 ﻿namespace Eclipse.Core.Validation;
 
-public class ValidationResult
+public sealed class ValidationResult
 {
     public bool IsSucceded { get; }
 

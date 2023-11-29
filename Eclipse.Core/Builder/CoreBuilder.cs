@@ -2,7 +2,7 @@
 
 namespace Eclipse.Core.Builder;
 
-public class CoreBuilder
+public sealed class CoreBuilder
 {
     private readonly IServiceCollection _services;
 

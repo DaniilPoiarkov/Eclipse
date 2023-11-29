@@ -5,7 +5,7 @@ using Microsoft.Azure.Cosmos;
 
 namespace Eclipse.DataAccess.EclipseCosmosDb;
 
-public class EclipseCosmosDbContext : CosmosDbContext
+public sealed class EclipseCosmosDbContext : CosmosDbContext
 {
     public IContainer<IdentityUser> IdentityUsers => Container<IdentityUser>($"{nameof(IdentityUser)}s");
 

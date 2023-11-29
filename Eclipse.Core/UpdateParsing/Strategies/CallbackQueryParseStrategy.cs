@@ -6,7 +6,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Core.UpdateParsing.Strategies;
 
-public class CallbackQueryParseStrategy : IParseStrategy
+internal sealed class CallbackQueryParseStrategy : IParseStrategy
 {
     public UpdateType Type => UpdateType.CallbackQuery;
 
