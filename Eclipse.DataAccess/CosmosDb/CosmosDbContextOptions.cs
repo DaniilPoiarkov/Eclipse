@@ -1,6 +1,6 @@
 ﻿namespace Eclipse.DataAccess.CosmosDb;
 
-public class CosmosDbContextOptions
+public sealed class CosmosDbContextOptions
 {
     public string ConnectionString { get; set; } = null!;
 

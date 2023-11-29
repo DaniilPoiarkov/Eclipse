@@ -4,7 +4,7 @@ using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.DataAccess.IdentityUsers;
 
-internal class IdentityUserRepository : CosmosRepository<IdentityUser>, IIdentityUserRepository
+internal sealed class IdentityUserRepository : CosmosRepository<IdentityUser>, IIdentityUserRepository
 {
     public IdentityUserRepository(EclipseCosmosDbContext context) : base(context.IdentityUsers)
     {

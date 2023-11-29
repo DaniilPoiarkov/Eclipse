@@ -2,7 +2,6 @@
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Hosted;
 using Eclipse.DataAccess.IdentityUsers;
-using Eclipse.DataAccess.InMemoryDb;
 using Eclipse.Domain.IdentityUsers;
 
 using Microsoft.Azure.Cosmos;
@@ -21,7 +20,6 @@ public static class EclipseDataAccessModule
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
         services
-            .AddSingleton<IDbContext, InMemoryDbContext>()
             .AddScoped<IIdentityUserRepository, IdentityUserRepository>();
 
         services.AddHostedService<DataAccessModuleInitializationService>();
