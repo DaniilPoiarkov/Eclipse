@@ -41,10 +41,10 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
     private readonly IOptions<TelegramOptions> _options;
 
 
-    private static readonly UpdateType[] _allowedUpdateTypes = new[]
-    {
+    private static readonly UpdateType[] _allowedUpdateTypes =
+    [
         UpdateType.Message, UpdateType.CallbackQuery
-    };
+    ];
 
     public EclipseUpdateHandler(
         ILogger logger,

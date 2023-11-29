@@ -9,5 +9,5 @@ internal sealed class HealthCheckResultModel
 
     public TimeSpan TotalDuration { get; set; }
 
-    public Dictionary<string, HealthCheckEntry> Entries { get; set; } = new();
+    public Dictionary<string, HealthCheckEntry> Entries { get; set; } = [];
 }

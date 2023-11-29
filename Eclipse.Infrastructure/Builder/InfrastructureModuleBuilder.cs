@@ -29,7 +29,7 @@ internal class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
     public IInfrastructureModuleBuilder ConfigureCacheOptions(Action<CacheOptions> options)
         => Configure(options);
 
-    private IInfrastructureModuleBuilder Configure<TOptions>(Action<TOptions> options)
+    private InfrastructureModuleBuilder Configure<TOptions>(Action<TOptions> options)
         where TOptions : class
     {
         _services.Configure(options);

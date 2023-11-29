@@ -35,7 +35,7 @@ internal sealed class PipelineProvider : IPipelineProvider
             return pipeline!;
         }
 
-        if (route.StartsWith("/"))
+        if (route.StartsWith('/'))
         {
             return GetByCommand(route);
         }
