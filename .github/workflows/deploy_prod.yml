@@ -1,5 +1,5 @@
 
-name: Build, Test and deploy to an Azure
+name: Production Build, Test and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-app
