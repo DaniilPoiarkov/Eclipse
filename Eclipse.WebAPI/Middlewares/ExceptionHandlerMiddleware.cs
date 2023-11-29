@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Exceptions;
-using Eclipse.Domain.Shared.Exceptions;
+using Eclipse.Domain.Exceptions;
 
 using Microsoft.AspNetCore.Diagnostics;
 

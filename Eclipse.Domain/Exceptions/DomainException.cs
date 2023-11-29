@@ -1,6 +1,6 @@
 ﻿using Eclipse.Localization.Exceptions;
 
-namespace Eclipse.Domain.Shared.Exceptions;
+namespace Eclipse.Domain.Exceptions;
 
 public class DomainException : LocalizedException
 {
