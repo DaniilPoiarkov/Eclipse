@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Eclipse.Core.Pipelines;
 
-internal class PipelineProvider : IPipelineProvider
+internal sealed class PipelineProvider : IPipelineProvider
 {
     private readonly IServiceProvider _serviceProvider;
 

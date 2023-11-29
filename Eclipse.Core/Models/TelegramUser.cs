@@ -1,6 +1,7 @@
 ﻿namespace Eclipse.Core.Models;
 
-public class TelegramUser
+[Serializable]
+public sealed class TelegramUser
 {
     public long Id { get; set; }
 

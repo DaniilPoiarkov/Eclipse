@@ -1,6 +1,6 @@
 ﻿namespace Eclipse.Core.Core;
 
-internal class Stage : IStage
+internal sealed class Stage : IStage
 {
     private readonly Func<MessageContext, CancellationToken, Task<IResult>> _stage;
 

@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Core.UpdateParsing.Implementations;
 
-internal class UpdateParser : IUpdateParser
+internal sealed class UpdateParser : IUpdateParser
 {
     private readonly IParseStrategyProvider _parseStrategyProvider;
 

@@ -2,7 +2,7 @@
 
 namespace Eclipse.Core.Validation;
 
-public class ValidationContext
+public sealed class ValidationContext
 {
     public IServiceProvider ServiceProvider { get; }
 
