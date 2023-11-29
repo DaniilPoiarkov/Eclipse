@@ -4,7 +4,7 @@ using Telegram.Bot.Polling;
 
 namespace Eclipse.Infrastructure.Builder;
 
-internal class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
+internal sealed class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
 {
     private readonly IServiceCollection _services;
 
