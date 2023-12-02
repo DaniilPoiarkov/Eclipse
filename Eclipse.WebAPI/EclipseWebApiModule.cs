@@ -5,8 +5,6 @@ using Eclipse.WebAPI.Middlewares;
 
 using Microsoft.OpenApi.Models;
 
-using Serilog;
-
 namespace Eclipse.WebAPI;
 
 /// <summary>
