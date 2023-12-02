@@ -1,7 +1,11 @@
-﻿using Eclipse.WebAPI.Filters;
+﻿using Eclipse.DataAccess;
+using Eclipse.DataAccess.EclipseCosmosDb;
+using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Middlewares;
 
 using Microsoft.OpenApi.Models;
+
+using Serilog;
 
 namespace Eclipse.WebAPI;
 
@@ -63,5 +67,23 @@ public static class EclipseWebApiModule
             .AddProblemDetails();
 
         return services;
+    }
+
+    // TODO: Move to DataAccess module after adding ability to reference WebApplication here
+    public static async Task InitializeDataAccessModule(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+
+        var serviceProvider = scope.ServiceProvider;
+
+        var logger = serviceProvider.GetRequiredService<Serilog.ILogger>();
+        var context = serviceProvider.GetRequiredService<EclipseCosmosDbContext>();
+
+        logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
+
+        logger.Information("\tInitializing database");
+        await context.InitializeAsync(CancellationToken.None);
+
+        logger.Information("{module} module initialized successfully", nameof(EclipseDataAccessModule));
     }
 }

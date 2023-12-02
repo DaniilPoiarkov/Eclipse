@@ -1,6 +1,5 @@
 ﻿using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.EclipseCosmosDb;
-using Eclipse.DataAccess.Hosted;
 using Eclipse.DataAccess.IdentityUsers;
 using Eclipse.Domain.IdentityUsers;
 
@@ -21,8 +20,6 @@ public static class EclipseDataAccessModule
 
         services
             .AddScoped<IIdentityUserRepository, IdentityUserRepository>();
-
-        services.AddHostedService<DataAccessModuleInitializationService>();
 
         services.Configure(builder);
 
