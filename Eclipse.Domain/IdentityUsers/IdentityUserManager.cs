@@ -23,7 +23,7 @@ public class IdentityUserManager
     /// username
     /// already exists</exception>
     public async Task<IdentityUser?> CreateAsync(
-        string name, string surname, string username, long chatId, string culture, bool notificationsEnabled, CancellationToken cancellationToken = default)
+        string name, string surname, string username, long chatId, CancellationToken cancellationToken = default)
     {
         var withSameData = await _identityUserRepository.GetByExpressionAsync(
             expression: u => u.ChatId == chatId || u.Username == username,
@@ -38,7 +38,7 @@ public class IdentityUserManager
                 : throw new DuplicateDataException(nameof(username), username);
         }
 
-        var identityUser = new IdentityUser(Guid.NewGuid(), name, surname, username, chatId, culture, notificationsEnabled);
+        var identityUser = IdentityUser.Create(Guid.NewGuid(), name, surname, username, chatId);
 
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }

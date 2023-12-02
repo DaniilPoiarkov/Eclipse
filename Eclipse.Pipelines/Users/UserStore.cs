@@ -50,9 +50,7 @@ internal class UserStore : IUserStore
 
     private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
     {
-        if (identityDto.Name == telegramUser.Name
-            && identityDto.Username == telegramUser.Username
-            && identityDto.Surname == telegramUser.Surname)
+        if (HaveSameValues(identityDto, telegramUser))
         {
             _userCache.AddOrUpdate(identityDto);
             return;
@@ -67,5 +65,12 @@ internal class UserStore : IUserStore
 
         var user = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
         _userCache.AddOrUpdate(user);
+
+        static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
+        {
+            return identityDto.Name == telegramUser.Name
+                && identityDto.Username == telegramUser.Username
+                && identityDto.Surname == telegramUser.Surname;
+        }
     }
 }

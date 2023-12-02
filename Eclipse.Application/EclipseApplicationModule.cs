@@ -13,6 +13,7 @@ using Eclipse.Application.Google.Sheets.Suggestions;
 using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.Hosted;
 using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.IdentityUsers.EventHandlers;
 using Eclipse.Application.Localizations;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
@@ -22,6 +23,8 @@ using Eclipse.Application.TodoItems;
 using Eclipse.Infrastructure.Google.Sheets;
 
 using FluentValidation;
+
+using MediatR.NotificationPublishers;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -55,6 +58,12 @@ public static class EclipseApplicationModule
             .AddClasses(c => c.AssignableTo(typeof(IMapper<,>)))
             .AsImplementedInterfaces()
             .WithTransientLifetime());
+
+        services.AddMediatR(cfg =>
+        {
+            cfg.NotificationPublisher = new TaskWhenAllPublisher();
+            cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
+        });
 
         services
             .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()

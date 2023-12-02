@@ -26,26 +26,21 @@ public class IdentityUserManagerTests
         var name = "Name";
         var surname = "Surname";
         var chatId = 1;
-        var culture = "en";
-        var notificationsEnabled = false;
 
-        var identityUser = new IdentityUser(
+        var identityUser = IdentityUser.Create(
             Guid.NewGuid(),
             name,
             surname,
             string.Empty,
-            chatId,
-            culture,
-            notificationsEnabled);
+            chatId);
 
         _repository.CreateAsync(IdentityUserGenerator.Generate(1).First()).ReturnsForAnyArgs(identityUser);
 
-        var result = await Sut.CreateAsync(name, surname, string.Empty, chatId, culture, notificationsEnabled);
+        var result = await Sut.CreateAsync(name, surname, string.Empty, chatId);
 
         result.Should().NotBeNull();
         result!.Name.Should().Be(name);
         result.Surname.Should().Be(surname);
-        result.Culture.Should().Be(culture);
         result.ChatId.Should().Be(chatId);
         result.Id.Should().NotBeEmpty();
     }
@@ -62,7 +57,7 @@ public class IdentityUserManagerTests
 
         var action = async () =>
         {
-            await Sut.CreateAsync("Name", "Surname", duplicatedData.Username, duplicatedData.ChatId, "en", false);
+            await Sut.CreateAsync("Name", "Surname", duplicatedData.Username, duplicatedData.ChatId);
         };
 
         await action.Should().ThrowAsync<DuplicateDataException>();
