@@ -19,9 +19,7 @@ internal class IdentityUserService : IIdentityUserService
 
     public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var identity = await _userManager.CreateAsync(
-            createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, createDto.Culture, createDto.NotificationsEnabled,
-            cancellationToken)
+        var identity = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken)
             ?? throw new ObjectNotFoundException(nameof(IdentityUser));
 
         return _mapper.Map(identity);

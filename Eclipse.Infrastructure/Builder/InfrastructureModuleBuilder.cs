@@ -16,7 +16,7 @@ internal sealed class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
     public IInfrastructureModuleBuilder UseTelegramHandler<THandler>()
         where THandler : IUpdateHandler
     {
-        _services.AddSingleton<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
+        _services.AddScoped<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
         return this;
     }
 

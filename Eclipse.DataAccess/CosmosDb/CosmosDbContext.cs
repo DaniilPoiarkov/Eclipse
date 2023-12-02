@@ -20,10 +20,10 @@ public abstract class CosmosDbContext
     }
 
     /// <summary>
-    /// This method will be called under the hood. Use it to initialize database and containers
+    /// Use it to initialize database and containers
     /// </summary>
     /// <returns></returns>
-    internal abstract Task InitializeAsync(CancellationToken cancellationToken);
+    public abstract Task InitializeAsync(CancellationToken cancellationToken);
 
     public IContainer<TEntity> Container<TEntity>(string name)
         where TEntity : Entity

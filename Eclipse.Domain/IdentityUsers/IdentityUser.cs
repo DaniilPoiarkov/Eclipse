@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Reminders;
+﻿using Eclipse.Domain.IdentityUsers.Events;
+using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
@@ -9,17 +10,16 @@ namespace Eclipse.Domain.IdentityUsers;
 
 public sealed class IdentityUser : AggregateRoot
 {
-    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled)
+    private IdentityUser(Guid id, string name, string surname, string username, long chatId)
         : base(id)
     {
         Name = name;
         Surname = surname;
         Username = username;
         ChatId = chatId;
-        Culture = culture;
-        NotificationsEnabled = notificationsEnabled;
         
         Gmt = default;
+        Culture = string.Empty;
 
         _reminders = [];
         _todoItems = [];
@@ -59,6 +59,19 @@ public sealed class IdentityUser : AggregateRoot
     
     [JsonIgnore]
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
+
+    /// <summary>
+    /// Creates this instance.
+    /// </summary>
+    /// <returns></returns>
+    internal static IdentityUser Create(Guid id, string name, string surname, string username, long chatId)
+    {
+        var user = new IdentityUser(id, name, surname, username, chatId);
+        
+        user.AddEvent(new NewUserJoinedDomainEvent(id, username, name, surname));
+
+        return user;
+    }
 
     /// <summary>Adds the reminder.</summary>
     /// <param name="text">The text.</param>
