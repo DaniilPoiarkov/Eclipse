@@ -12,7 +12,7 @@ public sealed class EclipseCosmosDbContext : CosmosDbContext
     public EclipseCosmosDbContext(CosmosClient client, CosmosDbContextOptions options)
         : base(client, options) { }
 
-    public override async Task InitializeAsync(CancellationToken cancellationToken)
+    public override async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         var response = await Client.CreateDatabaseIfNotExistsAsync(Options.DatabaseId, cancellationToken: cancellationToken);
 
