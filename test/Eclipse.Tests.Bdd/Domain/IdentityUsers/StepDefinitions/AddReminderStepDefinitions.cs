@@ -11,8 +11,6 @@ public sealed class AddReminderStepDefinitions
 
     private static readonly string _reminderTextKey = "reminder-text";
 
-    private static readonly string _reminderTimeKey = "reminder-time";
-
     public AddReminderStepDefinitions(ScenarioContext scenarioContext)
     {
         _scenarioContext = scenarioContext;
@@ -45,18 +43,18 @@ public sealed class AddReminderStepDefinitions
     {
         _ = time.TryParseAsTimeOnly(out var timeOnly);
 
-        _scenarioContext.Add(_reminderTimeKey, timeOnly);
+        var text = _scenarioContext.Get<string>(_reminderTextKey);
+
+        var user = _scenarioContext.Get<IdentityUser>(_userKey);
+
+        user.AddReminder(text, timeOnly);
     }
 
     [Then("User must have (.*) reminders")]
-    public void ThenReminderShouldBeCreated(int remindersCount)
+    public void ThenUserMastHaveReminders(int remindersCount)
     {
         var user = _scenarioContext.Get<IdentityUser>(_userKey);
-        var text = _scenarioContext.Get<string>(_reminderTextKey);
-        var time = _scenarioContext.Get<TimeOnly>(_reminderTimeKey);
-
-        user.AddReminder(text, time);
-
+        
         user.Reminders.Count.Should().Be(remindersCount);
     }
 }

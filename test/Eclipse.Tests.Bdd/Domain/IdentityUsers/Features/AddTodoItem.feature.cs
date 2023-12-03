@@ -100,13 +100,21 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
+                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Text"});
+                table1.AddRow(new string[] {
+                            "Test item 1"});
+                table1.AddRow(new string[] {
+                            "Test item 2"});
+                table1.AddRow(new string[] {
+                            "Test item 3"});
 #line 7
- testRunner.Given("User with 3 todo items", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("User with todo items", ((string)(null)), table1, "Given ");
 #line hidden
-#line 8
+#line 12
  testRunner.When("Add todo item with following text: \"Test todo item\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 9
+#line 13
  testRunner.Then("User must have 4 todo items", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

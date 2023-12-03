@@ -1,5 +1,7 @@
 ﻿using Eclipse.Domain.IdentityUsers;
 
+using TechTalk.SpecFlow.Assist;
+
 namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.StepDefinitions;
 
 [Binding]
@@ -14,14 +16,16 @@ public sealed class AddTodoItemStepDefinitions
         _scenarioContext = scenarioContext;
     }
 
-    [Given("User with (.*) todo items")]
-    public void GivenUserWithTodoItems(int itemsCount)
+    [Given("User with todo items")]
+    public void GivenUserWithTodoItems(Table table)
     {
         var user = IdentityUser.Create(Guid.NewGuid(), "Name", "Surname", "Username", 1);
+        
+        var providedTodoItems = table.CreateSet<CreateTodoItem>();
 
-        for (int i = 0; i < itemsCount; i++)
+        foreach (var item in providedTodoItems)
         {
-            user.AddTodoItem($"Text {i}");
+            user.AddTodoItem(item.Text);
         }
 
         _scenarioContext.Add(_userKey, user);
@@ -42,4 +46,9 @@ public sealed class AddTodoItemStepDefinitions
         
         user.TodoItems.Count.Should().Be(itemsCount);
     }
+}
+
+file class CreateTodoItem
+{
+    public string? Text { get; set;}
 }
