@@ -19,7 +19,7 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class AddReminderFeature : object, Xunit.IClassFixture<AddReminderFeature.FixtureData>, System.IDisposable
+    public partial class AddTodoItemFeature : object, Xunit.IClassFixture<AddTodoItemFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
@@ -28,10 +28,10 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "AddReminder.feature"
+#line 1 "AddTodoItem.feature"
 #line hidden
         
-        public AddReminderFeature(AddReminderFeature.FixtureData fixtureData, Eclipse_Tests_Bdd_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public AddTodoItemFeature(AddTodoItemFeature.FixtureData fixtureData, Eclipse_Tests_Bdd_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -40,7 +40,7 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Domain/IdentityUsers/Features", "AddReminder", "User should be able to add valid reminder", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Domain/IdentityUsers/Features", "AddTodoItem", "User should be able to add todo item", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -80,16 +80,16 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="As a user I want be able to add reminders")]
-        [Xunit.TraitAttribute("FeatureTitle", "AddReminder")]
-        [Xunit.TraitAttribute("Description", "As a user I want be able to add reminders")]
+        [Xunit.SkippableFactAttribute(DisplayName="As a user I want be able to add todo item")]
+        [Xunit.TraitAttribute("FeatureTitle", "AddTodoItem")]
+        [Xunit.TraitAttribute("Description", "As a user I want be able to add todo item")]
         [Xunit.TraitAttribute("Category", "IdentityUser")]
-        public void AsAUserIWantBeAbleToAddReminders()
+        public void AsAUserIWantBeAbleToAddTodoItem()
         {
             string[] tagsOfScenario = new string[] {
                     "IdentityUser"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("As a user I want be able to add reminders", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("As a user I want be able to add todo item", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -101,16 +101,13 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 7
- testRunner.Given("Existing user with 0 reminders", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("User with 3 todo items", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 8
- testRunner.When("Add reminder with following text: \"Test reminder\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("Add todo item with following text: \"Test todo item\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 9
- testRunner.And("Following time: 17:30", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 10
- testRunner.Then("User must have 1 reminders", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("User must have 4 todo items", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -123,12 +120,12 @@ this.ScenarioInitialize(scenarioInfo);
             
             public FixtureData()
             {
-                AddReminderFeature.FeatureSetup();
+                AddTodoItemFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                AddReminderFeature.FeatureTearDown();
+                AddTodoItemFeature.FeatureTearDown();
             }
         }
     }
