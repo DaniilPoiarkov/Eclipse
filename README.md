@@ -69,6 +69,7 @@ Each module has own test project.
 * FluentAssertions
 * Bogus
 * Meziantou
+* SpecFlow
 
 ## Deployment and CICD
 * GitHub actions
