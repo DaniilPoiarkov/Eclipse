@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Extensions\Features\" />
     <Folder Include="Domain\IdentityUsers\Features\" />
     <Folder Include="Drivers\" />
     <Folder Include="Support\" />
