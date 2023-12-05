@@ -48,6 +48,7 @@ Data consistency
 ## Tests
 Each Test project reference base Eclipse.Tests class library, that provides helpers which used through all tests.
 Each module has own test project.
+BDD tests written with SpecFlow are all in the single tests assembly.
 
 ## Integrations
 ### API
