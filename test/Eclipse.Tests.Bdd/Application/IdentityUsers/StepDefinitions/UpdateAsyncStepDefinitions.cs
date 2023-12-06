@@ -89,7 +89,7 @@ internal sealed class UpdateAsyncStepDefinitions
     }
 
     [Then("The user's notification status should be (.*)")]
-    public void ThenTheUserSurnameShouldBe(bool expectedNotificationsStatus)
+    public void ThenTheUserNotificationStatusShouldBe(bool expectedNotificationsStatus)
     {
         _result.NotificationsEnabled.Should().Be(expectedNotificationsStatus);
     }
