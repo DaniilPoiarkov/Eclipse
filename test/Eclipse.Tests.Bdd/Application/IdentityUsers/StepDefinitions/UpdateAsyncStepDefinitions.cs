@@ -17,7 +17,7 @@ internal sealed class UpdateAsyncStepDefinitions
 
     private readonly Lazy<IIdentityUserService> _lazySut;
 
-    private IIdentityUserService _sut => _lazySut.Value;
+    private IIdentityUserService Sut => _lazySut.Value;
 
     private IdentityUserDto _result = new();
 
@@ -55,7 +55,7 @@ internal sealed class UpdateAsyncStepDefinitions
         _updateDto.Culture = table.Rows[0]["Culture"];
         _updateDto.NotificationsEnabled = bool.Parse(table.Rows[0]["NotificationsEnabled"]);
 
-        _result = await _sut.UpdateAsync(_user.Id, _updateDto);
+        _result = await Sut.UpdateAsync(_user.Id, _updateDto);
     }
 
     [Then("The user details should be updated successfully")]
