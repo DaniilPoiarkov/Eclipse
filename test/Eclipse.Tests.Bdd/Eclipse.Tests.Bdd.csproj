@@ -19,6 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Extensions\Features\" />
+    <Folder Include="Application\IdentityUsers\Features\" />
     <Folder Include="Domain\IdentityUsers\Features\" />
     <Folder Include="Drivers\" />
     <Folder Include="Support\" />
@@ -27,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Eclipse.Application\Eclipse.Application.csproj" />
     <ProjectReference Include="..\..\Eclipse.Domain\Eclipse.Domain.csproj" />
+    <ProjectReference Include="..\Eclipse.Tests\Eclipse.Tests.csproj" />
   </ItemGroup>
 
 </Project>

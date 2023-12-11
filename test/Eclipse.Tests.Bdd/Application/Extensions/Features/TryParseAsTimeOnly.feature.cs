@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
+namespace Eclipse.Tests.Bdd.Application.Extensions.Features
 {
     using TechTalk.SpecFlow;
     using System;
@@ -19,7 +19,7 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class AddTodoItemFeature : object, Xunit.IClassFixture<AddTodoItemFeature.FixtureData>, System.IDisposable
+    public partial class TryParseAsTimeOnlyFeature : object, Xunit.IClassFixture<TryParseAsTimeOnlyFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
@@ -28,10 +28,10 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "AddTodoItem.feature"
+#line 1 "TryParseAsTimeOnly.feature"
 #line hidden
         
-        public AddTodoItemFeature(AddTodoItemFeature.FixtureData fixtureData, Eclipse_Tests_Bdd_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public TryParseAsTimeOnlyFeature(TryParseAsTimeOnlyFeature.FixtureData fixtureData, Eclipse_Tests_Bdd_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -40,7 +40,7 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Domain/IdentityUsers/Features", "AddTodoItem", "User should be able to add todo item", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Application/Extensions/Features", "TryParseAsTimeOnly", "Check whether extension methods passes happy case", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -80,16 +80,16 @@ namespace Eclipse.Tests.Bdd.Domain.IdentityUsers.Features
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="As a user I want be able to add todo item")]
-        [Xunit.TraitAttribute("FeatureTitle", "AddTodoItem")]
-        [Xunit.TraitAttribute("Description", "As a user I want be able to add todo item")]
-        [Xunit.TraitAttribute("Category", "IdentityUser")]
-        public void AsAUserIWantBeAbleToAddTodoItem()
+        [Xunit.SkippableFactAttribute(DisplayName="As a developer I want to use method to parse string value as TimeOnly")]
+        [Xunit.TraitAttribute("FeatureTitle", "TryParseAsTimeOnly")]
+        [Xunit.TraitAttribute("Description", "As a developer I want to use method to parse string value as TimeOnly")]
+        [Xunit.TraitAttribute("Category", "Extensions")]
+        public void AsADeveloperIWantToUseMethodToParseStringValueAsTimeOnly()
         {
             string[] tagsOfScenario = new string[] {
-                    "IdentityUser"};
+                    "Extensions"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("As a user I want be able to add todo item", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("As a developer I want to use method to parse string value as TimeOnly", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -100,22 +100,14 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Text"});
-                table3.AddRow(new string[] {
-                            "Test item 1"});
-                table3.AddRow(new string[] {
-                            "Test item 2"});
-                table3.AddRow(new string[] {
-                            "Test item 3"});
 #line 7
- testRunner.Given("User with todo items", ((string)(null)), table3, "Given ");
+ testRunner.Given("Following string: 17:30", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 12
- testRunner.When("Add todo item with following text: \"Test todo item\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 8
+ testRunner.When("Call TryParseAsTimeOnly extension method", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 13
- testRunner.Then("User must have 4 todo items", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 9
+ testRunner.Then("Bollean indicates as true and outcome value must contain 17 hours and 30 minutes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -128,12 +120,12 @@ this.ScenarioInitialize(scenarioInfo);
             
             public FixtureData()
             {
-                AddTodoItemFeature.FeatureSetup();
+                TryParseAsTimeOnlyFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                AddTodoItemFeature.FeatureTearDown();
+                TryParseAsTimeOnlyFeature.FeatureTearDown();
             }
         }
     }
