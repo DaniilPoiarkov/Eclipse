@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Exceptions;
-using Eclipse.Application.Extensions;
 using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;

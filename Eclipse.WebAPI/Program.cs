@@ -2,7 +2,6 @@ using Eclipse.Application;
 using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
-using Eclipse.DataAccess.CosmosDb;
 using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
@@ -13,7 +12,6 @@ using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.HealthChecks;
-using Eclipse.WebAPI.Middlewares;
 
 using Serilog;
 
@@ -30,17 +28,13 @@ builder.Services
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()
-    .AddDataAccessModule(builder =>
-    {
-        builder.CosmosOptions = configuration.GetSection("Azure:CosmosDb")
-            .Get<CosmosDbContextOptions>()!;
-    });
+    .AddDataAccessModule(options => configuration.GetSection("Azure").Bind(options));
 
 builder.Services
     .AddInfrastructureModule()
     .UseTelegramHandler<ITelegramUpdateHandler>()
-    .ConfigureCacheOptions(options => options.Expiration = new TimeSpan(3, 0, 0, 0))
-    .ConfigureGoogleOptions(options => options.Credentials = configuration["Google:Credentials"]!)
+    .ConfigureCacheOptions(options => options.Expiration = TimeSpan.FromDays(3))
+    .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
 builder.Services.AddLocalization(builder =>
@@ -72,7 +66,7 @@ if (app.Environment.IsDevelopment())
     ///
 }
 
-app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
@@ -82,5 +76,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.InitializeDataAccessModule();
+await app.InitializeApplicationModuleAsync();
+await app.InitializePipelineModuleAsync();
 
 app.Run();

@@ -48,6 +48,7 @@ Data consistency
 ## Tests
 Each Test project reference base Eclipse.Tests class library, that provides helpers which used through all tests.
 Each module has own test project.
+BDD tests written with SpecFlow are all in the single tests assembly.
 
 ## Integrations
 ### API
@@ -55,7 +56,7 @@ Each module has own test project.
 * Telegram API
 
 ### Tech stack
-* ASP.NET 7
+* ASP.NET 8
 * Quartz
 * FluentValidation
 * Azure CosmosDb
@@ -69,6 +70,7 @@ Each module has own test project.
 * FluentAssertions
 * Bogus
 * Meziantou
+* SpecFlow
 
 ## Deployment and CICD
 * GitHub actions

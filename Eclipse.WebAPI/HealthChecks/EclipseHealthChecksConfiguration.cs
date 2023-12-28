@@ -7,10 +7,13 @@ namespace Eclipse.WebAPI.HealthChecks;
 
 public static class EclipseHealthChecksConfiguration
 {
+    private static readonly string[] tags = ["telegram-bot"];
+
     public static IServiceCollection AddEclipseHealthChecks(this IServiceCollection services)
     {
-        services.AddHealthChecks()
-            .AddCheck<BotHealthCheck>("eclipse", HealthStatus.Unhealthy, new[] { "telegram-bot" });
+        services
+            .AddHealthChecks()
+            .AddCheck<BotHealthCheck>("eclipse", HealthStatus.Unhealthy, tags);
 
         return services;
     }

@@ -4,7 +4,7 @@ using Telegram.Bot.Polling;
 
 namespace Eclipse.Infrastructure.Builder;
 
-internal class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
+internal sealed class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
 {
     private readonly IServiceCollection _services;
 
@@ -16,7 +16,7 @@ internal class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
     public IInfrastructureModuleBuilder UseTelegramHandler<THandler>()
         where THandler : IUpdateHandler
     {
-        _services.AddSingleton<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
+        _services.AddScoped<IUpdateHandler>(sp => sp.GetRequiredService<THandler>());
         return this;
     }
 
@@ -29,7 +29,7 @@ internal class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
     public IInfrastructureModuleBuilder ConfigureCacheOptions(Action<CacheOptions> options)
         => Configure(options);
 
-    private IInfrastructureModuleBuilder Configure<TOptions>(Action<TOptions> options)
+    private InfrastructureModuleBuilder Configure<TOptions>(Action<TOptions> options)
         where TOptions : class
     {
         _services.Configure(options);

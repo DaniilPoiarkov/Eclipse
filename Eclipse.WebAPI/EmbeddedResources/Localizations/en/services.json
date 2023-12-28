@@ -16,6 +16,8 @@
     "BotCommand:DescriptionMinLength": "Description cant be less then 10 symbols",
     "BotCommand:DescriptionMaxLength": "Description cant be more then 256 symbols",
 
-    "Entity:NotFound": "Entity of type {0} not found"
+    "Entity:NotFound": "Entity of type {0} not found",
+    
+    "IdentityUser:Events:NewUserJoined": "New user started to use bot!\n\rId: {0}\n\rUserName: {1}\n\rFull name: {2} {3}"
   }
 }

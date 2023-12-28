@@ -5,14 +5,14 @@ using Microsoft.Azure.Cosmos;
 
 namespace Eclipse.DataAccess.EclipseCosmosDb;
 
-public class EclipseCosmosDbContext : CosmosDbContext
+public sealed class EclipseCosmosDbContext : CosmosDbContext
 {
     public IContainer<IdentityUser> IdentityUsers => Container<IdentityUser>($"{nameof(IdentityUser)}s");
 
     public EclipseCosmosDbContext(CosmosClient client, CosmosDbContextOptions options)
         : base(client, options) { }
 
-    internal override async Task InitializeAsync(CancellationToken cancellationToken)
+    public override async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         var response = await Client.CreateDatabaseIfNotExistsAsync(Options.DatabaseId, cancellationToken: cancellationToken);
 

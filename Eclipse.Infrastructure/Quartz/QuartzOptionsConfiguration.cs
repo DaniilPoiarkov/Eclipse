@@ -5,7 +5,7 @@ using Quartz;
 
 namespace Eclipse.Infrastructure.Quartz;
 
-internal class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
+internal sealed class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 {
     private static readonly int _minutesDelay = 30;
 

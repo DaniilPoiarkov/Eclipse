@@ -2,7 +2,8 @@
 
 namespace Eclipse.DataAccess.Builder;
 
-public class DataAccessModuleBuilder
+[Serializable]
+public sealed class DataAccessModuleBuilder
 {
     public CosmosDbContextOptions CosmosOptions { get; set; } = new();
 }

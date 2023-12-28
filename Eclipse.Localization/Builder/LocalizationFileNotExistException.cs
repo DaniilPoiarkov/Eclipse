@@ -2,8 +2,9 @@
 
 namespace Eclipse.Localization.Builder;
 
-internal class LocalizationFileNotExistException : LocalizedException
+[Serializable]
+internal sealed class LocalizationFileNotExistException : LocalizedException
 {
-    public LocalizationFileNotExistException(params string[] args)
+    internal LocalizationFileNotExistException(params string[] args)
         : base("LocalizationFileNotExistExceptionMessage", args) { }
 }

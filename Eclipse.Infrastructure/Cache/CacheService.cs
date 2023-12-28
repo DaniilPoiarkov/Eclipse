@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.Infrastructure.Cache;
 
-internal class CacheService : ICacheService
+internal sealed class CacheService : ICacheService
 {
     private readonly IMemoryCache _memoryCache;
 

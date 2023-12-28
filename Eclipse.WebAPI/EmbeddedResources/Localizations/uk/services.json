@@ -15,7 +15,9 @@
     "BotCommand:CommandManLength": "Команда не може бути більшою за 24 симлова",
     "BotCommand:DescriptionMinLength": "Опис не може бути меншим за 10 символів",
     "BotCommand:DescriptionMaxLength": "Опис не може бути більшим за 256 символів",
-    
-    "Entity:NotFound": "Сутність типу {0} не знайдено"
+
+    "Entity:NotFound": "Сутність типу {0} не знайдено",
+
+    "IdentityUser:Events:NewUserJoined": "Новий користувач!\n\rУнікальний ідентифікатор: {0}\n\rЮзернейм: {1}\n\rФІО: {2} {3}"
   }
 }

@@ -50,7 +50,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         }
         catch (Exception ex)
         {
-            _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex.Message);
+            _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex);
             return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:Error"]);
         }
     }

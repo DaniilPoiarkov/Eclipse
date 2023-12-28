@@ -1,4 +1,4 @@
-﻿using HealthChecks.UI.Core;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Newtonsoft.Json;
 
@@ -6,15 +6,16 @@ using System.Text;
 
 namespace Eclipse.Infrastructure.Jobs.HealthCheck;
 
-internal class HealthCheckEntry
+[Serializable]
+internal sealed class HealthCheckEntry
 {
-    public Dictionary<string, object> Data { get; set; } = new();
+    public Dictionary<string, object> Data { get; set; } = [];
 
     public TimeSpan Duration { get; set; }
 
-    public UIHealthStatus Status { get; set; }
+    public HealthStatus Status { get; set; }
 
-    public string[] Tags { get; set; } = Array.Empty<string>();
+    public string[] Tags { get; set; } = [];
 
     public override string ToString()
     {

@@ -2,8 +2,9 @@
 
 namespace Eclipse.Localization.Builder;
 
-internal class UnableToParseLocalizationResourceException : LocalizedException
+[Serializable]
+internal sealed class UnableToParseLocalizationResourceException : LocalizedException
 {
-    public UnableToParseLocalizationResourceException(string file)
+    internal UnableToParseLocalizationResourceException(string file)
         : base("UnableToParseLocalizationExceptionMessage", file) { }
 }

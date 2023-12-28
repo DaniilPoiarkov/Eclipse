@@ -1,6 +1,8 @@
 ﻿using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
 
+using MediatR;
+
 using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.CosmosDb;
@@ -10,9 +12,12 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 {
     protected readonly IContainer<TEntity> Container;
 
-    public CosmosRepository(IContainer<TEntity> container)
+    protected readonly IPublisher Publisher;
+
+    public CosmosRepository(IContainer<TEntity> container, IPublisher publisher)
     {
         Container = container;
+        Publisher = publisher;
     }
 
     public virtual Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default) =>
@@ -30,6 +35,32 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
     public virtual Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) =>
         Container.GetByExpressionAsync(expression, cancellationToken);
 
-    public virtual Task<TEntity?> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default) =>
-        Container.UpdateAsync(entity, cancellationToken);
+    public virtual async Task<TEntity?> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        var result = await Container.UpdateAsync(entity, cancellationToken);
+        
+        await TriggerDomainEvents(entity, cancellationToken);
+
+        return result;
+    }
+
+    protected virtual async Task TriggerDomainEvents(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        if (entity is not AggregateRoot aggregateRoot)
+        {
+            return;
+        }
+
+        var events = aggregateRoot.GetEvents();
+
+        if (events.IsNullOrEmpty())
+        {
+            return;
+        }
+
+        foreach (var domainEvent in events)
+        {
+            await Publisher.Publish(domainEvent, cancellationToken);
+        }
+    }
 }

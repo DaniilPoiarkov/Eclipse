@@ -14,14 +14,14 @@ public static class IdentityUserGenerator
 
         for (int i = 0; i < count; i++)
         {
-            result.Add(new IdentityUser(
+            var user = IdentityUser.Create(
                 Guid.NewGuid(),
                 faker.Person.FirstName,
                 faker.Person.LastName,
                 faker.Person.UserName,
-                chatId: i,
-                culture: "en",
-                notificationsEnabled: i % 2 == 0));
+                chatId: i);
+
+            result.Add(user);
         }
 
         return result;

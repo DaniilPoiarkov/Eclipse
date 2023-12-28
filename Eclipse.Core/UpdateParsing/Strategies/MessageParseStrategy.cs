@@ -6,7 +6,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Core.UpdateParsing.Strategies;
 
-internal class MessageParseStrategy : IParseStrategy
+internal sealed class MessageParseStrategy : IParseStrategy
 {
     public UpdateType Type => UpdateType.Message;
 

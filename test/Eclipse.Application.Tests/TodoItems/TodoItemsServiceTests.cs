@@ -5,7 +5,7 @@ using Eclipse.Application.Exceptions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.TodoItems;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

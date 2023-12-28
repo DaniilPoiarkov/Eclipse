@@ -1,6 +1,6 @@
-﻿using Eclipse.Domain.Reminders;
+﻿using Eclipse.Domain.IdentityUsers.Events;
+using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
-using Eclipse.Domain.Shared.Exceptions;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 
@@ -8,27 +8,27 @@ using Newtonsoft.Json;
 
 namespace Eclipse.Domain.IdentityUsers;
 
-#pragma warning disable CS8618
-public class IdentityUser : AggregateRoot
+public sealed class IdentityUser : AggregateRoot
 {
-    internal IdentityUser(Guid id, string name, string surname, string username, long chatId, string culture, bool notificationsEnabled)
+    private IdentityUser(Guid id, string name, string surname, string username, long chatId)
         : base(id)
     {
         Name = name;
         Surname = surname;
         Username = username;
         ChatId = chatId;
-        Culture = culture;
-        NotificationsEnabled = notificationsEnabled;
         
         Gmt = default;
+        Culture = string.Empty;
 
-        _reminders = new List<Reminder>();
-        _todoItems = new List<TodoItem>();
+        _reminders = [];
+        _todoItems = [];
     }
 
     [JsonConstructor]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private IdentityUser()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         
     }
@@ -55,17 +55,28 @@ public class IdentityUser : AggregateRoot
     public TimeSpan Gmt { get; private set; }
 
     [JsonIgnore]
-    public IReadOnlyCollection<Reminder> Reminders => _reminders;
+    public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
     
     [JsonIgnore]
-    public IReadOnlyCollection<TodoItem> TodoItems => _todoItems;
+    public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>
-    /// Creates reminder for user and returns it
+    /// Creates this instance.
     /// </summary>
-    /// <param name="text"></param>
-    /// <param name="notifyAt"></param>
-    /// <returns cref="Reminder"></returns>
+    /// <returns></returns>
+    internal static IdentityUser Create(Guid id, string name, string surname, string username, long chatId)
+    {
+        var user = new IdentityUser(id, name, surname, username, chatId);
+        
+        user.AddEvent(new NewUserJoinedDomainEvent(id, username, name, surname));
+
+        return user;
+    }
+
+    /// <summary>Adds the reminder.</summary>
+    /// <param name="text">The text.</param>
+    /// <param name="notifyAt">The notify at.</param>
+    /// <returns>Created Reminder</returns>
     public Reminder AddReminder(string text, TimeOnly notifyAt)
     {
         var reminder = new Reminder(Guid.NewGuid(), Id, text, notifyAt);
@@ -74,11 +85,9 @@ public class IdentityUser : AggregateRoot
         return reminder;
     }
 
-    /// <summary>
-    /// Removes reminders and returns those which match specified time
-    /// </summary>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <summary>Removes the reminders which matches provided time.</summary>
+    /// <param name="time">The time.</param>
+    /// <returns>Removed Reminders</returns>
     public IReadOnlyList<Reminder> RemoveRemindersForTime(TimeOnly time)
     {
         var specification = new ReminderNotifyAtSpecification(time);
@@ -95,10 +104,8 @@ public class IdentityUser : AggregateRoot
         return reminders;
     }
 
-    /// <summary>
-    /// Calculates GMT using curernt user time and utc now
-    /// </summary>
-    /// <param name="currentUserTime"></param>
+    /// <summary>Sets the GMT by given input with user local time.</summary>
+    /// <param name="currentUserTime">The current user time.</param>
     public void SetGmt(TimeOnly currentUserTime)
     {
         var utc = DateTime.UtcNow;
@@ -120,12 +127,11 @@ public class IdentityUser : AggregateRoot
         }
     }
 
-    /// <summary>
-    /// Creates new todo item to user
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    /// <exception cref="TodoItemLimitException"></exception>
+    /// <summary>Adds the todo item.</summary>
+    /// <param name="text">The text.</param>
+    /// <returns>Created TodoItem item</returns>
+    /// <exception cref="TodoItemLimitException">New item exceeds maximum limit</exception>
+    /// <exception cref="TodoItemValidationException">Text is empty or exceeds maximum length</exception>
     public TodoItem AddTodoItem(string? text)
     {
         if (_todoItems.Count == TodoItemConstants.Limit)
@@ -144,24 +150,24 @@ public class IdentityUser : AggregateRoot
         }
 
         var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        
         _todoItems.Add(todoItem);
+
         return todoItem;
     }
 
-    /// <summary>
-    /// Removes item with given Id from user list of TodoItems and retuns it
-    /// </summary>
-    /// <param name="todoItemId"></param>
-    /// <returns></returns>
-    /// <exception cref="EntityNotFoundException"></exception>
+    /// <summary>Finishes the item.</summary>
+    /// <param name="todoItemId">The todo item identifier.</param>
+    /// <returns>Removed <a cref="TodoItem"></a></returns>
+    /// <exception cref="EntityNotFoundException">Item with given id not found</exception>
     public TodoItem FinishItem(Guid todoItemId)
     {
-        var item = _todoItems.FirstOrDefault(i => i.Id == todoItemId)
-            ?? throw new EntityNotFoundException(typeof(TodoItem));
+        var item = _todoItems.GetById(todoItemId);
 
         _todoItems.Remove(item);
+
+        item.MarkAsFinished();
 
         return item;
     }
 }
-#pragma warning restore CS8618

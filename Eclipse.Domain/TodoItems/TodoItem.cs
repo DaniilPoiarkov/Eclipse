@@ -1,22 +1,12 @@
 ﻿using Eclipse.Domain.Shared.Entities;
-using Eclipse.Domain.Shared.TodoItems;
 
 using Newtonsoft.Json;
 
 namespace Eclipse.Domain.TodoItems;
 
-public class TodoItem : Entity
+public sealed class TodoItem : Entity
 {
     [JsonConstructor]
-    internal TodoItem(Guid id, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null)
-        : base(id)
-    { 
-        Text = text;
-        CreatedAt = createdAt;
-        FinishedAt = finishedAt;
-        IsFinished = isFinished;
-    }
-
     internal TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
     {
         UserId = userId;
@@ -28,7 +18,7 @@ public class TodoItem : Entity
 
     private TodoItem() { }
 
-    public Guid UserId { get; set; }
+    public Guid UserId { get; private set; }
     
     public string Text { get; private set; } = string.Empty;
 
@@ -38,6 +28,8 @@ public class TodoItem : Entity
 
     public DateTime? FinishedAt { get; private set; }
 
+    /// <summary>Marks item as finished.</summary>
+    /// <exception cref="TodoItemAlreadyFinishedException">If item already finished</exception>
     public void MarkAsFinished()
     {
         if (IsFinished)

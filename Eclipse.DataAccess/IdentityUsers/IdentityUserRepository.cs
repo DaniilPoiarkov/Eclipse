@@ -2,11 +2,14 @@
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.Domain.IdentityUsers;
 
+using MediatR;
+
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Eclipse.DataAccess.IdentityUsers;
 
-internal class IdentityUserRepository : CosmosRepository<IdentityUser>, IIdentityUserRepository
+internal sealed class IdentityUserRepository : CosmosRepository<IdentityUser>, IIdentityUserRepository
 {
-    public IdentityUserRepository(EclipseCosmosDbContext context) : base(context.IdentityUsers)
-    {
-    }
+    public IdentityUserRepository(EclipseCosmosDbContext context, IServiceProvider serviceProvider)
+        : base(context.IdentityUsers, serviceProvider.CreateAsyncScope().ServiceProvider.GetRequiredService<IPublisher>()) { }
 }
