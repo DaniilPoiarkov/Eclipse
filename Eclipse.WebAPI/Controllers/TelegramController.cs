@@ -29,8 +29,8 @@ public class TelegramController : ControllerBase
     }
 
     [HttpGet("users")]
-    public IActionResult GetUsers(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
     {
-        return Ok(_userService.GetAllAsync(cancellationToken));
+        return Ok(await _userService.GetAllAsync(cancellationToken));
     }
 }
