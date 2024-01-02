@@ -6,11 +6,13 @@ namespace Eclipse.WebAPI.Filters;
 public sealed class EclipseApiKeyAuthorizeAttribute : ApiKeyAuthorizeAttribute
 {
     public EclipseApiKeyAuthorizeAttribute()
-        : base("API-KEY") { }
+        : base("X-API-KEY") { }
 
     protected override string GetExpectedValue(AuthorizationFilterContext context)
     {
-        var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<ApiKeyAuthorizationOptions>>();
+        var options = context.HttpContext
+            .RequestServices
+            .GetRequiredService<IOptions<ApiKeyAuthorizationOptions>>();
 
         return options.Value.EclipseApiKey;
     }

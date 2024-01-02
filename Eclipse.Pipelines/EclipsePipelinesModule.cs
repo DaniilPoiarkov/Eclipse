@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Builder;
 using Serilog;
 
 using Telegram.Bot;
+using Telegram.Bot.Polling;
 
 namespace Eclipse.Pipelines;
 
@@ -60,9 +61,30 @@ public static class EclipsePipelinesModule
 
         var logger = serviceProvider.GetRequiredService<ILogger>();
         var client = serviceProvider.GetRequiredService<ITelegramBotClient>();
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
+
+#if DEBUG
+        InitForLocal(serviceProvider, client);
+#else
+        await InitForDeploy(serviceProvider, client);
+#endif
+
+        var me = await client.GetMeAsync();
+
+        logger.Information("\tBot: {bot}", me.Username);
+        logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
+    }
+
+    private static void InitForLocal(IServiceProvider serviceProvider, ITelegramBotClient client)
+    {
+        var updateHanlder = serviceProvider.GetRequiredService<IUpdateHandler>();
+        client.StartReceiving(updateHanlder);
+    }
+
+    private static async Task InitForDeploy(IServiceProvider serviceProvider, ITelegramBotClient client)
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         var webhookInfo = await client.GetWebhookInfoAsync();
 
@@ -75,10 +97,5 @@ public static class EclipsePipelinesModule
             url: configuration["Telegram:WebhookUrl"]!,
             secretToken: configuration["Telegram:SecretToken"]
         );
-
-        var me = await client.GetMeAsync();
-
-        logger.Information("\tBot: {bot}", me.Username);
-        logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
     }
 }

@@ -21,7 +21,9 @@ public static class EclipseWebApiModule
         services
             .AddEndpointsApiExplorer();
 
-        services.AddScoped<ApiKeyAuthorizeAttribute>();
+        services
+            .AddScoped<EclipseApiKeyAuthorizeAttribute>()
+            .AddScoped<SecretTokenAuthorizeAttribute>();
 
         services.AddSwaggerGen(ConfigureSwagger);
 
@@ -41,7 +43,7 @@ public static class EclipseWebApiModule
             Version = "v1",
         });
 
-        var apiKeySecurity = "API-KEY";
+        var apiKeySecurity = "X-API-KEY";
 
         options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
         {

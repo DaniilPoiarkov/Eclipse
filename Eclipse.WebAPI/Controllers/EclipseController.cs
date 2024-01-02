@@ -24,6 +24,7 @@ public class EclipseController : ControllerBase
     }
 
     [HttpPost("_handle")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> HandleUpdate([FromBody] Update update, CancellationToken cancellationToken)
     {
         await _updateHandler.HandleUpdateAsync(_botClient, update, cancellationToken);
