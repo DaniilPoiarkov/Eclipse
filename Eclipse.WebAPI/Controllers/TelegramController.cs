@@ -8,7 +8,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[ApiKeyAuthorize]
+[EclipseApiKeyAuthorize]
 public class TelegramController : ControllerBase
 {
     private readonly ITelegramService _telegramService;

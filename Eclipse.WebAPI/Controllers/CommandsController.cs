@@ -6,7 +6,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[ApiKeyAuthorize]
+[EclipseApiKeyAuthorize]
 public class CommandsController : ControllerBase
 {
     private readonly ICommandService _commandService;
