@@ -11,11 +11,11 @@ using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 
 using Serilog;
 
-using Telegram.Bot.Polling;
 using Telegram.Bot;
 
 namespace Eclipse.Pipelines;
@@ -60,10 +60,21 @@ public static class EclipsePipelinesModule
 
         var logger = serviceProvider.GetRequiredService<ILogger>();
         var client = serviceProvider.GetRequiredService<ITelegramBotClient>();
-        var updateHandler = serviceProvider.GetRequiredService<IUpdateHandler>();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
-        client.StartReceiving(updateHandler);
+
+        var webhookInfo = await client.GetWebhookInfoAsync();
+
+        if (webhookInfo is not null)
+        {
+            await client.SetWebhookAsync(string.Empty);
+        }
+
+        await client.SetWebhookAsync(
+            url: configuration["Telegram:WebhookUrl"]!,
+            secretToken: configuration["Telegram:SecretToken"]
+        );
 
         var me = await client.GetMeAsync();
 
