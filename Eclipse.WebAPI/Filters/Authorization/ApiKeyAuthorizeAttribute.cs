@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.WebAPI.Filters;
+namespace Eclipse.WebAPI.Filters.Authorization;
 
 public sealed class ApiKeyAuthorizeAttribute : ApiKeyAuthorizeBaseAttribute
 {

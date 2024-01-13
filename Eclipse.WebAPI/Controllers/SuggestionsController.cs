@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
 

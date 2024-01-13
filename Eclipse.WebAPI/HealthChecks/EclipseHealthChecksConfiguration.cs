@@ -1,4 +1,5 @@
 ﻿using Eclipse.DataAccess.CosmosDb;
+using Eclipse.WebAPI.Filters.Enpoints;
 
 using HealthChecks.CosmosDb;
 using HealthChecks.UI.Client;
@@ -25,7 +26,7 @@ public static class EclipseHealthChecksConfiguration
         return services;
     }
 
-    public static IApplicationBuilder UseEclipseHealthCheks(this IApplicationBuilder app)
+    public static IApplicationBuilder UseEclipseHealthCheks(this WebApplication app)
     {
         var options = new HealthCheckOptions
         {
@@ -33,7 +34,8 @@ public static class EclipseHealthChecksConfiguration
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         };
 
-        app.UseHealthChecks(new PathString("/_health-checks"), options);
+        app.MapHealthChecks("/_health-checks", options)
+            .AddEndpointFilter(new ApiKeyAuthorizeEndpointFilter());
 
         return app;
     }

@@ -10,7 +10,7 @@ using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
-using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.HealthChecks;
 
 using Serilog;
