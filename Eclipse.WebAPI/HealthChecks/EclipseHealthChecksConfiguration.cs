@@ -1,19 +1,26 @@
-﻿using HealthChecks.UI.Client;
+﻿using Eclipse.DataAccess.CosmosDb;
+
+using HealthChecks.CosmosDb;
+using HealthChecks.UI.Client;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Eclipse.WebAPI.HealthChecks;
 
 public static class EclipseHealthChecksConfiguration
 {
-    private static readonly string[] tags = ["telegram-bot"];
-
     public static IServiceCollection AddEclipseHealthChecks(this IServiceCollection services)
     {
         services
             .AddHealthChecks()
-            .AddCheck<BotHealthCheck>("eclipse", HealthStatus.Unhealthy, tags);
+            .AddAzureCosmosDB(sp => sp.GetRequiredService<CosmosClient>(), sp => new AzureCosmosDbHealthCheckOptions
+            {
+                DatabaseId = sp.GetRequiredService<CosmosDbContextOptions>().DatabaseId,
+                ContainerIds = ["IdentityUsers"]
+            }, tags: ["database"])
+            .AddCheck<BotHealthCheck>("eclipse", HealthStatus.Unhealthy, ["telegram-bot"]);
 
         return services;
     }
