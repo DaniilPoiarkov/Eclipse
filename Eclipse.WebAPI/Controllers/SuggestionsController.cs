@@ -7,7 +7,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[EclipseApiKeyAuthorize]
+[ApiKeyAuthorize]
 public class SuggestionsController : ControllerBase
 {
     private readonly ISuggestionsService _suggestionsService;

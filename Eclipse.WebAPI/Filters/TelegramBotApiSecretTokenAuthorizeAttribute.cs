@@ -3,9 +3,9 @@
 namespace Eclipse.WebAPI.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public sealed class SecretTokenAuthorizeAttribute : ApiKeyAuthorizeAttribute
+public sealed class TelegramBotApiSecretTokenAuthorizeAttribute : ApiKeyAuthorizeBaseAttribute
 {
-    public SecretTokenAuthorizeAttribute()
+    public TelegramBotApiSecretTokenAuthorizeAttribute()
         : base("X-Telegram-Bot-Api-Secret-Token") { }
 
     protected override string GetExpectedValue(AuthorizationFilterContext context)

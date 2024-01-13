@@ -23,8 +23,8 @@ public static class EclipseWebApiModule
             .AddEndpointsApiExplorer();
 
         services
-            .AddScoped<EclipseApiKeyAuthorizeAttribute>()
-            .AddScoped<SecretTokenAuthorizeAttribute>();
+            .AddScoped<ApiKeyAuthorizeAttribute>()
+            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>();
 
         services.AddSwaggerGen(ConfigureSwagger);
 

@@ -10,7 +10,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[SecretTokenAuthorize]
+[TelegramBotApiSecretTokenAuthorize]
 public class EclipseController : ControllerBase
 {
     private readonly IUpdateHandler _updateHandler;
