@@ -42,7 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Tests.Bdd", "..\test\Eclipse.Tests.Bdd\Eclipse.Tests.Bdd.csproj", "{AE35548A-19F1-4706-8704-EE2B23647998}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Tests.Bdd", "..\test\Eclipse.Tests.Bdd\Eclipse.Tests.Bdd.csproj", "{AE35548A-19F1-4706-8704-EE2B23647998}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

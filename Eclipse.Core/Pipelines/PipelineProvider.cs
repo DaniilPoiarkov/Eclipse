@@ -12,16 +12,16 @@ internal sealed class PipelineProvider : IPipelineProvider
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly Dictionary<RouteAttribute, Type> _pipelines;
+    private readonly Dictionary<RouteAttribute, PipelineBase> _pipelines;
 
     private readonly ICurrentTelegramUser _currentUser;
 
     public PipelineProvider(IEnumerable<PipelineBase> pipelines, IServiceProvider serviceProvider, ICurrentTelegramUser currentUser)
     {
         _pipelines = pipelines
-            .Select(p => p.GetType())
-            .Where(type => type.GetCustomAttribute<RouteAttribute>() is not null)
-            .ToDictionary(pipeline => pipeline.GetCustomAttribute<RouteAttribute>()!);
+            .Select(p => (Pipeline: p, Attribute: p.GetType().GetCustomAttribute<RouteAttribute>()))
+            .Where(tuple => tuple.Attribute is not null)
+            .ToDictionary(tuple => tuple.Attribute!, tuple => tuple.Pipeline);
 
         _serviceProvider = serviceProvider;
         _currentUser = currentUser;
@@ -31,8 +31,7 @@ internal sealed class PipelineProvider : IPipelineProvider
     {
         if (string.IsNullOrEmpty(route))
         {
-            var pipeline = _serviceProvider.GetRequiredService<INotFoundPipeline>() as PipelineBase;
-            return pipeline!;
+            return GetNotFoundPipeline();
         }
 
         if (route.StartsWith('/'))
@@ -40,40 +39,49 @@ internal sealed class PipelineProvider : IPipelineProvider
             return GetByCommand(route);
         }
 
-        return ReturnByRoute(route);
+        return GetByRoute(route);
     }
 
-    private PipelineBase ReturnByRoute(string route)
+    private PipelineBase GetByRoute(string route)
     {
-        var pipelineType = _pipelines.FirstOrDefault(p => p.Key.Route.Equals(route)).Value
-            ?? typeof(INotFoundPipeline);
-
-        return ResolveAndValidate(pipelineType);
+        var pipeline = _pipelines.FirstOrDefault(p => p.Key.Route.Equals(route)).Value
+            ?? GetNotFoundPipeline();
+        
+        return ValidOrAccessDenied(pipeline);
     }
 
-    private PipelineBase GetByCommand(string route)
+    private PipelineBase GetByCommand(string command)
     {
-        var pipelineType = _pipelines.FirstOrDefault(kv => kv.Key.Command is not null && kv.Key.Command.Equals(route)).Value
-            ?? typeof(INotFoundPipeline);
+        var pipeline = _pipelines.FirstOrDefault(kv => kv.Key.Command is not null && kv.Key.Command.Equals(command)).Value
+            ?? GetNotFoundPipeline();
 
-        return ResolveAndValidate(pipelineType);
+        return ValidOrAccessDenied(pipeline);
     }
 
-    private PipelineBase ResolveAndValidate(Type pipelineType)
+    private PipelineBase GetNotFoundPipeline()
     {
-        if (!Validate(pipelineType, out var results))
+        return _pipelines.First(kv => kv.Value is INotFoundPipeline).Value;
+    }
+
+    private PipelineBase ValidOrAccessDenied(PipelineBase pipeline)
+    {
+        if (Validate(pipeline, out var results))
         {
-            var accessDeniedPipeline = _serviceProvider.GetRequiredService<IAccessDeniedPipeline>();
-            accessDeniedPipeline.SetResults(results);
-            return (accessDeniedPipeline as PipelineBase)!;
+            return pipeline;
         }
 
-        return (_serviceProvider.GetRequiredService(pipelineType) as PipelineBase)!;
+        var accessDeniedPipeline = _pipelines.First(kv => kv.Value is IAccessDeniedPipeline).Value as IAccessDeniedPipeline;
+
+        accessDeniedPipeline!.SetResults(results);
+        
+        return (accessDeniedPipeline as PipelineBase)!;
     }
 
-    private bool Validate(Type pipeline, out IEnumerable<ValidationResult> results)
+    private bool Validate(PipelineBase pipeline, out IEnumerable<ValidationResult> results)
     {
-        var validationAttributes = pipeline.GetCustomAttributes<ContextValidationAttribute>().ToList();
+        var validationAttributes = pipeline.GetType()
+            .GetCustomAttributes<ContextValidationAttribute>()
+            .ToList();
 
         if (validationAttributes.Count == 0)
         {
@@ -81,7 +89,9 @@ internal sealed class PipelineProvider : IPipelineProvider
             return true;
         }
 
-        var context = new ValidationContext(_serviceProvider, _currentUser.GetCurrentUser());
+        using var scope = _serviceProvider.CreateAsyncScope();
+
+        var context = new ValidationContext(scope.ServiceProvider, _currentUser.GetCurrentUser());
 
         results = validationAttributes.Select(a => a.Validate(context));
 
