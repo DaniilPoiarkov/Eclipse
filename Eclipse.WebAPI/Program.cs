@@ -32,7 +32,7 @@ builder.Services
 
 builder.Services
     .AddInfrastructureModule()
-    .UseTelegramHandler<ITelegramUpdateHandler>()
+    .UseTelegramHandler<IEclipseUpdateHandler>()
     .ConfigureCacheOptions(options => options.Expiration = TimeSpan.FromDays(3))
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));

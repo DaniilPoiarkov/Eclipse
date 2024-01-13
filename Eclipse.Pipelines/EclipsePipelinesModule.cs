@@ -64,11 +64,11 @@ public static class EclipsePipelinesModule
 
         logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
 
-#if DEBUG
-        InitForLocal(serviceProvider, client);
-#else
+//#if DEBUG
+//        InitForLocal(serviceProvider, client);
+//#else
         await InitForDeploy(serviceProvider, client);
-#endif
+//#endif
 
         var me = await client.GetMeAsync();
 
