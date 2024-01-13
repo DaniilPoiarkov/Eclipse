@@ -30,10 +30,13 @@ public abstract class Pipeline
     protected static IResult Multiple(params IResult[] results) =>
         new MultipleActionsResult(results);
 
-    protected static IResult Menu(IEnumerable<IKeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
-            Menu(new List<IEnumerable<IKeyboardButton>>() { buttons }, message, inputPlaceholder, resize);
+    protected static IResult Menu(IEnumerable<KeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
+        Menu(new List<IEnumerable<KeyboardButton>>() { buttons }, message, inputPlaceholder, resize);
 
-    protected static IResult Menu(IEnumerable<IEnumerable<IKeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
+    protected static IResult Menu(IEnumerable<InlineKeyboardButton> buttons, string message) =>
+        Menu(new List<IEnumerable<InlineKeyboardButton>>() { buttons }, message);
+
+    protected static IResult Menu(IEnumerable<IEnumerable<KeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
     {
         var button = buttons.FirstOrDefault()?
             .FirstOrDefault();
@@ -43,28 +46,31 @@ public abstract class Pipeline
             return Text(message);
         }
 
-        if (button is KeyboardButton)
+        var keyboardButtons = buttons.Cast<IEnumerable<KeyboardButton>>();
+
+        var menu = new ReplyKeyboardMarkup(keyboardButtons)
         {
-            var keyboardButtons = buttons.Cast<IEnumerable<KeyboardButton>>();
+            InputFieldPlaceholder = inputPlaceholder,
+            ResizeKeyboard = resize
+        };
 
-            var menu = new ReplyKeyboardMarkup(keyboardButtons)
-            {
-                InputFieldPlaceholder = inputPlaceholder,
-                ResizeKeyboard = resize
-            };
+        return new MenuResult(message, menu);
+    }
 
-            return new MenuResult(message, menu);
+    protected static IResult Menu(
+        IEnumerable<IEnumerable<InlineKeyboardButton>> buttons,
+        string message)
+    {
+        var button = buttons.FirstOrDefault()?
+            .FirstOrDefault();
+
+        if (button is null)
+        {
+            return Text(message);
         }
 
-        if (button is InlineKeyboardButton)
-        {
-            var inlineButtons = buttons.Cast<IEnumerable<InlineKeyboardButton>>();
+        var inlineMenu = new InlineKeyboardMarkup(buttons);
 
-            var inlineMenu = new InlineKeyboardMarkup(inlineButtons);
-
-            return new MenuResult(message, inlineMenu);
-        }
-
-        return Text(message);
+        return new MenuResult(message, inlineMenu);
     }
 }

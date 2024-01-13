@@ -19,24 +19,18 @@ public class PipelineProviderTests
 
     public PipelineProviderTests()
     {
-        var pipelines = new PipelineBase[]
-        {
-            new Test1Pipeline(),
-            new Test2Pipeline(),
-            new TestAccessFailsPipeline(),
-            new TestAccessPassedPipeline(),
-        };
-
         var serviceProvider = new ServiceCollection()
             .AddCoreModule()
-            .AddSingleton<Test1Pipeline>()
-            .AddSingleton<Test2Pipeline>()
-            .AddSingleton<TestAccessFailsPipeline>()
-            .AddSingleton<TestAccessPassedPipeline>()
+            .AddSingleton<PipelineBase, Test1Pipeline>()
+            .AddSingleton<PipelineBase, Test2Pipeline>()
+            .AddSingleton<PipelineBase, TestAccessFailsPipeline>()
+            .AddSingleton<PipelineBase, TestAccessPassedPipeline>()
             .BuildServiceProvider();
 
         var currentUser = Substitute.For<ICurrentTelegramUser>();
         currentUser.GetCurrentUser().Returns(new TelegramUser());
+
+        var pipelines = serviceProvider.GetServices<PipelineBase>();
 
         _pipelineProvider = new PipelineProvider(pipelines, serviceProvider, currentUser);
     }

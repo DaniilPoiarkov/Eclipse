@@ -20,8 +20,9 @@ public static class EclipseCoreModule
 
         builder?.Invoke(coreBuilder);
 
-        services.AddTransient<INotFoundPipeline, NotFoundPipeline>()
-            .AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()
+        services
+            //.AddTransient<INotFoundPipeline, NotFoundPipeline>()
+            //.AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()
             .AddTransient<IPipelineProvider, PipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
@@ -31,6 +32,12 @@ public static class EclipseCoreModule
         services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
             .AddClasses(c => c.AssignableTo<IParseStrategy>())
             .AsSelf()
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblyOf<PipelineBase>()
+            .AddClasses(c => c.AssignableTo<PipelineBase>())
+            .As<PipelineBase>()
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
