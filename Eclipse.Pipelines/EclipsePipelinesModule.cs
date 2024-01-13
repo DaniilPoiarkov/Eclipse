@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Builder;
 using Serilog;
 
 using Telegram.Bot;
-using Telegram.Bot.Polling;
 
 namespace Eclipse.Pipelines;
 
@@ -34,8 +33,7 @@ public static class EclipsePipelinesModule
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
                 .AddTransient<IUserStore, UserStore>()
                 .AddTransient<IMessageStore, MessageStore>()
-                .AddTransient<IPipelineStore, PipelineStore>()
-            .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>();
+                .AddTransient<IPipelineStore, PipelineStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())
@@ -64,11 +62,7 @@ public static class EclipsePipelinesModule
 
         logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
 
-//#if DEBUG
-//        InitForLocal(serviceProvider, client);
-//#else
-        await InitForDeploy(serviceProvider, client);
-//#endif
+        await ResetWebhookAsync(serviceProvider, client);
 
         var me = await client.GetMeAsync();
 
@@ -76,13 +70,7 @@ public static class EclipsePipelinesModule
         logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
     }
 
-    private static void InitForLocal(IServiceProvider serviceProvider, ITelegramBotClient client)
-    {
-        var updateHanlder = serviceProvider.GetRequiredService<IUpdateHandler>();
-        client.StartReceiving(updateHanlder);
-    }
-
-    private static async Task InitForDeploy(IServiceProvider serviceProvider, ITelegramBotClient client)
+    private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 

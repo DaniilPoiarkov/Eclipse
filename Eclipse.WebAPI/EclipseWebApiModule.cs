@@ -3,14 +3,9 @@ using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Middlewares;
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
-using Newtonsoft.Json.Converters;
-
 using Swashbuckle.AspNetCore.SwaggerGen;
-
-using System.Text.Json.Serialization;
 
 namespace Eclipse.WebAPI;
 
@@ -36,8 +31,6 @@ public static class EclipseWebApiModule
         services
             .AddExceptionHandler<ExceptionHandlerMiddleware>()
             .AddProblemDetails();
-
-        //services.ParseEnumsAsStrings();
 
         return services;
     }
@@ -79,14 +72,6 @@ public static class EclipseWebApiModule
         };
 
         options.AddSecurityRequirement(requirement);
-    }
-
-    private static void ParseEnumsAsStrings(this IServiceCollection services)
-    {
-        services.Configure<JsonOptions>(options =>
-        {
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
     }
 
     // TODO: Move to DataAccess module after adding ability to reference WebApplication here
