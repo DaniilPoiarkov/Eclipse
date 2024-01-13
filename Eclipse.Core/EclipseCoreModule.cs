@@ -21,8 +21,6 @@ public static class EclipseCoreModule
         builder?.Invoke(coreBuilder);
 
         services
-            //.AddTransient<INotFoundPipeline, NotFoundPipeline>()
-            //.AddTransient<IAccessDeniedPipeline, AccessDeniedPipeline>()
             .AddTransient<IPipelineProvider, PipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()

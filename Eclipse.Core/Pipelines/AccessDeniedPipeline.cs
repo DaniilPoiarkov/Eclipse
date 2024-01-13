@@ -4,7 +4,7 @@ using Eclipse.Core.Validation;
 
 namespace Eclipse.Core.Pipelines;
 
-[Route("/href_access_denied")]
+[Route("", "/href_access_denied")]
 public class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
 {
     protected IReadOnlyList<ValidationResult> Errors { get; private set; } = new List<ValidationResult>();
