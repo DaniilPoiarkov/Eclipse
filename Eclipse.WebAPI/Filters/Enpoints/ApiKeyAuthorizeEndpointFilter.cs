@@ -1,6 +1,5 @@
-﻿
-using Eclipse.WebAPI.Filters.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Eclipse.WebAPI.Filters.Authorization;
+
 using Microsoft.Extensions.Options;
 
 namespace Eclipse.WebAPI.Filters.Enpoints;
@@ -21,26 +20,25 @@ public sealed class ApiKeyAuthorizeEndpointFilter : IEndpointFilter
 
         if (!httpContext.Request.Headers.TryGetValue(_header, out var apiKey))
         {
-            response.StatusCode = StatusCodes.Status401Unauthorized;
-            await response.WriteAsJsonAsync(new
-            {
-                Error = "API-KEY is missing"
-            });
-
+            await SendUnauthorizedResponse(response, "API-KEY is missing");
             return default;
         }
 
         if (!options.Value.EclipseApiKey.Equals(apiKey))
         {
-            response.StatusCode = StatusCodes.Status401Unauthorized;
-            await response.WriteAsJsonAsync(new
-            {
-                Error = "API-KEY is invalid"
-            });
-
+            await SendUnauthorizedResponse(response, "API-KEY is invalid");
             return default;
         }
 
         return await next(context);
+    }
+
+    private static async Task SendUnauthorizedResponse(HttpResponse response, string error)
+    {
+        response.StatusCode = StatusCodes.Status401Unauthorized;
+        await response.WriteAsJsonAsync(new
+        {
+            Error = error
+        });
     }
 }
