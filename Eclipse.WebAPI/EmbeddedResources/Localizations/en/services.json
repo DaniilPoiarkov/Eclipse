@@ -8,7 +8,7 @@
     "TodoItem:AlreadyFinished": "Todo item '{0}' already finished",
     "TodoItem:Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",
     "TodoItem:Empty": "To do item cannot be empty",
-    "TodoItem:MaxLength": "To do item cannot be more than 125 characters",
+    "TodoItem:MaxLength": "To do item cannot be more than {0} characters",
 
     "Eclipse:ValidationFailed": "🥺It looks like I forgot to tell you that {0}.\n\rClick 'Add item' and try again",
 

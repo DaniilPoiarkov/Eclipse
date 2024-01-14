@@ -146,7 +146,7 @@ public sealed class IdentityUser : AggregateRoot
 
         if (text.Length > TodoItemConstants.MaxLength)
         {
-            throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength);
+            throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength, TodoItemConstants.MaxLength);
         }
 
         var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
