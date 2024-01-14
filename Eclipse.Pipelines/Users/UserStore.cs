@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
+using Eclipse.Domain.Exceptions;
 
 namespace Eclipse.Pipelines.Users;
 
@@ -31,7 +31,7 @@ internal class UserStore : IUserStore
             var entity = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
             await CheckAndUpdate(entity, user, cancellationToken);
         }
-        catch (ObjectNotFoundException)
+        catch (EntityNotFoundException)
         {
             var createUserDto = new IdentityUserCreateDto
             {

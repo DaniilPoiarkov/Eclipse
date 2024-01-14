@@ -8,7 +8,7 @@ public class EclipseValidationException : LocalizedException
 
     public IReadOnlyList<string> Errors => _errors.AsReadOnly();
 
-    public EclipseValidationException(IList<string> errors) : base("Eclipse:ValidationFailed", errors.ToArray())
+    public EclipseValidationException(IList<string> errors) : base("Eclipse:ValidationFailed", [.. errors])
     {
         _errors = errors;
     }

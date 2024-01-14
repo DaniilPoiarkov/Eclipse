@@ -1,6 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.Telegram.Commands;
+using Eclipse.Application.Exceptions;
+
 using FluentValidation;
+
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -26,7 +29,16 @@ internal class CommandService : ICommandService
 
     public async Task Add(CommandDto command, CancellationToken cancellationToken = default)
     {
-        _commandDtoValidator.ValidateAndThrow(command);
+        var result = _commandDtoValidator.Validate(command);
+
+        if (!result.IsValid)
+        {
+            throw new EclipseValidationException(
+                result.Errors
+                    .Select(e => e.ErrorMessage)
+                    .ToArray()
+            );
+        }
 
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
 
@@ -61,7 +73,7 @@ internal class CommandService : ICommandService
     private async Task SetCommands(IEnumerable<BotCommand> commands, CancellationToken cancellationToken = default)
     {
         await _botClient.SetMyCommandsAsync(commands, BotCommandScope.AllPrivateChats(), cancellationToken: cancellationToken);
-    } 
+    }
 
     private async Task<BotCommand[]> GetMyCommands(CancellationToken cancellationToken = default)
     {

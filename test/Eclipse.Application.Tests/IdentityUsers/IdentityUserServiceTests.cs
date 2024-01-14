@@ -1,8 +1,9 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Exceptions;
 using Eclipse.Application.IdentityUsers;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Tests.Generators;
+
 using FluentAssertions;
 
 using NSubstitute;
@@ -49,7 +50,7 @@ public class IdentityUserServiceTests
             await Sut.UpdateAsync(Guid.NewGuid(), new IdentityUserUpdateDto());
         };
 
-        await action.Should().ThrowAsync<ObjectNotFoundException>();
+        await action.Should().ThrowAsync<EntityNotFoundException>();
         await _manager.DidNotReceive().UpdateAsync(default!);
     }
 
@@ -109,6 +110,6 @@ public class IdentityUserServiceTests
             await Sut.GetByIdAsync(Guid.NewGuid());
         };
 
-        await action.Should().ThrowAsync<ObjectNotFoundException>();
+        await action.Should().ThrowAsync<EntityNotFoundException>();
     }
 }

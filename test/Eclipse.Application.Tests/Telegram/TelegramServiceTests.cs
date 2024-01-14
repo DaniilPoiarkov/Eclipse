@@ -19,7 +19,7 @@ public class TelegramServiceTests
     public TelegramServiceTests()
     {
         var botClient = Substitute.For<ITelegramBotClient>();
-        _sut = new TelegramService(botClient, new SendMessageModelValidator());
+        _sut = new TelegramService(botClient);
     }
 
     [Fact]

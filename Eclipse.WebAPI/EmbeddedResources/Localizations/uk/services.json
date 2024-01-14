@@ -18,6 +18,7 @@
 
     "Entity:NotFound": "Сутність типу {0} не знайдено",
 
-    "IdentityUser:Events:NewUserJoined": "Новий користувач!\n\rУнікальний ідентифікатор: {0}\n\rЮзернейм: {1}\n\rФІО: {2} {3}"
+    "IdentityUser:Events:NewUserJoined": "Новий користувач!\n\rУнікальний ідентифікатор: {0}\n\rЮзернейм: {1}\n\rФІО: {2} {3}",
+    "IdentityUser:DuplicateData": "Користувач з {0} {1} вже існує."
   }
 }
