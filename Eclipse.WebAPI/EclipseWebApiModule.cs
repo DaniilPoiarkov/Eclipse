@@ -1,6 +1,6 @@
 ﻿using Eclipse.DataAccess;
 using Eclipse.DataAccess.EclipseCosmosDb;
-using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
 using Microsoft.OpenApi.Models;
@@ -16,7 +16,8 @@ public static class EclipseWebApiModule
 {
     public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
-        services.AddControllers()
+        services
+            .AddControllers()
             .AddNewtonsoftJson();
 
         services

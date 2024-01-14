@@ -1,9 +1,9 @@
 ﻿using Bogus;
 
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.Exceptions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Tests.Generators;
@@ -108,7 +108,7 @@ public class TodoItemsServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WhenUserNotExists_ThenObjectNotFoundExceptionThrown()
+    public async Task CreateAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
         var createModel = new CreateTodoItemDto
         {
@@ -121,6 +121,6 @@ public class TodoItemsServiceTests
             await Sut.CreateAsync(createModel);
         };
 
-        await action.Should().ThrowAsync<ObjectNotFoundException>();
+        await action.Should().ThrowAsync<EntityNotFoundException>();
     }
 }

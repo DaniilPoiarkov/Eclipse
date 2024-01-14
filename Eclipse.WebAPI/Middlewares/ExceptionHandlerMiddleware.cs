@@ -1,30 +1,56 @@
-﻿using Eclipse.Application.Exceptions;
-using Eclipse.Domain.Exceptions;
+﻿using Eclipse.Domain.Exceptions;
+using Eclipse.Infrastructure.Exceptions;
+using Eclipse.Localization.Localizers;
 
 using Microsoft.AspNetCore.Diagnostics;
 
-using System.Net;
+using ILogger = Serilog.ILogger;
 
 namespace Eclipse.WebAPI.Middlewares;
 
 public class ExceptionHandlerMiddleware : IExceptionHandler
 {
+    private readonly ILocalizer _localizer;
+
+    private readonly ILogger _logger;
+
+    public ExceptionHandlerMiddleware(ILocalizer localizer, ILogger logger)
+    {
+        _localizer = localizer;
+        _logger = logger;
+    }
+
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
-        var status = exception switch
+        var statusCode = exception switch
         {
-            DomainException => HttpStatusCode.Forbidden,
-            ObjectNotFoundException => HttpStatusCode.NotFound,
-            ApplicationException => HttpStatusCode.BadRequest,
-            _ => HttpStatusCode.InternalServerError
+            DomainException => StatusCodes.Status403Forbidden,
+            EntityNotFoundException => StatusCodes.Status404NotFound,
+            EclipseValidationException => StatusCodes.Status400BadRequest,
+            NotImplementedException => StatusCodes.Status501NotImplemented,
+            _ => StatusCodes.Status500InternalServerError
         };
 
-        context.Response.StatusCode = (int)status;
+        var template = _localizer[exception.Message];
+
+        var error = statusCode == StatusCodes.Status500InternalServerError
+            ? "Internal error."
+            : string.Format(
+                template,
+                exception.Data.Values
+            );
+
+        context.Response.StatusCode = statusCode;
 
         await context.Response.WriteAsJsonAsync(
-            new { Error = exception.Message },
+            new { Error = error },
             cancellationToken: cancellationToken);
-        
+
+        if (statusCode == StatusCodes.Status500InternalServerError)
+        {
+            _logger.Error(template, exception.Data.Values);
+        }
+
         return true;
     }
 }

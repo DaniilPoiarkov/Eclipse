@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Infrastructure.Exceptions;
 using Eclipse.Localization.Exceptions;
 
 using Serilog;
@@ -44,9 +46,12 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
             await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
             return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:NewItemAdded"]);
         }
-        catch (LocalizedException ex)
+        catch (EclipseValidationException ex)
         {
-            return Menu(TodoItemMenuButtons, Localizer.FormatLocalizedException(ex));
+            var template = Localizer[ex.Message];
+            var message = string.Format(template, [..ex.Data.Values]);
+
+            return Menu(TodoItemMenuButtons, message);
         }
         catch (Exception ex)
         {

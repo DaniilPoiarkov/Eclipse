@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Users;
 
@@ -40,7 +40,7 @@ public class UserStoreTests
     public async Task AddOrUpdate_WhenUserNotExists_ThenCreatesUser_AndAddToCache()
     {
         _identityUserCache.GetAll().Returns(new List<IdentityUserDto>());
-        _identityUserService.GetByChatIdAsync(User.Id).Throws(new ObjectNotFoundException(nameof(IdentityUser)));
+        _identityUserService.GetByChatIdAsync(User.Id).Throws(new EntityNotFoundException(typeof(IdentityUser)));
 
         var create = new IdentityUserCreateDto
         {

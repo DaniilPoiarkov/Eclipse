@@ -7,5 +7,7 @@ public static class TelegramErrors
     public static class Messages
     {
         public static readonly string MessageCannotBeEmpty = $"{_prefix}:MessageCannotBeEmpty";
+
+        public static readonly string InvalidChatId = $"{_prefix}:InvalidChatId";
     }
 }

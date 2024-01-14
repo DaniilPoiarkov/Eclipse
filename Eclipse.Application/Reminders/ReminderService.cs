@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Exceptions;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.Reminders;
@@ -21,7 +21,7 @@ internal class ReminderService : IReminderService
     public async Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+            ?? throw new EntityNotFoundException(typeof(IdentityUser));
 
         user.AddReminder(createReminderDto.Text, createReminderDto.NotifyAt);
 
@@ -33,7 +33,7 @@ internal class ReminderService : IReminderService
     public async Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+            ?? throw new EntityNotFoundException(typeof(IdentityUser));
 
         user.RemoveRemindersForTime(time);
 

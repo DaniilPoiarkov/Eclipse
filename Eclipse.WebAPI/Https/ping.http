@@ -4,3 +4,7 @@
 
 GET https://{{hostname}}:{{port}}/api/ping
 
+###
+
+GET https://{{hostname}}:{{port}}/_health-checks
+X-API-KEY: <your-key>

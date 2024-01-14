@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
-using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
@@ -10,7 +9,6 @@ using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
-using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.EventHandlers;
 using Eclipse.Application.Localizations;
@@ -69,8 +67,7 @@ public static class EclipseApplicationModule
         });
 
         services
-            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()
-            .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>();
+            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>();
 
         services
             .Decorate<IReminderService, CachedReminderService>()

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Eclipse.WebAPI.Filters;
+namespace Eclipse.WebAPI.Filters.Authorization;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public abstract class ApiKeyAuthorizeBaseAttribute : Attribute, IAuthorizationFilter

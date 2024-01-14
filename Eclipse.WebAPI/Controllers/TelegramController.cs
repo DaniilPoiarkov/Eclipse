@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
 
