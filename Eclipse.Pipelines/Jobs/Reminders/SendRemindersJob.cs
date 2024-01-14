@@ -28,8 +28,7 @@ internal class SendRemindersJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var utc = DateTime.UtcNow;
-        var time = new TimeOnly(utc.Hour, utc.Minute);
+        var time = DateTime.UtcNow.GetTime();
 
         var specification = new ReminderDtoNotifyAtSpecification(time);
 
@@ -37,7 +36,7 @@ internal class SendRemindersJob : EclipseJobBase
             .Where(u => u.Reminders.Any(specification))
             .ToList();
 
-        if (users.Count == 0)
+        if (users.IsNullOrEmpty())
         {
             return;
         }

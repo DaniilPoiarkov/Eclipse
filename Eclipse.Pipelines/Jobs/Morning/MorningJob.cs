@@ -11,6 +11,8 @@ namespace Eclipse.Pipelines.Jobs.Morning;
 
 internal class MorningJob : EclipseJobBase
 {
+    private static readonly TimeOnly Morning = new(9, 0);
+
     private readonly IPipelineStore _pipelineStore;
 
     private readonly IPipelineProvider _pipelineProvider;
@@ -33,8 +35,11 @@ internal class MorningJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
+        var time = DateTime.UtcNow.GetTime();
+
         var users = _identityUserStore.GetCachedUsers()
-            .Where(u => u.NotificationsEnabled)
+            .Where(u => u.NotificationsEnabled
+                && time.Add(u.Gmt) == Morning)
             .ToList();
 
         var notifications = new List<Task>(users.Count);
