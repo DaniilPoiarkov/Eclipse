@@ -31,7 +31,7 @@ public class ExceptionHandlerMiddleware : IExceptionHandler
             _ => StatusCodes.Status500InternalServerError
         };
 
-        var template = _localizer[exception.Message];
+        var template = _localizer[exception.Message, "en"];
 
         var error = statusCode == StatusCodes.Status500InternalServerError
             ? "Internal error."
@@ -43,7 +43,7 @@ public class ExceptionHandlerMiddleware : IExceptionHandler
         context.Response.StatusCode = statusCode;
 
         await context.Response.WriteAsJsonAsync(
-            new { Error = error },
+            new { Error = ErrorResponse.Create(error, exception) },
             cancellationToken: cancellationToken);
 
         if (statusCode == StatusCodes.Status500InternalServerError)
