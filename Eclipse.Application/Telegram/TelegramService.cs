@@ -1,7 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Application.Exceptions;
-
-using FluentValidation;
+using Eclipse.Infrastructure.Exceptions;
 
 using Telegram.Bot;
 
@@ -21,13 +19,15 @@ internal class TelegramService : ITelegramService
         if (string.IsNullOrEmpty(message.Message))
         {
             throw new EclipseValidationException(
-                [TelegramErrors.Messages.MessageCannotBeEmpty]
+                TelegramErrors.Messages.MessageCannotBeEmpty
             );
         }
 
         if (message.ChatId == default)
         {
-            throw new EclipseValidationException([]);
+            throw new EclipseValidationException(
+                TelegramErrors.Messages.InvalidChatId
+            );
         }
 
         await _botClient.SendTextMessageAsync(

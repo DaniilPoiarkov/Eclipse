@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Exceptions;
 using Eclipse.Core.Models;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;

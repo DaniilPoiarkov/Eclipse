@@ -8,7 +8,7 @@ public class DomainException : EclipseException
     {
         for (int i = 0; i < args.Length; i++)
         {
-            WithData($"{i}", args[i]);
+            WithData($"{{{i}}}", args[i]);
         }
     }
 }

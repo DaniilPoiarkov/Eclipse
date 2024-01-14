@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.Telegram.Commands;
-using Eclipse.Application.Exceptions;
 
 using FluentValidation;
 
@@ -29,16 +28,7 @@ internal class CommandService : ICommandService
 
     public async Task Add(CommandDto command, CancellationToken cancellationToken = default)
     {
-        var result = _commandDtoValidator.Validate(command);
-
-        if (!result.IsValid)
-        {
-            throw new EclipseValidationException(
-                result.Errors
-                    .Select(e => e.ErrorMessage)
-                    .ToArray()
-            );
-        }
+        _commandDtoValidator.ValidateAndThrow(command);
 
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
 

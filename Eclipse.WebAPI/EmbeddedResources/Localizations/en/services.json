@@ -3,6 +3,7 @@
   "Texts": {
     "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
     "Telegram:MessageCannotBeEmpty": "Message can not be empty",
+    "Telegram:Invalid chat id": "Chat id cannot be 0",
 
     "TodoItem:AlreadyFinished": "Todo item '{0}' already finished",
     "TodoItem:Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",

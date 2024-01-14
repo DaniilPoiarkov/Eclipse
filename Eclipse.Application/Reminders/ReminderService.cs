@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Exceptions;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 

@@ -103,7 +103,7 @@ public class IdentityUserServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenExceptionTHrown()
+    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenExceptionThrown()
     {
         var action = async () =>
         {

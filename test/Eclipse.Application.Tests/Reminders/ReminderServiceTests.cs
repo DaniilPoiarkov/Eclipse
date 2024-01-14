@@ -56,7 +56,7 @@ public class ReminderServiceTests
     }
 
     [Fact]
-    public async Task CreateReminderAsync_WhenUserNotExists_ThenObjectNotFoundExceptionThrown()
+    public async Task CreateReminderAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
         var reminderCreateDto = new ReminderCreateDto
         {

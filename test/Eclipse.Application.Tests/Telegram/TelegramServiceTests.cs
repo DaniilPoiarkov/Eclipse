@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Telegram;
+using Eclipse.Infrastructure.Exceptions;
 using Eclipse.Localization.Exceptions;
 
 using FluentAssertions;
@@ -53,7 +54,7 @@ public class TelegramServiceTests
             await _sut.Send(model);
         };
 
-        await action.Should().ThrowAsync<LocalizedException>();
+        await action.Should().ThrowAsync<EclipseValidationException>();
     }
 
     [Fact]
@@ -71,6 +72,6 @@ public class TelegramServiceTests
             await _sut.Send(model);
         };
 
-        await action.Should().ThrowAsync<LocalizedException>();
+        await action.Should().ThrowAsync<EclipseValidationException>();
     }
 }

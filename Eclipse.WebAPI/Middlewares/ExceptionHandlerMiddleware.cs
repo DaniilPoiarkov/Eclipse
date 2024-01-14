@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Exceptions;
-using Eclipse.Domain.Exceptions;
+﻿using Eclipse.Domain.Exceptions;
+using Eclipse.Infrastructure.Exceptions;
 using Eclipse.Localization.Localizers;
 
 using Microsoft.AspNetCore.Diagnostics;
