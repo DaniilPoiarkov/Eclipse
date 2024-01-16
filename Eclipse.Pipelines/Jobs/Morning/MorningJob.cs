@@ -49,16 +49,16 @@ internal class MorningJob : EclipseJobBase
                 && time.Add(u.Gmt) == Morning)
             .ToList();
 
+        if (users.IsNullOrEmpty())
+        {
+            return;
+        }
+
         // TODO: Remove after fixing job
         await _botClient.SendTextMessageAsync(
             _options.Value.Chat,
             $"Sending morning message to {users.Count} user(s):\n\r{string.Join("\n\r* ", users.Select(u => u.Username))}",
             cancellationToken: context.CancellationToken);
-
-        if (users.IsNullOrEmpty())
-        {
-            return;
-        }
 
         var notifications = new List<Task>(users.Count);
 
