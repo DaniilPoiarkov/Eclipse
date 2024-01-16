@@ -71,6 +71,11 @@ internal class MorningJob : EclipseJobBase
 
                 var pipeline = _pipelineProvider.Get("/daily_morning");
 
+                await _botClient.SendTextMessageAsync(
+                    _options.Value.Chat,
+                    $"Morning job {pipeline.GetType().Name} pipeline found",
+                    cancellationToken: context.CancellationToken);
+
                 var messageContext = new MessageContext(user.ChatId, string.Empty, new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username));
 
                 var result = await pipeline.RunNext(messageContext, context.CancellationToken);
@@ -88,6 +93,16 @@ internal class MorningJob : EclipseJobBase
             }
         }
 
-        await Task.WhenAll(notifications);
+        try
+        {
+            await Task.WhenAll(notifications);
+        }
+        catch (Exception ex)
+        {
+            await _botClient.SendTextMessageAsync(
+                _options.Value.Chat,
+                $"Exception in await all:\n\r\n\r{ex}",
+                cancellationToken: context.CancellationToken);
+        }
     }
 }
