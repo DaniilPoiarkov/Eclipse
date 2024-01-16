@@ -25,9 +25,11 @@ internal class QuatzOptionsConfiguration : IConfigureOptions<QuartzOptions>
         var jobKey = JobKey.Create(typeof(TJob).Name);
 
         options.AddJob<TJob>(job => job.WithIdentity(jobKey))
-            .AddTrigger(trigger => trigger.ForJob(jobKey)
-                .WithSimpleSchedule(s => s.WithIntervalInMinutes(_oneMinuteScanInterval)
+            .AddTrigger(
+                trigger => trigger.ForJob(jobKey)
+                    .WithSimpleSchedule(s => s.WithIntervalInMinutes(_oneMinuteScanInterval)
                     .RepeatForever())
-                .StartNow());
+                    .StartNow()
+            );
     }
 }

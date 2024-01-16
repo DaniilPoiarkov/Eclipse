@@ -42,7 +42,7 @@ internal sealed class EveningJob : EclipseJobBase
 
         foreach (var user in users)
         {
-            var template = _localizer["Jobs:Evening"];
+            var template = _localizer["Jobs:Evening", user.Culture];
 
             sendings.Add(_telegramService.Send(new SendMessageModel
             {

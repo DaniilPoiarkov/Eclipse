@@ -66,19 +66,17 @@ if (app.Environment.IsDevelopment())
     ///
 }
 
-app.UseExceptionHandler();
-
-app.UseHttpsRedirection();
+app.UseExceptionHandler()
+    .UseHttpsRedirection();
 
 app.UseEclipseHealthCheks();
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication()
+    .UseAuthorization();
 
 app.MapControllers();
 
 await app.InitializeDataAccessModule();
-await app.InitializeApplicationModuleAsync();
 await app.InitializePipelineModuleAsync();
 
 app.Run();
