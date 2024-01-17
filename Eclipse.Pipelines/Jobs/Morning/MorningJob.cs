@@ -1,10 +1,9 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Core.Core;
 using Eclipse.Core.Models;
-using Eclipse.Infrastructure.Builder;
+using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Users;
-
-using Microsoft.Extensions.Options;
 
 using Quartz;
 
@@ -24,24 +23,24 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IUserStore _identityUserStore;
 
-    private readonly IOptions<TelegramOptions> _options;
-
     private readonly IServiceProvider _serviceProvider;
+
+    private readonly IEclipseLocalizer _localizer;
 
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IUserStore identityUserStore,
-        IOptions<TelegramOptions> options,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        IEclipseLocalizer localizer)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
         _identityUserStore = identityUserStore;
-        _options = options;
         _serviceProvider = serviceProvider;
+        _localizer = localizer;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -58,60 +57,34 @@ internal sealed class MorningJob : EclipseJobBase
             return;
         }
 
-        // TODO: Remove after fixing job
-        await _botClient.SendTextMessageAsync(
-            _options.Value.Chat,
-            $"Sending morning message to {users.Count} user(s):\n\r{string.Join("\n\r * @", users.Select(u => u.Username))}",
-            cancellationToken: context.CancellationToken);
-
         var notifications = new List<Task>(users.Count);
 
         foreach (var user in users)
         {
-            try
-            {
-                var key = new PipelineKey(user.ChatId);
-                _pipelineStore.Remove(key);
 
-                var pipeline = _pipelineProvider.Get("/daily_morning");
+            var key = new PipelineKey(user.ChatId);
+            _pipelineStore.Remove(key);
 
-                await _botClient.SendTextMessageAsync(
-                    _options.Value.Chat,
-                    $"Morning job {pipeline.GetType().Name} pipeline found",
-                    cancellationToken: context.CancellationToken);
+            var pipeline = (_pipelineProvider.Get("/daily_morning") as EclipsePipelineBase)!;
 
-                var messageContext = new MessageContext(
-                    user.ChatId,
-                    string.Empty,
-                    new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username),
-                    _serviceProvider
-                );
+            _localizer.CheckCulture(user.ChatId);
 
-                var result = await pipeline.RunNext(messageContext, context.CancellationToken);
+            pipeline.SetLocalizer(_localizer);
 
-                notifications.Add(result.SendAsync(_botClient, context.CancellationToken));
+            var messageContext = new MessageContext(
+                user.ChatId,
+                string.Empty,
+                new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username),
+                _serviceProvider
+            );
 
-                _pipelineStore.Set(key, pipeline);
-            }
-            catch (Exception ex)
-            {
-                await _botClient.SendTextMessageAsync(
-                    _options.Value.Chat,
-                    $"Exception in morning job:\n\r\n\r{ex}",
-                    cancellationToken: context.CancellationToken);
-            }
+            var result = await pipeline.RunNext(messageContext, context.CancellationToken);
+
+            notifications.Add(result.SendAsync(_botClient, context.CancellationToken));
+
+            _pipelineStore.Set(key, pipeline);
         }
 
-        try
-        {
-            await Task.WhenAll(notifications);
-        }
-        catch (Exception ex)
-        {
-            await _botClient.SendTextMessageAsync(
-                _options.Value.Chat,
-                $"Exception in await all:\n\r\n\r{ex}",
-                cancellationToken: context.CancellationToken);
-        }
+        await Task.WhenAll(notifications);
     }
 }
