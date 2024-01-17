@@ -32,9 +32,6 @@ internal sealed class MessageParseStrategy : IParseStrategy
 
         var user = new TelegramUser(chatId, name, surname, username);
 
-        return new MessageContext(chatId, value, user)
-        {
-            Services = _serviceProvider
-        };
+        return new MessageContext(chatId, value, user, _serviceProvider);
     }
 }
