@@ -20,8 +20,14 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
         Publisher = publisher;
     }
 
-    public virtual Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default) =>
-        Container.CreateAsync(entity, cancellationToken);
+    public virtual async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        var result = Container.CreateAsync(entity, cancellationToken);
+
+        await TriggerDomainEvents(entity, cancellationToken);
+
+        return result;
+    }
 
     public virtual Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
         Container.DeleteAsync(id, cancellationToken);
