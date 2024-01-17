@@ -50,8 +50,6 @@ public abstract class PipelineTestFixture<TPipeline>
 
     protected MessageContext GetContext(string value)
     {
-        var context = MessageContextGenerator.Generate(value);
-        context.Services = ServiceProvider;
-        return context;
+        return MessageContextGenerator.Generate(value, ServiceProvider);
     }
 }

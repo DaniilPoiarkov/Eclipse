@@ -12,7 +12,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Jobs.Morning;
 
-internal class MorningJob : EclipseJobBase
+internal sealed class MorningJob : EclipseJobBase
 {
     private static readonly TimeOnly Morning = new(9, 0);
 
