@@ -4,8 +4,6 @@ using Eclipse.Localization.Localizers;
 
 using Microsoft.AspNetCore.Diagnostics;
 
-using System.Text;
-
 using ILogger = Serilog.ILogger;
 
 namespace Eclipse.WebAPI.Middlewares;
