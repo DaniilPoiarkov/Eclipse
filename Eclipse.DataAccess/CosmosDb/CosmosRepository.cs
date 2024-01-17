@@ -22,7 +22,7 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 
     public virtual async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        var result = Container.CreateAsync(entity, cancellationToken);
+        var result = await Container.CreateAsync(entity, cancellationToken);
 
         await TriggerDomainEvents(entity, cancellationToken);
 
