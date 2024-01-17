@@ -12,7 +12,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Jobs.Morning;
 
-internal class MorningJob : EclipseJobBase
+internal sealed class MorningJob : EclipseJobBase
 {
     private static readonly TimeOnly Morning = new(9, 0);
 
@@ -26,18 +26,22 @@ internal class MorningJob : EclipseJobBase
 
     private readonly IOptions<TelegramOptions> _options;
 
+    private readonly IServiceProvider _serviceProvider;
+
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IUserStore identityUserStore,
-        IOptions<TelegramOptions> options)
+        IOptions<TelegramOptions> options,
+        IServiceProvider serviceProvider)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
         _identityUserStore = identityUserStore;
         _options = options;
+        _serviceProvider = serviceProvider;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -57,7 +61,7 @@ internal class MorningJob : EclipseJobBase
         // TODO: Remove after fixing job
         await _botClient.SendTextMessageAsync(
             _options.Value.Chat,
-            $"Sending morning message to {users.Count} user(s):\n\r{string.Join("\n\r* ", users.Select(u => u.Username))}",
+            $"Sending morning message to {users.Count} user(s):\n\r{string.Join("\n\r * @", users.Select(u => u.Username))}",
             cancellationToken: context.CancellationToken);
 
         var notifications = new List<Task>(users.Count);
@@ -76,7 +80,12 @@ internal class MorningJob : EclipseJobBase
                     $"Morning job {pipeline.GetType().Name} pipeline found",
                     cancellationToken: context.CancellationToken);
 
-                var messageContext = new MessageContext(user.ChatId, string.Empty, new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username));
+                var messageContext = new MessageContext(
+                    user.ChatId,
+                    string.Empty,
+                    new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username),
+                    _serviceProvider
+                );
 
                 var result = await pipeline.RunNext(messageContext, context.CancellationToken);
 

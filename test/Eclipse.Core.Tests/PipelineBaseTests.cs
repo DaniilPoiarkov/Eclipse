@@ -25,10 +25,7 @@ public class PipelineBaseTests
     { 
         get
         {
-            return new MessageContext(0, string.Empty, new TelegramUser())
-            {
-                Services = _services.BuildServiceProvider(),
-            };
+            return new MessageContext(0, string.Empty, new TelegramUser(), _services.BuildServiceProvider());
         }
     }
 

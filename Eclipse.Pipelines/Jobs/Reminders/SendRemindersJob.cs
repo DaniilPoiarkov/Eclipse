@@ -8,7 +8,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Jobs.Reminders;
 
-internal class SendRemindersJob : EclipseJobBase
+internal sealed class SendRemindersJob : EclipseJobBase
 {
     private readonly ITelegramBotClient _botClient;
 
