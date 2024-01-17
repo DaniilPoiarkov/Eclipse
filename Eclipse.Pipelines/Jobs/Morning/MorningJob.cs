@@ -1,6 +1,9 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Infrastructure.Builder;
+using Eclipse.Localization.Localizers;
+using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Users;
 
@@ -28,13 +31,16 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IServiceProvider _serviceProvider;
 
+    private readonly IEclipseLocalizer _localizer;
+
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IUserStore identityUserStore,
         IOptions<TelegramOptions> options,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        IEclipseLocalizer localizer)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -42,6 +48,7 @@ internal sealed class MorningJob : EclipseJobBase
         _identityUserStore = identityUserStore;
         _options = options;
         _serviceProvider = serviceProvider;
+        _localizer = localizer;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -73,7 +80,11 @@ internal sealed class MorningJob : EclipseJobBase
                 var key = new PipelineKey(user.ChatId);
                 _pipelineStore.Remove(key);
 
-                var pipeline = _pipelineProvider.Get("/daily_morning");
+                var pipeline = (_pipelineProvider.Get("/daily_morning") as EclipsePipelineBase)!;
+
+                _localizer.CheckCulture(user.ChatId);
+
+                pipeline.SetLocalizer(_localizer);
 
                 await _botClient.SendTextMessageAsync(
                     _options.Value.Chat,
