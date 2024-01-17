@@ -37,14 +37,15 @@ public class ExceptionHandlerMiddleware : IExceptionHandler
             ? "Internal error."
             : string.Format(
                 template,
-                exception.Data.Values
+                [..exception.Data.Values]
             );
 
         context.Response.StatusCode = statusCode;
 
         await context.Response.WriteAsJsonAsync(
             new { Error = ErrorResponse.Create(error, exception) },
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken
+        );
 
         if (statusCode == StatusCodes.Status500InternalServerError)
         {
