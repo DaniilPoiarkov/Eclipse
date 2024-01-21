@@ -49,7 +49,7 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
         if (user.NotificationsEnabled.Equals(enable))
         {
-            return MenuAndEditedOptionsMessage(
+            return MenuAndRemoveOptions(
                 Localizer[$"{_pipelinePrefix}:Already{(enable ? "Enabled" : "Disabled")}"],
                 message?.MessageId);
         }
@@ -61,7 +61,7 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
         await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
-        return MenuAndEditedOptionsMessage(
+        return MenuAndRemoveOptions(
             Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"],
             message?.MessageId);
     }

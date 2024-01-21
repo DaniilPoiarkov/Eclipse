@@ -50,7 +50,7 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
         if (!SupportedLanguage(context))
         {
-            return MenuAndEditedOptionsMessage(
+            return MenuAndRemoveOptions(
                 Localizer[$"{_pipelinePrefix}:Unsupported"],
                 message?.MessageId);
         }
@@ -59,7 +59,7 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
         if (user.Culture == context.Value)
         {
-            return MenuAndEditedOptionsMessage(
+            return MenuAndRemoveOptions(
                 Localizer[$"{_pipelinePrefix}:Changed"],
                 message?.MessageId);
         }
@@ -78,7 +78,7 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
         Localizer.CheckCulture(context.ChatId);
 
-        return MenuAndEditedOptionsMessage(
+        return MenuAndRemoveOptions(
             Localizer[$"{_pipelinePrefix}:Changed"],
             message?.MessageId);
 

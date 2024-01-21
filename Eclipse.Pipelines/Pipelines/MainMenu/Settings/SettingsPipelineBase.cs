@@ -13,7 +13,7 @@ public abstract class SettingsPipelineBase : EclipsePipelineBase
         new[] { new KeyboardButton(Localizer["Menu:MainMenu"]) }
     };
 
-    protected IResult MenuWithRemovingInlineButtons(string message, int messageId)
+    private IResult MenuAndEdit(string message, int messageId)
     {
         var menu = Menu(SettingsMenuButtons, message);
         var edit = Edit(messageId, InlineKeyboardMarkup.Empty());
@@ -21,10 +21,10 @@ public abstract class SettingsPipelineBase : EclipsePipelineBase
         return Multiple(menu, edit);
     }
 
-    protected IResult MenuAndEditedOptionsMessage(string message, int? messageId)
+    protected IResult MenuAndRemoveOptions(string message, int? messageId)
     {
         return messageId is null
             ? Menu(SettingsMenuButtons, message)
-            : MenuWithRemovingInlineButtons(message, messageId.Value);
+            : MenuAndEdit(message, messageId.Value);
     }
 }
