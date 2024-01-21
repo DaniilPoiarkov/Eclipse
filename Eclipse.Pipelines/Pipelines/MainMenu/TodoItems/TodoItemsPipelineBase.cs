@@ -10,6 +10,8 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
+    protected static readonly string PipelinePrefix = "Pipelines:TodoItems";
+
     protected IEnumerable<IEnumerable<KeyboardButton>> TodoItemMenuButtons => new List<KeyboardButton[]>
     {
         new[] { new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]), new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]) },
@@ -20,7 +22,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     protected string BuildMessage(IEnumerable<TodoItemDto> items)
     {
-        var sb = new StringBuilder(Localizer["Pipelines:TodoItems:YourToDos"])
+        var sb = new StringBuilder(Localizer[$"{PipelinePrefix}:YourToDos"])
             .AppendLine()
             .AppendLine();
 
@@ -32,7 +34,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         }
 
         return sb.AppendLine()
-            .AppendLine(Localizer["Pipelines:TodoItems:FinishOrGoBack"])
+            .AppendLine(Localizer[$"{PipelinePrefix}:FinishOrGoBack"])
             .ToString();
     }
 
@@ -57,7 +59,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     protected IResult AllItemsFinishedResult(Message? message)
     {
-        var text = Localizer["Pipelines:TodoItems:YouDidEmAll"];
+        var text = Localizer[$"{PipelinePrefix}:YouDidEmAll"];
 
         if (message is null)
         {
@@ -71,7 +73,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
     {
         var buttons = BuildButtons(leftover);
 
-        var text = $"{Localizer["Pipelines:TodoItems:YouAreDoingGreat"]}" +
+        var text = $"{Localizer[$"{PipelinePrefix}:YouAreDoingGreat"]}" +
             $"{Environment.NewLine}{Environment.NewLine}" +
             $"{BuildMessage(leftover)}";
 

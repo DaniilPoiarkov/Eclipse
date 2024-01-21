@@ -1,9 +1,7 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Infrastructure.Exceptions;
-using Eclipse.Localization.Exceptions;
 
 using Serilog;
 
@@ -15,6 +13,8 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
     private readonly ITodoItemService _todoItemService;
 
     private readonly ILogger _logger;
+
+    private static readonly string _pipelinePrefix = $"{PipelinePrefix}:AddItem";
 
     public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
     {
@@ -30,7 +30,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private IResult SendInfo(MessageContext context)
     {
-        return Text(Localizer["Pipelines:TodoItems:AddItem:DiscribeWhatToAdd"]);
+        return Text(Localizer[$"{_pipelinePrefix}:DiscribeWhatToAdd"]);
     }
 
     private async Task<IResult> SaveNewTodoItem(MessageContext context, CancellationToken cancellationToken)
@@ -44,7 +44,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         try
         {
             await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
-            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:NewItemAdded"]);
+            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:NewItemAdded"]);
         }
         catch (EclipseValidationException ex)
         {
@@ -56,7 +56,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
         catch (Exception ex)
         {
             _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex);
-            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:AddItem:Error"]);
+            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Error"]);
         }
     }
 }
