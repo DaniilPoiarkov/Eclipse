@@ -3,6 +3,7 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
+using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -15,10 +16,13 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
     private readonly IIdentityUserService _identityUserService;
 
-    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService)
+    private readonly IMessageStore _messageStore;
+
+    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService, IMessageStore messageStore)
     {
         _cacheService = cacheService;
         _identityUserService = identityUserService;
+        _messageStore = messageStore;
     }
 
     protected override void Initialize()
@@ -40,16 +44,22 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
     private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
     {
+        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+
         if (!SupportedLanguage(context))
         {
-            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Unsupported"]);
+            return MenuAndEditedOptionsMessage(
+                Localizer["Pipelines:Settings:Language:Unsupported"],
+                message?.MessageId);
         }
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (user.Culture == context.Value)
         {
-            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Changed"]);
+            return MenuAndEditedOptionsMessage(
+                Localizer["Pipelines:Settings:Language:Changed"],
+                message?.MessageId);
         }
 
         var updateDto = new IdentityUserUpdateDto
@@ -66,7 +76,9 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
         Localizer.CheckCulture(context.ChatId);
 
-        return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Changed"]);
+        return MenuAndEditedOptionsMessage(
+            Localizer["Pipelines:Settings:Language:Changed"],
+            message?.MessageId);
 
         static bool SupportedLanguage(MessageContext context)
         {
