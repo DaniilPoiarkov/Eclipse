@@ -1,6 +1,4 @@
-﻿using Eclipse.Localization.Exceptions;
-
-namespace Eclipse.Localization.Builder;
+﻿namespace Eclipse.Localization.Exceptions;
 
 [Serializable]
 internal sealed class UnableToParseLocalizationResourceException : LocalizedException

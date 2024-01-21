@@ -23,4 +23,13 @@ public static class LocalizationModule
 
         return services;
     }
+
+    public static IServiceCollection AddLocalizationV2(this IServiceCollection services, Action<LocalizationOptions> configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+
+        services.Configure(configuration);
+
+        return services;
+    }
 }
