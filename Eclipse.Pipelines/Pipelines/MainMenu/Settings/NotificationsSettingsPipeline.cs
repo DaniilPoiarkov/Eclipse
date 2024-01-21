@@ -45,17 +45,10 @@ internal class NotificationsSettingsPipeline : SettingsPipelineBase
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        if (user.NotificationsEnabled && enable)
+        if (user.NotificationsEnabled.Equals(enable))
         {
             return MenuAndEditedOptionsMessage(
-                Localizer["Pipelines:Settings:Notifications:AlreadyEnabled"],
-                message?.MessageId);
-        }
-
-        if (!user.NotificationsEnabled && !enable)
-        {
-            return MenuAndEditedOptionsMessage(
-                Localizer["Pipelines:Settings:Notifications:AlreadyDisabled"],
+                Localizer[$"Pipelines:Settings:Notifications:Already{(enable ? "Enabled" : "Disabled")}"],
                 message?.MessageId);
         }
 
