@@ -15,6 +15,8 @@ public class AddReminderPipeline : RemindersPipelineBase
 
     private readonly IReminderService _reminderService;
 
+    private static readonly string _pipelinePrefix = "Pipelines:Reminders";
+
     public AddReminderPipeline(ICacheService cacheService, IIdentityUserService identityUserService, IReminderService reminderService)
     {
         _cacheService = cacheService;
@@ -24,7 +26,7 @@ public class AddReminderPipeline : RemindersPipelineBase
 
     protected override void Initialize()
     {
-        RegisterStage(_ => Text(Localizer["Pipelines:Reminders:AskForText"]));
+        RegisterStage(_ => Text(Localizer[$"{_pipelinePrefix}:AskForText"]));
         RegisterStage(AskForTime);
         RegisterStage(SaveReminder);
     }
@@ -34,19 +36,19 @@ public class AddReminderPipeline : RemindersPipelineBase
         if (string.IsNullOrEmpty(context.Value))
         {
             FinishPipeline();
-            return Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders:ValueCannotBeEmpty"]);
+            return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:ValueCannotBeEmpty"]);
         }
 
         _cacheService.Set(new CacheKey($"reminder-text-{context.ChatId}"), context.Value);
 
-        return Text(Localizer["Pipelines:Reminders:AskForTime"]);
+        return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }
 
     private async Task<IResult> SaveReminder(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (!context.Value.TryParseAsTimeOnly(out var time))
         {
-            return Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders:CannotParseTime"]);
+            return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:CannotParseTime"]);
         }
 
         var chatId = context.ChatId;
@@ -63,6 +65,6 @@ public class AddReminderPipeline : RemindersPipelineBase
         
         await _reminderService.CreateReminderAsync(user.Id, reminderCreateDto, cancellationToken);
 
-        return Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders:Created"]);
+        return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:Created"]);
     }
 }

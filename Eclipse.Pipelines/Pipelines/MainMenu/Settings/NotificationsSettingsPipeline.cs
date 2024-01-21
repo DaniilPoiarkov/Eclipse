@@ -1,19 +1,25 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 [Route("Menu:Settings:Notifications", "/settings_notifications")]
-internal class NotificationsSettingsPipeline : SettingsPipelineBase
+internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 {
     private readonly IIdentityUserService _identityUserService;
 
-    public NotificationsSettingsPipeline(IIdentityUserService identityUserService)
+    private readonly IMessageStore _messageStore;
+
+    private static readonly string _pipelinePrefix = "Pipelines:Settings:Notifications";
+
+    public NotificationsSettingsPipeline(IIdentityUserService identityUserService, IMessageStore messageStore)
     {
         _identityUserService = identityUserService;
+        _messageStore = messageStore;
     }
 
     protected override void Initialize()
@@ -30,23 +36,22 @@ internal class NotificationsSettingsPipeline : SettingsPipelineBase
             InlineKeyboardButton.WithCallbackData($"{Localizer["Disable"]} 🔇")
         };
 
-        return Menu(buttons, Localizer["Pipelines:Settings:Notifications:Message"]);
+        return Menu(buttons, Localizer[$"{_pipelinePrefix}:Message"]);
     }
 
     private async Task<IResult> EnableNotifications(MessageContext context, CancellationToken cancellationToken)
     {
+        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+
         var enable = context.Value.Equals("Enable");
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        if (user.NotificationsEnabled && enable)
+        if (user.NotificationsEnabled.Equals(enable))
         {
-            return Text(Localizer["Pipelines:Settings:Notifications:AlreadyEnabled"]);
-        }
-
-        if (!user.NotificationsEnabled && !enable)
-        {
-            return Text(Localizer["Pipelines:Settings:Notifications:AlreadyDisabled"]);
+            return MenuAndRemoveOptions(
+                Localizer[$"{_pipelinePrefix}:Already{(enable ? "Enabled" : "Disabled")}"],
+                message?.MessageId);
         }
 
         var updateDto = new IdentityUserUpdateDto
@@ -56,6 +61,8 @@ internal class NotificationsSettingsPipeline : SettingsPipelineBase
 
         await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
-        return Text(Localizer[$"Pipelines:Settings:Notifications:{(enable ? "Enabled" : "Disabled")}"]);
+        return MenuAndRemoveOptions(
+            Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"],
+            message?.MessageId);
     }
 }
