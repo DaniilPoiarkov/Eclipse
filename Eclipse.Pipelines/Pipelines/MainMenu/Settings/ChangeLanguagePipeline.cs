@@ -18,6 +18,8 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
     private readonly IMessageStore _messageStore;
 
+    private static readonly string _pipelinePrefix = "Pipelines:Settings:Language";
+
     public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService, IMessageStore messageStore)
     {
         _cacheService = cacheService;
@@ -35,11 +37,11 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
     {
         var buttons = new List<InlineKeyboardButton>
         {
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Settings:Language:English"], "en"),
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Settings:Language:Ukrainian"], "uk"),
+            InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:English"], "en"),
+            InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:Ukrainian"], "uk"),
         };
 
-        return Menu(buttons, Localizer["Pipelines:Settings:Language:Choose"]);
+        return Menu(buttons, Localizer[$"{_pipelinePrefix}:Choose"]);
     }
 
     private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
@@ -49,7 +51,7 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
         if (!SupportedLanguage(context))
         {
             return MenuAndEditedOptionsMessage(
-                Localizer["Pipelines:Settings:Language:Unsupported"],
+                Localizer[$"{_pipelinePrefix}:Unsupported"],
                 message?.MessageId);
         }
 
@@ -58,7 +60,7 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
         if (user.Culture == context.Value)
         {
             return MenuAndEditedOptionsMessage(
-                Localizer["Pipelines:Settings:Language:Changed"],
+                Localizer[$"{_pipelinePrefix}:Changed"],
                 message?.MessageId);
         }
 
@@ -77,7 +79,7 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
         Localizer.CheckCulture(context.ChatId);
 
         return MenuAndEditedOptionsMessage(
-            Localizer["Pipelines:Settings:Language:Changed"],
+            Localizer[$"{_pipelinePrefix}:Changed"],
             message?.MessageId);
 
         static bool SupportedLanguage(MessageContext context)

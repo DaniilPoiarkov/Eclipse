@@ -8,11 +8,13 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 [Route("Menu:Settings:Notifications", "/settings_notifications")]
-internal class NotificationsSettingsPipeline : SettingsPipelineBase
+internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 {
     private readonly IIdentityUserService _identityUserService;
 
     private readonly IMessageStore _messageStore;
+
+    private static readonly string _pipelinePrefix = "Pipelines:Settings:Notifications";
 
     public NotificationsSettingsPipeline(IIdentityUserService identityUserService, IMessageStore messageStore)
     {
@@ -34,7 +36,7 @@ internal class NotificationsSettingsPipeline : SettingsPipelineBase
             InlineKeyboardButton.WithCallbackData($"{Localizer["Disable"]} 🔇")
         };
 
-        return Menu(buttons, Localizer["Pipelines:Settings:Notifications:Message"]);
+        return Menu(buttons, Localizer[$"{_pipelinePrefix}:Message"]);
     }
 
     private async Task<IResult> EnableNotifications(MessageContext context, CancellationToken cancellationToken)
@@ -48,7 +50,7 @@ internal class NotificationsSettingsPipeline : SettingsPipelineBase
         if (user.NotificationsEnabled.Equals(enable))
         {
             return MenuAndEditedOptionsMessage(
-                Localizer[$"Pipelines:Settings:Notifications:Already{(enable ? "Enabled" : "Disabled")}"],
+                Localizer[$"{_pipelinePrefix}:Already{(enable ? "Enabled" : "Disabled")}"],
                 message?.MessageId);
         }
 
@@ -60,7 +62,7 @@ internal class NotificationsSettingsPipeline : SettingsPipelineBase
         await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
         return MenuAndEditedOptionsMessage(
-            Localizer[$"Pipelines:Settings:Notifications:{(enable ? "Enabled" : "Disabled")}"],
+            Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"],
             message?.MessageId);
     }
 }
