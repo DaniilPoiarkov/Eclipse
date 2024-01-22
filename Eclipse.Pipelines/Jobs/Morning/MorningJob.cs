@@ -2,12 +2,14 @@
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Pipelines.Pipelines;
+using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Users;
 
 using Quartz;
 
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Eclipse.Pipelines.Jobs.Morning;
 
@@ -27,13 +29,16 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IEclipseLocalizer _localizer;
 
+    private readonly IMessageStore _messageStore;
+
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IUserStore identityUserStore,
         IServiceProvider serviceProvider,
-        IEclipseLocalizer localizer)
+        IEclipseLocalizer localizer,
+        IMessageStore messageStore)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -41,6 +46,7 @@ internal sealed class MorningJob : EclipseJobBase
         _identityUserStore = identityUserStore;
         _serviceProvider = serviceProvider;
         _localizer = localizer;
+        _messageStore = messageStore;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -57,7 +63,7 @@ internal sealed class MorningJob : EclipseJobBase
             return;
         }
 
-        var notifications = new List<Task>(users.Count);
+        var notifications = new List<Task<Message?>>(users.Count);
 
         foreach (var user in users)
         {
@@ -81,10 +87,20 @@ internal sealed class MorningJob : EclipseJobBase
             var result = await pipeline.RunNext(messageContext, context.CancellationToken);
 
             notifications.Add(result.SendAsync(_botClient, context.CancellationToken));
-
+            
             _pipelineStore.Set(key, pipeline);
         }
+        
+        var messages = await Task.WhenAll(notifications);
 
-        await Task.WhenAll(notifications);
+        foreach (var message in messages)
+        {
+            if (message is null)
+            {
+                continue;
+            }
+            
+            _messageStore.Set(new MessageKey(message.Chat.Id), message);
+        }
     }
 }
