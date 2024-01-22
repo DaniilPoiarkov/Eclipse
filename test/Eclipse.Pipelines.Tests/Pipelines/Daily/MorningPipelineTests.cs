@@ -72,23 +72,27 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
         var context = GetContext("/daily_morning");
 
         // First message act
-        var multipleResult = await Sut.RunNext(context);
+        var firstStepResult = await Sut.RunNext(context);
         var isFinished = Sut.IsFinished;
 
         // Second message act
         context = GetContext("test");
-        var textResult = await Sut.RunNext(context);
+        var secondStepResult = await Sut.RunNext(context);
 
         // First message assertion
-        var multiple = multipleResult.As<MultipleActionsResult>();
-        multiple.Should().NotBeNull();
-        multiple.Results.Count.Should().Be(2);
+        var firstStepTypedResult = firstStepResult.As<MultipleActionsResult>();
+        firstStepTypedResult.Should().NotBeNull();
+        firstStepTypedResult.Results.Count.Should().Be(2);
         isFinished.Should().BeFalse();
 
         // Second message assertion
-        var text = textResult.As<TextResult>();
-        text.Should().NotBeNull();
-        text.Message.Should().Be("NotDefined");
+        var secondStepTypedResult = secondStepResult.As<MultipleActionsResult>();
+        secondStepTypedResult.Should().NotBeNull();
+        secondStepTypedResult.Results.Count.Should().Be(2);
+
+        var textResult = secondStepTypedResult.Results.FirstOrDefault(r => r is TextResult);
+        textResult.Should().NotBeNull();
+        textResult.As<TextResult>().Message.Should().Be("NotDefined");
         Sut.IsFinished.Should().BeTrue();
     }
 }
