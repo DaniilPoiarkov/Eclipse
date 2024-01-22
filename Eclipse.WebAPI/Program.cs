@@ -37,7 +37,7 @@ builder.Services
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
-builder.Services.AddLocalization(builder =>
+builder.Services.AddEclipseLocalization(builder =>
 {
     var path = "EmbeddedResources/Localizations/";
 
