@@ -8,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Eclipse.Pipelines.Pipelines.Daily;
 
 [Route("", "/daily_morning")]
-public class MorningPipeline : EclipsePipelineBase
+public sealed class MorningPipeline : EclipsePipelineBase
 {
     private readonly IMessageStore _messageStore;
 
@@ -33,7 +33,7 @@ public class MorningPipeline : EclipsePipelineBase
 
         var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
 
-        return EditedOrMenuResult(message, Localizer["Pipelines:Morning:AskMood"], buttons);
+        return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:Morning:AskMood"]));
     }
 
     private IResult HandleChoice(MessageContext context)
@@ -47,17 +47,7 @@ public class MorningPipeline : EclipsePipelineBase
 
         var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
 
-        return EditedOrTextResult(message, Localizer[text]);
-    }
-
-    private static IResult EditedOrTextResult(Message? message, string text)
-    {
-        return EditedOrDefaultResult(message, Text(text));
-    }
-
-    private static IResult EditedOrMenuResult(Message? message, string text, InlineKeyboardButton[] buttons)
-    {
-        return EditedOrDefaultResult(message, Menu(buttons, text));
+        return EditedOrDefaultResult(message, Text(Localizer[text]));
     }
 
     private static IResult EditedOrDefaultResult(Message? message, IResult @default)
