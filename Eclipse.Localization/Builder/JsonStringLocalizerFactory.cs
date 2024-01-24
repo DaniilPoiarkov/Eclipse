@@ -37,6 +37,17 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory
 
     public IStringLocalizer Create(string baseName, string location)
     {
-        return _innerFactory.Create(baseName, location);
+        var cultureInfo = _options.Value
+            .Resources
+            .Where(r => r.Path.StartsWith(baseName, StringComparison.OrdinalIgnoreCase))
+            .Select(r => r.GetCultureInfo(location))
+            .SingleOrDefault();
+
+        if (cultureInfo is null)
+        {
+            return _innerFactory.Create(baseName, location);
+        }
+
+        return new JsonStringLocalizer(cultureInfo);
     }
 }

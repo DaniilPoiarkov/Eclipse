@@ -10,7 +10,12 @@ public sealed class LocalizationOptions
 
     public LocalizationOptions Add<TResource>(string path)
     {
-        var resource = new StringResourceDefinition(typeof(TResource), path);
+        return Add(typeof(TResource), path);
+    }
+
+    public LocalizationOptions Add(Type type, string path)
+    {
+        var resource = new StringResourceDefinition(type, path);
         _resources.Add(resource);
 
         return this;

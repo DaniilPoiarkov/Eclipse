@@ -18,23 +18,19 @@ public sealed class StringResourceDefinition
 
     internal CultureInfo? GetCultureInfo(string culture)
     {
-        var grouping = Directory.GetFiles(System.IO.Path.GetFullPath(Path), "*.json")
+        var cultureInfo = Directory.GetFiles(System.IO.Path.GetFullPath(Path), "*.json")
             .Select(File.ReadAllText)
-            .Where(json => json.Contains($"\"culture\": \"{culture}\""))
+            .Where(json => json.StartsWith($"{{\"localization\": \"{culture}\"", StringComparison.CurrentCultureIgnoreCase))
             .Select(JsonConvert.DeserializeObject<CultureInfo>)
             .Where(cultureInfo => cultureInfo is not null)
             .GroupBy(cultureInfo => cultureInfo!.Localization)
+            .Select(grouping => new CultureInfo
+            {
+                Localization = grouping.Key,
+                Texts = grouping.SelectMany(cultureInfo => cultureInfo!.Texts).ToDictionary()
+            })
             .SingleOrDefault();
 
-        if (grouping is null)
-        {
-            return default;
-        }
-
-        return new CultureInfo
-        {
-            Localization = grouping.Key,
-            Texts = grouping.SelectMany(cultureInfo => cultureInfo!.Texts).ToDictionary()
-        };
-    }
+        return cultureInfo;
+    }   
 }
