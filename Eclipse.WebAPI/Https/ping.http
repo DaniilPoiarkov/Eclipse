@@ -1,0 +1,10 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@hostname=localhost
+@port=7236
+
+GET https://{{hostname}}:{{port}}/api/ping
+
+###
+
+GET https://{{hostname}}:{{port}}/_health-checks
+X-API-KEY: <your-key>

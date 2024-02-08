@@ -1,6 +1,8 @@
 {
   "Localization": "en",
   "Texts": {
-    "Jobs:SendReminders:Message": "Hey there😊\n\rYou asked to remind you:"
+    "Jobs:SendReminders:Message": "Hey there😊\n\rYou asked to remind you:",
+
+    "Jobs:Evening": "Hey, {0}, it's evening!🌒\n\rTime to slow down and prepare for rest😴\n\rQuick reminder:\n\r\n\rYou have {1} unfinished todo items!\n\r\n\rIf you done some of them it's time to mark them as finished😊"
   }
 }

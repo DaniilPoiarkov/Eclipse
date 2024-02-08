@@ -8,42 +8,42 @@
 - [Deployment and CICD](#deployment-and-cicd)
 
 ## Architecture diagram
-![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/2b033579-b7d2-490f-b93f-6f4b3477f5f8)
+![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/72b872eb-ef0e-416b-8653-9546edc51968)
 
 ## Modules
 
 ### WebAPI
-Basicly controllers and health-checks
+Basicly controllers and health-checks.
 
 ### Pipelines
-Contain logic with telegram interaction. In other words it is available for end user functionality
+Contain logic with telegram interaction. In other words it is available for end user functionality.
 
-This diagram shows how pipeline concept works and how user message proccedes
+This diagram shows how pipeline concept works and how user message proccedes:
 ![Eclipse-pipeline-flow drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/38c678c7-864c-4232-98e2-f809da031109)
 
 ### Application.Contracts
-Provides public API for application use cases
+Provides public API for application use cases.
 
 ### Application
-Contains implementations of public API
+Contains implementations of use cases.
 
 ### Domain.Shared
-Contains domain constants that can be shared thoughout whole solution
+Contains domain constants (like enums, const values) that can be shared thoughout whole solution.
 
 ### Domain
-Contains domain logic of application
+Contains domain logic of application.
 
 ### Core
 Provides easy API to build and retrieve pipelines.
 
 ### Localization
-Provides API to add multiple language support for application
+Provides API for multiple language support in application. As Microsoft.Localization is not very sutable for this purposes and works with XML schemas I desided to create own engine. Here we have ability to dynamicly set culture for localization (Without taking it from request headers) and using json as a schema for resoures. Planning to combine this engine and Microsoft.Localization abstractions.
 
 ### Infrastructure
-Basicly contains wrappers with only necessary API
+Basicly contains wrappers with only necessary API and cross-cutting concerns.
 
 ### DataAccess
-Data consistency
+Data consistency.
 
 ## Tests
 Each Test project reference base Eclipse.Tests class library, that provides helpers which used through all tests.

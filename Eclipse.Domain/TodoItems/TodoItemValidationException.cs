@@ -1,10 +1,16 @@
-﻿using Eclipse.Domain.Exceptions;
+﻿using Eclipse.Infrastructure.Exceptions;
 
 namespace Eclipse.Domain.TodoItems;
 
 [Serializable]
-internal sealed class TodoItemValidationException : DomainException
+internal sealed class TodoItemValidationException : EclipseValidationException
 {
-    internal TodoItemValidationException(params string[] args)
-        : base("Eclipse:ValidationFailed", args) { }
+    internal TodoItemValidationException(string error, params object[] args)
+        : base(error)
+    {
+        for (int i = 0; i < args.Length; i++)
+        {
+            WithData($"{{{i}}}", args[i]);
+        }
+    }
 }

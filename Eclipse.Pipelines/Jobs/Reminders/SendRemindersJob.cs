@@ -1,13 +1,14 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Pipelines.Users;
+
 using Quartz;
 
 using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Jobs.Reminders;
 
-internal class SendRemindersJob : EclipseJobBase
+internal sealed class SendRemindersJob : EclipseJobBase
 {
     private readonly ITelegramBotClient _botClient;
 
@@ -27,8 +28,7 @@ internal class SendRemindersJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var utc = DateTime.UtcNow;
-        var time = new TimeOnly(utc.Hour, utc.Minute);
+        var time = DateTime.UtcNow.GetTime();
 
         var specification = new ReminderDtoNotifyAtSpecification(time);
 
@@ -36,7 +36,7 @@ internal class SendRemindersJob : EclipseJobBase
             .Where(u => u.Reminders.Any(specification))
             .ToList();
 
-        if (users.Count == 0)
+        if (users.IsNullOrEmpty())
         {
             return;
         }

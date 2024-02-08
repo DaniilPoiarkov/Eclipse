@@ -7,6 +7,8 @@ using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Tests.Generators;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
@@ -43,7 +45,9 @@ public class LocalizationDecoratorTests
     public async Task Decorate_WhenLocalizationNotSpecified_ThenFetchingUserCulture()
     {
         var user = IdentityUserGenerator.Generate(1).First();
-        var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser());
+        var services = new ServiceCollection().BuildServiceProvider();
+        
+        var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
 
         _cacheService.Get<string>(default!).ReturnsNullForAnyArgs();
         _userManager.FindByChatIdAsync(user.ChatId).Returns(Task.FromResult<IdentityUser?>(user));

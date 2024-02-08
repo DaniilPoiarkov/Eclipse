@@ -137,7 +137,8 @@ internal class EclipseUpdateHandler : IEclipseUpdateHandler
         try
         {
             return _pipelineProvider.Get(
-                _localizer.ToLocalizableString(context.Value));
+                _localizer.ToLocalizableString(context.Value)
+            );
         }
         catch (LocalizationNotFoundException)
         {

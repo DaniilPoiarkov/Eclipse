@@ -1,9 +1,12 @@
-﻿namespace Eclipse.Domain.Exceptions;
+﻿using Eclipse.Infrastructure.Exceptions;
+
+namespace Eclipse.Domain.Exceptions;
 
 [Serializable]
-public sealed class EntityNotFoundException : DomainException
+public sealed class EntityNotFoundException : EclipseException
 {
-    public EntityNotFoundException(Type type) : base("Entity:NotFound", type.Name)
+    public EntityNotFoundException(Type type) : base("Entity:NotFound")
     {
+        WithData("{0}", type.Name);
     }
 }

@@ -6,5 +6,5 @@ namespace Eclipse.Domain.IdentityUsers;
 internal sealed class DuplicateDataException : DomainException
 {
     internal DuplicateDataException(string property, object value)
-        : base("$User with {0} {1} already exists", property, value.ToString() ?? string.Empty) { }
+        : base("IdentityUser:DuplicateData", property, value.ToString() ?? string.Empty) { }
 }

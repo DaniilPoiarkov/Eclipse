@@ -1,6 +1,6 @@
 ﻿using Eclipse.DataAccess;
 using Eclipse.DataAccess.EclipseCosmosDb;
-using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
 using Microsoft.OpenApi.Models;
@@ -16,12 +16,16 @@ public static class EclipseWebApiModule
 {
     public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
-        services.AddControllers();
+        services
+            .AddControllers()
+            .AddNewtonsoftJson();
 
         services
             .AddEndpointsApiExplorer();
 
-        services.AddScoped<ApiKeyAuthorizeAttribute>();
+        services
+            .AddScoped<ApiKeyAuthorizeAttribute>()
+            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>();
 
         services.AddSwaggerGen(ConfigureSwagger);
 
@@ -41,7 +45,7 @@ public static class EclipseWebApiModule
             Version = "v1",
         });
 
-        var apiKeySecurity = "API-KEY";
+        var apiKeySecurity = "X-API-KEY";
 
         options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
         {

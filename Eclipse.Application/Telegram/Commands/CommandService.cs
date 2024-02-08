@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.Telegram.Commands;
+
 using FluentValidation;
+
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -61,7 +63,7 @@ internal class CommandService : ICommandService
     private async Task SetCommands(IEnumerable<BotCommand> commands, CancellationToken cancellationToken = default)
     {
         await _botClient.SetMyCommandsAsync(commands, BotCommandScope.AllPrivateChats(), cancellationToken: cancellationToken);
-    } 
+    }
 
     private async Task<BotCommand[]> GetMyCommands(CancellationToken cancellationToken = default)
     {

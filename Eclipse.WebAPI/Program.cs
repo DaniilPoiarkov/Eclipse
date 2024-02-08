@@ -10,7 +10,7 @@ using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
-using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.HealthChecks;
 
 using Serilog;
@@ -32,7 +32,7 @@ builder.Services
 
 builder.Services
     .AddInfrastructureModule()
-    .UseTelegramHandler<ITelegramUpdateHandler>()
+    .UseTelegramHandler<IEclipseUpdateHandler>()
     .ConfigureCacheOptions(options => options.Expiration = TimeSpan.FromDays(3))
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
@@ -66,19 +66,17 @@ if (app.Environment.IsDevelopment())
     ///
 }
 
-app.UseExceptionHandler();
-
-app.UseHttpsRedirection();
+app.UseExceptionHandler()
+    .UseHttpsRedirection();
 
 app.UseEclipseHealthCheks();
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication()
+    .UseAuthorization();
 
 app.MapControllers();
 
 await app.InitializeDataAccessModule();
-await app.InitializeApplicationModuleAsync();
 await app.InitializePipelineModuleAsync();
 
 app.Run();

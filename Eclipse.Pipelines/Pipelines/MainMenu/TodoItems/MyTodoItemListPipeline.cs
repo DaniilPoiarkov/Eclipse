@@ -15,7 +15,9 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private readonly IMessageStore _messageStore;
 
-    private static readonly string _errorMessage = "Pipelines:TodoItems:MyList:Error";
+    private static readonly string _pipelinePrefix = $"{PipelinePrefix}:MyList";
+
+    private static readonly string _errorMessage = $"{_pipelinePrefix}:Error";
 
     public MyTodoItemListPipeline(ITodoItemService todoItemService, IIdentityUserService identityUserService, IMessageStore messageStore)
     {
@@ -38,7 +40,7 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
         if (items.Count == 0)
         {
             FinishPipeline();
-            return Menu(TodoItemMenuButtons, Localizer["Pipelines:TodoItems:MyList:Empty"]);
+            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Empty"]);
         }
 
         var message = BuildMessage(items);

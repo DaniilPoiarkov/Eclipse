@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Application.Exceptions;
+using Eclipse.Domain.Suggestions;
 using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;
@@ -10,7 +10,7 @@ public class SuggestionObjectParser : IObjectParser<SuggestionDto>
     {
         if (values.Count != 4)
         {
-            throw new UnableToParseValueException("objects", "Suggestion");
+            throw new UnableToParseValueException(nameof(values), nameof(Suggestion));
         }
 
         var id = values[0].ToGuid();

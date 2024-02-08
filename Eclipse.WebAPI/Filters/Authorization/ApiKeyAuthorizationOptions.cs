@@ -1,4 +1,4 @@
-﻿namespace Eclipse.WebAPI.Filters;
+﻿namespace Eclipse.WebAPI.Filters.Authorization;
 
 public class ApiKeyAuthorizationOptions
 {

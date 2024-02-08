@@ -1,5 +1,4 @@
 ﻿using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.Shared.TodoItems;
 
 namespace Eclipse.Domain.TodoItems;
 
@@ -7,5 +6,5 @@ namespace Eclipse.Domain.TodoItems;
 internal sealed class TodoItemAlreadyFinishedException : DomainException
 {
     internal TodoItemAlreadyFinishedException(string text)
-        : base(TodoItemErrors.Messages.AlreadyFinished, text) { }
+        : base("TodoItem:AlreadyFinished", text) { }
 }

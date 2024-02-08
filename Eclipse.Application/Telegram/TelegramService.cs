@@ -1,7 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Application.Exceptions;
-
-using FluentValidation;
+using Eclipse.Infrastructure.Exceptions;
 
 using Telegram.Bot;
 
@@ -11,21 +9,25 @@ internal class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IValidator<SendMessageModel> _validator;
-
-    public TelegramService(ITelegramBotClient botClient, IValidator<SendMessageModel> validator)
+    public TelegramService(ITelegramBotClient botClient)
     {
         _botClient = botClient;
-        _validator = validator;
     }
 
     public async Task Send(SendMessageModel message, CancellationToken cancellationToken = default)
     {
-        var validationResult = _validator.Validate(message);
-
-        if (!validationResult.IsValid)
+        if (string.IsNullOrEmpty(message.Message))
         {
-            throw new EclipseValidationException(validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
+            throw new EclipseValidationException(
+                TelegramErrors.Messages.MessageCannotBeEmpty
+            );
+        }
+
+        if (message.ChatId == default)
+        {
+            throw new EclipseValidationException(
+                TelegramErrors.Messages.InvalidChatId
+            );
         }
 
         await _botClient.SendTextMessageAsync(

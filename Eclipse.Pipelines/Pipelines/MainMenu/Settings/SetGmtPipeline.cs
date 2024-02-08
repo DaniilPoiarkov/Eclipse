@@ -9,6 +9,8 @@ internal class SetGmtPipeline : SettingsPipelineBase
 {
     private readonly IIdentityUserService _identityUserService;
 
+    private static readonly string _pipelinePrefix = "Pipelines:Settings:SetGmt";
+
     public SetGmtPipeline(IIdentityUserService identityUserService)
     {
         _identityUserService = identityUserService;
@@ -31,7 +33,7 @@ internal class SetGmtPipeline : SettingsPipelineBase
             ? time
             : time.Add(user.Gmt);
 
-        return Text(Localizer["Pipelines:Settings:SetGmt:Info"].Replace("{0}", $"{time:HH:mm}"));
+        return Text(Localizer[$"{_pipelinePrefix}:Info"].Replace("{0}", $"{time:HH:mm}"));
     }
 
     private async Task<IResult> UpdateUserGmt(MessageContext context, CancellationToken cancellationToken)
@@ -43,13 +45,13 @@ internal class SetGmtPipeline : SettingsPipelineBase
 
         if (!context.Value.TryParseAsTimeOnly(out var time))
         {
-            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:SetGmt:CannotParseTime"]);
+            return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:CannotParseTime"]);
         }
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         await _identityUserService.SetUserGmtTimeAsync(user.Id, time, cancellationToken);
 
-        return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:SetGmt:Success"]);
+        return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:Success"]);
     }
 }

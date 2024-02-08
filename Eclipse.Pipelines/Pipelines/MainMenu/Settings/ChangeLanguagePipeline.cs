@@ -3,6 +3,7 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
+using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -15,10 +16,15 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
     private readonly IIdentityUserService _identityUserService;
 
-    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService)
+    private readonly IMessageStore _messageStore;
+
+    private static readonly string _pipelinePrefix = "Pipelines:Settings:Language";
+
+    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService, IMessageStore messageStore)
     {
         _cacheService = cacheService;
         _identityUserService = identityUserService;
+        _messageStore = messageStore;
     }
 
     protected override void Initialize()
@@ -31,25 +37,31 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
     {
         var buttons = new List<InlineKeyboardButton>
         {
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Settings:Language:English"], "en"),
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Settings:Language:Ukrainian"], "uk"),
+            InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:English"], "en"),
+            InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:Ukrainian"], "uk"),
         };
 
-        return Menu(buttons, Localizer["Pipelines:Settings:Language:Choose"]);
+        return Menu(buttons, Localizer[$"{_pipelinePrefix}:Choose"]);
     }
 
     private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
     {
+        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+
         if (!SupportedLanguage(context))
         {
-            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Unsupported"]);
+            return MenuAndRemoveOptions(
+                Localizer[$"{_pipelinePrefix}:Unsupported"],
+                message?.MessageId);
         }
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (user.Culture == context.Value)
         {
-            return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Changed"]);
+            return MenuAndRemoveOptions(
+                Localizer[$"{_pipelinePrefix}:Changed"],
+                message?.MessageId);
         }
 
         var updateDto = new IdentityUserUpdateDto
@@ -66,7 +78,9 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
         Localizer.CheckCulture(context.ChatId);
 
-        return Menu(SettingsMenuButtons, Localizer["Pipelines:Settings:Language:Changed"]);
+        return MenuAndRemoveOptions(
+            Localizer[$"{_pipelinePrefix}:Changed"],
+            message?.MessageId);
 
         static bool SupportedLanguage(MessageContext context)
         {

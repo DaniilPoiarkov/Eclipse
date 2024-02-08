@@ -11,11 +11,11 @@ using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 
 using Serilog;
 
-using Telegram.Bot.Polling;
 using Telegram.Bot;
 
 namespace Eclipse.Pipelines;
@@ -33,8 +33,7 @@ public static class EclipsePipelinesModule
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
                 .AddTransient<IUserStore, UserStore>()
                 .AddTransient<IMessageStore, MessageStore>()
-                .AddTransient<IPipelineStore, PipelineStore>()
-            .AddSingleton<ITelegramUpdateHandler, TelegramUpdateHandler>();
+                .AddTransient<IPipelineStore, PipelineStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())
@@ -60,14 +59,31 @@ public static class EclipsePipelinesModule
 
         var logger = serviceProvider.GetRequiredService<ILogger>();
         var client = serviceProvider.GetRequiredService<ITelegramBotClient>();
-        var updateHandler = serviceProvider.GetRequiredService<IUpdateHandler>();
 
         logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
-        client.StartReceiving(updateHandler);
+
+        await ResetWebhookAsync(serviceProvider, client);
 
         var me = await client.GetMeAsync();
 
         logger.Information("\tBot: {bot}", me.Username);
         logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
+    }
+
+    private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        var webhookInfo = await client.GetWebhookInfoAsync();
+
+        if (webhookInfo is not null)
+        {
+            await client.SetWebhookAsync(string.Empty);
+        }
+
+        await client.SetWebhookAsync(
+            url: configuration["Telegram:WebhookUrl"]!,
+            secretToken: configuration["Telegram:SecretToken"]
+        );
     }
 }

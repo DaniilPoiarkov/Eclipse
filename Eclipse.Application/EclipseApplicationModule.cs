@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
-using Eclipse.Application.Contracts.Google.Sheets.TodoItems;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
@@ -10,7 +9,6 @@ using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
-using Eclipse.Application.Google.Sheets.TodoItems;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.EventHandlers;
 using Eclipse.Application.Localizations;
@@ -69,8 +67,7 @@ public static class EclipseApplicationModule
         });
 
         services
-            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>()
-            .AddTransient<ITodoItemSheetsService, TodoItemSheetsService>();
+            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>();
 
         services
             .Decorate<IReminderService, CachedReminderService>()
@@ -78,36 +75,5 @@ public static class EclipseApplicationModule
             .Decorate<ITodoItemService, CachedTodoItemsService>();
 
         return services;
-    }
-
-    public static async Task InitializeApplicationModuleAsync(this WebApplication app)
-    {
-        using var scope = app.Services.CreateScope();
-
-        var serviceProvider = scope.ServiceProvider;
-
-        var logger = serviceProvider.GetRequiredService<ILogger>();
-
-        logger.Information("Inizializing {module} module", nameof(EclipseApplicationModule));
-
-        logger.Information("\tRetrieving services");
-
-        var userService = serviceProvider.GetRequiredService<IIdentityUserService>();
-        var userCache = serviceProvider.GetRequiredService<IIdentityUserCache>();
-        var cacheService = serviceProvider.GetRequiredService<ICacheService>();
-
-        logger.Information("\t\tRetrieving data");
-
-        var users = await userService.GetAllAsync();
-
-        logger.Information("\tCaching data");
-
-        foreach (var user in users)
-        {
-            userCache.AddOrUpdate(user);
-            cacheService.Set(new CacheKey($"lang-{user.ChatId}"), string.IsNullOrEmpty(user.Culture) ? "uk" : user.Culture);
-        }
-
-        logger.Information("{module} initialized successfully", nameof(EclipseApplicationModule));
     }
 }

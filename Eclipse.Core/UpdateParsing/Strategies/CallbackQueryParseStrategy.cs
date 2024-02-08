@@ -29,9 +29,6 @@ internal sealed class CallbackQueryParseStrategy : IParseStrategy
 
         var value = callback.Data ?? string.Empty;
 
-        return new MessageContext(from.Id, value, user)
-        {
-            Services = _serviceProvider
-        };
+        return new MessageContext(from.Id, value, user, _serviceProvider);
     }
 }

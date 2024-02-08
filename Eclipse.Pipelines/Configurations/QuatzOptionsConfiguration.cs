@@ -1,4 +1,5 @@
-﻿using Eclipse.Pipelines.Jobs.Morning;
+﻿using Eclipse.Pipelines.Jobs.Evening;
+using Eclipse.Pipelines.Jobs.Morning;
 using Eclipse.Pipelines.Jobs.Reminders;
 
 using Microsoft.Extensions.Options;
@@ -9,37 +10,26 @@ namespace Eclipse.Pipelines.Configurations;
 
 internal class QuatzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 {
-    private static readonly TimeZoneInfo _timeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
-
-    private static readonly int _remindersScanInterval = 1;
+    private static readonly int _oneMinuteScanInterval = 1;
 
     public void Configure(QuartzOptions options)
     {
-        AddMorningJob(options);
-        AddSendRemindersJob(options);
+        AddJobWithEveryMinuteFire<MorningJob>(options);
+        AddJobWithEveryMinuteFire<SendRemindersJob>(options);
+        AddJobWithEveryMinuteFire<EveningJob>(options);
     }
 
-    private static void AddSendRemindersJob(QuartzOptions options)
+    private static void AddJobWithEveryMinuteFire<TJob>(QuartzOptions options)
+        where TJob : IJob
     {
-        var jobKey = JobKey.Create(nameof(SendRemindersJob));
+        var jobKey = JobKey.Create(typeof(TJob).Name);
 
-        options.AddJob<SendRemindersJob>(job => job.WithIdentity(jobKey))
-            .AddTrigger(trigger => trigger.ForJob(jobKey)
-                .WithSimpleSchedule(s => s.WithIntervalInMinutes(_remindersScanInterval)
+        options.AddJob<TJob>(job => job.WithIdentity(jobKey))
+            .AddTrigger(
+                trigger => trigger.ForJob(jobKey)
+                    .WithSimpleSchedule(s => s.WithIntervalInMinutes(_oneMinuteScanInterval)
                     .RepeatForever())
-                .StartNow());
-    }
-
-    private static void AddMorningJob(QuartzOptions options)
-    {
-        var key = JobKey.Create(nameof(MorningJob));
-
-        options.AddJob<MorningJob>(job => job.WithIdentity(key))
-            .AddTrigger(trigger => trigger.ForJob(key)
-                .WithSchedule(
-                    CronScheduleBuilder
-                        .DailyAtHourAndMinute(9, 0)
-                        .InTimeZone(_timeZone))
-                .StartNow());
+                    .StartNow()
+            );
     }
 }

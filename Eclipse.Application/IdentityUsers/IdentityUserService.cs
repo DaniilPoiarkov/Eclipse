@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Exceptions;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -20,7 +20,7 @@ internal class IdentityUserService : IIdentityUserService
     public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
         var identity = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+            ?? throw new EntityNotFoundException(typeof(IdentityUser));
 
         return _mapper.Map(identity);
     }
@@ -37,7 +37,7 @@ internal class IdentityUserService : IIdentityUserService
     public async Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+            ?? throw new EntityNotFoundException(typeof(IdentityUser));
 
         return _mapper.Map(user);
     }
@@ -86,7 +86,7 @@ internal class IdentityUserService : IIdentityUserService
         }
 
         var updated = await _userManager.UpdateAsync(user, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+            ?? throw new EntityNotFoundException(typeof(IdentityUser));
 
         return _mapper.Map(updated);
     }
@@ -94,6 +94,6 @@ internal class IdentityUserService : IIdentityUserService
     private async Task<IdentityUser> FindById(Guid id, CancellationToken cancellationToken = default)
     {
         return await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new ObjectNotFoundException(nameof(IdentityUser));
+            ?? throw new EntityNotFoundException(typeof(IdentityUser));
     }
 }

@@ -2,9 +2,9 @@
 
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Exceptions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.Reminders;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Tests.Generators;
 
@@ -56,7 +56,7 @@ public class ReminderServiceTests
     }
 
     [Fact]
-    public async Task CreateReminderAsync_WhenUserNotExists_ThenObjectNotFoundExceptionThrown()
+    public async Task CreateReminderAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
         var reminderCreateDto = new ReminderCreateDto
         {
@@ -69,7 +69,7 @@ public class ReminderServiceTests
             await Sut.CreateReminderAsync(Guid.NewGuid(), reminderCreateDto);
         };
 
-        await action.Should().ThrowAsync<ObjectNotFoundException>();
+        await action.Should().ThrowAsync<EntityNotFoundException>();
         await _userManager.DidNotReceive().UpdateAsync(default!);
     }
 
