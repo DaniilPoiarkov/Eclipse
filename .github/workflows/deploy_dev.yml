@@ -5,6 +5,7 @@ env:
   AZURE_WEBAPP_NAME: eclipse-dev-app
   AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '8.0.*'
+  DOTNET_ROOT: '.'
 
 on:
   push:
