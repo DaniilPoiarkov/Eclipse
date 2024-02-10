@@ -6,5 +6,8 @@ namespace Eclipse.Domain.TodoItems;
 internal sealed class TodoItemLimitException : EclipseValidationException
 {
     internal TodoItemLimitException(int limit)
-        : base("TodoItem:Limit", $"{limit}") { }
+        : base("TodoItem:Limit")
+    {
+        WithData("{0}", limit);
+    }
 }
