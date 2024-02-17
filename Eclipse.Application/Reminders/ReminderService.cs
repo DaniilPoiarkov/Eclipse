@@ -6,7 +6,7 @@ using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.Reminders;
 
-internal class ReminderService : IReminderService
+internal sealed class ReminderService : IReminderService
 {
     private readonly IdentityUserManager _userManager;
 

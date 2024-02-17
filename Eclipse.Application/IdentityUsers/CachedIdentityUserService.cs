@@ -3,7 +3,7 @@ using Eclipse.Application.Contracts.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
 
-internal class CachedIdentityUserService : IdentityUserCachingFixture, IIdentityUserService
+internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, IIdentityUserService
 {
     private readonly IIdentityUserService _identityUserService;
 

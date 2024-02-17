@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Application.Telegram.Commands;
 
-internal class CommandService : ICommandService
+internal sealed class CommandService : ICommandService
 {
     private readonly ITelegramBotClient _botClient;
 

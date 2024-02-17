@@ -4,7 +4,7 @@ using Eclipse.Application.Contracts.TodoItems;
 
 namespace Eclipse.Application.TodoItems;
 
-internal class CachedTodoItemsService : IdentityUserCachingFixture, ITodoItemService
+internal sealed class CachedTodoItemsService : IdentityUserCachingFixture, ITodoItemService
 {
     private readonly ITodoItemService _todoItemService;
     public CachedTodoItemsService(IIdentityUserCache userCache, ITodoItemService todoItemService) : base(userCache)

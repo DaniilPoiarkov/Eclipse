@@ -6,7 +6,7 @@ using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.TodoItems;
 
-internal class TodoItemService : ITodoItemService
+internal sealed class TodoItemService : ITodoItemService
 {
     private readonly IdentityUserManager _userManager;
 
