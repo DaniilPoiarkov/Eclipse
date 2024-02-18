@@ -4,7 +4,7 @@ using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;
 
-public class SuggestionObjectParser : IObjectParser<SuggestionDto>
+public sealed class SuggestionObjectParser : IObjectParser<SuggestionDto>
 {
     public SuggestionDto Parse(IList<object> values)
     {
@@ -29,6 +29,6 @@ public class SuggestionObjectParser : IObjectParser<SuggestionDto>
 
     public IList<object> Parse(SuggestionDto value)
     {
-        return new List<object> { value.Id, value.Text, value.TelegramUserId, value.CreatedAt };
+        return [value.Id, value.Text, value.TelegramUserId, value.CreatedAt];
     }
 }

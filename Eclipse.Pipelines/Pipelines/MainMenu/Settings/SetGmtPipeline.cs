@@ -26,8 +26,7 @@ internal class SetGmtPipeline : SettingsPipelineBase
     {
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        var utc = DateTime.UtcNow;
-        var time = new TimeOnly(utc.Hour, utc.Minute);
+        var time = DateTime.UtcNow.GetTime();
 
         time = user.Gmt == default
             ? time

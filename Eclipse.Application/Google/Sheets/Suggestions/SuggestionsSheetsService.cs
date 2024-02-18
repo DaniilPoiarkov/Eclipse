@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Eclipse.Application.Google.Sheets.Suggestions;
 
-internal class SuggestionsSheetsService : EclipseSheetsService<SuggestionDto>, ISuggestionsSheetsService
+internal sealed class SuggestionsSheetsService : EclipseSheetsService<SuggestionDto>, ISuggestionsSheetsService
 {
     public SuggestionsSheetsService(
         IGoogleSheetsService service,

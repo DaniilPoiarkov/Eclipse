@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Eclipse.Application.Telegram.Commands;
 
-public class CommandDtoValidator : AbstractValidator<CommandDto>
+public sealed class CommandDtoValidator : AbstractValidator<CommandDto>
 {
     public CommandDtoValidator()
     {

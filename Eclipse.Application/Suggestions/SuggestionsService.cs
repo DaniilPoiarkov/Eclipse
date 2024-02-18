@@ -4,7 +4,7 @@ using Eclipse.Application.Contracts.IdentityUsers;
 
 namespace Eclipse.Application.Suggestions;
 
-internal class SuggestionsService : ISuggestionsService
+internal sealed class SuggestionsService : ISuggestionsService
 {
     private readonly ISuggestionsSheetsService _sheetsService;
 

@@ -5,7 +5,7 @@ using Eclipse.Localization.Localizers;
 
 namespace Eclipse.Application.Localizations;
 
-internal class EclipseLocalizer : IEclipseLocalizer
+internal sealed class EclipseLocalizer : IEclipseLocalizer
 {
     private readonly ILocalizer _localizer;
 
