@@ -64,8 +64,7 @@ public class IdentityUserManager
             .SingleOrDefault();
     }
 
-    // TODO: Refactor tests so this method no longer need to be virtual and class can be marked as sealed
-    public virtual async Task<IdentityUser?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public async Task<IdentityUser?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return (await _identityUserRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
             .SingleOrDefault();

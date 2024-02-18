@@ -4,7 +4,7 @@ using Eclipse.Application.Contracts.Reminders;
 
 namespace Eclipse.Application.Reminders;
 
-internal class CachedReminderService : IdentityUserCachingFixture, IReminderService
+internal sealed class CachedReminderService : IdentityUserCachingFixture, IReminderService
 {
     private readonly IReminderService _reminderService;
 

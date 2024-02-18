@@ -3,7 +3,7 @@ using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Application.IdentityUsers;
 
-internal class IdentityUserCache : IIdentityUserCache
+internal sealed class IdentityUserCache : IIdentityUserCache
 {
     private readonly ICacheService _cacheService;
 
@@ -44,7 +44,6 @@ internal class IdentityUserCache : IIdentityUserCache
 
     private List<IdentityUserDto> GetList()
     {
-        return _cacheService.Get<List<IdentityUserDto>>(Key)
-            ?? new List<IdentityUserDto>();
+        return _cacheService.Get<List<IdentityUserDto>>(Key) ?? [];
     }
 }

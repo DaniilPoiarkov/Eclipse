@@ -6,7 +6,7 @@ using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
 
-public class IdentityUserMapper : IMapper<IdentityUser, IdentityUserDto>
+public sealed class IdentityUserMapper : IMapper<IdentityUser, IdentityUserDto>
 {
     public IdentityUserDto Map(IdentityUser value)
     {

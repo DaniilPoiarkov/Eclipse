@@ -5,7 +5,7 @@ using Telegram.Bot;
 
 namespace Eclipse.Application.Telegram;
 
-internal class TelegramService : ITelegramService
+internal sealed class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _botClient;
 

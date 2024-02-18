@@ -90,10 +90,8 @@ public sealed class IdentityUser : AggregateRoot
     /// <returns>Removed Reminders</returns>
     public IReadOnlyList<Reminder> RemoveRemindersForTime(TimeOnly time)
     {
-        var specification = new ReminderNotifyAtSpecification(time);
-
         var reminders = _reminders
-            .Where(specification)
+            .Where(new ReminderNotifyAtSpecification(time))
             .ToList();
 
         foreach (var reminder in reminders)
