@@ -5,7 +5,7 @@ using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Application.IdentityUsers;
 
-internal class IdentityUserService : IIdentityUserService
+internal sealed class IdentityUserService : IIdentityUserService
 {
     private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
 

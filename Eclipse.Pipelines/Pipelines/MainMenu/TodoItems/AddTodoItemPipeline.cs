@@ -35,6 +35,11 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> SaveNewTodoItem(MessageContext context, CancellationToken cancellationToken)
     {
+        if (context.Value.Equals("/cancel"))
+        {
+            return Menu(TodoItemMenuButtons, Localizer["Okay"]);
+        }
+
         var createNewItemModel = new CreateTodoItemDto
         {
             Text = context.Value,

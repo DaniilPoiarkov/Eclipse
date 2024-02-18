@@ -16,9 +16,9 @@ using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Decorations;
 
-public class LocalizationDecoratorTests
+public sealed class LocalizationDecoratorTests
 {
-    private readonly IdentityUserManager _userManager;
+    private readonly IIdentityUserRepository _repository;
 
     private readonly ICacheService _cacheService;
 
@@ -32,13 +32,17 @@ public class LocalizationDecoratorTests
 
     public LocalizationDecoratorTests()
     {
-        _userManager = Substitute.For<IdentityUserManager>(Substitute.For<IIdentityUserRepository>());
+        _repository = Substitute.For<IIdentityUserRepository>();
         _cacheService = Substitute.For<ICacheService>();
         _localizer = Substitute.For<IEclipseLocalizer>();
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
 
-        _lazySut = new Lazy<LocalizationDecorator>(() => new LocalizationDecorator(_userManager, _cacheService, _localizer));
+        _lazySut = new Lazy<LocalizationDecorator>(
+            () => new LocalizationDecorator(
+                new IdentityUserManager(_repository),
+                _cacheService,
+                _localizer));
     }
 
     [Fact]
@@ -50,12 +54,14 @@ public class LocalizationDecoratorTests
         var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
 
         _cacheService.Get<string>(default!).ReturnsNullForAnyArgs();
-        _userManager.FindByChatIdAsync(user.ChatId).Returns(Task.FromResult<IdentityUser?>(user));
+
+        _repository.GetByExpressionAsync(_ => true)
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
 
         await Sut.Decorate(_execution, context);
 
         _cacheService.ReceivedWithAnyArgs().Get<string>(default!);
-        await _userManager.Received().FindByChatIdAsync(user.ChatId);
+        await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         _cacheService.ReceivedWithAnyArgs().Set(default!, user.Culture);
         _localizer.Received().CheckCulture(user.ChatId);
     }

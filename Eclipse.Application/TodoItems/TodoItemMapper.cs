@@ -4,7 +4,7 @@ using Eclipse.Domain.TodoItems;
 
 namespace Eclipse.Application.TodoItems;
 
-public class TodoItemMapper : IMapper<TodoItem, TodoItemDto>
+public sealed class TodoItemMapper : IMapper<TodoItem, TodoItemDto>
 {
     public TodoItemDto Map(TodoItem value)
     {
