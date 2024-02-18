@@ -16,9 +16,9 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.TodoItems;
 
-public class TodoItemsServiceTests
+public sealed class TodoItemsServiceTests
 {
-    private readonly IdentityUserManager _userManager;
+    private readonly IIdentityUserRepository _repository;
 
     private readonly Lazy<ITodoItemService> _lazySut;
 
@@ -28,8 +28,8 @@ public class TodoItemsServiceTests
     {
         var mapper = new IdentityUserMapper();
 
-        _userManager = Substitute.For<IdentityUserManager>(Substitute.For<IIdentityUserRepository>());
-        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(_userManager, mapper));
+        _repository = Substitute.For<IIdentityUserRepository>();
+        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(new IdentityUserManager(_repository), mapper));
     }
 
     [Fact]
@@ -37,7 +37,8 @@ public class TodoItemsServiceTests
     {   
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _userManager.FindByChatIdAsync(user.ChatId).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
+        _repository.GetByExpressionAsync(_ => true)
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
@@ -70,7 +71,8 @@ public class TodoItemsServiceTests
             user.AddTodoItem(faker.Lorem.Word());
         }
 
-        _userManager.FindByChatIdAsync(user.ChatId).ReturnsForAnyArgs(Task.FromResult<IdentityUser?>(user));
+        _repository.GetByExpressionAsync(_ => true)
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
@@ -91,7 +93,8 @@ public class TodoItemsServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _userManager.FindByChatIdAsync(user.ChatId).Returns(Task.FromResult<IdentityUser?>(user));
+        _repository.GetByExpressionAsync(_ => true)
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
