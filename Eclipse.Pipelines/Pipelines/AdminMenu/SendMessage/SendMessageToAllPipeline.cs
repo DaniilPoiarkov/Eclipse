@@ -2,12 +2,11 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using System;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
 [Route("Menu:AdminMenu:Send:All", "/admin_send_all")]
-internal class SendMessageToAllPipeline : AdminPipelineBase
+internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 {
     private readonly IIdentityUserService _userService;
 

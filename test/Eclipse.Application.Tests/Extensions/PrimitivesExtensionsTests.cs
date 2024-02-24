@@ -29,4 +29,15 @@ public class PrimitivesExtensionsTests
         parsed.Should().BeFalse();
         time.Should().Be(default);
     }
+
+    [Fact]
+    public void TryParseAsTimeOnly_WhenHoursAndMinutesOutOfRange_ThenDefaultValueReturned()
+    {
+        var str = "222:333";
+
+        var parsed = str.TryParseAsTimeOnly(out var time);
+
+        parsed.Should().BeFalse();
+        time.Should().Be(default);
+    }
 }
