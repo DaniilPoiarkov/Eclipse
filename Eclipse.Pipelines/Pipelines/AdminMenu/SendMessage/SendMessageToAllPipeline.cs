@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using System;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
@@ -46,7 +47,7 @@ internal class SendMessageToAllPipeline : AdminPipelineBase
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
-        if (!context.Value.Equals("/confirm", StringComparison.CurrentCultureIgnoreCase))
+        if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
