@@ -11,10 +11,13 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
 
     private readonly IdentityUserManager _userManager;
 
-    public IdentityUserReadService(IMapper<IdentityUser, IdentityUserDto> mapper, IdentityUserManager userManager)
+    private readonly IIdentityUserRepository _repository;
+
+    public IdentityUserReadService(IMapper<IdentityUser, IdentityUserDto> mapper, IdentityUserManager userManager, IIdentityUserRepository repository)
     {
         _mapper = mapper;
         _userManager = userManager;
+        _repository = repository;
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -42,8 +45,12 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
         return _mapper.Map(user);
     }
 
-    public Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var users = await _repository.GetByFilterAsync(request.Name, request.UserName, request.NotificationsEnabled, cancellationToken);
+
+        return users
+            .Select(_mapper.Map)
+            .ToArray();
     }
 }
