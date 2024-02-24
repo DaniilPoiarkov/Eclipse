@@ -12,4 +12,9 @@ internal sealed class IdentityUserRepository : CosmosRepository<IdentityUser>, I
 {
     public IdentityUserRepository(EclipseCosmosDbContext context, IServiceProvider serviceProvider)
         : base(context.IdentityUsers, serviceProvider.CreateAsyncScope().ServiceProvider.GetRequiredService<IPublisher>()) { }
+
+    public Task<List<IdentityUser>> GetByFilterAsync(string? name, string? userName, bool notificationEnabled, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
