@@ -34,22 +34,23 @@ public class SuggestPipeline : EclipsePipelineBase
 
     protected IResult SendInfo(MessageContext context)
     {
-        var greetings = Localizer!["Pipelines:Suggest:Greetings"].Split(';', StringSplitOptions.RemoveEmptyEntries);
-        var greeting = greetings[Random.Shared.Next(0, greetings.Length)];
+        var greeting = Localizer!["Pipelines:Suggest:Greetings"]
+            .Split(';', StringSplitOptions.RemoveEmptyEntries)
+            .GetRandomItem();
 
         return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
     }
 
     protected async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
     {
-        if (context.Value.Equals("/cancel", StringComparison.CurrentCultureIgnoreCase))
-        {
-            return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:AsYouWish"]);
-        }
-
-        if (string.IsNullOrEmpty(context.Value))
+        if (context.Value.IsNullOrEmpty())
         {
             return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Error"]);
+        }
+
+        if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
+        {
+            return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:AsYouWish"]);
         }
 
         var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:" +
