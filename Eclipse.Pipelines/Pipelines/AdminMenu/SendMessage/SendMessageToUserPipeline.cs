@@ -5,7 +5,7 @@ using Eclipse.Core.Core;
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
 [Route("Menu:AdminMenu:Send:User", "/admin_send_user")]
-internal class SendMessageToUserPipeline : AdminPipelineBase
+internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 {
     private readonly ITelegramService _telegramService;
 
@@ -55,7 +55,7 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
 
     private async Task<IResult> SendMessage(MessageContext context, CancellationToken cancellationToken)
     {
-        if (!context.Value.Equals("/confirm", StringComparison.CurrentCultureIgnoreCase))
+        if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
