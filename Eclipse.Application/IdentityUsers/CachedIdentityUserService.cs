@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -12,9 +13,9 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         _identityUserService = identityUserService;
     }
 
-    public Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        return WithCachingAsync(() => _identityUserService.CreateAsync(createDto, cancellationToken));
+        return await WithCachingAsync(async () => await _identityUserService.CreateAsync(createDto, cancellationToken));
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)

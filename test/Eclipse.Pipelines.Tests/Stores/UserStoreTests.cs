@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 using Eclipse.Core.Models;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
@@ -11,7 +12,7 @@ using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Stores;
 
-public class UserStoreTests
+public sealed class UserStoreTests
 {
     private readonly IIdentityUserService _identityUserService = Substitute.For<IIdentityUserService>();
 
@@ -39,10 +40,13 @@ public class UserStoreTests
     [Fact]
     public async Task AddOrUpdate_WhenUserNotExists_ThenCreatesUser_AndAddToCache()
     {
-        _identityUserCache.GetAll().Returns(new List<IdentityUserDto>());
-        _identityUserService.GetByChatIdAsync(User.Id).Throws(new EntityNotFoundException(typeof(IdentityUser)));
+        _identityUserCache.GetAll()
+            .Returns(new List<IdentityUserDto>());
 
-        var create = new IdentityUserCreateDto
+        _identityUserService.GetByChatIdAsync(User.Id)
+            .Throws(new EntityNotFoundException(typeof(IdentityUser)));
+
+        var dto = new IdentityUserDto
         {
             ChatId = User.Id,
             Name = User.Name,
@@ -50,9 +54,14 @@ public class UserStoreTests
             Username = User.Username ?? string.Empty
         };
 
+        _identityUserService.CreateAsync(default!)
+            .ReturnsForAnyArgs(
+                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+            );
+
         await Sut.AddOrUpdate(User);
 
-        var dto = await _identityUserService.ReceivedWithAnyArgs().CreateAsync(create);
+        await _identityUserService.ReceivedWithAnyArgs().CreateAsync(new IdentityUserCreateDto());
         _identityUserCache.Received().AddOrUpdate(dto);
     }
 

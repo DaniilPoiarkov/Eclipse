@@ -41,8 +41,8 @@ internal class UserStore : IUserStore
                 ChatId = user.Id
             };
 
-            var identity = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
-            _userCache.AddOrUpdate(identity);
+            var result = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
+            _userCache.AddOrUpdate(result.Value);
         }
     }
 

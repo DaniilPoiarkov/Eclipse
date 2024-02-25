@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
+using Eclipse.Common.Results;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -35,10 +36,13 @@ public sealed class CachedIdentityUserServiceTests
 
         var createDto = new IdentityUserCreateDto();
 
-        _userService.CreateAsync(createDto).Returns(Task.FromResult(dto));
+        _userService.CreateAsync(createDto).Returns(
+            Task.FromResult(Result<IdentityUserDto>.Success(dto)
+        ));
 
         var result = await Sut.CreateAsync(createDto);
 
+        result.IsSuccess.Should().BeTrue();
         await _userService.Received().CreateAsync(createDto);
         _userCache.Received().AddOrUpdate(result);
     }

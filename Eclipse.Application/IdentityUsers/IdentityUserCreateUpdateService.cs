@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Common.Exceptions;
+using Eclipse.Common.Results;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 
@@ -18,22 +18,13 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
         _userManager = userManager;
     }
 
-    public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
         var result = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            var error = result.Error;
-
-            var ex = new EclipseValidationException(error!.Description);
-
-            for (int i = 0; i < error.Args.Length; i++)
-            {
-                ex.WithData($"{{{i}}}", error.Args[i]);
-            }
-
-            throw ex;
+            return result.Error;
         }
 
         return _mapper.Map(result.Value);

@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -17,7 +18,7 @@ internal sealed class IdentityUserService : IIdentityUserService
         _readService = readService;
     }
 
-    public Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
         return _createUpdateService.CreateAsync(createDto, cancellationToken);
     }

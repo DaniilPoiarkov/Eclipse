@@ -1,4 +1,6 @@
-﻿namespace Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Common.Results;
+
+namespace Eclipse.Application.Contracts.IdentityUsers;
 
 public interface IIdentityUserService : IIdentityUserReadService, IIdentityUserCreateUpdateService, IIdentityUserLogicService
 {
@@ -18,7 +20,7 @@ public interface IIdentityUserReadService
 
 public interface IIdentityUserCreateUpdateService
 {
-    Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default);
+    Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default);
 
     Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default);
 }
