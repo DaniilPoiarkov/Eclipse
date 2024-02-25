@@ -24,7 +24,6 @@ public class ExceptionHandlerMiddleware : IExceptionHandler
     {
         var statusCode = exception switch
         {
-            DomainException => StatusCodes.Status403Forbidden,
             EntityNotFoundException => StatusCodes.Status404NotFound,
             EclipseValidationException => StatusCodes.Status400BadRequest,
             NotImplementedException => StatusCodes.Status501NotImplemented,

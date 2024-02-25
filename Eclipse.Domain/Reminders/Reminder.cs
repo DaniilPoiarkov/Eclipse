@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Eclipse.Domain.Reminders;
 
-public class Reminder : Entity
+public sealed class Reminder : Entity
 {
     public Guid UserId { get; private set; }
 

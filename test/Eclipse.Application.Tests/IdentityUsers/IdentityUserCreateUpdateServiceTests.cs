@@ -14,7 +14,7 @@ namespace Eclipse.Application.Tests.IdentityUsers;
 
 public sealed class IdentityUserCreateUpdateServiceTests
 {
-    private readonly IdentityUserManager _manager;
+    private readonly IIdentityUserRepository _repository;
 
     private readonly Lazy<IIdentityUserCreateUpdateService> _lazySut;
 
@@ -22,11 +22,10 @@ public sealed class IdentityUserCreateUpdateServiceTests
 
     public IdentityUserCreateUpdateServiceTests()
     {
-        _manager = Substitute.For<IdentityUserManager>(
-            Substitute.For<IIdentityUserRepository>());
-
+        _repository = Substitute.For<IIdentityUserRepository>();
+        
         _lazySut = new Lazy<IIdentityUserCreateUpdateService>(
-            () => new IdentityUserCreateUpdateService(new IdentityUserMapper(), _manager)
+            () => new IdentityUserCreateUpdateService(new IdentityUserMapper(), new IdentityUserManager(_repository))
         );
     }
 
@@ -39,7 +38,7 @@ public sealed class IdentityUserCreateUpdateServiceTests
         };
 
         await action.Should().ThrowAsync<EntityNotFoundException>();
-        await _manager.DidNotReceive().UpdateAsync(default!);
+        await _repository.DidNotReceive().UpdateAsync(default!);
     }
 
     [Fact]
@@ -47,8 +46,8 @@ public sealed class IdentityUserCreateUpdateServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _manager.FindByIdAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
-        _manager.UpdateAsync(user).Returns(Task.FromResult<IdentityUser?>(user));
+        _repository.FindAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
+        _repository.UpdateAsync(user).Returns(Task.FromResult(user));
 
         var updateDto = new IdentityUserUpdateDto
         {
@@ -63,7 +62,7 @@ public sealed class IdentityUserCreateUpdateServiceTests
         result.Name.Should().Be(updateDto.Name);
         result.Surname.Should().Be(updateDto.Surname);
 
-        await _manager.Received().FindByIdAsync(user.Id);
-        await _manager.Received().UpdateAsync(user);
+        await _repository.Received().FindAsync(user.Id);
+        await _repository.Received().UpdateAsync(user);
     }
 }

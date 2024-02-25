@@ -48,6 +48,7 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
 
         try
         {
+            // TODO: Handle result here
             await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:NewItemAdded"]);
         }
