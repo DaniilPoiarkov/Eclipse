@@ -70,20 +70,7 @@ public static class ResultExtensions
             : result.ToProblemActionResult();
     }
 
-    public static IActionResult ToActionResult<T>(this Result<T> result, Func<IActionResult> okResult)
-    {
-        return result.IsSuccess
-            ? okResult()
-            : result.ToProblemActionResult();
-    }
-
     public static IResult ToResult(this Result result, Func<IResult> okResult)
-    {
-        return result.IsSuccess
-            ? okResult()
-            : result.ToProblemResult();
-    }
-    public static IResult ToResult<T>(this Result<T> result, Func<IResult> okResult)
     {
         return result.IsSuccess
             ? okResult()
