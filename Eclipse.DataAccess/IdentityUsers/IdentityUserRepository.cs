@@ -17,9 +17,25 @@ internal sealed class IdentityUserRepository : CosmosRepository<IdentityUser>, I
 
     public Task<IReadOnlyList<IdentityUser>> GetByFilterAsync(string? name, string? userName, bool notificationEnabled, CancellationToken cancellationToken = default)
     {
-        var specification = new NameSpecification(name)
-            .And(new UserNameSpecification(userName))
-            .And(new NotificationsEnabledSpecification(notificationEnabled));
+        var specification = Specification<IdentityUser>.Empty;
+
+        if (!name.IsNullOrEmpty())
+        {
+            specification = specification
+                .And(new NameSpecification(name));
+        }
+
+        if (!userName.IsNullOrEmpty())
+        {
+            specification = specification
+                .And(new UserNameSpecification(userName));
+        }
+
+        if (notificationEnabled)
+        {
+            specification = specification
+                .And(new NotificationsEnabledSpecification());
+        }
 
         return GetByExpressionAsync(specification, cancellationToken);
     }

@@ -7,7 +7,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[ApiKeyAuthorize]
+//[ApiKeyAuthorize]
 public sealed class UsersController : ControllerBase
 {
     private readonly IIdentityUserService _service;
@@ -21,5 +21,11 @@ public sealed class UsersController : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         return Ok(await _service.GetAllAsync(cancellationToken));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> GetFilteredList([FromBody] GetUsersRequest request, CancellationToken cancellationToken)
+    {
+        return Ok(await _service.GetFilteredListAsync(request, cancellationToken));
     }
 }

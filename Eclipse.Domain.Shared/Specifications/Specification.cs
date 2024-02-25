@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using Eclipse.Domain.Shared.Specifications.LogicalOperators;
+
+using System.Linq.Expressions;
 
 namespace Eclipse.Domain.Shared.Specifications;
 
@@ -13,4 +15,6 @@ public abstract class Specification<T>
     public static implicit operator Expression<Func<T, bool>>(Specification<T> specification) => specification.IsSatisfied();
 
     public static implicit operator Func<T, bool>(Specification<T> specification) => specification.IsSatisfied().Compile();
+
+    public static Specification<T> Empty => new EmptySpecification<T>();
 }
