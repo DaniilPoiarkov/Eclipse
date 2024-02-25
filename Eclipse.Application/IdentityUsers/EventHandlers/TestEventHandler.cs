@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Common.Telegram;
 using Eclipse.Domain.IdentityUsers.Events;
-using Eclipse.Infrastructure.Builder;
 
 using MediatR;
 

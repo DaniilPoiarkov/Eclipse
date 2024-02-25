@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Common.Cache;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

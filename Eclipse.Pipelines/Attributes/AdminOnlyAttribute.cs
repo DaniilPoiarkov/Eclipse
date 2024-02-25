@@ -1,13 +1,13 @@
-﻿using Eclipse.Core.Attributes;
+﻿using Eclipse.Common.Telegram;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Validation;
-using Eclipse.Infrastructure.Builder;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Eclipse.Pipelines.Attributes;
 
-internal class AdminOnlyAttribute : ContextValidationAttribute
+internal sealed class AdminOnlyAttribute : ContextValidationAttribute
 {
     public override ValidationResult Validate(ValidationContext context)
     {

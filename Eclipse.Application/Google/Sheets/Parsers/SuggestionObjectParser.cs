@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Common.Sheets;
 using Eclipse.Domain.Suggestions;
-using Eclipse.Infrastructure.Google.Sheets;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;
 

@@ -1,4 +1,4 @@
-﻿using Eclipse.Infrastructure.Exceptions;
+﻿using Eclipse.Common.Exceptions;
 
 namespace Eclipse.WebAPI.Middlewares;
 

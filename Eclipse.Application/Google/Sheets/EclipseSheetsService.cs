@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Infrastructure.Google.Sheets;
+using Eclipse.Common.Sheets;
 
 using Microsoft.Extensions.Configuration;
 
@@ -7,7 +7,7 @@ namespace Eclipse.Application.Google.Sheets;
 
 internal abstract class EclipseSheetsService<TObject> : IEclipseSheetsService<TObject>
 {
-    protected readonly IGoogleSheetsService Service;
+    protected readonly ISheetsService Service;
 
     protected readonly IObjectParser<TObject> Parser;
 
@@ -17,7 +17,7 @@ internal abstract class EclipseSheetsService<TObject> : IEclipseSheetsService<TO
 
     protected abstract string Range { get; }
 
-    public EclipseSheetsService(IGoogleSheetsService service, IObjectParser<TObject> parser, IConfiguration configuration)
+    public EclipseSheetsService(ISheetsService service, IObjectParser<TObject> parser, IConfiguration configuration)
     {
         Service = service;
         Parser = parser;

@@ -1,8 +1,8 @@
-﻿using Eclipse.Infrastructure.Cache;
+﻿using Eclipse.Common.Cache;
 
 namespace Eclipse.Pipelines.Stores.Messages;
 
-public class MessageKey : StoreKey
+public sealed class MessageKey : StoreKey
 {
     public MessageKey(long chatId) : base(chatId)
     {

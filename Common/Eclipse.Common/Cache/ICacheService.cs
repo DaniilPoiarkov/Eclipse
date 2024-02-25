@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Infrastructure.Cache;
+﻿namespace Eclipse.Common.Cache;
 
 /// <summary>
 /// Simple wrapper around memory cache with easy to use API

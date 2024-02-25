@@ -1,4 +1,7 @@
-﻿using Eclipse.Infrastructure.Builder;
+﻿using Eclipse.Common.Cache;
+using Eclipse.Common.Sheets;
+using Eclipse.Common.Telegram;
+using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
@@ -37,7 +40,7 @@ public static class EclipseInfrastructureModule
         services
             .AddSingleton<IGoogleClient, GoogleClient>()
             .AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
-                .AddScoped<IGoogleSheetsService, GoogleSheetsService>();
+                .AddScoped<ISheetsService, GoogleSheetsService>();
 
         return services;
     }

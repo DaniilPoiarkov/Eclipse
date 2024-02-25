@@ -1,9 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Tests.Generators;
 

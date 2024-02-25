@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Telegram;
-using Eclipse.Infrastructure.Exceptions;
-using Eclipse.Localization.Exceptions;
+using Eclipse.Common.Exceptions;
 
 using FluentAssertions;
 
@@ -13,7 +12,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.Telegram;
 
-public class TelegramServiceTests
+public sealed class TelegramServiceTests
 {
     private readonly ITelegramService _sut;
 
