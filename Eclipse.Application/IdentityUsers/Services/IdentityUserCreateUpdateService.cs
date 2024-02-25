@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Results;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
 
