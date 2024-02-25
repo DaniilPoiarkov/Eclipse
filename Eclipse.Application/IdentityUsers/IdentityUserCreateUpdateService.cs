@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Exceptions;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 
@@ -25,7 +26,7 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
         {
             var error = result.Error;
 
-            var ex = new DomainException(error!.Description);
+            var ex = new EclipseValidationException(error!.Description);
 
             for (int i = 0; i < error.Args.Length; i++)
             {

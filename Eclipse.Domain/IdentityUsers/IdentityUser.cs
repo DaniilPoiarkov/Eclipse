@@ -136,21 +136,16 @@ public sealed class IdentityUser : AggregateRoot
             return UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         }
 
-        if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
-        {
-            return UserDomainErrors.TodoItemIsEmpty();
-        }
-
-        if (text.Length > TodoItemConstants.MaxLength)
-        {
-            return UserDomainErrors.TodoItemTooLong(TodoItemConstants.MaxLength);
-        }
-
-        var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        var result = TodoItem.Create(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
         
-        _todoItems.Add(todoItem);
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
 
-        return todoItem;
+        _todoItems.Add(result.Value);
+
+        return result;
     }
 
     /// <summary>Finishes the item.</summary>
