@@ -3,7 +3,7 @@ using Eclipse.Domain.Shared.Repositories;
 
 namespace Eclipse.Domain.IdentityUsers;
 
-public class IdentityUserManager
+public sealed class IdentityUserManager
 {
     private readonly IIdentityUserRepository _identityUserRepository;
 
@@ -21,18 +21,17 @@ public class IdentityUserManager
     /// <param name="notificationsEnabled">if set to <c>true</c> [notifications enabled].</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Created user</returns>
-    /// <exception cref="DuplicateDataException">User with given chatId
     /// or
     /// username
     /// already exists</exception>
     public async Task<Result<IdentityUser>> CreateAsync(
         string name, string surname, string username, long chatId, CancellationToken cancellationToken = default)
     {
-        var hasDuplicates = await _identityUserRepository.ContainsAsync(
+        var alreadyExist = await _identityUserRepository.ContainsAsync(
             expression: u => u.ChatId == chatId,
             cancellationToken: cancellationToken);
 
-        if (hasDuplicates)
+        if (alreadyExist)
         {
             return UserDomainErrors.DuplicateData(nameof(chatId), chatId);
         }

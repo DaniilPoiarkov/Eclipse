@@ -14,8 +14,6 @@ namespace Eclipse.Application.Tests.IdentityUsers;
 
 public sealed class IdentityUserReadServiceTests
 {
-    private readonly IdentityUserManager _manager;
-
     private readonly IIdentityUserRepository _repository;
 
     private readonly Lazy<IIdentityUserReadService> _lazySut;
@@ -25,8 +23,13 @@ public sealed class IdentityUserReadServiceTests
     public IdentityUserReadServiceTests()
     {
         _repository = Substitute.For<IIdentityUserRepository>();
-        _manager = Substitute.For<IdentityUserManager>(_repository);
-        _lazySut = new Lazy<IIdentityUserReadService>(() => new IdentityUserReadService(new IdentityUserMapper(), _manager, _repository));
+
+        _lazySut = new Lazy<IIdentityUserReadService>(
+            () => new IdentityUserReadService(
+                new IdentityUserMapper(),
+                new IdentityUserManager(_repository),
+                _repository
+            ));
     }
 
     [Fact]
@@ -34,7 +37,7 @@ public sealed class IdentityUserReadServiceTests
     {
         var count = 5;
         var users = IdentityUserGenerator.Generate(count);
-        _manager.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<IdentityUser>>(users));
+        _repository.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<IdentityUser>>(users));
 
         var result = await Sut.GetAllAsync();
 
