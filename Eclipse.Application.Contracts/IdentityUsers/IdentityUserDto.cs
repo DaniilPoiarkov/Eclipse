@@ -4,7 +4,8 @@ using Eclipse.Application.Contracts.TodoItems;
 
 namespace Eclipse.Application.Contracts.IdentityUsers;
 
-public class IdentityUserDto : AggregateRootDto
+[Serializable]
+public sealed class IdentityUserDto : AggregateRootDto
 {
     public string Name { get; set; } = string.Empty;
 
@@ -20,7 +21,7 @@ public class IdentityUserDto : AggregateRootDto
 
     public TimeSpan Gmt {  get; set; }
 
-    public IReadOnlyList<ReminderDto> Reminders { get; set; } = new List<ReminderDto>();
+    public IReadOnlyList<ReminderDto> Reminders { get; set; } = [];
 
-    public IReadOnlyList<TodoItemDto> TodoItems { get; set; } = new List<TodoItemDto>();
+    public IReadOnlyList<TodoItemDto> TodoItems { get; set; } = [];
 }

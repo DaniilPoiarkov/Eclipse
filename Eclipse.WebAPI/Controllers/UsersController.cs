@@ -7,7 +7,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-//[ApiKeyAuthorize]
+[ApiKeyAuthorize]
 public sealed class UsersController : ControllerBase
 {
     private readonly IIdentityUserService _service;
