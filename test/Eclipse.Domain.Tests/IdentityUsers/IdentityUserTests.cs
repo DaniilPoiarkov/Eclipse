@@ -1,4 +1,4 @@
-﻿using Eclipse.Domain.Exceptions;
+﻿using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
@@ -130,17 +130,22 @@ public class IdentityUserTests
         var result = _sut.FinishItem(item.Id);
 
         _sut.TodoItems.Should().BeEmpty();
-        result.Id.Should().Be(item.Id);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Id.Should().Be(item.Id);
     }
 
     [Fact]
     public void FinishItem_WhenItemWithSpecifiedIdNotExists_ThenExceptionThrown()
     {
-        var action = () =>
-        {
-            _sut.FinishItem(Guid.NewGuid());
-        };
+        var expectedResult = Error.NotFound("IdentityUser.FinishTodoItem", "Entity:NotFound", nameof(TodoItem));
 
-        action.Should().Throw<EntityNotFoundException>();
+        var result = _sut.FinishItem(Guid.NewGuid());
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().NotBeNull();
+        result.Error!.Type.Should().Be(ErrorType.NotFound);
+        result.Error.Code.Should().Be("IdentityUser.FinishTodoItem");
+        result.Error.Description.Should().Be("Entity:NotFound");
+        result.Error.Args.Should().Contain(nameof(TodoItem));
     }
 }

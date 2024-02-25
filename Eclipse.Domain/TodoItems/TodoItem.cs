@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Common.Results;
+using Eclipse.Domain.Shared.Entities;
 
 using Newtonsoft.Json;
 
@@ -29,15 +30,16 @@ public sealed class TodoItem : Entity
     public DateTime? FinishedAt { get; private set; }
 
     /// <summary>Marks item as finished.</summary>
-    /// <exception cref="TodoItemAlreadyFinishedException">If item already finished</exception>
-    public void MarkAsFinished()
+    public Result MarkAsFinished()
     {
         if (IsFinished)
         {
-            throw new TodoItemAlreadyFinishedException(Text);
+            return TodoItemDomainErrors.AlreadyFinished(Text);
         }
 
         IsFinished = true;
         FinishedAt = DateTime.UtcNow;
+
+        return Result.Success();
     }
 }

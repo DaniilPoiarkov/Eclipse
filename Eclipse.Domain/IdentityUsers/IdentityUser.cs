@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Exceptions;
+﻿using Eclipse.Common.Results;
+using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers.Events;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
@@ -158,15 +159,23 @@ public sealed class IdentityUser : AggregateRoot
     /// <summary>Finishes the item.</summary>
     /// <param name="todoItemId">The todo item identifier.</param>
     /// <returns>Removed <a cref="TodoItem"></a></returns>
-    /// <exception cref="EntityNotFoundException">Item with given id not found</exception>
-    public TodoItem FinishItem(Guid todoItemId)
+    public Result<TodoItem> FinishItem(Guid todoItemId)
     {
-        var item = _todoItems.FirstOrDefault(e => e.Id == todoItemId)
-            ?? throw new EntityNotFoundException(typeof(TodoItem));
+        var item = _todoItems.FirstOrDefault(e => e.Id == todoItemId);
+
+        if (item is null)
+        {
+            return UserDomainErrors.TodoItemNotFound();
+        }
 
         _todoItems.Remove(item);
 
-        item.MarkAsFinished();
+        var result = item.MarkAsFinished();
+
+        if (!result.IsSuccess)
+        {
+            return result.Error!;
+        }
 
         return item;
     }
