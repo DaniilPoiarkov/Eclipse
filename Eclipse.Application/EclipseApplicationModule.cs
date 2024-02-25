@@ -17,17 +17,13 @@ using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
-using Eclipse.Infrastructure.Cache;
-using Eclipse.Infrastructure.Google.Sheets;
+using Eclipse.Common.Sheets;
 
 using FluentValidation;
 
 using MediatR.NotificationPublishers;
 
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-
-using Serilog;
 
 namespace Eclipse.Application;
 
@@ -44,9 +40,14 @@ public static class EclipseApplicationModule
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
-                .AddTransient<IIdentityUserService, IdentityUserService>()
                 .AddTransient<IReminderService, ReminderService>()
             .AddScoped<IEclipseLocalizer, EclipseLocalizer>();
+
+        services
+            .AddTransient<IIdentityUserCreateUpdateService, IdentityUserCreateUpdateService>()
+            .AddTransient<IIdentityUserLogicService, IdentityUserLogicService>()
+            .AddTransient<IIdentityUserReadService, IdentityUserReadService>()
+            .AddTransient<IIdentityUserService, IdentityUserService>();
 
         services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 

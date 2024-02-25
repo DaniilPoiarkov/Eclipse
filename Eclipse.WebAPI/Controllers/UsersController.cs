@@ -22,4 +22,10 @@ public sealed class UsersController : ControllerBase
     {
         return Ok(await _service.GetAllAsync(cancellationToken));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> GetFilteredList([FromBody] GetUsersRequest request, CancellationToken cancellationToken)
+    {
+        return Ok(await _service.GetFilteredListAsync(request, cancellationToken));
+    }
 }

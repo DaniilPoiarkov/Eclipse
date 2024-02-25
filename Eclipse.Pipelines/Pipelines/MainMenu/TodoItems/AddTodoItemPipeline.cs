@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Common.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Exceptions;
 
 using Serilog;
 

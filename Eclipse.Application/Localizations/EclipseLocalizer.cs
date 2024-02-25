@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Common.Cache;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 

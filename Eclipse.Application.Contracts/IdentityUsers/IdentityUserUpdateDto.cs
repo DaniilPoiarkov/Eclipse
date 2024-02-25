@@ -1,8 +1,8 @@
 ﻿namespace Eclipse.Application.Contracts.IdentityUsers;
 
-public class IdentityUserUpdateDto
+[Serializable]
+public sealed class IdentityUserUpdateDto
 {
-
     public string? Name { get; set; } = null;
 
     public string? Surname { get; set; } = null;

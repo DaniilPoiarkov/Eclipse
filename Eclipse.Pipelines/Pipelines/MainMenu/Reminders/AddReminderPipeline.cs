@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 

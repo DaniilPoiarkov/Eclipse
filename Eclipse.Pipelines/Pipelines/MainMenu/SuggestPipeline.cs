@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Common.Telegram;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Builder;
 
 using Microsoft.Extensions.Options;
 

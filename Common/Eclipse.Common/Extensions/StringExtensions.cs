@@ -6,6 +6,19 @@ public static class StringExtensions
 {
     /// <summary>
     /// <code>
+    /// return str.Contains(value, StringComparison.OrdinalIgnoreCase);
+    /// </code>
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool ContainsOrdinalIgnoreCase(this string str, string value)
+    {
+        return str.Contains(value, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// <code>
     /// return source.Equals(other, StringComparison.CurrentCultureIgnoreCase);
     /// </code>
     /// </summary>

@@ -1,6 +1,6 @@
-﻿namespace Eclipse.Infrastructure.Google.Sheets;
+﻿namespace Eclipse.Common.Sheets;
 
-public interface IGoogleSheetsService
+public interface ISheetsService
 {
     /// <summary>
     /// 

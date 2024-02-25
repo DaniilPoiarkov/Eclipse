@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.IdentityUsers;
 
-public class CachedIdentityUserServiceTests
+public sealed class CachedIdentityUserServiceTests
 {
     private readonly IIdentityUserCache _userCache;
 

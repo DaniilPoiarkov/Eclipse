@@ -1,9 +1,10 @@
 ﻿using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Sheets.v4;
+using Eclipse.Common.Sheets;
 
 namespace Eclipse.Infrastructure.Google.Sheets;
 
-internal sealed class GoogleSheetsService : IGoogleSheetsService
+internal sealed class GoogleSheetsService : ISheetsService
 {
     private static readonly int _namesRow = 1;
 
@@ -28,7 +29,7 @@ internal sealed class GoogleSheetsService : IGoogleSheetsService
 
         var valueRange = new ValueRange
         {
-            Values = new List<IList<object>>() { values },
+            Values = [values],
         };
 
         var appendRequest = _sheetsService.Spreadsheets.Values.Append(valueRange, sheetId, range);

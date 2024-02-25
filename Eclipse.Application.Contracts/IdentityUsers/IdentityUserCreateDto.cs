@@ -1,6 +1,7 @@
 ﻿namespace Eclipse.Application.Contracts.IdentityUsers;
 
-public class IdentityUserCreateDto
+[Serializable]
+public sealed class IdentityUserCreateDto
 {
     public string Name { get; set; } = string.Empty;
 

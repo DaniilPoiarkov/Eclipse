@@ -1,6 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿using Eclipse.Common.Specifications.LogicalOperators;
 
-namespace Eclipse.Domain.Shared.Specifications;
+using System.Linq.Expressions;
+
+namespace Eclipse.Common.Specifications;
 
 /// <summary>
 /// Use specifications to avoid writing same linq queries
@@ -13,4 +15,6 @@ public abstract class Specification<T>
     public static implicit operator Expression<Func<T, bool>>(Specification<T> specification) => specification.IsSatisfied();
 
     public static implicit operator Func<T, bool>(Specification<T> specification) => specification.IsSatisfied().Compile();
+
+    public static Specification<T> Empty => new EmptySpecification<T>();
 }

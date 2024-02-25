@@ -53,6 +53,18 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         return WithCachingAsync(() => _identityUserService.GetByIdAsync(id, cancellationToken));
     }
 
+    public async Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        var users = await _identityUserService.GetFilteredListAsync(request, cancellationToken);
+
+        foreach(var user in users)
+        {
+            UserCache.AddOrUpdate(user);
+        }
+
+        return users;
+    }
+
     public Task<IdentityUserDto> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _identityUserService.SetUserGmtTimeAsync(userId, currentUserTime, cancellationToken));
