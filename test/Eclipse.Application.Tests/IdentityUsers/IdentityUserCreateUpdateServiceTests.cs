@@ -48,7 +48,7 @@ public sealed class IdentityUserCreateUpdateServiceTests
         var user = IdentityUserGenerator.Generate(1).First();
 
         _manager.FindByIdAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
-        _manager.UpdateAsync(user).Returns(Task.FromResult<IdentityUser?>(user));
+        _manager.UpdateAsync(user).Returns(Task.FromResult(user));
 
         var updateDto = new IdentityUserUpdateDto
         {

@@ -19,7 +19,7 @@ internal sealed class Container<TEntity> : IContainer<TEntity>
 
     public IQueryable<TEntity> Items => _container.GetItemLinqQueryable<TEntity>(true).AsQueryable();
 
-    public async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var itemResponse = await _container.CreateItemAsync(entity, cancellationToken: cancellationToken);
         return itemResponse.Resource;
@@ -30,7 +30,7 @@ internal sealed class Container<TEntity> : IContainer<TEntity>
         await _container.DeleteItemAsync<TEntity>(id.ToString(), PartitionKey.None, cancellationToken: cancellationToken);
     }
 
-    public async Task<TEntity?> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var response = await _container.UpsertItemAsync(entity, cancellationToken: cancellationToken);
         return response.Resource;
@@ -45,7 +45,7 @@ internal sealed class Container<TEntity> : IContainer<TEntity>
 
     public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var iterator = _container.GetItemLinqQueryable<TEntity>()
+        using var iterator = _container.GetItemLinqQueryable<TEntity>()
             .ToFeedIterator();
 
         var results = new List<TEntity>();
@@ -61,7 +61,7 @@ internal sealed class Container<TEntity> : IContainer<TEntity>
 
     public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
     {
-        var iterator = GetFeedIterator(expression);
+        using var iterator = GetFeedIterator(expression);
 
         var results = new List<TEntity>();
 
@@ -76,10 +76,16 @@ internal sealed class Container<TEntity> : IContainer<TEntity>
 
     public async Task<TEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var iterator = GetFeedIterator(entity => entity.Id == id);
+        using var iterator = GetFeedIterator(entity => entity.Id == id);
 
         var response = await iterator.ReadNextAsync(cancellationToken);
 
         return response.Resource.SingleOrDefault();
+    }
+
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        return await Items.Where(expression)
+            .CountAsync(cancellationToken);
     }
 }

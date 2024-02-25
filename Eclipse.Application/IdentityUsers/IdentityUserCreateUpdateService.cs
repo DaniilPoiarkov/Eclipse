@@ -19,10 +19,23 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
 
     public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var identity = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var result = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken);
 
-        return _mapper.Map(identity);
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+
+            var ex = new DomainException(error!.Description);
+
+            for (int i = 0; i < error.Args.Length; i++)
+            {
+                ex.WithData($"{{{i}}}", error.Args[i]);
+            }
+
+            throw ex;
+        }
+
+        return _mapper.Map(result.Value);
     }
 
     public async Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)

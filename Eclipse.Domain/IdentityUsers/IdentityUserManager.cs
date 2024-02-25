@@ -1,4 +1,7 @@
-﻿namespace Eclipse.Domain.IdentityUsers;
+﻿using Eclipse.Common.Results;
+using Eclipse.Domain.Shared.Repositories;
+
+namespace Eclipse.Domain.IdentityUsers;
 
 public class IdentityUserManager
 {
@@ -22,20 +25,16 @@ public class IdentityUserManager
     /// or
     /// username
     /// already exists</exception>
-    public async Task<IdentityUser?> CreateAsync(
+    public async Task<Result<IdentityUser>> CreateAsync(
         string name, string surname, string username, long chatId, CancellationToken cancellationToken = default)
     {
-        var withSameData = await _identityUserRepository.GetByExpressionAsync(
-            expression: u => u.ChatId == chatId || u.Username == username,
+        var hasDuplicates = await _identityUserRepository.ContainsAsync(
+            expression: u => u.ChatId == chatId,
             cancellationToken: cancellationToken);
 
-        if (withSameData.Count != 0)
+        if (hasDuplicates)
         {
-            var withSameId = withSameData.FirstOrDefault(u => u.ChatId == chatId);
-
-            return withSameId is not null
-                ? throw new DuplicateDataException(nameof(chatId), chatId)
-                : throw new DuplicateDataException(nameof(username), username);
+            return UserDomainErrors.DuplicateData(nameof(chatId), chatId);
         }
 
         var identityUser = IdentityUser.Create(Guid.NewGuid(), name, surname, username, chatId);
@@ -43,7 +42,7 @@ public class IdentityUserManager
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }
 
-    public Task<IdentityUser?> UpdateAsync(IdentityUser identityUser, CancellationToken cancellationToken = default)
+    public Task<IdentityUser> UpdateAsync(IdentityUser identityUser, CancellationToken cancellationToken = default)
     {
         return _identityUserRepository.UpdateAsync(identityUser, cancellationToken);
     }
