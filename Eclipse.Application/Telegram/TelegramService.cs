@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Infrastructure.Exceptions;
+using Eclipse.Common.Exceptions;
 
 using Telegram.Bot;
 

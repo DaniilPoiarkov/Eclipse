@@ -46,9 +46,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Tests.Bdd", "..\tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E4999EA3-3B32-4C9C-B0F3-98643D580BE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Common", "..\Common\Eclipse.Common\Eclipse.Common.csproj", "{6B2F6993-419C-4993-8877-BDE27D4858DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Common", "..\Common\Eclipse.Common\Eclipse.Common.csproj", "{6B2F6993-419C-4993-8877-BDE27D4858DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Common.Tests", "..\test\Eclipse.Common.Tests\Eclipse.Common.Tests.csproj", "{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Common.Tests", "..\test\Eclipse.Common.Tests\Eclipse.Common.Tests.csproj", "{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

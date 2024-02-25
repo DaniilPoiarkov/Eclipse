@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Cache;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 using Eclipse.Pipelines.Stores.Messages;
 

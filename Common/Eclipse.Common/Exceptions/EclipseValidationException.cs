@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Infrastructure.Exceptions;
+﻿namespace Eclipse.Common.Exceptions;
 
 public class EclipseValidationException : EclipseException
 {
