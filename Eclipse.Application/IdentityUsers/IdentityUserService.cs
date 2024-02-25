@@ -48,7 +48,7 @@ internal sealed class IdentityUserService : IIdentityUserService
         return _logicService.SetUserGmtTimeAsync(id, currentUserTime, cancellationToken);
     }
 
-    public Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
     {
         return _createUpdateService.UpdateAsync(id, updateDto, cancellationToken);
     }

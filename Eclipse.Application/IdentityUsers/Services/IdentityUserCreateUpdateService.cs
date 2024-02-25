@@ -3,8 +3,9 @@ using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 
-namespace Eclipse.Application.IdentityUsers;
+namespace Eclipse.Application.IdentityUsers.Services;
 
 internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdateService
 {
@@ -30,10 +31,14 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
         return _mapper.Map(result.Value);
     }
 
-    public async Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByIdAsync(id, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         user.Name = updateDto.Name is null
             ? user.Name
@@ -57,9 +62,7 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
             user.NotificationsEnabled = updateDto.NotificationsEnabled.Value;
         }
 
-        var updated = await _userManager.UpdateAsync(user, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
-
+        var updated = await _userManager.UpdateAsync(user, cancellationToken);
         return _mapper.Map(updated);
     }
 }

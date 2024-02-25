@@ -3,7 +3,7 @@ using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 
-namespace Eclipse.Application.IdentityUsers;
+namespace Eclipse.Application.IdentityUsers.Services;
 
 internal sealed class IdentityUserLogicService : IIdentityUserLogicService
 {

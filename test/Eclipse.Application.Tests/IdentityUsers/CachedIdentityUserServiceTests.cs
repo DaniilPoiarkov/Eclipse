@@ -146,13 +146,16 @@ public sealed class CachedIdentityUserServiceTests
 
         var updateDto = new IdentityUserUpdateDto();
 
-        _userService.UpdateAsync(dto.Id, updateDto).Returns(Task.FromResult(dto));
+        _userService.UpdateAsync(dto.Id, updateDto)
+            .Returns(Task.FromResult(Result<IdentityUserDto>.Success(dto)));
 
         var result = await Sut.UpdateAsync(dto.Id, updateDto);
 
+        result.IsSuccess.Should().BeTrue();
+
         await _userService.Received().UpdateAsync(dto.Id, updateDto);
         _userCache.Received().AddOrUpdate(dto);
-        result.Id.Should().Be(dto.Id);
+        result.Value.Id.Should().Be(dto.Id);
     }
 
     private static IdentityUserDto GetDto() => IdentityUserDtoGenerator.GenerateUsers(1, 1).First();
