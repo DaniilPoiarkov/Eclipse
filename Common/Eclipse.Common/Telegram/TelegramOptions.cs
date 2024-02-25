@@ -1,6 +1,6 @@
-﻿namespace Eclipse.Infrastructure.Builder;
+﻿namespace Eclipse.Common.Telegram;
 
-public class TelegramOptions
+public sealed class TelegramOptions
 {
     public string Token { get; set; } = string.Empty;
 

@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Cache;
 using Eclipse.Common.Sheets;
+using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.Google;

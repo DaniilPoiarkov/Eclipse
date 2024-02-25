@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eclipse.DataAccess\Eclipse.DataAccess.csproj" />
+    <ProjectReference Include="..\Eclipse.Infrastructure\Eclipse.Infrastructure.csproj" />
     <ProjectReference Include="..\Eclipse.Pipelines\Eclipse.Pipelines.csproj" />
   </ItemGroup>
 

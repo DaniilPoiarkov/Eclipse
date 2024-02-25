@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Common.Telegram;
 using Eclipse.Domain.IdentityUsers.Events;
-using Eclipse.Infrastructure.Builder;
 using Eclipse.Localization.Localizers;
 
 using MediatR;

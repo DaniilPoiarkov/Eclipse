@@ -1,4 +1,6 @@
-﻿using Telegram.Bot.Polling;
+﻿using Eclipse.Common.Telegram;
+
+using Telegram.Bot.Polling;
 
 namespace Eclipse.Infrastructure.Builder;
 

@@ -1,9 +1,8 @@
 ﻿using Eclipse.Common.Cache;
-using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Pipelines.Stores.Pipelines;
 
-public class PipelineKey : StoreKey
+public sealed class PipelineKey : StoreKey
 {
     public PipelineKey(long chatId) : base(chatId)
     {

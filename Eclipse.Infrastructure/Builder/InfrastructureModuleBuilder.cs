@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Eclipse.Common.Telegram;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Telegram.Bot.Polling;
 

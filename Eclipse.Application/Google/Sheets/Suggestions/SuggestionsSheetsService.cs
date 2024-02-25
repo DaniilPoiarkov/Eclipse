@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Common.Sheets;
-using Eclipse.Infrastructure.Google.Sheets;
 
 using Microsoft.Extensions.Configuration;
 
