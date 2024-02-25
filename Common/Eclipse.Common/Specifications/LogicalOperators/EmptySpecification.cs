@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Eclipse.Domain.Shared.Specifications.LogicalOperators;
+namespace Eclipse.Common.Specifications.LogicalOperators;
 
 internal sealed class EmptySpecification<T> : Specification<T>
 {

@@ -1,8 +1,8 @@
-﻿using Eclipse.Domain.Shared.Specifications.Visitors;
+﻿using Eclipse.Common.Specifications.Visitors;
 
 using System.Linq.Expressions;
 
-namespace Eclipse.Domain.Shared.Specifications.LogicalOperators;
+namespace Eclipse.Common.Specifications.LogicalOperators;
 
 internal sealed class AndSpecification<T> : Specification<T>
 {

@@ -44,6 +44,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Tests.Bdd", "..\test\Eclipse.Tests.Bdd\Eclipse.Tests.Bdd.csproj", "{AE35548A-19F1-4706-8704-EE2B23647998}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E4999EA3-3B32-4C9C-B0F3-98643D580BE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Common", "..\Common\Eclipse.Common\Eclipse.Common.csproj", "{6B2F6993-419C-4993-8877-BDE27D4858DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Common.Tests", "..\test\Eclipse.Common.Tests\Eclipse.Common.Tests.csproj", "{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +124,14 @@ Global
 		{AE35548A-19F1-4706-8704-EE2B23647998}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE35548A-19F1-4706-8704-EE2B23647998}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE35548A-19F1-4706-8704-EE2B23647998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B2F6993-419C-4993-8877-BDE27D4858DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B2F6993-419C-4993-8877-BDE27D4858DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B2F6993-419C-4993-8877-BDE27D4858DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B2F6993-419C-4993-8877-BDE27D4858DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E48702CE-D236-47B0-AB5E-AD6220CCF0B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,6 +144,8 @@ Global
 		{651B6D30-5B0B-419A-8A74-486AE8D5B0BD} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
 		{DB78B5A1-CA74-4283-9334-8156859A9940} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
 		{AE35548A-19F1-4706-8704-EE2B23647998} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
+		{6B2F6993-419C-4993-8877-BDE27D4858DC} = {E4999EA3-3B32-4C9C-B0F3-98643D580BE0}
+		{E48702CE-D236-47B0-AB5E-AD6220CCF0B5} = {0F046F49-A55E-40D4-8D5F-220772FFEE28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F191F42F-E73C-400D-B0EF-2E6CD7145C57}
