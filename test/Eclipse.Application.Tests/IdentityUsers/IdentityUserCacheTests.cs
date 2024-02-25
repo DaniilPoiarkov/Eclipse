@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.IdentityUsers;
 
-public class IdentityUserCacheTests
+public sealed class IdentityUserCacheTests
 {
     private readonly ICacheService _cacheService;
 
