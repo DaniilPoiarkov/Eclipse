@@ -1,10 +1,8 @@
 ﻿using FluentAssertions;
 
-using Xunit;
+namespace Eclipse.Common.Tests.Extensions;
 
-namespace Eclipse.Application.Tests.Extensions;
-
-public class PrimitivesExtensionsTests
+public sealed class StringExtensionsTests
 {
     [Fact]
     public void TryParseAsTimeOnly_WhenValueCanBeParsed_ThenValidTimeOnlyResultReturned()
