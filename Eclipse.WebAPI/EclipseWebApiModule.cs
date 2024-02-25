@@ -1,6 +1,4 @@
-﻿using Eclipse.DataAccess;
-using Eclipse.DataAccess.EclipseCosmosDb;
-using Eclipse.WebAPI.Filters.Authorization;
+﻿using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
 using Microsoft.OpenApi.Models;
@@ -73,23 +71,5 @@ public static class EclipseWebApiModule
         };
 
         options.AddSecurityRequirement(requirement);
-    }
-
-    // TODO: Move to DataAccess module after adding ability to reference WebApplication here
-    public static async Task InitializeDataAccessModule(this WebApplication app)
-    {
-        using var scope = app.Services.CreateScope();
-
-        var serviceProvider = scope.ServiceProvider;
-
-        var logger = serviceProvider.GetRequiredService<Serilog.ILogger>();
-        var context = serviceProvider.GetRequiredService<EclipseCosmosDbContext>();
-
-        logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
-
-        logger.Information("\tInitializing database");
-        await context.InitializeAsync();
-
-        logger.Information("{module} module initialized successfully", nameof(EclipseDataAccessModule));
     }
 }
