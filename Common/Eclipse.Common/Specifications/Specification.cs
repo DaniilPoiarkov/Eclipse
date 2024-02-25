@@ -1,8 +1,8 @@
-﻿using Eclipse.Domain.Shared.Specifications.LogicalOperators;
+﻿using Eclipse.Common.Specifications.LogicalOperators;
 
 using System.Linq.Expressions;
 
-namespace Eclipse.Domain.Shared.Specifications;
+namespace Eclipse.Common.Specifications;
 
 /// <summary>
 /// Use specifications to avoid writing same linq queries

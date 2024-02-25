@@ -2,7 +2,7 @@
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.IdentityUsers.Specifications;
-using Eclipse.Domain.Shared.Specifications;
+using Eclipse.Common.Specifications;
 
 using MediatR;
 

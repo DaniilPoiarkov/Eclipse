@@ -1,4 +1,4 @@
-﻿using Eclipse.Domain.Shared.Specifications;
+﻿using Eclipse.Common.Specifications;
 using Eclipse.Domain.Tests.Specifications.Utils;
 
 using FluentAssertions;

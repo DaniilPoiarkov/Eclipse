@@ -1,6 +1,6 @@
-﻿using Eclipse.Domain.Shared.Specifications.LogicalOperators;
+﻿using Eclipse.Common.Specifications.LogicalOperators;
 
-namespace Eclipse.Domain.Shared.Specifications;
+namespace Eclipse.Common.Specifications;
 
 public static class SpecificationExtensions
 {
