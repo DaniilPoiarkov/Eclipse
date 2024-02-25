@@ -85,41 +85,59 @@ public class IdentityUserTests
     public void AddTodoItem_WhenTextValid_ThenTodoItemCreated()
     {
         var result = _sut.AddTodoItem("test");
+
+        result.IsSuccess.Should().BeTrue();
         
-        result.Text.Should().Be("test");
-        result.Id.Should().NotBeEmpty();
-        result.UserId.Should().Be(_sut.Id);
+        var value = result.Value;
+        value.Text.Should().Be("test");
+        value.Id.Should().NotBeEmpty();
+        value.UserId.Should().Be(_sut.Id);
         _sut.TodoItems.Count.Should().Be(1);
     }
 
     [Fact]
-    public void AddTodoItem_WhenTextIsNull_ThenExceptionThrown()
+    public void AddTodoItem_WhenTextIsNull_ThenFailureResultReturned()
     {
-        var action = () =>
-        {
-            _sut.AddTodoItem(null);
-        };
+        var expectedError = Error.Validation("IdentityUser.AddTodoItem.Empty", "TodoItem:Empty");
 
-        action.Should().Throw<TodoItemValidationException>();
+        var result = _sut.AddTodoItem(null);
+
+        result.IsSuccess.Should().BeFalse();
+        
+        var error = result.Error;
+        error.Should().NotBeNull();
+        error!.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
     }
 
     [Fact]
-    public void AddTodoItem_WhenTextViolatesLengthRestrictions_ThenValidationExceptionThrown()
+    public void AddTodoItem_WhenTextIsTooLong_ThenFailureResultReturned()
     {
+        var expectedError = Error.Validation("IdentityUser.AddTodoItem.MaxLength", "TodoItem:MaxLength", TodoItemConstants.MaxLength);
         var text = new string('x', TodoItemConstants.MaxLength + 1);
 
-        var maxLengthAction = () =>
-        {
-            _sut.AddTodoItem(text);
-        };
+        var result = _sut.AddTodoItem(text);
 
-        var minLengthAction = () =>
-        {
-            _sut.AddTodoItem(string.Empty);
-        };
+        var error = result.Error;
+        result.IsSuccess.Should().BeFalse();
+        error.Should().NotBeNull();
+        error!.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
+    }
 
-        maxLengthAction.Should().Throw<TodoItemValidationException>();
-        minLengthAction.Should().Throw<TodoItemValidationException>();
+    [Fact]
+    public void AddTodoItem_WhenTextIsEmpty_ThenFailureResultReturned()
+    {
+        var expectedError = Error.Validation("IdentityUser.AddTodoItem.Empty", "TodoItem:Empty");
+        var result = _sut.AddTodoItem(string.Empty);
+
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Should().NotBeNull();
+        error!.Code.Should().Be(expectedError.Code);
+        error!.Description.Should().Be(expectedError.Description);
     }
 
     [Fact]
@@ -127,25 +145,28 @@ public class IdentityUserTests
     {
         var item = _sut.AddTodoItem("test");
 
-        var result = _sut.FinishItem(item.Id);
+        var result = _sut.FinishItem(item.Value.Id);
+
+        result.IsSuccess.Should().BeTrue();
 
         _sut.TodoItems.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
-        result.Value.Id.Should().Be(item.Id);
+        result.Value.Id.Should().Be(item.Value.Id);
+        result.Error.Should().BeNull();
     }
 
     [Fact]
-    public void FinishItem_WhenItemWithSpecifiedIdNotExists_ThenExceptionThrown()
+    public void FinishItem_WhenItemWithSpecifiedIdNotExists_ThenFailureResultReturned()
     {
-        var expectedResult = Error.NotFound("IdentityUser.FinishTodoItem", "Entity:NotFound", nameof(TodoItem));
+        var expectedError = Error.NotFound("IdentityUser.FinishTodoItem", "Entity:NotFound", nameof(TodoItem));
 
         var result = _sut.FinishItem(Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().NotBeNull();
         result.Error!.Type.Should().Be(ErrorType.NotFound);
-        result.Error.Code.Should().Be("IdentityUser.FinishTodoItem");
-        result.Error.Description.Should().Be("Entity:NotFound");
-        result.Error.Args.Should().Contain(nameof(TodoItem));
+        result.Error.Code.Should().Be(expectedError.Code);
+        result.Error.Description.Should().Be(expectedError.Description);
+        result.Error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 }

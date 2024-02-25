@@ -1,5 +1,4 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers.Events;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
@@ -130,23 +129,21 @@ public sealed class IdentityUser : AggregateRoot
     /// <summary>Adds the todo item.</summary>
     /// <param name="text">The text.</param>
     /// <returns>Created TodoItem item</returns>
-    /// <exception cref="TodoItemLimitException">New item exceeds maximum limit</exception>
-    /// <exception cref="TodoItemValidationException">Text is empty or exceeds maximum length</exception>
-    public TodoItem AddTodoItem(string? text)
+    public Result<TodoItem> AddTodoItem(string? text)
     {
         if (_todoItems.Count == TodoItemConstants.Limit)
         {
-            throw new TodoItemLimitException(TodoItemConstants.Limit);
+            return UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         }
 
         if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
         {
-            throw new TodoItemValidationException(TodoItemErrors.Messages.Empty);
+            return UserDomainErrors.TodoItemIsEmpty();
         }
 
         if (text.Length > TodoItemConstants.MaxLength)
         {
-            throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength, TodoItemConstants.MaxLength);
+            return UserDomainErrors.TodoItemTooLong(TodoItemConstants.MaxLength);
         }
 
         var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
@@ -174,7 +171,7 @@ public sealed class IdentityUser : AggregateRoot
 
         if (!result.IsSuccess)
         {
-            return result.Error!;
+            return result.Error;
         }
 
         return item;

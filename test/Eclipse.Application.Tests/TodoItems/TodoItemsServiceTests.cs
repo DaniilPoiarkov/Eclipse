@@ -3,6 +3,7 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
+using Eclipse.Common.Exceptions;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.TodoItems;
@@ -85,7 +86,7 @@ public sealed class TodoItemsServiceTests
             await Sut.CreateAsync(createModel);
         };
 
-        await action.Should().ThrowAsync<TodoItemLimitException>();
+        await action.Should().ThrowAsync<EclipseValidationException>();
     }
 
     [Fact]
@@ -107,7 +108,7 @@ public sealed class TodoItemsServiceTests
             await Sut.CreateAsync(createModel);
         };
 
-        await action.Should().ThrowAsync<TodoItemValidationException>();
+        await action.Should().ThrowAsync<EclipseValidationException>();
     }
 
     [Fact]

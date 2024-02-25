@@ -32,7 +32,7 @@ public sealed record Error
 
     public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure, []);
 
-    public static implicit operator Result(Error error) => Result.Failure(error);
+    public static implicit operator Result(Error? error) => Result.Failure(error ?? None);
 
     public static Error NotFound(string code, string description, params object[] args) => new(code, description, ErrorType.NotFound, args);
     public static Error Conflict(string code, string description, params object[] args) => new(code, description, ErrorType.Conflict, args);

@@ -22,9 +22,7 @@ public class Result
         static bool AreArgumentsValid(bool isSuccess, Error? error)
         {
             return isSuccess && error is null
-                || !isSuccess
-                && error is not null
-                && error != Error.None;
+                || !isSuccess && error is not null;
         }
     }
 
@@ -65,5 +63,5 @@ public sealed class Result<TValue> : Result
 
     public static implicit operator Result<TValue>(TValue value) => Result<TValue>.Success(value);
 
-    public static implicit operator Result<TValue>(Error error) => Result<TValue>.Failure(error);
+    public static implicit operator Result<TValue>(Error? error) => Result<TValue>.Failure(error ?? Error.None);
 }

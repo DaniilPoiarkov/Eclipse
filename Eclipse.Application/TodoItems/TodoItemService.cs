@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Common.Exceptions;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 
@@ -25,7 +26,20 @@ internal sealed class TodoItemService : ITodoItemService
         var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken)
             ?? throw new EntityNotFoundException(typeof(IdentityUser));
 
-        user.AddTodoItem(input.Text);
+        var result = user.AddTodoItem(input.Text);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove throwing an exception and return result
+            var ex = new EclipseValidationException(result.Error!.Description, result.Error.Code);
+            
+            for (var i = 0; i < result.Error.Args.Length; i++)
+            {
+                ex.WithData($"{{{i}}}", result.Error.Args[i]);
+            }
+
+            throw ex;
+        }
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
