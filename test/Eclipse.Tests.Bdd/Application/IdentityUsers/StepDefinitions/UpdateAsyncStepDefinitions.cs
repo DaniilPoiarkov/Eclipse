@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 
 using NSubstitute;

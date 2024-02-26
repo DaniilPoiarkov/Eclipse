@@ -1,13 +1,20 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Eclipse.Common.Results;
+﻿namespace Eclipse.Common.Results;
 
 public class Result
 {
     public bool IsSuccess { get; }
 
-    [MemberNotNullWhen(false, nameof(IsSuccess))]
-    public Error? Error { get; }
+    private readonly Error? _error;
+
+    public Error Error { get
+        {
+            if (IsSuccess || _error is null)
+            {
+                throw new InvalidOperationException($"Cannot access {nameof(Error)} {(IsSuccess ? "when Result is success." : "as it was not provided.")}.");
+            }
+
+            return _error;
+        } }
 
     protected Result(bool isSuccess, Error? error)
     {
@@ -17,7 +24,7 @@ public class Result
         }
 
         IsSuccess = isSuccess;
-        Error = error;
+        _error = error;
 
         static bool AreArgumentsValid(bool isSuccess, Error? error)
         {
@@ -64,4 +71,6 @@ public sealed class Result<TValue> : Result
     public static implicit operator Result<TValue>(TValue value) => Result<TValue>.Success(value);
 
     public static implicit operator Result<TValue>(Error? error) => Result<TValue>.Failure(error ?? Error.None);
+
+    public static implicit operator TValue(Result<TValue> result) => result.Value;
 }

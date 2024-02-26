@@ -1,7 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -46,13 +47,18 @@ public sealed class IdentityUserReadServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenExceptionThrown()
+    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenFailureResultReturned()
     {
-        var action = async () =>
-        {
-            await Sut.GetByIdAsync(Guid.NewGuid());
-        };
+        var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
 
-        await action.Should().ThrowAsync<EntityNotFoundException>();
+        var result = await Sut.GetByIdAsync(Guid.NewGuid());
+
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        error.Type.Should().Be(expectedError.Type);
     }
 }

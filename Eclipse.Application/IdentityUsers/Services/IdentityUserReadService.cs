@@ -1,9 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 
-namespace Eclipse.Application.IdentityUsers;
+namespace Eclipse.Application.IdentityUsers.Services;
 
 internal sealed class IdentityUserReadService : IIdentityUserReadService
 {
@@ -29,18 +30,26 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
             .ToList();
     }
 
-    public async Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         return _mapper.Map(user);
     }
 
-    public async Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByIdAsync(id, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         return _mapper.Map(user);
     }

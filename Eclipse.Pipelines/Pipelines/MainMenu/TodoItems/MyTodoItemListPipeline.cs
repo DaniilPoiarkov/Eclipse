@@ -2,12 +2,14 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Stores.Messages;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:TodoItemsMenu:MyList", "/todos_my")]
-internal class MyTodoItemListPipeline : TodoItemsPipelineBase
+internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
@@ -34,8 +36,15 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> SendList(MessageContext context, CancellationToken cancellationToken)
     {
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
-        var items = user.TodoItems;
+        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        var items = result.Value.TodoItems;
 
         if (items.Count == 0)
         {
@@ -65,29 +74,29 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
 
-        try
-        {
-            var user = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
+        var result = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
 
-            var items = user.TodoItems;
-
-            if (items.Count == 0)
-            {
-                return AllItemsFinishedResult(message);
-            }
-
-            RegisterStage(HandleUpdate);
-
-            if (message is null)
-            {
-                return await SendList(context, cancellationToken);
-            }
-
-            return ItemFinishedResult(items, message);
-        }
-        catch
+        if (!result.IsSuccess)
         {
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
+
+        var user = result.Value;
+
+        var items = user.TodoItems;
+
+        if (items.Count == 0)
+        {
+            return AllItemsFinishedResult(message);
+        }
+
+        RegisterStage(HandleUpdate);
+
+        if (message is null)
+        {
+            return await SendList(context, cancellationToken);
+        }
+
+        return ItemFinishedResult(items, message);
     }
 }

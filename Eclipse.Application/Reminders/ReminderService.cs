@@ -1,8 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 
 namespace Eclipse.Application.Reminders;
 
@@ -18,10 +19,14 @@ internal sealed class ReminderService : IReminderService
         _mapper = mapper;
     }
 
-    public async Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         user.AddReminder(createReminderDto.Text, createReminderDto.NotifyAt);
 
@@ -30,10 +35,14 @@ internal sealed class ReminderService : IReminderService
         return _mapper.Map(user);
     }
 
-    public async Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         user.RemoveRemindersForTime(time);
 

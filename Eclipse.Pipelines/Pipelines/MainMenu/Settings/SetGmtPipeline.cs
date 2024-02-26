@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
@@ -24,7 +26,15 @@ internal class SetGmtPipeline : SettingsPipelineBase
 
     private async Task<IResult> SendKnownDataAndAskForNewGmt(MessageContext context, CancellationToken cancellationToken)
     {
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        var user = result.Value;
 
         var time = DateTime.UtcNow.GetTime();
 
@@ -47,9 +57,21 @@ internal class SetGmtPipeline : SettingsPipelineBase
             return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:CannotParseTime"]);
         }
 
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var userResult = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        await _identityUserService.SetUserGmtTimeAsync(user.Id, time, cancellationToken);
+        if (!userResult.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        var result = await _identityUserService.SetUserGmtTimeAsync(userResult.Value.Id, time, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove. Make sense not even check this result
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
 
         return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:Success"]);
     }

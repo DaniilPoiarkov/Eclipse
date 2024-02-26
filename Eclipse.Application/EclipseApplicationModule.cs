@@ -11,6 +11,7 @@ using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.EventHandlers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Application.Localizations;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;

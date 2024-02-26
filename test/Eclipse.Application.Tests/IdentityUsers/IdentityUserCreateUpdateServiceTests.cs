@@ -1,7 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -25,19 +26,25 @@ public sealed class IdentityUserCreateUpdateServiceTests
         _repository = Substitute.For<IIdentityUserRepository>();
         
         _lazySut = new Lazy<IIdentityUserCreateUpdateService>(
-            () => new IdentityUserCreateUpdateService(new IdentityUserMapper(), new IdentityUserManager(_repository))
-        );
+            () => new IdentityUserCreateUpdateService(
+                new IdentityUserMapper(),
+                new IdentityUserManager(_repository)
+            ));
     }
 
     [Fact]
     public async Task UpdateAsync_WhenUserWithSpecifiedIdNotExist_ThenExceptionThrown()
     {
-        var action = async () =>
-        {
-            await Sut.UpdateAsync(Guid.NewGuid(), new IdentityUserUpdateDto());
-        };
+        var expected = DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        var result = await Sut.UpdateAsync(Guid.NewGuid(), new IdentityUserUpdateDto());
 
-        await action.Should().ThrowAsync<EntityNotFoundException>();
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Code.Should().Be(expected.Code);
+        error.Description.Should().Be(expected.Description);
+        error.Args.Should().BeEquivalentTo(expected.Args);
+
         await _repository.DidNotReceive().UpdateAsync(default!);
     }
 
@@ -46,8 +53,11 @@ public sealed class IdentityUserCreateUpdateServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _repository.FindAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
-        _repository.UpdateAsync(user).Returns(Task.FromResult(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
+
+        _repository.UpdateAsync(user)
+            .Returns(Task.FromResult(user));
 
         var updateDto = new IdentityUserUpdateDto
         {
@@ -58,9 +68,12 @@ public sealed class IdentityUserCreateUpdateServiceTests
 
         var result = await Sut.UpdateAsync(user.Id, updateDto);
 
-        result.Username.Should().Be(updateDto.Username);
-        result.Name.Should().Be(updateDto.Name);
-        result.Surname.Should().Be(updateDto.Surname);
+        result.IsSuccess.Should().BeTrue();
+        
+        var value = result.Value;
+        value.Username.Should().Be(updateDto.Username);
+        value.Name.Should().Be(updateDto.Name);
+        value.Surname.Should().Be(updateDto.Surname);
 
         await _repository.Received().FindAsync(user.Id);
         await _repository.Received().UpdateAsync(user);

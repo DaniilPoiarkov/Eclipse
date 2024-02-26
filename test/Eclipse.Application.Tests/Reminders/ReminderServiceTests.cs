@@ -4,8 +4,8 @@ using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.Reminders;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.Reminders;
 
-public class ReminderServiceTests
+public sealed class ReminderServiceTests
 {
     private readonly IIdentityUserRepository _repository;
 
@@ -48,10 +48,12 @@ public class ReminderServiceTests
 
         var result = await Sut.CreateReminderAsync(identityUser.Id, reminderCreateDto);
 
-        result.Reminders.Count.Should().Be(1);
+        result.IsSuccess.Should().BeTrue();
 
-        var reminder = result.Reminders[0];
+        var user = result.Value;
+        user.Reminders.Count.Should().Be(1);
 
+        var reminder = user.Reminders[0];
         reminder.Text.Should().Be(reminderCreateDto.Text);
         reminder.NotifyAt.Should().Be(reminderCreateDto.NotifyAt);
         reminder.UserId.Should().Be(identityUser.Id);
@@ -63,18 +65,23 @@ public class ReminderServiceTests
     [Fact]
     public async Task CreateReminderAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
+        var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
+
         var reminderCreateDto = new ReminderCreateDto
         {
             NotifyAt = TimeOnly.FromDateTime(DateTime.UtcNow),
             Text = "Test"
         };
 
-        var action = async () =>
-        {
-            await Sut.CreateReminderAsync(Guid.NewGuid(), reminderCreateDto);
-        };
+        var result = await Sut.CreateReminderAsync(Guid.NewGuid(), reminderCreateDto);
 
-        await action.Should().ThrowAsync<EntityNotFoundException>();
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Code.Should().Be(error.Code);
+        error.Description.Should().Be(error.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        error.Type.Should().Be(expectedError.Type);
         await _repository.DidNotReceive().UpdateAsync(default!);
     }
 
@@ -98,17 +105,21 @@ public class ReminderServiceTests
 
         user.AddReminder(text, furtureTime);
 
-        _repository.FindAsync(user.Id)!.Returns(Task.FromResult(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
 
         // Act
         var result = await Sut.RemoveRemindersForTime(user.Id, time);
-        
+
         // Assert
-        result.Should().NotBeNull();
-        result.Id.Should().Be(user.Id);
-        result.Reminders.Count.Should().Be(1);
+        result.IsSuccess.Should().BeTrue();
+
+        var dto = result.Value;
+        dto.Should().NotBeNull();
+        dto.Id.Should().Be(dto.Id);
+        dto.Reminders.Count.Should().Be(1);
         
-        var leftReminder = result.Reminders[0];
+        var leftReminder = dto.Reminders[0];
         leftReminder.Text.Should().Be(text);
         leftReminder.NotifyAt.Should().Be(furtureTime);
 

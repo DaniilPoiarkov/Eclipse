@@ -1,9 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Common.Exceptions;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 
 namespace Eclipse.Application.TodoItems;
 
@@ -21,24 +21,20 @@ internal sealed class TodoItemService : ITodoItemService
         _mapper = mapper;
     }
 
-    public async Task<IdentityUserDto> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         var result = user.AddTodoItem(input.Text);
 
         if (!result.IsSuccess)
         {
-            // TODO: Remove throwing an exception and return result
-            var ex = new EclipseValidationException(result.Error!.Description, result.Error.Code);
-            
-            for (var i = 0; i < result.Error.Args.Length; i++)
-            {
-                ex.WithData($"{{{i}}}", result.Error.Args[i]);
-            }
-
-            throw ex;
+            return result.Error;
         }
 
         await _userManager.UpdateAsync(user, cancellationToken);
@@ -46,10 +42,14 @@ internal sealed class TodoItemService : ITodoItemService
         return _mapper.Map(user);
     }
 
-    public async Task<IdentityUserDto> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         user.FinishItem(itemId);
 

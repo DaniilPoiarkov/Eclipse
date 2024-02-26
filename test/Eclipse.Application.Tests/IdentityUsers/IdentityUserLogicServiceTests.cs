@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Tests.Generators;
 
@@ -34,7 +35,8 @@ public sealed class IdentityUserLogicServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _repository.FindAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
 
         var utc = DateTime.UtcNow;
 
@@ -49,6 +51,7 @@ public sealed class IdentityUserLogicServiceTests
 
         await _repository.Received().FindAsync(user.Id);
         await _repository.Received().UpdateAsync(user);
-        result.Gmt.Should().Be(expected);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Gmt.Should().Be(expected);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Base;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 
-namespace Eclipse.Application.IdentityUsers;
+namespace Eclipse.Application.IdentityUsers.Services;
 
 internal sealed class IdentityUserLogicService : IIdentityUserLogicService
 {
@@ -17,10 +18,14 @@ internal sealed class IdentityUserLogicService : IIdentityUserLogicService
         _userManager = userManager;
     }
 
-    public async Task<IdentityUserDto> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByIdAsync(id, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         user.SetGmt(currentUserTime);
 
