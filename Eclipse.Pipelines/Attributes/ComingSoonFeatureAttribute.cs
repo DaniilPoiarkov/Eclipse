@@ -3,7 +3,7 @@ using Eclipse.Core.Validation;
 
 namespace Eclipse.Pipelines.Attributes;
 
-internal class ComingSoonFeatureAttribute : ContextValidationAttribute
+internal sealed class ComingSoonFeatureAttribute : ContextValidationAttribute
 {
     public override ValidationResult Validate(ValidationContext context)
     {

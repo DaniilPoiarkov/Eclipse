@@ -3,7 +3,7 @@ using Eclipse.Core.Validation;
 
 namespace Eclipse.Pipelines.Pipelines.EdgeCases;
 
-internal class EclipseAccessDeniedPipeline : EclipsePipelineBase, IAccessDeniedPipeline
+internal sealed class EclipseAccessDeniedPipeline : EclipsePipelineBase, IAccessDeniedPipeline
 {
     public void SetResults(IEnumerable<ValidationResult> results)
     { 

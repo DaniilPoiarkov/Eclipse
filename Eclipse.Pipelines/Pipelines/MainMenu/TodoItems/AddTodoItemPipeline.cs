@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -42,15 +43,9 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 
         var result = await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:NewItemAdded"]);
-        }
-
-        var error = result.Error;
-        var description = Localizer[error!.Description];
-
-        var message = string.Format(description, error.Args);
+        var message = result.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:NewItemAdded"]
+            : Localizer.LocalizeError(result.Error);
 
         return Menu(TodoItemMenuButtons, message);
     }

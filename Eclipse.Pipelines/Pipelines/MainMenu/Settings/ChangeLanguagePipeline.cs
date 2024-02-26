@@ -1,10 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
-using Eclipse.Common.Results;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 using Eclipse.Pipelines.Stores.Messages;
 
@@ -13,7 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Language;
 
 [Route("Menu:Settings:Language", "/settings_language")]
-internal class ChangeLanguagePipeline : SettingsPipelineBase
+internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 {
     private readonly ICacheService _cacheService;
 
@@ -62,8 +60,9 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
 
         if (!result.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return MenuAndRemoveOptions(
+                Localizer.LocalizeError(result.Error),
+                message?.MessageId);
         }
 
         var user = result.Value;
@@ -80,7 +79,14 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
             Culture = context.Value,
         };
 
-        await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
+
+        if (!updateResult.IsSuccess)
+        {
+            return MenuAndRemoveOptions(
+                Localizer.LocalizeError(updateResult.Error),
+                message?.MessageId);
+        }
 
         var key = new CacheKey($"lang-{context.ChatId}");
 

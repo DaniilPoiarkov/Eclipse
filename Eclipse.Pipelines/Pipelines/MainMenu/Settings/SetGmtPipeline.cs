@@ -1,13 +1,12 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 [Route("Menu:Settings:SetGmt", "/settings_setgmt")]
-internal class SetGmtPipeline : SettingsPipelineBase
+internal sealed class SetGmtPipeline : SettingsPipelineBase
 {
     private readonly IIdentityUserService _identityUserService;
 
@@ -30,8 +29,7 @@ internal class SetGmtPipeline : SettingsPipelineBase
 
         if (!result.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return Text(Localizer.LocalizeError(result.Error));
         }
 
         var user = result.Value;
@@ -42,7 +40,9 @@ internal class SetGmtPipeline : SettingsPipelineBase
             ? time
             : time.Add(user.Gmt);
 
-        return Text(Localizer[$"{_pipelinePrefix}:Info"].Replace("{0}", $"{time:HH:mm}"));
+        return Text(
+            string.Format(Localizer[$"{_pipelinePrefix}:Info"], $"{time:HH:mm}")
+        );
     }
 
     private async Task<IResult> UpdateUserGmt(MessageContext context, CancellationToken cancellationToken)
@@ -61,18 +61,15 @@ internal class SetGmtPipeline : SettingsPipelineBase
 
         if (!userResult.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return Menu(SettingsMenuButtons, Localizer.LocalizeError(userResult.Error));
         }
 
         var result = await _identityUserService.SetUserGmtTimeAsync(userResult.Value.Id, time, cancellationToken);
 
-        if (!result.IsSuccess)
-        {
-            // TODO: Remove. Make sense not even check this result
-            throw new EntityNotFoundException(typeof(IdentityUser));
-        }
+        var text = result.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:Success"]
+            : Localizer.LocalizeError(result.Error);
 
-        return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:Success"]);
+        return Menu(SettingsMenuButtons, text);
     }
 }

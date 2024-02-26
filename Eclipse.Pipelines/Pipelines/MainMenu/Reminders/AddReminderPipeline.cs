@@ -1,10 +1,9 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
@@ -35,7 +34,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 
     private IResult AskForTime(MessageContext context)
     {
-        if (string.IsNullOrEmpty(context.Value))
+        if (context.Value.IsNullOrEmpty())
         {
             FinishPipeline();
             return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:ValueCannotBeEmpty"]);
@@ -55,12 +54,11 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 
         var chatId = context.ChatId;
 
-        var result = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+        var userResult = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
 
-        if (!result.IsSuccess)
+        if (!userResult.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return Menu(RemindersMenuButtons, Localizer.LocalizeError(userResult.Error));
         }
 
         var text = _cacheService.Get<string>(new CacheKey($"reminder-text-{chatId}"))!;
@@ -68,11 +66,13 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
         var reminderCreateDto = new ReminderCreateDto
         {
             Text = text,
-            NotifyAt = time.Add(result.Value.Gmt * -1)
+            NotifyAt = time.Add(userResult.Value.Gmt * -1)
         };
         
-        await _reminderService.CreateReminderAsync(result.Value.Id, reminderCreateDto, cancellationToken);
+        var result = await _reminderService.CreateReminderAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
 
-        return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:Created"]);
+        return result.IsSuccess
+            ? Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:Created"])
+            : Menu(RemindersMenuButtons, Localizer.LocalizeError(result.Error));
     }
 }
