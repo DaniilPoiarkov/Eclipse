@@ -1,10 +1,12 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Exceptions;
 using Eclipse.Core.Models;
 using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Users;
 
-internal class UserStore : IUserStore
+internal sealed class UserStore : IUserStore
 {
     private readonly IIdentityUserService _identityUserService;
 
@@ -26,24 +28,31 @@ internal class UserStore : IUserStore
             return;
         }
 
-        try
-        {
-            var entity = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
-            await CheckAndUpdate(entity, user, cancellationToken);
-        }
-        catch (EntityNotFoundException)
-        {
-            var createUserDto = new IdentityUserCreateDto
-            {
-                Name = user.Name,
-                Username = user.Username ?? string.Empty,
-                Surname = user.Surname,
-                ChatId = user.Id
-            };
+        var userResult = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
 
-            var result = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
-            _userCache.AddOrUpdate(result.Value);
+        if (userResult.IsSuccess)
+        {
+            await CheckAndUpdate(userResult.Value, user, cancellationToken);
+            return;
         }
+
+        var createUserDto = new IdentityUserCreateDto
+        {
+            Name = user.Name,
+            Username = user.Username ?? string.Empty,
+            Surname = user.Surname,
+            ChatId = user.Id
+        };
+
+        var creationResult = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
+
+        if (!creationResult.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EclipseValidationException("Create user validation");
+        }
+
+        _userCache.AddOrUpdate(creationResult.Value);
     }
 
     public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetAll();
@@ -63,8 +72,15 @@ internal class UserStore : IUserStore
             Surname = telegramUser.Surname
         };
 
-        var user = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
-        _userCache.AddOrUpdate(user);
+        var result = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        _userCache.AddOrUpdate(result);
 
         static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
         {

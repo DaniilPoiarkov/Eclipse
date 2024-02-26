@@ -3,6 +3,7 @@ using Eclipse.Common.Results;
 using Eclipse.Core.Models;
 using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Pipelines.Users;
 
 using NSubstitute;
@@ -36,7 +37,12 @@ public sealed class UserStoreTests
             .Returns(new List<IdentityUserDto>());
 
         _identityUserService.GetByChatIdAsync(User.Id)
-            .Throws(new EntityNotFoundException(typeof(IdentityUser)));
+            .Returns(
+                Task.FromResult(
+                    Result<IdentityUserDto>.Failure(
+                        DefaultErrors.EntityNotFound(typeof(IdentityUser))
+                    )
+                ));
 
         var dto = GetDto();
 
