@@ -24,9 +24,9 @@ public class CommandsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody] CommandDto command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Add([FromBody] AddCommandRequest request, CancellationToken cancellationToken)
     {
-        await _commandService.Add(command, cancellationToken);
+        await _commandService.Add(request, cancellationToken);
         return NoContent();
     }
 
