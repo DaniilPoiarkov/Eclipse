@@ -78,8 +78,7 @@ public sealed class ReminderServiceTests
         result.IsSuccess.Should().BeFalse();
 
         var error = result.Error;
-        error.Should().NotBeNull();
-        error!.Code.Should().Be(error.Code);
+        error.Code.Should().Be(error.Code);
         error.Description.Should().Be(error.Description);
         error.Args.Should().BeEquivalentTo(expectedError.Args);
         error.Type.Should().Be(expectedError.Type);
@@ -106,8 +105,8 @@ public sealed class ReminderServiceTests
 
         user.AddReminder(text, furtureTime);
 
-        _repository.FindAsync(user.Id)!
-            .Returns(Task.FromResult(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
 
         // Act
         var result = await Sut.RemoveRemindersForTime(user.Id, time);

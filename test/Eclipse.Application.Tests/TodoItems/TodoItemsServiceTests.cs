@@ -29,10 +29,12 @@ public sealed class TodoItemsServiceTests
 
     public TodoItemsServiceTests()
     {
-        var mapper = new IdentityUserMapper();
-
         _repository = Substitute.For<IIdentityUserRepository>();
-        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(new IdentityUserManager(_repository), mapper));
+        _lazySut = new Lazy<ITodoItemService>(
+            () => new TodoItemService(
+                new IdentityUserManager(_repository),
+                new IdentityUserMapper()
+            ));
     }
 
     [Fact]
@@ -90,14 +92,13 @@ public sealed class TodoItemsServiceTests
         result.IsSuccess.Should().BeFalse();
         
         var error = result.Error;
-
         error.Code.Should().Be(expectedError.Code);
         error.Description.Should().Be(expectedError.Description);
         error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 
     [Fact]
-    public async Task CreateAsync_WhenTextIsEmpty_ThenValidationFails()
+    public async Task CreateAsync_WhenTextIsEmpty_ThenFailureResultReturned()
     {
         var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
         var user = IdentityUserGenerator.Generate(1).First();
@@ -122,7 +123,7 @@ public sealed class TodoItemsServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
+    public async Task CreateAsync_WhenUserNotExists_ThenFailureResultReturned()
     {
         var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
 
