@@ -1,8 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Telegram;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.IdentityUsers.Events;
 using Eclipse.Localization.Localizers;
 
@@ -40,12 +38,10 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
         
         if (!result.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return;
         }
 
         var user = result.Value;
-
         var localizedString = _localizer["IdentityUser:Events:NewUserJoined", user.Culture];
 
         var content = string.Format(localizedString, notification.UserId, notification.UserName, notification.Name, notification.Surname);

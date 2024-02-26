@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Contracts.Reminders;
 
@@ -11,7 +12,7 @@ public interface IReminderService
     /// <param name="createReminderDto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default);
+    Task<Result<IdentityUserDto>> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes all user reminders for specified time
