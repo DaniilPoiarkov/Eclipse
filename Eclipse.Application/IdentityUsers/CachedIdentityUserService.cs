@@ -13,9 +13,9 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         _identityUserService = identityUserService;
     }
 
-    public async Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        return await WithCachingAsync(async () => await _identityUserService.CreateAsync(createDto, cancellationToken));
+        return WithCachingAsync(() => _identityUserService.CreateAsync(createDto, cancellationToken));
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -30,28 +30,32 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         return users;
     }
 
-    public async Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         var user = UserCache.GetByChatId(chatId);
 
         if (user is not null)
         {
-            return user;
+            return Task.FromResult(
+                Result<IdentityUserDto>.Success(user)
+            );
         }
 
-        return await WithCachingAsync(async () => await _identityUserService.GetByChatIdAsync(chatId, cancellationToken));
+        return WithCachingAsync(() => _identityUserService.GetByChatIdAsync(chatId, cancellationToken));
     }
 
-    public async Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var user = UserCache.GetById(id);
 
         if (user is not null)
         {
-            return user;
+            return Task.FromResult(
+                Result<IdentityUserDto>.Success(user)
+            );
         }
 
-        return await WithCachingAsync(async () => await _identityUserService.GetByIdAsync(id, cancellationToken));
+        return WithCachingAsync(() => _identityUserService.GetByIdAsync(id, cancellationToken));
     }
 
     public async Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
@@ -66,13 +70,13 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         return users;
     }
 
-    public async Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
-        return await WithCachingAsync(async () => await _identityUserService.SetUserGmtTimeAsync(userId, currentUserTime, cancellationToken));
+        return WithCachingAsync(() => _identityUserService.SetUserGmtTimeAsync(userId, currentUserTime, cancellationToken));
     }
 
-    public async Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
     {
-        return await WithCachingAsync(async () => await _identityUserService.UpdateAsync(id, updateDto, cancellationToken));
+        return WithCachingAsync(() => _identityUserService.UpdateAsync(id, updateDto, cancellationToken));
     }
 }
