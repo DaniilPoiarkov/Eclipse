@@ -50,6 +50,7 @@ public sealed class IdentityUserLogicServiceTests
 
         await _repository.Received().FindAsync(user.Id);
         await _repository.Received().UpdateAsync(user);
-        result.Gmt.Should().Be(expected);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Gmt.Should().Be(expected);
     }
 }

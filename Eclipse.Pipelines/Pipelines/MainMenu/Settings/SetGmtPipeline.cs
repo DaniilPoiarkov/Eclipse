@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
@@ -49,7 +51,13 @@ internal class SetGmtPipeline : SettingsPipelineBase
 
         var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        await _identityUserService.SetUserGmtTimeAsync(user.Id, time, cancellationToken);
+        var result = await _identityUserService.SetUserGmtTimeAsync(user.Id, time, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
 
         return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:Success"]);
     }

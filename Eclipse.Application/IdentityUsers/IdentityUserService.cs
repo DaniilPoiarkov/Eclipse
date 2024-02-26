@@ -43,7 +43,7 @@ internal sealed class IdentityUserService : IIdentityUserService
         return _readService.GetFilteredListAsync(request, cancellationToken);
     }
 
-    public Task<IdentityUserDto> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
         return _logicService.SetUserGmtTimeAsync(id, currentUserTime, cancellationToken);
     }

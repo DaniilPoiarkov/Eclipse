@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Tests.Generators;
@@ -158,7 +159,7 @@ public class IdentityUserTests
     [Fact]
     public void FinishItem_WhenItemWithSpecifiedIdNotExists_ThenFailureResultReturned()
     {
-        var expectedError = Error.NotFound("IdentityUser.FinishTodoItem", "Entity:NotFound", nameof(TodoItem));
+        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem));
 
         var result = _sut.FinishItem(Guid.NewGuid());
 

@@ -129,14 +129,18 @@ public sealed class CachedIdentityUserServiceTests
         var dto = GetDto();
         var time = new TimeOnly();
 
-        _userService.SetUserGmtTimeAsync(dto.Id, time).Returns(Task.FromResult(dto));
+        _userService.SetUserGmtTimeAsync(dto.Id, time)
+            .Returns(
+                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+            );
 
         var result = await Sut.SetUserGmtTimeAsync(dto.Id, time);
 
         await _userService.Received().SetUserGmtTimeAsync(dto.Id, time);
         _userCache.Received().AddOrUpdate(dto);
 
-        result.Id.Should().Be(dto.Id);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Id.Should().Be(dto.Id);
     }
 
     [Fact]

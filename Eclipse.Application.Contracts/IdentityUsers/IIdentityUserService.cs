@@ -27,5 +27,5 @@ public interface IIdentityUserCreateUpdateService
 
 public interface IIdentityUserLogicService
 {
-    Task<IdentityUserDto> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default);
+    Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default);
 }
