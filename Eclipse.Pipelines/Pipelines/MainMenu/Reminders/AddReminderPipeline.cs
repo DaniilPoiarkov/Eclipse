@@ -71,8 +71,10 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
         
         var result = await _reminderService.CreateReminderAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
 
-        return result.IsSuccess
-            ? Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:Created"])
-            : Menu(RemindersMenuButtons, Localizer.LocalizeError(result.Error));
+        var message = result.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:Created"]
+            : Localizer.LocalizeError(result.Error);
+
+        return Menu(RemindersMenuButtons, message);
     }
 }
