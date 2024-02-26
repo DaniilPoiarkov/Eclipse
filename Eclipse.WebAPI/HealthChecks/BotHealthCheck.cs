@@ -4,7 +4,7 @@ using Telegram.Bot;
 
 namespace Eclipse.WebAPI.HealthChecks;
 
-public class BotHealthCheck : IHealthCheck
+public sealed class BotHealthCheck : IHealthCheck
 {
     private readonly ITelegramBotClient _botClient;
 

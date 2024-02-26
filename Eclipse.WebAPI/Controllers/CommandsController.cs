@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
+using Eclipse.Common.Results;
 using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace Eclipse.WebAPI.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [ApiKeyAuthorize]
-public class CommandsController : ControllerBase
+public sealed class CommandsController : ControllerBase
 {
     private readonly ICommandService _commandService;
 
@@ -26,8 +27,8 @@ public class CommandsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] AddCommandRequest request, CancellationToken cancellationToken)
     {
-        await _commandService.Add(request, cancellationToken);
-        return NoContent();
+        var result = await _commandService.Add(request, cancellationToken);
+        return result.ToActionResult(NoContent);
     }
 
     [HttpDelete("{command}")]

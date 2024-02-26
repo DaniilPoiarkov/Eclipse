@@ -11,7 +11,7 @@ namespace Eclipse.WebAPI.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [TelegramBotApiSecretTokenAuthorize]
-public class EclipseController : ControllerBase
+public sealed class EclipseController : ControllerBase
 {
     private readonly IUpdateHandler _updateHandler;
 
