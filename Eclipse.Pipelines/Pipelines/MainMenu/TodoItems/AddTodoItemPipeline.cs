@@ -1,25 +1,19 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Common.Exceptions;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-
-using Serilog;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:TodoItemsMenu:AddItem", "/todos_add")]
-internal class AddTodoItemPipeline : TodoItemsPipelineBase
+internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
-    private readonly ILogger _logger;
-
     private static readonly string _pipelinePrefix = $"{PipelinePrefix}:AddItem";
 
-    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
+    public AddTodoItemPipeline(ITodoItemService todoItemService)
     {
         _todoItemService = todoItemService;
-        _logger = logger;
     }
 
     protected override void Initialize()
@@ -46,23 +40,18 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
             UserId = context.User.Id,
         };
 
-        try
+        var result = await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
+
+        if (result.IsSuccess)
         {
-            // TODO: Handle result here
-            await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:NewItemAdded"]);
         }
-        catch (EclipseValidationException ex)
-        {
-            var template = Localizer[ex.Message];
-            var message = string.Format(template, [..ex.Data.Values]);
 
-            return Menu(TodoItemMenuButtons, message);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex);
-            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Error"]);
-        }
+        var error = result.Error;
+        var description = Localizer[error!.Description];
+
+        var message = string.Format(description, error.Args);
+
+        return Menu(TodoItemMenuButtons, message);
     }
 }
