@@ -151,9 +151,7 @@ public class IdentityUserTests
         result.IsSuccess.Should().BeTrue();
 
         _sut.TodoItems.Should().BeEmpty();
-        result.IsSuccess.Should().BeTrue();
         result.Value.Id.Should().Be(item.Value.Id);
-        result.Error.Should().BeNull();
     }
 
     [Fact]
