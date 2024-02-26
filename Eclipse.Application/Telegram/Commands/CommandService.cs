@@ -1,8 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Common.Results;
 
-using FluentValidation;
-
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
