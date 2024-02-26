@@ -33,7 +33,8 @@ public sealed class IdentityUserCacheTests
     {
         var users = IdentityUserDtoGenerator.GenerateUsers(1, 5);
 
-        _cacheService.Get<List<IdentityUserDto>>(_key).ReturnsForAnyArgs(users);
+        _cacheService.Get<List<IdentityUserDto>>(_key)
+            .ReturnsForAnyArgs(users);
 
         var result = Sut.GetAll();
 
@@ -48,7 +49,8 @@ public sealed class IdentityUserCacheTests
         var cached = IdentityUserDtoGenerator.GenerateUsers(1, 4);
         var dto = IdentityUserDtoGenerator.GenerateUsers(5, 1).First();
 
-        _cacheService.Get<List<IdentityUserDto>>(_key).ReturnsForAnyArgs(cached);
+        _cacheService.Get<List<IdentityUserDto>>(_key)
+            .ReturnsForAnyArgs(cached);
 
         Sut.AddOrUpdate(dto);
 

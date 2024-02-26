@@ -36,9 +36,10 @@ public sealed class CachedIdentityUserServiceTests
 
         var createDto = new IdentityUserCreateDto();
 
-        _userService.CreateAsync(createDto).Returns(
-            Task.FromResult(Result<IdentityUserDto>.Success(dto)
-        ));
+        _userService.CreateAsync(createDto)
+            .Returns(
+                Task.FromResult(Result<IdentityUserDto>.Success(dto)
+            ));
 
         var result = await Sut.CreateAsync(createDto);
 
@@ -51,7 +52,11 @@ public sealed class CachedIdentityUserServiceTests
     public async Task GetAllAsync_WhenCalled_ThenAllUsersCached()
     {
         var dtos = IdentityUserDtoGenerator.GenerateUsers(1, 5);
-        _userService.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<IdentityUserDto>>(dtos));
+
+        _userService.GetAllAsync()
+            .Returns(
+                Task.FromResult<IReadOnlyList<IdentityUserDto>>(dtos)
+            );
 
         var result = await Sut.GetAllAsync();
 
@@ -59,6 +64,7 @@ public sealed class CachedIdentityUserServiceTests
         {
             _userCache.Received().AddOrUpdate(dto);
         }
+
         await _userService.Received().GetAllAsync();
     }
 
@@ -160,7 +166,9 @@ public sealed class CachedIdentityUserServiceTests
         var updateDto = new IdentityUserUpdateDto();
 
         _userService.UpdateAsync(dto.Id, updateDto)
-            .Returns(Task.FromResult(Result<IdentityUserDto>.Success(dto)));
+            .Returns(
+                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+            );
 
         var result = await Sut.UpdateAsync(dto.Id, updateDto);
 

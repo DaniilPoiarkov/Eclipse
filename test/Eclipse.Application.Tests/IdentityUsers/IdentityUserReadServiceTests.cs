@@ -54,10 +54,9 @@ public sealed class IdentityUserReadServiceTests
         var result = await Sut.GetByIdAsync(Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
 
-        error.Should().NotBeNull();
-        error!.Code.Should().Be(expectedError.Code);
+        var error = result.Error;
+        error.Code.Should().Be(expectedError.Code);
         error.Description.Should().Be(expectedError.Description);
         error.Args.Should().BeEquivalentTo(expectedError.Args);
         error.Type.Should().Be(expectedError.Type);

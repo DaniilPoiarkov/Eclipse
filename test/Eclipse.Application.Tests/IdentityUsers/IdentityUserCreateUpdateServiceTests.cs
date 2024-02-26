@@ -41,8 +41,7 @@ public sealed class IdentityUserCreateUpdateServiceTests
         result.IsSuccess.Should().BeFalse();
 
         var error = result.Error;
-        error.Should().NotBeNull();
-        error!.Code.Should().Be(expected.Code);
+        error.Code.Should().Be(expected.Code);
         error.Description.Should().Be(expected.Description);
         error.Args.Should().BeEquivalentTo(expected.Args);
 
@@ -54,8 +53,11 @@ public sealed class IdentityUserCreateUpdateServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _repository.FindAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
-        _repository.UpdateAsync(user).Returns(Task.FromResult(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
+
+        _repository.UpdateAsync(user)
+            .Returns(Task.FromResult(user));
 
         var updateDto = new IdentityUserUpdateDto
         {

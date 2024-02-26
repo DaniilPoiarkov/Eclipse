@@ -35,7 +35,8 @@ public sealed class IdentityUserLogicServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _repository.FindAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
 
         var utc = DateTime.UtcNow;
 
