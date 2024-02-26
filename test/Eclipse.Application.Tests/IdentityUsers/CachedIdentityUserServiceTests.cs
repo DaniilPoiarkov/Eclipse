@@ -73,7 +73,8 @@ public sealed class CachedIdentityUserServiceTests
 
         _userCache.Received().GetByChatId(dto.ChatId);
         await _userService.DidNotReceive().GetByChatIdAsync(dto.ChatId);
-        result.ChatId.Should().Be(dto.ChatId);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.ChatId.Should().Be(dto.ChatId);
     }
 
     [Fact]
@@ -81,15 +82,19 @@ public sealed class CachedIdentityUserServiceTests
     {
         var dto = GetDto();
 
-        _userService.GetByChatIdAsync(dto.ChatId).Returns(Task.FromResult(dto));
+        _userService.GetByChatIdAsync(dto.ChatId)
+            .Returns(
+                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+            );
 
         var result = await Sut.GetByChatIdAsync(dto.ChatId);
 
         await _userService.Received().GetByChatIdAsync(dto.ChatId);
         _userCache.Received().AddOrUpdate(dto);
         _userCache.Received().GetByChatId(dto.ChatId);
-
-        result.ChatId.Should().Be(dto.ChatId);
+        
+        result.IsSuccess.Should().BeTrue();
+        result.Value.ChatId.Should().Be(dto.ChatId);
     }
 
     [Fact]
@@ -103,8 +108,8 @@ public sealed class CachedIdentityUserServiceTests
 
         _userCache.Received().GetById(dto.Id);
         await _userService.DidNotReceive().GetByIdAsync(dto.Id);
-
-        result.Id.Should().Be(dto.Id);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Id.Should().Be(dto.Id);
     }
 
     [Fact]
@@ -112,7 +117,10 @@ public sealed class CachedIdentityUserServiceTests
     {
         var dto = GetDto();
 
-        _userService.GetByIdAsync(dto.Id).Returns(Task.FromResult(dto));
+        _userService.GetByIdAsync(dto.Id)
+            .Returns(
+                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+            );
 
         var result = await Sut.GetByIdAsync(dto.Id);
 
@@ -120,7 +128,8 @@ public sealed class CachedIdentityUserServiceTests
         await _userService.Received().GetByIdAsync(dto.Id);
         _userCache.Received().AddOrUpdate(dto);
 
-        result.Id.Should().Be(dto.Id);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Id.Should().Be(dto.Id);
     }
 
     [Fact]

@@ -3,11 +3,13 @@ using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
 [Route("Menu:Reminders:Add", "/reminders_add")]
-public class AddReminderPipeline : RemindersPipelineBase
+public sealed class AddReminderPipeline : RemindersPipelineBase
 {
     private readonly ICacheService _cacheService;
 
@@ -53,17 +55,23 @@ public class AddReminderPipeline : RemindersPipelineBase
 
         var chatId = context.ChatId;
 
-        var user = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+        var result = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
 
         var text = _cacheService.Get<string>(new CacheKey($"reminder-text-{chatId}"))!;
 
         var reminderCreateDto = new ReminderCreateDto
         {
             Text = text,
-            NotifyAt = time.Add(user.Gmt * -1)
+            NotifyAt = time.Add(result.Value.Gmt * -1)
         };
         
-        await _reminderService.CreateReminderAsync(user.Id, reminderCreateDto, cancellationToken);
+        await _reminderService.CreateReminderAsync(result.Value.Id, reminderCreateDto, cancellationToken);
 
         return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:Created"]);
     }

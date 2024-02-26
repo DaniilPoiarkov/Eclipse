@@ -2,6 +2,8 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Stores.Messages;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
@@ -34,8 +36,15 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> SendList(MessageContext context, CancellationToken cancellationToken)
     {
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
-        var items = user.TodoItems;
+        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        var items = result.Value.TodoItems;
 
         if (items.Count == 0)
         {

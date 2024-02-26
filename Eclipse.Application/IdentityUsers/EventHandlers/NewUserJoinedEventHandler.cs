@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Telegram;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.IdentityUsers.Events;
 using Eclipse.Localization.Localizers;
 
@@ -34,16 +36,24 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
 
     public async Task Handle(NewUserJoinedDomainEvent notification, CancellationToken cancellationToken)
     {
-        var reciever = await _identityUserService.GetByChatIdAsync(_telegramOptions.Value.Chat, cancellationToken);
+        var result = await _identityUserService.GetByChatIdAsync(_telegramOptions.Value.Chat, cancellationToken);
         
-        var localizedString = _localizer["IdentityUser:Events:NewUserJoined", reciever.Culture];
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        var user = result.Value;
+
+        var localizedString = _localizer["IdentityUser:Events:NewUserJoined", user.Culture];
 
         var content = string.Format(localizedString, notification.UserId, notification.UserName, notification.Name, notification.Surname);
 
         var message = new SendMessageModel
         {
             Message = content,
-            ChatId = reciever.ChatId
+            ChatId = user.ChatId
         };
 
         await _telegramService.Send(message, cancellationToken);

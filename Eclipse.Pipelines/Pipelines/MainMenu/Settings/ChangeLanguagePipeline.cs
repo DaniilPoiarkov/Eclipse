@@ -1,7 +1,10 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Cache;
+using Eclipse.Common.Results;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Exceptions;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 using Eclipse.Pipelines.Stores.Messages;
 
@@ -55,7 +58,15 @@ internal class ChangeLanguagePipeline : SettingsPipelineBase
                 message?.MessageId);
         }
 
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            // TODO: Remove
+            throw new EntityNotFoundException(typeof(IdentityUser));
+        }
+
+        var user = result.Value;
 
         if (user.Culture == context.Value)
         {

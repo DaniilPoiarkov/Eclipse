@@ -13,9 +13,9 @@ public interface IIdentityUserReadService
 
     Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default);
 
-    Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default);
+    Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default);
 }
 
 public interface IIdentityUserCreateUpdateService

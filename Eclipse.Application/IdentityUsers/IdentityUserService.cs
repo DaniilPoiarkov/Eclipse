@@ -28,12 +28,12 @@ internal sealed class IdentityUserService : IIdentityUserService
         return _readService.GetAllAsync(cancellationToken);
     }
 
-    public Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return _readService.GetByChatIdAsync(chatId, cancellationToken);
     }
 
-    public Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _readService.GetByIdAsync(id, cancellationToken);
     }
