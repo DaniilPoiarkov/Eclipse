@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Common.Results;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
 
@@ -43,10 +42,14 @@ internal sealed class TodoItemService : ITodoItemService
         return _mapper.Map(user);
     }
 
-    public async Task<IdentityUserDto> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        }
 
         user.FinishItem(itemId);
 

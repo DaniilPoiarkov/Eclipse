@@ -9,7 +9,7 @@ using Eclipse.Pipelines.Stores.Messages;
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:TodoItemsMenu:MyList", "/todos_my")]
-internal class MyTodoItemListPipeline : TodoItemsPipelineBase
+internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
@@ -74,29 +74,29 @@ internal class MyTodoItemListPipeline : TodoItemsPipelineBase
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
 
-        try
-        {
-            var user = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
+        var result = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
 
-            var items = user.TodoItems;
-
-            if (items.Count == 0)
-            {
-                return AllItemsFinishedResult(message);
-            }
-
-            RegisterStage(HandleUpdate);
-
-            if (message is null)
-            {
-                return await SendList(context, cancellationToken);
-            }
-
-            return ItemFinishedResult(items, message);
-        }
-        catch
+        if (!result.IsSuccess)
         {
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
+
+        var user = result.Value;
+
+        var items = user.TodoItems;
+
+        if (items.Count == 0)
+        {
+            return AllItemsFinishedResult(message);
+        }
+
+        RegisterStage(HandleUpdate);
+
+        if (message is null)
+        {
+            return await SendList(context, cancellationToken);
+        }
+
+        return ItemFinishedResult(items, message);
     }
 }

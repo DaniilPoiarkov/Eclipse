@@ -18,8 +18,8 @@ internal sealed class CachedTodoItemsService : IdentityUserCachingFixture, ITodo
         return await WithCachingAsync(async () => await _todoItemService.CreateAsync(input, cancellationToken));
     }
 
-    public Task<IdentityUserDto> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
-        return WithCachingAsync(() => _todoItemService.FinishItemAsync(chatId, itemId, cancellationToken));
+        return await WithCachingAsync(async () => await _todoItemService.FinishItemAsync(chatId, itemId, cancellationToken));
     }
 }
