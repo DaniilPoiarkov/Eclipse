@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -8,13 +7,10 @@ namespace Eclipse.Application.IdentityUsers.Services;
 
 internal sealed class IdentityUserLogicService : IIdentityUserLogicService
 {
-    private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
-
     private readonly IdentityUserManager _userManager;
 
-    public IdentityUserLogicService(IMapper<IdentityUser, IdentityUserDto> mapper, IdentityUserManager userManager)
+    public IdentityUserLogicService(IdentityUserManager userManager)
     {
-        _mapper = mapper;
         _userManager = userManager;
     }
 
@@ -31,6 +27,6 @@ internal sealed class IdentityUserLogicService : IIdentityUserLogicService
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        return _mapper.Map(user);
+        return user.ToDto();
     }
 }

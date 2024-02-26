@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -11,14 +11,9 @@ internal sealed class TodoItemService : ITodoItemService
 {
     private readonly IdentityUserManager _userManager;
 
-    private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
-
-    public TodoItemService(
-        IdentityUserManager userManager,
-        IMapper<IdentityUser, IdentityUserDto> mapper)
+    public TodoItemService(IdentityUserManager userManager)
     {
         _userManager = userManager;
-        _mapper = mapper;
     }
 
     public async Task<Result<IdentityUserDto>> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
@@ -39,7 +34,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        return _mapper.Map(user);
+        return user.ToDto();
     }
 
     public async Task<Result<IdentityUserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
@@ -55,6 +50,6 @@ internal sealed class TodoItemService : ITodoItemService
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        return _mapper.Map(user);
+        return user.ToDto();
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Tests.Generators;
@@ -25,7 +24,6 @@ public sealed class IdentityUserLogicServiceTests
         _repository = Substitute.For<IIdentityUserRepository>();
         _lazySut = new Lazy<IIdentityUserLogicService>(
             () => new IdentityUserLogicService(
-                new IdentityUserMapper(),
                 new IdentityUserManager(_repository)
             ));
     }
