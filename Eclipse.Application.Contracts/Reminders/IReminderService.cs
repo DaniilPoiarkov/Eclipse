@@ -21,5 +21,5 @@ public interface IReminderService
     /// <param name="time"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default);
+    Task<Result<IdentityUserDto>> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default);
 }
