@@ -2,7 +2,6 @@
 
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.Reminders;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -28,8 +27,7 @@ public sealed class ReminderServiceTests
         _repository = Substitute.For<IIdentityUserRepository>();
         _lazySut = new Lazy<IReminderService>(
             () => new ReminderService(
-                new IdentityUserManager(_repository),
-                new IdentityUserMapper()
+                new IdentityUserManager(_repository)
             ));
     }
 

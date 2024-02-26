@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
 
 using FluentValidation;
 
@@ -14,16 +13,10 @@ internal sealed class CommandService : ICommandService
 
     private readonly IValidator<CommandDto> _commandDtoValidator;
 
-    private readonly IMapper<BotCommand, CommandDto> _mapper;
-
-    public CommandService(
-        ITelegramBotClient botClient,
-        IValidator<CommandDto> commandDtoValidator,
-        IMapper<BotCommand, CommandDto> mapper)
+    public CommandService(ITelegramBotClient botClient, IValidator<CommandDto> commandDtoValidator)
     {
         _botClient = botClient;
         _commandDtoValidator = commandDtoValidator;
-        _mapper = mapper;
     }
 
     public async Task Add(CommandDto command, CancellationToken cancellationToken = default)
@@ -48,7 +41,7 @@ internal sealed class CommandService : ICommandService
     {
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
         
-        return commands.Select(_mapper.Map)
+        return commands.Select(c => c.ToDto())
             .ToArray();
     }
 

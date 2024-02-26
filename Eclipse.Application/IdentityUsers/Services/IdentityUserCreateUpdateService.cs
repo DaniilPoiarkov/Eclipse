@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -8,13 +7,10 @@ namespace Eclipse.Application.IdentityUsers.Services;
 
 internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdateService
 {
-    private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
-
     private readonly IdentityUserManager _userManager;
 
-    public IdentityUserCreateUpdateService(IMapper<IdentityUser, IdentityUserDto> mapper, IdentityUserManager userManager)
+    public IdentityUserCreateUpdateService(IdentityUserManager userManager)
     {
-        _mapper = mapper;
         _userManager = userManager;
     }
 
@@ -27,7 +23,7 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
             return result.Error;
         }
 
-        return _mapper.Map(result.Value);
+        return result.Value.ToDto();
     }
 
     public async Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
@@ -61,7 +57,6 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
             user.NotificationsEnabled = updateDto.NotificationsEnabled.Value;
         }
 
-        var updated = await _userManager.UpdateAsync(user, cancellationToken);
-        return _mapper.Map(updated);
+        return (await _userManager.UpdateAsync(user, cancellationToken)).ToDto();
     }
 }

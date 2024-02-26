@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -27,7 +26,6 @@ public sealed class IdentityUserReadServiceTests
 
         _lazySut = new Lazy<IIdentityUserReadService>(
             () => new IdentityUserReadService(
-                new IdentityUserMapper(),
                 new IdentityUserManager(_repository),
                 _repository
             ));

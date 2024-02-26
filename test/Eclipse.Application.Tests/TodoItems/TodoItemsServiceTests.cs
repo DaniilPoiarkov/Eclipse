@@ -1,10 +1,7 @@
 ﻿using Bogus;
 
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
-using Eclipse.Common.Exceptions;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.TodoItems;
@@ -32,8 +29,7 @@ public sealed class TodoItemsServiceTests
         _repository = Substitute.For<IIdentityUserRepository>();
         _lazySut = new Lazy<ITodoItemService>(
             () => new TodoItemService(
-                new IdentityUserManager(_repository),
-                new IdentityUserMapper()
+                new IdentityUserManager(_repository)
             ));
     }
 

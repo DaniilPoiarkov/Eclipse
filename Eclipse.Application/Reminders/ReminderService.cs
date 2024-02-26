@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -11,12 +11,9 @@ internal sealed class ReminderService : IReminderService
 {
     private readonly IdentityUserManager _userManager;
 
-    private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
-
-    public ReminderService(IdentityUserManager userManager, IMapper<IdentityUser, IdentityUserDto> mapper)
+    public ReminderService(IdentityUserManager userManager)
     {
         _userManager = userManager;
-        _mapper = mapper;
     }
 
     public async Task<Result<IdentityUserDto>> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
@@ -32,7 +29,7 @@ internal sealed class ReminderService : IReminderService
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        return _mapper.Map(user);
+        return user.ToDto();
     }
 
     public async Task<Result<IdentityUserDto>> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
@@ -48,6 +45,6 @@ internal sealed class ReminderService : IReminderService
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        return _mapper.Map(user);
+        return user.ToDto();
     }
 }
