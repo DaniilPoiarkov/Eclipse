@@ -1,9 +1,8 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Stores.Messages;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
@@ -40,13 +39,12 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         if (!result.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return Menu(TodoItemMenuButtons, Localizer.LocalizeError(result.Error));
         }
 
         var items = result.Value.TodoItems;
 
-        if (items.Count == 0)
+        if (items.IsNullOrEmpty())
         {
             FinishPipeline();
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Empty"]);
@@ -81,11 +79,9 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
 
-        var user = result.Value;
+        var items = result.Value.TodoItems;
 
-        var items = user.TodoItems;
-
-        if (items.Count == 0)
+        if (items.IsNullOrEmpty())
         {
             return AllItemsFinishedResult(message);
         }

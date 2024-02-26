@@ -1,8 +1,7 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -51,8 +50,9 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
         if (!result.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return MenuAndRemoveOptions(
+                Localizer.LocalizeError(result.Error),
+                message?.MessageId);
         }
 
         var user = result.Value;
@@ -69,10 +69,12 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
             NotificationsEnabled = enable,
         };
 
-        await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
-        return MenuAndRemoveOptions(
-            Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"],
-            message?.MessageId);
+        var text = updateResult.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"]
+            : Localizer.LocalizeError(updateResult.Error);
+
+        return MenuAndRemoveOptions(text, message?.MessageId);
     }
 }

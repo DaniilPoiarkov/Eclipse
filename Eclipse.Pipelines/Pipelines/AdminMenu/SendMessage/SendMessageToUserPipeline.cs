@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -60,16 +61,15 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        try
-        {
-            await _telegramService.Send(MessageModel, cancellationToken);
+        var result = await _telegramService.Send(MessageModel, cancellationToken);
 
+        if (result.IsSuccess)
+        {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
-        catch (Exception ex)
-        {
-            return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}" +
-                $"{ex.Message}");
-        }
+
+        var text = $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{Localizer.LocalizeError(result.Error)}";
+
+        return Menu(AdminMenuButtons, text);
     }
 }

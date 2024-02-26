@@ -8,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Pipelines.Configurations;
 
-internal class QuatzOptionsConfiguration : IConfigureOptions<QuartzOptions>
+internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOptions>
 {
     private static readonly int _oneMinuteScanInterval = 1;
 

@@ -19,8 +19,6 @@ using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
 using Eclipse.Common.Sheets;
 
-using FluentValidation;
-
 using MediatR.NotificationPublishers;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -48,8 +46,6 @@ public static class EclipseApplicationModule
             .AddTransient<IIdentityUserLogicService, IdentityUserLogicService>()
             .AddTransient<IIdentityUserReadService, IdentityUserReadService>()
             .AddTransient<IIdentityUserService, IdentityUserService>();
-
-        services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
 
         services.Scan(tss => tss.FromAssemblyOf<SuggestionObjectParser>()
             .AddClasses(c => c.AssignableTo(typeof(IObjectParser<>)))

@@ -1,13 +1,13 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Core.Models;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Pipelines.Users;
 
+using FluentAssertions;
+
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 
 using Xunit;
 
@@ -51,9 +51,13 @@ public sealed class UserStoreTests
                 Task.FromResult(Result<IdentityUserDto>.Success(dto))
             );
 
-        await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdate(User);
 
-        await _identityUserService.ReceivedWithAnyArgs().CreateAsync(new IdentityUserCreateDto());
+        result.IsSuccess.Should().BeTrue();
+
+        await _identityUserService.ReceivedWithAnyArgs()
+            .CreateAsync(new IdentityUserCreateDto());
+
         _identityUserCache.Received().AddOrUpdate(dto);
     }
 
@@ -64,7 +68,9 @@ public sealed class UserStoreTests
 
         _identityUserCache.GetByChatId(User.Id).Returns(dto);
 
-        await Sut.AddOrUpdate(new TelegramUser(1, dto.Name, dto.Surname, dto.Username));
+        var result = await Sut.AddOrUpdate(new TelegramUser(1, dto.Name, dto.Surname, dto.Username));
+
+        result.IsSuccess.Should().BeTrue();
 
         await _identityUserService.DidNotReceiveWithAnyArgs()
             .UpdateAsync(dto.Id, new IdentityUserUpdateDto());
@@ -86,9 +92,13 @@ public sealed class UserStoreTests
                 Task.FromResult(Result<IdentityUserDto>.Success(dto))
             );
 
-        await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdate(User);
 
-        await _identityUserService.ReceivedWithAnyArgs().UpdateAsync(dto.Id, update);
+        result.IsSuccess.Should().BeTrue();
+        
+        await _identityUserService.ReceivedWithAnyArgs()
+            .UpdateAsync(dto.Id, update);
+
         _identityUserCache.Received().AddOrUpdate(dto);
     }
 
@@ -110,7 +120,9 @@ public sealed class UserStoreTests
                 Task.FromResult(Result<IdentityUserDto>.Success(dto))
             );
 
-        await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdate(User);
+
+        result.IsSuccess.Should().BeTrue();
 
         await _identityUserService.ReceivedWithAnyArgs()
             .UpdateAsync(dto.Id, update);

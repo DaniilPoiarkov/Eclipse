@@ -1,8 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Common.Exceptions;
+using Eclipse.Common.Results;
 using Eclipse.Core.Models;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Users;
 
@@ -18,22 +16,20 @@ internal sealed class UserStore : IUserStore
         _userCache = userCache;
     }
 
-    public async Task AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
+    public async Task<Result> AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
     {
         var cached = _userCache.GetByChatId(user.Id);
 
         if (cached is not null)
         {
-            await CheckAndUpdate(cached, user, cancellationToken);
-            return;
+            return await CheckAndUpdate(cached, user, cancellationToken);
         }
 
         var userResult = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
 
         if (userResult.IsSuccess)
         {
-            await CheckAndUpdate(userResult.Value, user, cancellationToken);
-            return;
+            return await CheckAndUpdate(userResult.Value, user, cancellationToken);
         }
 
         var createUserDto = new IdentityUserCreateDto
@@ -48,21 +44,21 @@ internal sealed class UserStore : IUserStore
 
         if (!creationResult.IsSuccess)
         {
-            // TODO: Remove
-            throw new EclipseValidationException("Create user validation");
+            return creationResult.Error;
         }
 
         _userCache.AddOrUpdate(creationResult.Value);
+        return Result.Success();
     }
 
     public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetAll();
 
-    private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
+    private async Task<Result> CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
     {
         if (HaveSameValues(identityDto, telegramUser))
         {
             _userCache.AddOrUpdate(identityDto);
-            return;
+            return Result.Success();
         }
 
         var updateDto = new IdentityUserUpdateDto
@@ -76,11 +72,12 @@ internal sealed class UserStore : IUserStore
 
         if (!result.IsSuccess)
         {
-            // TODO: Remove
-            throw new EntityNotFoundException(typeof(IdentityUser));
+            return result.Error;
         }
 
         _userCache.AddOrUpdate(result);
+
+        return Result.Success();
 
         static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
         {
