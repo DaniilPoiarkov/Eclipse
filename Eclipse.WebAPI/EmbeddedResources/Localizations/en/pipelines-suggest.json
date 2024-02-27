@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:Suggest": "{0}! Feel free to describe your idea or write /cancel to return",
     "Pipelines:Suggest:Greetings": "Hey;Glad to head that;Wow;Awesome",

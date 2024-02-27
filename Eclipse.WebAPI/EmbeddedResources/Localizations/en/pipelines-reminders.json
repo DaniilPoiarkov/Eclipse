@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:Reminders": "Let's take a look to our reminders!",
     "Pipelines:Reminders:AskForText": "Describe what do you want me to remind you",

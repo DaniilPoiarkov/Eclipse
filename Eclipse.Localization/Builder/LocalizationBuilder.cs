@@ -1,4 +1,5 @@
-﻿using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Localizers;
 
 using Newtonsoft.Json;
 
@@ -6,7 +7,7 @@ namespace Eclipse.Localization.Builder;
 
 internal sealed class LocalizationBuilder : ILocalizationBuilder
 {
-    private readonly List<CultureInfo> _localizations = [];
+    private readonly List<LocalizationResource> _resources = [];
 
     public string DefaultLocalization { get; set; } = "en";
 
@@ -21,15 +22,14 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
 
         var json = File.ReadAllText(fullPath);
 
-        var localizationResource = JsonConvert.DeserializeObject<CultureInfo>(json)
-            ?? throw new UnableToParseLocalizationResourceException(path);
+        var resource = JsonConvert.DeserializeObject<LocalizationResource>(json);
 
-        if (localizationResource.Localization.Equals(string.Empty))
+        if (resource is null || string.IsNullOrEmpty(resource.Culture))
         {
             throw new UnableToParseLocalizationResourceException(path);
         }
 
-        _localizations.Add(localizationResource);
+        _resources.Add(resource);
 
         return this;
     }
@@ -38,28 +38,36 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
     {
         var fullPath = Path.GetFullPath(path);
 
-        var cultureInfos = Directory.GetFiles(fullPath, "*.json")
+        var resources = Directory.GetFiles(fullPath, "*.json")
             .Select(File.ReadAllText)
-            .Select(JsonConvert.DeserializeObject<CultureInfo>)
-            .Where(cultureInfo => cultureInfo is not null);
-
-        foreach (var cultureInfo in cultureInfos)
+            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
+            .Where(resource => resource is not null)
+            .GroupBy(resource => resource!.Culture)
+            .Select(group => new LocalizationResource
+            {
+                Culture = group.Key,
+                Texts = group
+                    .SelectMany(r => r!.Texts)
+                    .ToDictionary()
+            });
+        
+        foreach (var resource in resources)
         {
-            var existing = _localizations.FirstOrDefault(l => l.Localization == cultureInfo!.Localization);
+            var existing = _resources.FirstOrDefault(l => l.Culture == resource!.Culture);
 
             if (existing is null)
             {
-                _localizations.Add(cultureInfo!);
+                _resources.Add(resource);
                 continue;
             }
 
             existing.Texts = existing.Texts
-                .Concat(cultureInfo!.Texts)
-                .ToDictionary(kv => kv.Key, kv => kv.Value);
+                .Concat(resource.Texts)
+                .ToDictionary();
         }
 
         return this;
     }
 
-    public ILocalizer Build() => new Localizer(_localizations, DefaultLocalization);
+    public ILocalizer Build() => new Localizer(_resources, DefaultLocalization);
 }

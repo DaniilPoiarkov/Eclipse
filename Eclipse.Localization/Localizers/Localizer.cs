@@ -4,21 +4,21 @@ namespace Eclipse.Localization.Localizers;
 
 internal sealed class Localizer : ILocalizer
 {
-    private readonly List<CultureInfo> _localizations;
+    private readonly List<LocalizationResource> _resources;
 
-    private readonly CultureInfo _default;
+    private readonly LocalizationResource _default;
 
-    public Localizer(List<CultureInfo> localizations, string @default)
+    public Localizer(List<LocalizationResource> resources, string @default)
     {
-        _localizations = localizations;
-        _default = _localizations.First(l => l.Localization == @default);
+        _resources = resources;
+        _default = _resources.First(l => l.Culture == @default);
     }
 
     public string this[string key, string? culture = null]
     {
         get
         {
-            var localizer = _localizations.FirstOrDefault(l => l.Localization == culture)
+            var localizer = _resources.FirstOrDefault(l => l.Culture == culture)
                 ?? _default;
 
             return localizer.Texts.TryGetValue(key, out var localization)
@@ -35,7 +35,7 @@ internal sealed class Localizer : ILocalizer
 
     public string ToLocalizableString(string value)
     {
-        var localization = _localizations.FirstOrDefault(l => l.Texts.ContainsValue(value))
+        var localization = _resources.FirstOrDefault(l => l.Texts.ContainsValue(value))
             ?? throw new LocalizationNotFoundException(value, nameof(value));
 
         return localization.Texts.First(t => t.Value.Equals(value)).Key;

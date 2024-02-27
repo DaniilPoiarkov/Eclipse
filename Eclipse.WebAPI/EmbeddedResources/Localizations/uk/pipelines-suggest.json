@@ -1,5 +1,5 @@
 {
-  "Localization": "uk",
+  "Culture": "uk",
   "Texts": {
     "Pipelines:Suggest": "{0}! Опиши свою ідею або нажми /cancel щоб повернутись назад",
     "Pipelines:Suggest:Greetings": "Ура;Рада це чути;Вау;Це ж треба",
