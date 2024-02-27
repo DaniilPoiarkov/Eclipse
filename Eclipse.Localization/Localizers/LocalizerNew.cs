@@ -10,9 +10,9 @@ internal sealed class LocalizerNew : ILocalizer
 
     private readonly string _default;
 
-    private readonly Lazy<List<CultureInfo>> _resources;
+    private readonly Lazy<List<LocalizationResource>> _resources;
 
-    private List<CultureInfo> Localizations => _resources.Value;
+    private List<LocalizationResource> Localizations => _resources.Value;
 
     public LocalizerNew(List<string> resourcePaths, string @default)
     {
@@ -25,8 +25,8 @@ internal sealed class LocalizerNew : ILocalizer
     {
         get
         {
-            var localizer = Localizations.FirstOrDefault(l => l.Localization == culture)
-                ?? Localizations.First(l => l.Localization == _default);
+            var localizer = Localizations.FirstOrDefault(l => l.Culture == culture)
+                ?? Localizations.First(l => l.Culture == _default);
 
             return localizer.Texts.TryGetValue(key, out var localization)
                 ? localization
@@ -48,17 +48,17 @@ internal sealed class LocalizerNew : ILocalizer
         return localization.Texts.First(t => t.Value.Equals(value)).Key;
     }
 
-    private List<CultureInfo> GetCultureInfoList()
+    private List<LocalizationResource> GetCultureInfoList()
     {
         var localizations = _resourcePaths.Select(Path.GetFullPath)
             .SelectMany(path => Directory.GetFiles(path, "*.json"))
             .Select(File.ReadAllText)
-            .Select(JsonConvert.DeserializeObject<CultureInfo>)
+            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
             .Where(cultureInfo => cultureInfo is not null)
-            .GroupBy(cultureInfo => cultureInfo!.Localization)
-            .Select(grouping => new CultureInfo()
+            .GroupBy(cultureInfo => cultureInfo!.Culture)
+            .Select(grouping => new LocalizationResource()
             {
-                Localization = grouping.Key,
+                Culture = grouping.Key,
                 Texts = grouping.SelectMany(cultureInfo => cultureInfo!.Texts).ToDictionary()
             })
             .ToList();

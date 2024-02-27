@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:AdminMenu": "Switched to admin mode",
     "Pipelines:AdminMenu:SendToUser:SendUserId": "Send user chat Id",

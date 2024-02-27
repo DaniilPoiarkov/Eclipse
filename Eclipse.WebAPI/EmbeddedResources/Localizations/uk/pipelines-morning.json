@@ -1,5 +1,5 @@
 {
-  "Localization": "uk",
+  "Culture": "uk",
   "Texts": {
     "Pipelines:Morning:AskMood": "Добрий ранок🌖\n\rЯк справи?😊",
     "Pipelines:Morning:GoodMood": "Це дуже добре!\n\rБажаю тобі гарного дня😊",

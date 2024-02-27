@@ -1,5 +1,5 @@
 {
-  "Localization": "uk",
+  "Culture": "uk",
   "Texts": {
     "Pipelines:AdminMenu": "Включено режим адміністратора",
     "Pipelines:AdminMenu:SendToUser:SendUserId": "Відправте ідентифікатор користовуча",

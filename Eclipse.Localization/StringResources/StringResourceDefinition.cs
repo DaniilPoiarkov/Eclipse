@@ -16,17 +16,17 @@ public sealed class StringResourceDefinition
         Path = path;
     }
 
-    internal CultureInfo? GetCultureInfo(string culture)
+    internal LocalizationResource? GetCultureInfo(string culture)
     {
         var cultureInfo = Directory.GetFiles(System.IO.Path.GetFullPath(Path), "*.json")
             .Select(File.ReadAllText)
             .Where(json => json.StartsWith($"{{\"localization\": \"{culture}\"", StringComparison.CurrentCultureIgnoreCase))
-            .Select(JsonConvert.DeserializeObject<CultureInfo>)
+            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
             .Where(cultureInfo => cultureInfo is not null)
-            .GroupBy(cultureInfo => cultureInfo!.Localization)
-            .Select(grouping => new CultureInfo
+            .GroupBy(cultureInfo => cultureInfo!.Culture)
+            .Select(grouping => new LocalizationResource
             {
-                Localization = grouping.Key,
+                Culture = grouping.Key,
                 Texts = grouping.SelectMany(cultureInfo => cultureInfo!.Texts).ToDictionary()
             })
             .SingleOrDefault();

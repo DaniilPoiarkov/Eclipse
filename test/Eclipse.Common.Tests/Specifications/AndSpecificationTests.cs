@@ -3,8 +3,6 @@ using Eclipse.Domain.Tests.Specifications.Utils;
 
 using FluentAssertions;
 
-using Xunit;
-
 namespace Eclipse.Domain.Tests.Specifications;
 
 public sealed class AndSpecificationTests
@@ -24,16 +22,17 @@ public sealed class AndSpecificationTests
     [Fact]
     public void AndSpecification_WhenApplied_ThenBothSpecificationMustMatch()
     {
-        var greaterThanValue = 5;
-        var expectedCount = 5;
+        var xGreaterThanValue = 5;
+        var yGreaterThanValue = 7;
+        var expectedCount = 3;
 
-        var specification = new XGreaterThanSpecification(greaterThanValue)
-            .And(new YGreaterThanSpecification(greaterThanValue));
+        var specification = new XGreaterThanSpecification(xGreaterThanValue)
+            .And(new YGreaterThanSpecification(yGreaterThanValue));
 
         var results = _objects.Where(specification).ToArray();
 
         results.Length.Should().Be(expectedCount);
-        results.All(x => x.X > greaterThanValue).Should().BeTrue();
-        results.All(x => x.Y > greaterThanValue).Should().BeTrue();
+        results.All(x => x.X > xGreaterThanValue).Should().BeTrue();
+        results.All(x => x.Y > yGreaterThanValue).Should().BeTrue();
     }
 }

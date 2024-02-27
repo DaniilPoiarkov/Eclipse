@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:Common:About": "Hi, {name}!\r\nMy name is Eclipse and I'm your small helper😊\r\n Use /help to get some addition info",
     "Pipelines:Common:Help": "Here what I can do",

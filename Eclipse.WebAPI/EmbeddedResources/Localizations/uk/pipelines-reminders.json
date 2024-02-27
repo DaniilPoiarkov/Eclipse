@@ -1,5 +1,5 @@
 {
-  "Localization": "uk",
+  "Culture": "uk",
   "Texts": {
     "Pipelines:Reminders": "Давай глянемо на нагадування!",
     "Pipelines:Reminders:AskForText": "Опиши що мені нагадати",
