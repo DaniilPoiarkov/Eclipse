@@ -18,16 +18,14 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         return WithCachingAsync(() => _identityUserService.CreateAsync(createDto, cancellationToken));
     }
 
-    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _identityUserService.GetAllAsync(cancellationToken);
+        return _identityUserService.GetAllAsync(cancellationToken);
+    }
 
-        foreach (var user in users)
-        {
-            UserCache.AddOrUpdate(user);
-        }
-
-        return users;
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        return _identityUserService.GetFilteredListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
@@ -56,18 +54,6 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         }
 
         return WithCachingAsync(() => _identityUserService.GetByIdAsync(id, cancellationToken));
-    }
-
-    public async Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        var users = await _identityUserService.GetFilteredListAsync(request, cancellationToken);
-
-        foreach(var user in users)
-        {
-            UserCache.AddOrUpdate(user);
-        }
-
-        return users;
     }
 
     public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)

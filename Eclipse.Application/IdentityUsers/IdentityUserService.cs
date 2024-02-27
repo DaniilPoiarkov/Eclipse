@@ -23,9 +23,14 @@ internal sealed class IdentityUserService : IIdentityUserService
         return _createUpdateService.CreateAsync(createDto, cancellationToken);
     }
 
-    public Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return _readService.GetAllAsync(cancellationToken);
+    }
+
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        return _readService.GetFilteredListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
@@ -36,11 +41,6 @@ internal sealed class IdentityUserService : IIdentityUserService
     public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _readService.GetByIdAsync(id, cancellationToken);
-    }
-
-    public Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        return _readService.GetFilteredListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)

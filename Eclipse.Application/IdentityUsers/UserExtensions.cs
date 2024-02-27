@@ -29,4 +29,18 @@ internal static class UserExtensions
                 .ToList(),
         };
     }
+
+    public static IdentityUserSlimDto ToSlimDto(this IdentityUser value)
+    {
+        return new IdentityUserSlimDto
+        {
+            Id = value.Id,
+            Name = value.Name,
+            Surname = value.Surname,
+            Username = value.Username,
+            ChatId = value.ChatId,
+            Culture = value.Culture,
+            NotificationsEnabled = value.NotificationsEnabled
+        };
+    }
 }

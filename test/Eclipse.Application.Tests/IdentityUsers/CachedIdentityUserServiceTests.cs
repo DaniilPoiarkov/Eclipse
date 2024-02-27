@@ -49,26 +49,6 @@ public sealed class CachedIdentityUserServiceTests
     }
 
     [Fact]
-    public async Task GetAllAsync_WhenCalled_ThenAllUsersCached()
-    {
-        var dtos = IdentityUserDtoGenerator.GenerateUsers(1, 5);
-
-        _userService.GetAllAsync()
-            .Returns(
-                Task.FromResult<IReadOnlyList<IdentityUserDto>>(dtos)
-            );
-
-        var result = await Sut.GetAllAsync();
-
-        foreach (var dto in result)
-        {
-            _userCache.Received().AddOrUpdate(dto);
-        }
-
-        await _userService.Received().GetAllAsync();
-    }
-
-    [Fact]
     public async Task GetByChatIdAsync_WhenUserCached_ThenCachedUserReturned()
     {
         var dto = GetDto();
@@ -179,5 +159,5 @@ public sealed class CachedIdentityUserServiceTests
         result.Value.Id.Should().Be(dto.Id);
     }
 
-    private static IdentityUserDto GetDto() => IdentityUserDtoGenerator.GenerateUsers(1, 1).First();
+    private static IdentityUserDto GetDto() => IdentityUserDtoGenerator.Generate(1, 1).First();
 }

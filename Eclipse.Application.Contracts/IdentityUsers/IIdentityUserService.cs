@@ -9,9 +9,9 @@ public interface IIdentityUserService : IIdentityUserReadService, IIdentityUserC
 
 public interface IIdentityUserReadService
 {
-    Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 

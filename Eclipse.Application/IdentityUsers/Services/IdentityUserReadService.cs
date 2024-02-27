@@ -17,13 +17,22 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
         _repository = repository;
     }
 
-    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var users = await _userManager.GetAllAsync(cancellationToken);
 
         return users
-            .Select(u => u.ToDto())
+            .Select(u => u.ToSlimDto())
             .ToList();
+    }
+
+    public async Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        var users = await _repository.GetByFilterAsync(request.Name, request.UserName, request.NotificationsEnabled, cancellationToken);
+
+        return users
+            .Select(u => u.ToSlimDto())
+            .ToArray();
     }
 
     public async Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
@@ -48,14 +57,5 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
         }
 
         return user.ToDto();
-    }
-
-    public async Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        var users = await _repository.GetByFilterAsync(request.Name, request.UserName, request.NotificationsEnabled, cancellationToken);
-
-        return users
-            .Select(u => u.ToDto())
-            .ToArray();
     }
 }
