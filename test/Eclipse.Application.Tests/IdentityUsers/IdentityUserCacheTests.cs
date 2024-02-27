@@ -31,7 +31,7 @@ public sealed class IdentityUserCacheTests
     [Fact]
     public void GetAll_WhenUsersCached_ThenCachedUsersReturned()
     {
-        var users = IdentityUserDtoGenerator.GenerateUsers(1, 5);
+        var users = IdentityUserDtoGenerator.Generate(1, 5);
 
         _cacheService.Get<List<IdentityUserDto>>(_key)
             .ReturnsForAnyArgs(users);
@@ -46,8 +46,8 @@ public sealed class IdentityUserCacheTests
     [Fact]
     public void AddOrUpdate_WhenUserNotCached_ThenAddUserToCachedCollection()
     {
-        var cached = IdentityUserDtoGenerator.GenerateUsers(1, 4);
-        var dto = IdentityUserDtoGenerator.GenerateUsers(5, 1).First();
+        var cached = IdentityUserDtoGenerator.Generate(1, 4);
+        var dto = IdentityUserDtoGenerator.Generate(5, 1).First();
 
         _cacheService.Get<List<IdentityUserDto>>(_key)
             .ReturnsForAnyArgs(cached);

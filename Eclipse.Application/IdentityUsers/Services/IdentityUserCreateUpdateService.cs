@@ -26,7 +26,7 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
         return result.Value.ToDto();
     }
 
-    public async Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public async Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto update, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(id, cancellationToken);
 
@@ -35,26 +35,29 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
             return DefaultErrors.EntityNotFound(typeof(IdentityUser));
         }
 
-        user.Name = updateDto.Name is null
-            ? user.Name
-            : updateDto.Name;
-
-        user.Surname = updateDto.Surname is null
-            ? user.Surname
-            : updateDto.Surname;
-
-        user.Username = updateDto.Username is null
-            ? user.Username
-            : updateDto.Username;
-
-        if (!string.IsNullOrEmpty(updateDto.Culture))
+        if (!update.Name.IsNullOrEmpty())
         {
-            user.Culture = updateDto.Culture;
+            user.Name = update.Name;
         }
 
-        if (updateDto.NotificationsEnabled.HasValue)
+        if (!update.Surname.IsNullOrEmpty())
         {
-            user.NotificationsEnabled = updateDto.NotificationsEnabled.Value;
+            user.Surname = update.Surname;
+        }
+
+        if (!update.Username.IsNullOrEmpty())
+        {
+            user.Username = update.Username;
+        }
+
+        if (!update.Culture.IsNullOrEmpty())
+        {
+            user.Culture = update.Culture;
+        }
+
+        if (update.NotificationsEnabled.HasValue)
+        {
+            user.NotificationsEnabled = update.NotificationsEnabled.Value;
         }
 
         return (await _userManager.UpdateAsync(user, cancellationToken)).ToDto();

@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -23,9 +24,14 @@ internal sealed class IdentityUserService : IIdentityUserService
         return _createUpdateService.CreateAsync(createDto, cancellationToken);
     }
 
-    public Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return _readService.GetAllAsync(cancellationToken);
+    }
+
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        return _readService.GetFilteredListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
@@ -33,14 +39,14 @@ internal sealed class IdentityUserService : IIdentityUserService
         return _readService.GetByChatIdAsync(chatId, cancellationToken);
     }
 
+    public Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    {
+        return _readService.GetPaginatedListAsync(request, cancellationToken);
+    }
+
     public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _readService.GetByIdAsync(id, cancellationToken);
-    }
-
-    public Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        return _readService.GetFilteredListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)

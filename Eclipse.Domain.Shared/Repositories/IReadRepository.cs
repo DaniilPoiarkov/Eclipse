@@ -27,6 +27,16 @@ public interface IReadRepository<TEntity>
     Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Returnes <a cref="TEntity"></a> records which match the expression and spplies pagination.
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="skipCount"></param>
+    /// <param name="takeCount"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Returns <a cref="TEntity"></a> with specified id, if entity was not found returns null
     /// </summary>
     /// <param name="id"></param>

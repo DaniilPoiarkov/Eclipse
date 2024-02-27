@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -18,16 +19,19 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         return WithCachingAsync(() => _identityUserService.CreateAsync(createDto, cancellationToken));
     }
 
-    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _identityUserService.GetAllAsync(cancellationToken);
+        return _identityUserService.GetAllAsync(cancellationToken);
+    }
 
-        foreach (var user in users)
-        {
-            UserCache.AddOrUpdate(user);
-        }
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        return _identityUserService.GetFilteredListAsync(request, cancellationToken);
+    }
 
-        return users;
+    public Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    {
+        return _identityUserService.GetPaginatedListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
@@ -56,18 +60,6 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         }
 
         return WithCachingAsync(() => _identityUserService.GetByIdAsync(id, cancellationToken));
-    }
-
-    public async Task<IReadOnlyList<IdentityUserDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        var users = await _identityUserService.GetFilteredListAsync(request, cancellationToken);
-
-        foreach(var user in users)
-        {
-            UserCache.AddOrUpdate(user);
-        }
-
-        return users;
     }
 
     public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
