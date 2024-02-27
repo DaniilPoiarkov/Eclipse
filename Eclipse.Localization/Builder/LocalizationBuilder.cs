@@ -1,4 +1,5 @@
-﻿using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Localizers;
 
 using Newtonsoft.Json;
 
