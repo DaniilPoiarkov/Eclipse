@@ -2,11 +2,11 @@
 
 namespace Eclipse.Localization.Localizers;
 
-[DebuggerDisplay("{Localization}")]
+[DebuggerDisplay("{Culture}")]
 [Serializable]
-internal sealed class CultureInfo
+internal sealed class LocalizationResource
 {
-    public string Localization { get; set; } = string.Empty;
+    public string Culture { get; set; } = string.Empty;
 
     public Dictionary<string, string> Texts { get; set; } = [];
 }

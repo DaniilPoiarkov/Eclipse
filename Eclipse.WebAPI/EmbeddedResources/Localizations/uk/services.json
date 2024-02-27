@@ -1,5 +1,5 @@
 {
-  "Localization": "uk",
+  "Culture": "uk",
   "Texts": {
     "Telegram:BotAlreadyRunning": "Неможливо запустити бота оскільки він вже працює",
     "Telegram:MessageCannotBeEmpty": "Повідомлення не може бути пустим",

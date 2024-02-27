@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
 
-using NSubstitute.ExceptionExtensions;
-
 namespace Eclipse.Common.Tests.Pagination;
 
 public class PaginationListTests

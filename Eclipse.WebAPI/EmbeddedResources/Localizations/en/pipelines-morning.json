@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:Morning:AskMood": "Morning🌖\n\rWhat's up'?😊",
     "Pipelines:Morning:GoodMood": "Glad to hear that!\n\rWish you good day😊",

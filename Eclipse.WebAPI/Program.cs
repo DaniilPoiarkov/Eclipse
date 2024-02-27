@@ -12,6 +12,7 @@ using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.HealthChecks;
+using Eclipse.WebAPI.Options;
 
 using Serilog;
 
@@ -37,14 +38,19 @@ builder.Services
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
-builder.Services.AddLocalization(builder =>
+builder.Services.AddLocalization(localization =>
 {
-    var path = "EmbeddedResources/Localizations/";
+    var options = builder.Configuration.GetSection("Localization")
+        .Get<LocalizationOptions>()!;
 
-    builder.AddJsonFiles($"{path}en")
-        .AddJsonFiles($"{path}uk");
+    var path = "EmbeddedResources/Localizations";
 
-    builder.DefaultLocalization = "uk";
+    foreach (var culture in options.AvailableCultures)
+    {
+        localization.AddJsonFiles($"{path}/{culture}");
+    }
+
+    localization.DefaultLocalization = options.DefaultCulture;
 });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(

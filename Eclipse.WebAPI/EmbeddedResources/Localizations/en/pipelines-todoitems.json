@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:TodoItems": "Let's take a look what do we have here..",
     "Pipelines:TodoItems:YourToDos": "📝 Your to dos:",

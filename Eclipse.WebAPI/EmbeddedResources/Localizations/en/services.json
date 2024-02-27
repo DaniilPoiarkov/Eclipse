@@ -1,5 +1,5 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
     "Telegram:MessageCannotBeEmpty": "Message can not be empty",
