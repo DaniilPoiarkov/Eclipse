@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 
 using NSubstitute;
@@ -30,7 +30,7 @@ internal sealed class UpdateAsyncStepDefinitions
         _lazyManager = new Lazy<IdentityUserManager>(() => new IdentityUserManager(_repository));
 
         _lazySut = new Lazy<IIdentityUserCreateUpdateService>(
-            () => new IdentityUserCreateUpdateService(new IdentityUserMapper(), _lazyManager.Value)
+            () => new IdentityUserCreateUpdateService(_lazyManager.Value)
         );
     }
 

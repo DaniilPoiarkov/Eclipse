@@ -1,4 +1,6 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Common.Results;
+using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.TodoItems;
 
 using Newtonsoft.Json;
 
@@ -7,13 +9,36 @@ namespace Eclipse.Domain.TodoItems;
 public sealed class TodoItem : Entity
 {
     [JsonConstructor]
-    internal TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
+    private TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
     {
         UserId = userId;
         Text = text;
         CreatedAt = createdAt;
         IsFinished = isFinished;
         FinishedAt = finishedAt;
+    }
+
+    /// <summary>
+    /// Creates new TodoItem
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="userId"></param>
+    /// <param name="text"></param>
+    /// <param name="createdAt"></param>
+    /// <returns></returns>
+    internal static Result<TodoItem> Create(Guid id, Guid userId, string? text, DateTime createdAt)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
+        {
+            return TodoItemDomainErrors.TodoItemIsEmpty();
+        }
+
+        if (text.Length > TodoItemConstants.MaxLength)
+        {
+            return TodoItemDomainErrors.TodoItemTooLong(TodoItemConstants.MaxLength);
+        }
+
+        return new TodoItem(id, userId, text, createdAt);
     }
 
     private TodoItem() { }
@@ -29,15 +54,16 @@ public sealed class TodoItem : Entity
     public DateTime? FinishedAt { get; private set; }
 
     /// <summary>Marks item as finished.</summary>
-    /// <exception cref="TodoItemAlreadyFinishedException">If item already finished</exception>
-    public void MarkAsFinished()
+    public Result MarkAsFinished()
     {
         if (IsFinished)
         {
-            throw new TodoItemAlreadyFinishedException(Text);
+            return TodoItemDomainErrors.AlreadyFinished(Text);
         }
 
         IsFinished = true;
         FinishedAt = DateTime.UtcNow;
+
+        return Result.Success();
     }
 }

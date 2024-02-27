@@ -1,10 +1,10 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 using Eclipse.Core.Models;
-using Eclipse.Domain.Exceptions;
 
 namespace Eclipse.Pipelines.Users;
 
-internal class UserStore : IUserStore
+internal sealed class UserStore : IUserStore
 {
     private readonly IIdentityUserService _identityUserService;
 
@@ -16,44 +16,49 @@ internal class UserStore : IUserStore
         _userCache = userCache;
     }
 
-    public async Task AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
+    public async Task<Result> AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
     {
         var cached = _userCache.GetByChatId(user.Id);
 
         if (cached is not null)
         {
-            await CheckAndUpdate(cached, user, cancellationToken);
-            return;
+            return await CheckAndUpdate(cached, user, cancellationToken);
         }
 
-        try
-        {
-            var entity = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
-            await CheckAndUpdate(entity, user, cancellationToken);
-        }
-        catch (EntityNotFoundException)
-        {
-            var createUserDto = new IdentityUserCreateDto
-            {
-                Name = user.Name,
-                Username = user.Username ?? string.Empty,
-                Surname = user.Surname,
-                ChatId = user.Id
-            };
+        var userResult = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
 
-            var identity = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
-            _userCache.AddOrUpdate(identity);
+        if (userResult.IsSuccess)
+        {
+            return await CheckAndUpdate(userResult.Value, user, cancellationToken);
         }
+
+        var createUserDto = new IdentityUserCreateDto
+        {
+            Name = user.Name,
+            Username = user.Username ?? string.Empty,
+            Surname = user.Surname,
+            ChatId = user.Id
+        };
+
+        var creationResult = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
+
+        if (!creationResult.IsSuccess)
+        {
+            return creationResult.Error;
+        }
+
+        _userCache.AddOrUpdate(creationResult.Value);
+        return Result.Success();
     }
 
     public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetAll();
 
-    private async Task CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
+    private async Task<Result> CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
     {
         if (HaveSameValues(identityDto, telegramUser))
         {
             _userCache.AddOrUpdate(identityDto);
-            return;
+            return Result.Success();
         }
 
         var updateDto = new IdentityUserUpdateDto
@@ -63,8 +68,16 @@ internal class UserStore : IUserStore
             Surname = telegramUser.Surname
         };
 
-        var user = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
-        _userCache.AddOrUpdate(user);
+        var result = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
+
+        _userCache.AddOrUpdate(result);
+
+        return Result.Success();
 
         static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
         {

@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
@@ -11,6 +10,7 @@ using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.EventHandlers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Application.Localizations;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
@@ -18,8 +18,6 @@ using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
 using Eclipse.Common.Sheets;
-
-using FluentValidation;
 
 using MediatR.NotificationPublishers;
 
@@ -49,15 +47,8 @@ public static class EclipseApplicationModule
             .AddTransient<IIdentityUserReadService, IdentityUserReadService>()
             .AddTransient<IIdentityUserService, IdentityUserService>();
 
-        services.AddValidatorsFromAssemblyContaining<CommandDtoValidator>(ServiceLifetime.Transient);
-
         services.Scan(tss => tss.FromAssemblyOf<SuggestionObjectParser>()
             .AddClasses(c => c.AssignableTo(typeof(IObjectParser<>)))
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
-
-        services.Scan(tss => tss.FromAssemblyOf<TodoItemMapper>()
-            .AddClasses(c => c.AssignableTo(typeof(IMapper<,>)))
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 

@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
-using Eclipse.Domain.Exceptions;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -14,8 +14,6 @@ namespace Eclipse.Application.Tests.IdentityUsers;
 
 public sealed class IdentityUserReadServiceTests
 {
-    private readonly IdentityUserManager _manager;
-
     private readonly IIdentityUserRepository _repository;
 
     private readonly Lazy<IIdentityUserReadService> _lazySut;
@@ -25,8 +23,12 @@ public sealed class IdentityUserReadServiceTests
     public IdentityUserReadServiceTests()
     {
         _repository = Substitute.For<IIdentityUserRepository>();
-        _manager = Substitute.For<IdentityUserManager>(_repository);
-        _lazySut = new Lazy<IIdentityUserReadService>(() => new IdentityUserReadService(new IdentityUserMapper(), _manager, _repository));
+
+        _lazySut = new Lazy<IIdentityUserReadService>(
+            () => new IdentityUserReadService(
+                new IdentityUserManager(_repository),
+                _repository
+            ));
     }
 
     [Fact]
@@ -34,7 +36,7 @@ public sealed class IdentityUserReadServiceTests
     {
         var count = 5;
         var users = IdentityUserGenerator.Generate(count);
-        _manager.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<IdentityUser>>(users));
+        _repository.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<IdentityUser>>(users));
 
         var result = await Sut.GetAllAsync();
 
@@ -43,13 +45,18 @@ public sealed class IdentityUserReadServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenExceptionThrown()
+    public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenFailureResultReturned()
     {
-        var action = async () =>
-        {
-            await Sut.GetByIdAsync(Guid.NewGuid());
-        };
+        var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
 
-        await action.Should().ThrowAsync<EntityNotFoundException>();
+        var result = await Sut.GetByIdAsync(Guid.NewGuid());
+
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        error.Type.Should().Be(expectedError.Type);
     }
 }

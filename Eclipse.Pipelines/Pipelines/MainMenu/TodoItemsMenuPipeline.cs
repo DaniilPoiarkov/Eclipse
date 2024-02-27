@@ -4,7 +4,7 @@ using Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Menu:MainMenu:MyToDos", "/todos")]
-internal class TodoItemsMenuPipeline : TodoItemsPipelineBase
+internal sealed class TodoItemsMenuPipeline : TodoItemsPipelineBase
 {
     protected override void Initialize()
     {

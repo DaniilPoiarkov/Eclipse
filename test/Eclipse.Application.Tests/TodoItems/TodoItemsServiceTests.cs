@@ -1,10 +1,10 @@
 ﻿using Bogus;
 
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.TodoItems;
-using Eclipse.Domain.Exceptions;
 using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Tests.Generators;
 
@@ -26,10 +26,11 @@ public sealed class TodoItemsServiceTests
 
     public TodoItemsServiceTests()
     {
-        var mapper = new IdentityUserMapper();
-
         _repository = Substitute.For<IIdentityUserRepository>();
-        _lazySut = new Lazy<ITodoItemService>(() => new TodoItemService(new IdentityUserManager(_repository), mapper));
+        _lazySut = new Lazy<ITodoItemService>(
+            () => new TodoItemService(
+                new IdentityUserManager(_repository)
+            ));
     }
 
     [Fact]
@@ -48,11 +49,12 @@ public sealed class TodoItemsServiceTests
 
         var result = await Sut.CreateAsync(createModel);
 
-        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
 
-        result.TodoItems.Count.Should().Be(1);
+        var dto = result.Value;
+        dto.TodoItems.Count.Should().Be(1);
 
-        var todoItem = result.TodoItems[0];
+        var todoItem = dto.TodoItems[0];
 
         todoItem.Text.Should().Be(createModel.Text);
         todoItem.UserId.Should().Be(user.Id);
@@ -60,8 +62,9 @@ public sealed class TodoItemsServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WhenUserReachLimitOfItems_ThenExceptionThrown()
+    public async Task CreateAsync_WhenUserReachLimitOfItems_ThenFailureResultReturned()
     {
+        var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         var user = IdentityUserGenerator.Generate(1).First();
 
         var faker = new Faker();
@@ -80,17 +83,20 @@ public sealed class TodoItemsServiceTests
             UserId = user.ChatId,
         };
 
-        var action = async () =>
-        {
-            await Sut.CreateAsync(createModel);
-        };
+        var result = await Sut.CreateAsync(createModel);
 
-        await action.Should().ThrowAsync<TodoItemLimitException>();
+        result.IsSuccess.Should().BeFalse();
+        
+        var error = result.Error;
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 
     [Fact]
-    public async Task CreateAsync_WhenTestIsEmpty_ThenValidationFails()
+    public async Task CreateAsync_WhenTextIsEmpty_ThenFailureResultReturned()
     {
+        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
         var user = IdentityUserGenerator.Generate(1).First();
 
         _repository.GetByExpressionAsync(_ => true)
@@ -102,28 +108,34 @@ public sealed class TodoItemsServiceTests
             UserId = user.ChatId,
         };
 
-        var action = async () =>
-        {
-            await Sut.CreateAsync(createModel);
-        };
+        var result = await Sut.CreateAsync(createModel);
 
-        await action.Should().ThrowAsync<TodoItemValidationException>();
+        result.IsSuccess.Should().BeFalse();
+        var error = result.Error;
+
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 
     [Fact]
-    public async Task CreateAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
+    public async Task CreateAsync_WhenUserNotExists_ThenFailureResultReturned()
     {
+        var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
+
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
             UserId = 2,
         };
 
-        var action = async () =>
-        {
-            await Sut.CreateAsync(createModel);
-        };
+        var result = await Sut.CreateAsync(createModel);
 
-        await action.Should().ThrowAsync<EntityNotFoundException>();
+        result.IsSuccess.Should().BeFalse();
+        var error = result.Error;
+
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 }

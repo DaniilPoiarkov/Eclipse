@@ -11,7 +11,7 @@ using Telegram.Bot;
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Menu:MainMenu:Suggest", "/suggest")]
-public class SuggestPipeline : EclipsePipelineBase
+public sealed class SuggestPipeline : EclipsePipelineBase
 {
     private readonly ITelegramBotClient _botClient;
 
@@ -32,7 +32,7 @@ public class SuggestPipeline : EclipsePipelineBase
         RegisterStage(RecieveIdea);
     }
 
-    protected IResult SendInfo(MessageContext context)
+    private IResult SendInfo(MessageContext context)
     {
         var greeting = Localizer!["Pipelines:Suggest:Greetings"]
             .Split(';', StringSplitOptions.RemoveEmptyEntries)
@@ -41,7 +41,7 @@ public class SuggestPipeline : EclipsePipelineBase
         return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
     }
 
-    protected async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
+    private async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.IsNullOrEmpty())
         {
@@ -53,8 +53,7 @@ public class SuggestPipeline : EclipsePipelineBase
             return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:AsYouWish"]);
         }
 
-        var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:" +
-            $"\n{context.Value}";
+        var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{context.Value}";
 
         var suggestionDto = new SuggestionDto
         {

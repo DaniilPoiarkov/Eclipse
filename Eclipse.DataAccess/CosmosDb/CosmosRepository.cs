@@ -20,7 +20,7 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
         Publisher = publisher;
     }
 
-    public virtual async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var result = await Container.CreateAsync(entity, cancellationToken);
 
@@ -28,6 +28,9 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 
         return result;
     }
+
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) =>
+        Container.CountAsync(expression, cancellationToken);
 
     public virtual Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
         Container.DeleteAsync(id, cancellationToken);
@@ -41,7 +44,10 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
     public virtual Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) =>
         Container.GetByExpressionAsync(expression, cancellationToken);
 
-    public virtual async Task<TEntity?> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default) =>
+        Container.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken);
+
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var result = await Container.UpdateAsync(entity, cancellationToken);
         

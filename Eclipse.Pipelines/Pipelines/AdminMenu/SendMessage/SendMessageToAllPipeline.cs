@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Application.Localizations;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
@@ -51,24 +52,27 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        try
+        var notifications = (await _userService.GetAllAsync(cancellationToken))
+            .Select(u => new SendMessageModel
+            {
+                ChatId = u.ChatId,
+                Message = Content
+            })
+            .Select(m => _telegramService.Send(m, cancellationToken));
+
+        var errors = (await Task.WhenAll(notifications))
+            .Where(r => !r.IsSuccess)
+            .Select(r => r.Error)
+            .Select(Localizer.LocalizeError)
+            .Select((error, index) => $"{index + 1}. {error}");
+
+        if (errors.IsNullOrEmpty())
         {
-            var notifications = (await _userService.GetAllAsync(cancellationToken))
-                .Select(u => new SendMessageModel
-                {
-                    ChatId = u.ChatId,
-                    Message = Content
-                })
-                .Select(m => _telegramService.Send(m, cancellationToken));
-
-            await Task.WhenAll(notifications);
-
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
-        catch (Exception ex)
-        {
-            return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:" +
-                $"{Environment.NewLine}{ex.Message}");
-        }
+
+        var text = string.Join(Environment.NewLine, errors);
+
+        return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{text}");
     }
 }

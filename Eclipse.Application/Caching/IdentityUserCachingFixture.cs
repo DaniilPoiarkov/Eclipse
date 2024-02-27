@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Caching;
 
@@ -11,12 +12,15 @@ internal abstract class IdentityUserCachingFixture
         UserCache = userCache;
     }
 
-    protected async Task<IdentityUserDto> WithCachingAsync(Func<Task<IdentityUserDto>> action)
+    protected async Task<Result<IdentityUserDto>> WithCachingAsync(Func<Task<Result<IdentityUserDto>>> action)
     {
-        var user = await action();
+        var result = await action();
 
-        UserCache.AddOrUpdate(user);
+        if (result.IsSuccess)
+        {
+            UserCache.AddOrUpdate(result.Value);
+        }
 
-        return user;
+        return result;
     }
 }

@@ -1,7 +1,5 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.Telegram.Commands;
-
-using FluentValidation;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
+using Eclipse.Common.Results;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,23 +10,21 @@ internal sealed class CommandService : ICommandService
 {
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IValidator<CommandDto> _commandDtoValidator;
+    private static readonly string _descriptionPrefix = "BotCommand";
 
-    private readonly IMapper<BotCommand, CommandDto> _mapper;
-
-    public CommandService(
-        ITelegramBotClient botClient,
-        IValidator<CommandDto> commandDtoValidator,
-        IMapper<BotCommand, CommandDto> mapper)
+    public CommandService(ITelegramBotClient botClient)
     {
         _botClient = botClient;
-        _commandDtoValidator = commandDtoValidator;
-        _mapper = mapper;
     }
 
-    public async Task Add(CommandDto command, CancellationToken cancellationToken = default)
+    public async Task<Result> Add(AddCommandRequest request, CancellationToken cancellationToken = default)
     {
-        _commandDtoValidator.ValidateAndThrow(command);
+        var result = ValidateCommandCreateModel(request);
+
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
 
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
 
@@ -37,18 +33,35 @@ internal sealed class CommandService : ICommandService
         newCommands.AddRange(commands);
         newCommands.Add(new BotCommand()
         {
-            Command = command.Command,
-            Description = command.Description,
+            Command = request.Command!.ToLowerInvariant(),
+            Description = request.Description!,
         });
 
         await SetCommands(newCommands, cancellationToken: cancellationToken);
+
+        return Result.Success();
+    }
+
+    private static Result ValidateCommandCreateModel(AddCommandRequest command)
+    {
+        if (command.Command is not { Length: >= CommandConstants.CommandMinLength and <= CommandConstants.CommandMaxLength })
+        {
+            return Error.Validation("Command.Add", $"{_descriptionPrefix}:{(command.Command.IsNullOrEmpty() ? "CommandMinLength" : "CommandMaxLength")}");
+        }
+
+        if (command.Description is not { Length: >= CommandConstants.DescriptionMinLength and <= CommandConstants.DescriptionMaxLength })
+        {
+            return Error.Validation("Command.Add", $"{_descriptionPrefix}:{(command.Description?.Length < CommandConstants.DescriptionMinLength ? "DescriptionMinLength" : "DescriptionMaxLength")}");
+        }
+
+        return Result.Success();
     }
 
     public async Task<IReadOnlyList<CommandDto>> GetList(CancellationToken cancellationToken = default)
     {
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
         
-        return commands.Select(_mapper.Map)
+        return commands.Select(c => c.ToDto())
             .ToArray();
     }
 

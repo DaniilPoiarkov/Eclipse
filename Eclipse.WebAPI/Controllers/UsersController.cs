@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
 using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
@@ -27,5 +28,11 @@ public sealed class UsersController : ControllerBase
     public async Task<IActionResult> GetFilteredList([FromBody] GetUsersRequest request, CancellationToken cancellationToken)
     {
         return Ok(await _service.GetFilteredListAsync(request, cancellationToken));
+    }
+
+    [HttpPost("paginated")]
+    public async Task<IActionResult> GetPaginatedList([FromBody] PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken)
+    {
+        return Ok(await _service.GetPaginatedListAsync(request, cancellationToken));
     }
 }

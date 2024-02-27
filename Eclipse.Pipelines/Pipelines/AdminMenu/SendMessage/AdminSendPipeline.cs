@@ -3,7 +3,7 @@
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
 [Route("Menu:AdminMenu:Send", "/admin_send")]
-internal class AdminSendPipeline : AdminPipelineBase
+internal sealed class AdminSendPipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {

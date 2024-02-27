@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Tests.Generators;
 
@@ -13,7 +13,7 @@ namespace Eclipse.Application.Tests.IdentityUsers;
 
 public sealed class IdentityUserLogicServiceTests
 {
-    private readonly IdentityUserManager _manager;
+    private readonly IIdentityUserRepository _repository;
 
     private readonly Lazy<IIdentityUserLogicService> _lazySut;
 
@@ -21,10 +21,11 @@ public sealed class IdentityUserLogicServiceTests
 
     public IdentityUserLogicServiceTests()
     {
-        _manager = Substitute.For<IdentityUserManager>(
-            Substitute.For<IIdentityUserRepository>());
-
-        _lazySut = new Lazy<IIdentityUserLogicService>(() => new IdentityUserLogicService(new IdentityUserMapper(), _manager));
+        _repository = Substitute.For<IIdentityUserRepository>();
+        _lazySut = new Lazy<IIdentityUserLogicService>(
+            () => new IdentityUserLogicService(
+                new IdentityUserManager(_repository)
+            ));
     }
 
     [Fact]
@@ -32,7 +33,8 @@ public sealed class IdentityUserLogicServiceTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
-        _manager.FindByIdAsync(user.Id).Returns(Task.FromResult<IdentityUser?>(user));
+        _repository.FindAsync(user.Id)
+            .Returns(Task.FromResult<IdentityUser?>(user));
 
         var utc = DateTime.UtcNow;
 
@@ -45,8 +47,9 @@ public sealed class IdentityUserLogicServiceTests
 
         var result = await Sut.SetUserGmtTimeAsync(user.Id, currentUserTime);
 
-        await _manager.Received().FindByIdAsync(user.Id);
-        await _manager.Received().UpdateAsync(user);
-        result.Gmt.Should().Be(expected);
+        await _repository.Received().FindAsync(user.Id);
+        await _repository.Received().UpdateAsync(user);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Gmt.Should().Be(expected);
     }
 }

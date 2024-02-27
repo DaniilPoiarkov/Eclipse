@@ -24,7 +24,7 @@ public class SuggestionServiceTests
         suggestionsSheetsService.GetAll().Returns(suggestions);
 
         var userRepository = Substitute.For<IIdentityUserService>();
-        var users = IdentityUserDtoGenerator.GenerateUsers(1, 5);
+        var users = IdentityUserDtoGenerator.GenerateSlim(1, 5);
 
         userRepository.GetAllAsync().Returns(users);
 

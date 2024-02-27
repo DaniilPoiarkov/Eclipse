@@ -13,9 +13,9 @@
     "Eclipse:ValidationFailed": "🥺It looks like I forgot to tell you that {0}.\n\rClick 'Add item' and try again",
 
     "BotCommand:CommandMinLength": "Command cant be less then 1 symbol",
-    "BotCommand:CommandManLength": "Command cant be more then 24 symbols",
-    "BotCommand:DescriptionMinLength": "Description cant be less then 10 symbols",
-    "BotCommand:DescriptionMaxLength": "Description cant be more then 256 symbols",
+    "BotCommand:CommandManLength": "Command cant be more then 32 symbols",
+    "BotCommand:DescriptionMinLength": "Description cannot be less then 3 symbols",
+    "BotCommand:DescriptionMaxLength": "Description cannot be more then 256 symbols",
 
     "Entity:NotFound": "Entity of type {0} not found",
 

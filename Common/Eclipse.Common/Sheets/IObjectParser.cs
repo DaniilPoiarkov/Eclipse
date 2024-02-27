@@ -1,4 +1,6 @@
-﻿namespace Eclipse.Common.Sheets;
+﻿using Eclipse.Common.Results;
+
+namespace Eclipse.Common.Sheets;
 
 /// <summary>
 /// Contains logic to parse <a cref="TObject"></a> to proper list of objects and parse <a cref="IList{object}"></a> to specified type
@@ -6,7 +8,7 @@
 /// <typeparam name="TObject"></typeparam>
 public interface IObjectParser<TObject>
 {
-    TObject Parse(IList<object> values);
+    Result<TObject> Parse(IList<object> values);
 
     IList<object> Parse(TObject value);
 }

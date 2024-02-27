@@ -1,25 +1,20 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Common.Exceptions;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-
-using Serilog;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:TodoItemsMenu:AddItem", "/todos_add")]
-internal class AddTodoItemPipeline : TodoItemsPipelineBase
+internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
-    private readonly ILogger _logger;
-
     private static readonly string _pipelinePrefix = $"{PipelinePrefix}:AddItem";
 
-    public AddTodoItemPipeline(ITodoItemService todoItemService, ILogger logger)
+    public AddTodoItemPipeline(ITodoItemService todoItemService)
     {
         _todoItemService = todoItemService;
-        _logger = logger;
     }
 
     protected override void Initialize()
@@ -46,22 +41,12 @@ internal class AddTodoItemPipeline : TodoItemsPipelineBase
             UserId = context.User.Id,
         };
 
-        try
-        {
-            await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
-            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:NewItemAdded"]);
-        }
-        catch (EclipseValidationException ex)
-        {
-            var template = Localizer[ex.Message];
-            var message = string.Format(template, [..ex.Data.Values]);
+        var result = await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
 
-            return Menu(TodoItemMenuButtons, message);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("{pipelineName} exception: {error}", nameof(AddTodoItemPipeline), ex);
-            return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Error"]);
-        }
+        var message = result.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:NewItemAdded"]
+            : Localizer.LocalizeError(result.Error);
+
+        return Menu(TodoItemMenuButtons, message);
     }
 }

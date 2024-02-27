@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Sheets.v4;
+
 using Eclipse.Common.Sheets;
 
 namespace Eclipse.Infrastructure.Google.Sheets;
@@ -20,7 +21,10 @@ internal sealed class GoogleSheetsService : ISheetsService
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
         var values = request.Execute();
 
-        return values.Values.Skip(_namesRow).Select(parser.Parse);
+        return values.Values
+            .Skip(_namesRow)
+            .Select(parser.Parse)
+            .Select(result => result.Value);
     }
 
     public void Append<TObject>(string sheetId, string range, TObject value, IObjectParser<TObject> parser)

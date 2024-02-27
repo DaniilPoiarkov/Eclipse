@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 using Eclipse.Core.Models;
 
 namespace Eclipse.Pipelines.Users;
@@ -11,7 +12,7 @@ internal interface IUserStore
     /// <param name="user"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default);
+    Task<Result> AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieve cached users

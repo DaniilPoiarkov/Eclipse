@@ -1,11 +1,12 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 [Route("Menu:Settings:SetGmt", "/settings_setgmt")]
-internal class SetGmtPipeline : SettingsPipelineBase
+internal sealed class SetGmtPipeline : SettingsPipelineBase
 {
     private readonly IIdentityUserService _identityUserService;
 
@@ -24,7 +25,14 @@ internal class SetGmtPipeline : SettingsPipelineBase
 
     private async Task<IResult> SendKnownDataAndAskForNewGmt(MessageContext context, CancellationToken cancellationToken)
     {
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return Text(Localizer.LocalizeError(result.Error));
+        }
+
+        var user = result.Value;
 
         var time = DateTime.UtcNow.GetTime();
 
@@ -32,7 +40,9 @@ internal class SetGmtPipeline : SettingsPipelineBase
             ? time
             : time.Add(user.Gmt);
 
-        return Text(Localizer[$"{_pipelinePrefix}:Info"].Replace("{0}", $"{time:HH:mm}"));
+        return Text(
+            string.Format(Localizer[$"{_pipelinePrefix}:Info"], $"{time:HH:mm}")
+        );
     }
 
     private async Task<IResult> UpdateUserGmt(MessageContext context, CancellationToken cancellationToken)
@@ -47,10 +57,19 @@ internal class SetGmtPipeline : SettingsPipelineBase
             return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:CannotParseTime"]);
         }
 
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var userResult = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        await _identityUserService.SetUserGmtTimeAsync(user.Id, time, cancellationToken);
+        if (!userResult.IsSuccess)
+        {
+            return Menu(SettingsMenuButtons, Localizer.LocalizeError(userResult.Error));
+        }
 
-        return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:Success"]);
+        var result = await _identityUserService.SetUserGmtTimeAsync(userResult.Value.Id, time, cancellationToken);
+
+        var text = result.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:Success"]
+            : Localizer.LocalizeError(result.Error);
+
+        return Menu(SettingsMenuButtons, text);
     }
 }

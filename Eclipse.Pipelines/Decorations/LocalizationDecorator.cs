@@ -6,7 +6,7 @@ using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.Pipelines.Decorations;
 
-public class LocalizationDecorator : IPipelineExecutionDecorator
+public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
     private readonly IdentityUserManager _userManager;
 
