@@ -57,7 +57,7 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
 
             if (existing is null)
             {
-                _resources.Add(resource!);
+                _resources.Add(resource);
                 continue;
             }
 
