@@ -30,8 +30,13 @@ public sealed class PaginatedList<T>
             .Take(pageSize)
             .ToArray();
 
-        var pages = (int)Math.Ceiling((double)itemsCount / pageSize);
+        var pages = GetPagesCount(itemsCount, pageSize);
 
         return new PaginatedList<T>(items, pages, itemsCount);
+    }
+
+    public static int GetPagesCount(int allIntesCount, int pageSize)
+    {
+        return (int)Math.Ceiling((double)allIntesCount / pageSize);
     }
 }

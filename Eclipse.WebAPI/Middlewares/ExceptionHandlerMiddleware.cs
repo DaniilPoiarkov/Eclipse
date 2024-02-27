@@ -20,25 +20,20 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
-        var statusCode = exception switch
+        context.Response.StatusCode = exception switch
         {
             NotImplementedException => StatusCodes.Status501NotImplemented,
             _ => StatusCodes.Status500InternalServerError
         };
-
-        context.Response.StatusCode = statusCode;
 
         await context.Response.WriteAsJsonAsync(
             new { Error = "Internal error." },
             cancellationToken: cancellationToken
         );
 
-        if (statusCode == StatusCodes.Status500InternalServerError)
-        {
-            _logger.Error(
-                _localizer[exception.Message, "en"],
-                exception.Data.Values);
-        }
+        _logger.Error(
+            _localizer[exception.Message, "en"],
+            exception.Data.Values);
 
         return true;
     }

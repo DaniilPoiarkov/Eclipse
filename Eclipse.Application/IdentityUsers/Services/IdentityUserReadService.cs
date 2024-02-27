@@ -42,10 +42,9 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
     public async Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
         var specification = request.Options.GetSpecification();
+        var skip = (request.Page - 1) * request.PageSize;
 
         var countRequest = _repository.CountAsync(specification, cancellationToken);
-
-        var skip = (request.Page - 1) * request.PageSize;
         var usersRequest = _repository.GetByExpressionAsync(specification, skip, request.PageSize, cancellationToken);
 
         await Task.WhenAll(countRequest, usersRequest);
@@ -55,7 +54,7 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
             .Select(u => u.ToSlimDto())
             .ToArray();
 
-        var pages = (int)Math.Ceiling((double)count / request.PageSize);
+        var pages = PaginatedList<IdentityUserSlimDto>.GetPagesCount(count, request.PageSize);
 
         return new PaginatedList<IdentityUserSlimDto>(users, pages, count);
     }

@@ -43,7 +43,7 @@ public static class LinqExtensions
             return count == 0;
         }
 
-        return source.Any();
+        return !source.Any();
     }
 
     /// <summary>
