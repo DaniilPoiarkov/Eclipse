@@ -44,6 +44,9 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
     public virtual Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) =>
         Container.GetByExpressionAsync(expression, cancellationToken);
 
+    public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default) =>
+        Container.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken);
+
     public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var result = await Container.UpdateAsync(entity, cancellationToken);

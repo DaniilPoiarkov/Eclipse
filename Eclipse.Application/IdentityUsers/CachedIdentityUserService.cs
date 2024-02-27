@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -26,6 +27,11 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
     public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
     {
         return _identityUserService.GetFilteredListAsync(request, cancellationToken);
+    }
+
+    public Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    {
+        return _identityUserService.GetPaginatedListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)

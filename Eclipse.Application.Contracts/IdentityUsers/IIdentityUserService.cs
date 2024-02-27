@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Results;
+﻿using Eclipse.Common.Linq;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Contracts.IdentityUsers;
 
@@ -12,6 +13,8 @@ public interface IIdentityUserReadService
     Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default);
+
+    Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default);
 
     Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 

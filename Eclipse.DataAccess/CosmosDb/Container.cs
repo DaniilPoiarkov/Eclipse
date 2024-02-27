@@ -74,6 +74,24 @@ internal sealed class Container<TEntity> : IContainer<TEntity>
         return results;
     }
 
+    public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    {
+        var iterator = Items.Where(expression)
+            .Skip(skipCount)
+            .Take(takeCount)
+            .ToFeedIterator();
+
+        var results = new List<TEntity>();
+
+        while (iterator.HasMoreResults)
+        {
+            var response = await iterator.ReadNextAsync(cancellationToken);
+            results.AddRange(response.Resource);
+        }
+
+        return results;
+    }
+
     public async Task<TEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
         using var iterator = GetFeedIterator(entity => entity.Id == id);

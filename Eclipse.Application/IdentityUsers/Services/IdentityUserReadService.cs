@@ -1,4 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.IdentityUsers.Extensions;
+using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared.Errors;
@@ -28,11 +30,34 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
 
     public async Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
     {
-        var users = await _repository.GetByFilterAsync(request.Name, request.UserName, request.NotificationsEnabled, cancellationToken);
+        var users = await _repository.GetByExpressionAsync(
+            request.GetSpecification(),
+            cancellationToken);
 
         return users
             .Select(u => u.ToSlimDto())
             .ToArray();
+    }
+
+    public async Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    {
+        var specification = request.Options.GetSpecification();
+
+        var countRequest = _repository.CountAsync(specification, cancellationToken);
+
+        var skip = (request.Page - 1) * request.PageSize;
+        var usersRequest = _repository.GetByExpressionAsync(specification, skip, request.PageSize, cancellationToken);
+
+        await Task.WhenAll(countRequest, usersRequest);
+
+        var count = countRequest.Result;
+        var users = usersRequest.Result
+            .Select(u => u.ToSlimDto())
+            .ToArray();
+
+        var pages = (int)Math.Ceiling((double)count / request.PageSize);
+
+        return new PaginatedList<IdentityUserSlimDto>(users, pages, count);
     }
 
     public async Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)

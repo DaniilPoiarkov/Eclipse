@@ -1,4 +1,6 @@
-﻿namespace System.Linq;
+﻿using Eclipse.Common.Linq;
+
+namespace System.Linq;
 
 public static class LinqExtensions
 {
@@ -42,5 +44,18 @@ public static class LinqExtensions
         }
 
         return source.Any();
+    }
+
+    /// <summary>
+    /// Iterates items and applies pagination.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    public static PaginatedList<T> ToPaginatedList<T>(this IEnumerable<T> source, int page, int pageSize)
+    {
+        return PaginatedList<T>.Create(source, page, pageSize);
     }
 }

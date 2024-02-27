@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
@@ -36,6 +37,11 @@ internal sealed class IdentityUserService : IIdentityUserService
     public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return _readService.GetByChatIdAsync(chatId, cancellationToken);
+    }
+
+    public Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    {
+        return _readService.GetPaginatedListAsync(request, cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
