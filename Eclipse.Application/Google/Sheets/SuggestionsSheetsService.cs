@@ -4,7 +4,7 @@ using Eclipse.Domain.Suggestions;
 
 using Microsoft.Extensions.Configuration;
 
-namespace Eclipse.Application.Google.Sheets.Suggestions;
+namespace Eclipse.Application.Google.Sheets;
 
 internal sealed class SuggestionsSheetsService : EclipseSheetsService<Suggestion>
 {

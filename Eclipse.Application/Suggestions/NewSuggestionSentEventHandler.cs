@@ -7,7 +7,7 @@ using MediatR;
 
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.Application.Suggestions.Events;
+namespace Eclipse.Application.Suggestions;
 
 internal sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSuggestionSentDomainEvent>
 {

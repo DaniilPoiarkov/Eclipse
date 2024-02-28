@@ -6,7 +6,7 @@ using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.Google.Sheets.Suggestions;
+using Eclipse.Application.Google.Sheets;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.EventHandlers;
 using Eclipse.Application.IdentityUsers.Services;

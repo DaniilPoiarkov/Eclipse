@@ -3,7 +3,7 @@ using Google.Apis.Sheets.v4;
 
 using Eclipse.Common.Sheets;
 
-namespace Eclipse.Infrastructure.Google.Sheets;
+namespace Eclipse.Infrastructure.Google;
 
 internal sealed class GoogleSheetsService : ISheetsService
 {

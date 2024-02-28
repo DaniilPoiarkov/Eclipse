@@ -6,7 +6,6 @@ using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.EventBus;
 using Eclipse.Infrastructure.Google;
-using Eclipse.Infrastructure.Google.Sheets;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
