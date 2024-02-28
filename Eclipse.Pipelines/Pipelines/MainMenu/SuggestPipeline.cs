@@ -1,27 +1,16 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Common.Telegram;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-
-using Microsoft.Extensions.Options;
-
-using Telegram.Bot;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Menu:MainMenu:Suggest", "/suggest")]
 public sealed class SuggestPipeline : EclipsePipelineBase
 {
-    private readonly ITelegramBotClient _botClient;
-
-    private readonly IOptions<TelegramOptions> _options;
-
     private readonly ISuggestionsService _suggestionsService;
 
-    public SuggestPipeline(ITelegramBotClient botClient, IOptions<TelegramOptions> options, ISuggestionsService suggestionsService)
+    public SuggestPipeline(ISuggestionsService suggestionsService)
     {
-        _botClient = botClient;
-        _options = options;
         _suggestionsService = suggestionsService;
     }
 
@@ -52,8 +41,6 @@ public sealed class SuggestPipeline : EclipsePipelineBase
             return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:AsYouWish"]);
         }
 
-        var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{context.Value}";
-
         var request = new CreateSuggestionRequest
         {
             Text = context.Value,
@@ -61,9 +48,6 @@ public sealed class SuggestPipeline : EclipsePipelineBase
         };
 
         await _suggestionsService.CreateAsync(request, cancellationToken);
-
-        // TODO: Rework, move to the service
-        await _botClient.SendTextMessageAsync(_options.Value.Chat, message, cancellationToken: cancellationToken);
 
         return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Success"]);
     }

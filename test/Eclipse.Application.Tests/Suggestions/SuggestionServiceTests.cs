@@ -9,6 +9,9 @@ using NSubstitute;
 
 using Xunit;
 using Eclipse.Tests.Generators;
+using Eclipse.Application.Contracts.Telegram;
+using Microsoft.Extensions.Options;
+using Eclipse.Common.Telegram;
 
 namespace Eclipse.Application.Tests.Suggestions;
 
@@ -28,7 +31,10 @@ public class SuggestionServiceTests
 
         userRepository.GetAllAsync().Returns(users);
 
-        _sut = new SuggestionsService(suggestionsSheetsService, userRepository);
+        var telegramService = Substitute.For<ITelegramService>();
+        var options = Substitute.For<IOptions<TelegramOptions>>();
+
+        _sut = new SuggestionsService(suggestionsSheetsService, userRepository, telegramService, options);
     }
 
     [Fact]

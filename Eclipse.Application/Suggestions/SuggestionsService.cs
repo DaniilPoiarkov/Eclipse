@@ -1,7 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Common.Telegram;
 using Eclipse.Common.Results;
+
+using Microsoft.Extensions.Options;
 
 namespace Eclipse.Application.Suggestions;
 
@@ -11,10 +15,16 @@ internal sealed class SuggestionsService : ISuggestionsService
 
     private readonly IIdentityUserService _userService;
 
-    public SuggestionsService(ISuggestionsSheetsService sheetsService, IIdentityUserService userService)
+    private readonly ITelegramService _telegramService;
+
+    private readonly IOptions<TelegramOptions> _options;
+
+    public SuggestionsService(ISuggestionsSheetsService sheetsService, IIdentityUserService userService, ITelegramService telegramService, IOptions<TelegramOptions> options)
     {
         _sheetsService = sheetsService;
         _userService = userService;
+        _telegramService = telegramService;
+        _options = options;
     }
 
     public async Task<Result> CreateAsync(CreateSuggestionRequest request, CancellationToken cancellationToken = default)
@@ -27,8 +37,22 @@ internal sealed class SuggestionsService : ISuggestionsService
             Text = request.Text,
         };
 
-        await _sheetsService.AddAsync(suggestion, cancellationToken);
-        
+        var getUserResult = await _userService.GetByChatIdAsync(request.TelegramUserId, cancellationToken);
+
+        var message = getUserResult.IsSuccess
+            ? $"Suggestion from {getUserResult.Value.Name}{getUserResult.Value.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{request.Text}"
+            : $"Suggestion from unknown user:{Environment.NewLine}{request.Text}";
+
+        var send = new SendMessageModel
+        {
+            ChatId = _options.Value.Chat,
+            Message = message
+        };
+
+        await Task.WhenAll(
+            _sheetsService.AddAsync(suggestion, cancellationToken),
+            _telegramService.Send(send, cancellationToken));
+
         return Result.Success();
     }
 
