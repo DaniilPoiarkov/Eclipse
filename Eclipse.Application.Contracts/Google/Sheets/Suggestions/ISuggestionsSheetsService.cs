@@ -2,6 +2,6 @@
 
 namespace Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 
-public interface ISuggestionsSheetsService : IEclipseSheetsService<SuggestionDto>
+public interface ISuggestionsSheetsService : IEclipseSheetsService<SuggestionSheetsModel>
 {
 }

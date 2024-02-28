@@ -29,19 +29,19 @@ internal sealed class SuggestionsService : ISuggestionsService
 
     public async Task<Result> CreateAsync(CreateSuggestionRequest request, CancellationToken cancellationToken = default)
     {
-        var suggestion = new SuggestionDto
+        var getUserResult = await _userService.GetByChatIdAsync(request.TelegramUserId, cancellationToken);
+
+        var message = getUserResult.IsSuccess
+            ? $"Suggestion from {getUserResult.Value.Name}{getUserResult.Value.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{request.Text}"
+            : $"Suggestion from unknown user:{Environment.NewLine}{request.Text}";
+
+        var suggestion = new SuggestionSheetsModel
         {
             Id = Guid.NewGuid(),
             CreatedAt = DateTime.UtcNow,
             TelegramUserId = request.TelegramUserId,
             Text = request.Text,
         };
-
-        var getUserResult = await _userService.GetByChatIdAsync(request.TelegramUserId, cancellationToken);
-
-        var message = getUserResult.IsSuccess
-            ? $"Suggestion from {getUserResult.Value.Name}{getUserResult.Value.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{request.Text}"
-            : $"Suggestion from unknown user:{Environment.NewLine}{request.Text}";
 
         var send = new SendMessageModel
         {

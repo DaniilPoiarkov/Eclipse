@@ -6,11 +6,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace Eclipse.Application.Google.Sheets.Suggestions;
 
-internal sealed class SuggestionsSheetsService : EclipseSheetsService<SuggestionDto>, ISuggestionsSheetsService
+internal sealed class SuggestionsSheetsService : EclipseSheetsService<SuggestionSheetsModel>, ISuggestionsSheetsService
 {
     public SuggestionsSheetsService(
         ISheetsService service,
-        IObjectParser<SuggestionDto> parser,
+        IObjectParser<SuggestionSheetsModel> parser,
         IConfiguration configuration)
         : base(service, parser, configuration)
     {

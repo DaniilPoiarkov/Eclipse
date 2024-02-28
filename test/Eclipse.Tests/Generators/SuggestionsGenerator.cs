@@ -6,9 +6,9 @@ namespace Eclipse.Tests.Generators;
 
 public static class SuggestionsGenerator
 {
-    public static List<SuggestionDto> Generate(int count, long baseUserId)
+    public static List<SuggestionSheetsModel> Generate(int count, long baseUserId)
     {
-        return new Faker<SuggestionDto>()
+        return new Faker<SuggestionSheetsModel>()
             .RuleFor(s => s.Id, _ => Guid.NewGuid())
             .RuleFor(s => s.Text, f => f.Lorem.Word())
             .RuleFor(s => s.TelegramUserId, baseUserId++)

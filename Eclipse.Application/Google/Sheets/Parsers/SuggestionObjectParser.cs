@@ -5,9 +5,9 @@ using Eclipse.Domain.Suggestions;
 
 namespace Eclipse.Application.Google.Sheets.Parsers;
 
-public sealed class SuggestionObjectParser : IObjectParser<SuggestionDto>
+public sealed class SuggestionObjectParser : IObjectParser<SuggestionSheetsModel>
 {
-    public Result<SuggestionDto> Parse(IList<object> values)
+    public Result<SuggestionSheetsModel> Parse(IList<object> values)
     {
         if (values.Count != 4)
         {
@@ -19,7 +19,7 @@ public sealed class SuggestionObjectParser : IObjectParser<SuggestionDto>
         var chatId = values[2].ToLong();
         var createdAt = values[3].ToDateTime();
 
-        return new SuggestionDto
+        return new SuggestionSheetsModel
         {
             Id = id,
             Text = text ?? string.Empty,
@@ -28,7 +28,7 @@ public sealed class SuggestionObjectParser : IObjectParser<SuggestionDto>
         };
     }
 
-    public IList<object> Parse(SuggestionDto value)
+    public IList<object> Parse(SuggestionSheetsModel value)
     {
         return [value.Id, value.Text, value.TelegramUserId, value.CreatedAt];
     }

@@ -2,7 +2,8 @@
 
 namespace Eclipse.Application.Contracts.Suggestions;
 
-public class SuggestionDto : EntityDto
+[Serializable]
+public sealed class SuggestionSheetsModel : EntityDto
 {
     public string Text { get; set; } = string.Empty;
 
