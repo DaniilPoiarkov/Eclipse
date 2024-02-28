@@ -4,5 +4,5 @@ public interface IEclipseSheetsService<TObject>
 {
     IReadOnlyList<TObject> GetAll();
 
-    void Add(TObject value);
+    Task AddAsync(TObject value, CancellationToken cancellationToken = default);
 }

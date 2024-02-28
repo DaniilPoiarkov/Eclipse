@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Suggestions;
 
@@ -14,6 +15,21 @@ internal sealed class SuggestionsService : ISuggestionsService
     {
         _sheetsService = sheetsService;
         _userService = userService;
+    }
+
+    public async Task<Result> CreateAsync(CreateSuggestionRequest request, CancellationToken cancellationToken = default)
+    {
+        var suggestion = new SuggestionDto
+        {
+            Id = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            TelegramUserId = request.TelegramUserId,
+            Text = request.Text,
+        };
+
+        await _sheetsService.AddAsync(suggestion, cancellationToken);
+        
+        return Result.Success();
     }
 
     public async Task<IReadOnlyList<SuggestionAndUserDto>> GetWithUserInfo(CancellationToken cancellationToken = default)

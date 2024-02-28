@@ -30,8 +30,8 @@ internal abstract class EclipseSheetsService<TObject> : IEclipseSheetsService<TO
         return Service.Get(SheetId, Range, Parser).ToList();
     }
 
-    public virtual void Add(TObject value)
+    public virtual Task AddAsync(TObject value, CancellationToken cancellationToken = default)
     {
-        Service.Append(SheetId, Range, value, Parser);
+        return Service.AppendAsync(SheetId, Range, value, Parser, cancellationToken);
     }
 }

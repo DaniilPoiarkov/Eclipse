@@ -27,7 +27,7 @@ internal sealed class GoogleSheetsService : ISheetsService
             .Select(result => result.Value);
     }
 
-    public void Append<TObject>(string sheetId, string range, TObject value, IObjectParser<TObject> parser)
+    public Task AppendAsync<TObject>(string sheetId, string range, TObject value, IObjectParser<TObject> parser, CancellationToken cancellationToken = default)
     {
         var values = parser.Parse(value);
 
@@ -39,6 +39,6 @@ internal sealed class GoogleSheetsService : ISheetsService
         var appendRequest = _sheetsService.Spreadsheets.Values.Append(valueRange, sheetId, range);
         appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
 
-        appendRequest.Execute();
+        return appendRequest.ExecuteAsync();
     }
 }

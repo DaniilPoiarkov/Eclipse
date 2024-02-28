@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
-using Eclipse.Application.Contracts.Suggestions;
+﻿using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Common.Telegram;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
@@ -17,13 +16,13 @@ public sealed class SuggestPipeline : EclipsePipelineBase
 
     private readonly IOptions<TelegramOptions> _options;
 
-    private readonly ISuggestionsSheetsService _sheetsService;
+    private readonly ISuggestionsService _suggestionsService;
 
-    public SuggestPipeline(ITelegramBotClient botClient, IOptions<TelegramOptions> options, ISuggestionsSheetsService sheetsService)
+    public SuggestPipeline(ITelegramBotClient botClient, IOptions<TelegramOptions> options, ISuggestionsService suggestionsService)
     {
         _botClient = botClient;
         _options = options;
-        _sheetsService = sheetsService;
+        _suggestionsService = suggestionsService;
     }
 
     protected override void Initialize()
@@ -55,16 +54,15 @@ public sealed class SuggestPipeline : EclipsePipelineBase
 
         var message = $"Suggestion from {context.User.Name}{context.User.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{context.Value}";
 
-        var suggestionDto = new SuggestionDto
+        var request = new CreateSuggestionRequest
         {
-            Id = Guid.NewGuid(),
             Text = context.Value,
             TelegramUserId = context.User.Id,
-            CreatedAt = DateTime.UtcNow,
         };
 
-        _sheetsService.Add(suggestionDto);
+        await _suggestionsService.CreateAsync(request, cancellationToken);
 
+        // TODO: Rework, move to the service
         await _botClient.SendTextMessageAsync(_options.Value.Chat, message, cancellationToken: cancellationToken);
 
         return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Success"]);

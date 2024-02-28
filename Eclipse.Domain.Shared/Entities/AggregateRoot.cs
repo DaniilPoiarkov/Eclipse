@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.Shared.Entities;
 
-public abstract class AggregateRoot : Entity
+public abstract class AggregateRoot : Entity, IHasDomainEvents
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
