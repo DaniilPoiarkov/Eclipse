@@ -17,8 +17,6 @@ public sealed class IdentityUserManager
     /// <param name="surname">The surname.</param>
     /// <param name="username">The username.</param>
     /// <param name="chatId">The telegram chat identifier.</param>
-    /// <param name="culture">The culture.</param>
-    /// <param name="notificationsEnabled">if set to <c>true</c> [notifications enabled].</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Created user</returns>
     /// or

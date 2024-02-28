@@ -2,9 +2,9 @@
 
 namespace Eclipse.Domain.Shared.Entities;
 
-public abstract class AggregateRoot : Entity
+public abstract class AggregateRoot : Entity, IHasDomainEvents
 {
-    private readonly List<DomainEvent> _domainEvents = [];
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     public AggregateRoot(Guid id)
         : base(id) { }
@@ -16,7 +16,7 @@ public abstract class AggregateRoot : Entity
     /// </summary>
     /// <param name="domainEvent">The domain event.</param>
     /// <returns></returns>
-    protected void AddEvent(DomainEvent domainEvent)
+    protected void AddEvent(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
     }
@@ -25,7 +25,7 @@ public abstract class AggregateRoot : Entity
     /// Gets the events.
     /// </summary>
     /// <returns></returns>
-    public IReadOnlyList<DomainEvent> GetEvents()
+    public IReadOnlyList<IDomainEvent> GetEvents()
     {
         return _domainEvents.AsReadOnly();
     }

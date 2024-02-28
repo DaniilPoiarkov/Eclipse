@@ -2,13 +2,13 @@
 
 namespace Eclipse.Domain.Suggestions;
 
-public class Suggestion : Entity
+public sealed class Suggestion : AggregateRoot
 {
-    public Suggestion(Guid id, string text, long telegramUserId) : base(id)
+    internal Suggestion(Guid id, string text, long telegramUserId, DateTime createdAt) : base(id)
     {
         Text = text;
         TelegramUserId = telegramUserId;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = createdAt;
     }
 
     private Suggestion() { }
@@ -18,4 +18,11 @@ public class Suggestion : Entity
     public long TelegramUserId { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
+
+    public static Suggestion Create(Guid id, string text, long telegramUserId, DateTime createdAt)
+    {
+        var suggestion = new Suggestion(id, text, telegramUserId, createdAt);
+        suggestion.AddEvent(new NewSuggestionSentDomainEvent(id, telegramUserId, text));
+        return suggestion;
+    }
 }

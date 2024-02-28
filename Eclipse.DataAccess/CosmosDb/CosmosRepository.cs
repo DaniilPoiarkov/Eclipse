@@ -1,7 +1,6 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Common.EventBus;
+using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
-
-using MediatR;
 
 using System.Linq.Expressions;
 
@@ -12,12 +11,12 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 {
     protected readonly IContainer<TEntity> Container;
 
-    protected readonly IPublisher Publisher;
+    protected readonly IEventBus EventBus;
 
-    public CosmosRepository(IContainer<TEntity> container, IPublisher publisher)
+    public CosmosRepository(IContainer<TEntity> container, IEventBus eventBus)
     {
         Container = container;
-        Publisher = publisher;
+        EventBus = eventBus;
     }
 
     public virtual async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
@@ -72,7 +71,7 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 
         foreach (var domainEvent in events)
         {
-            await Publisher.Publish(domainEvent, cancellationToken);
+            await EventBus.Publish(domainEvent, cancellationToken);
         }
     }
 }
