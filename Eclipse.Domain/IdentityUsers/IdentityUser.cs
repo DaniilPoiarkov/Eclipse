@@ -171,9 +171,4 @@ public sealed class IdentityUser : AggregateRoot
 
         return item;
     }
-
-    public void Test()
-    {
-        AddEvent(new TestDomainEvent());
-    }
 }
