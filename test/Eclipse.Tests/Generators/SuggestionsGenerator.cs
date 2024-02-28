@@ -1,18 +1,22 @@
 ﻿using Bogus;
 
-using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Domain.Suggestions;
 
 namespace Eclipse.Tests.Generators;
 
 public static class SuggestionsGenerator
 {
-    public static List<SuggestionDto> Generate(int count, long baseUserId)
+    public static List<Suggestion> Generate(int count, long baseUserId)
     {
-        return new Faker<SuggestionDto>()
-            .RuleFor(s => s.Id, _ => Guid.NewGuid())
-            .RuleFor(s => s.Text, f => f.Lorem.Word())
-            .RuleFor(s => s.TelegramUserId, baseUserId++)
-            .RuleFor(s => s.CreatedAt, f => f.Date.Past(1, DateTime.UtcNow))
-            .Generate(count);
+        var suggestions = new List<Suggestion>(count);
+
+        var faker = new Faker();
+
+        for (int i = 0; i < count; i++)
+        {
+            suggestions.Add(new Suggestion(Guid.NewGuid(), faker.Lorem.Word(), baseUserId++, faker.Date.Past(1, DateTime.UtcNow)));
+        }
+
+        return suggestions;
     }
 }

@@ -21,11 +21,11 @@ public abstract class Pipeline
         new EditMenuResult(messageId, menu);
 
     protected static IResult Edit(int messageId, string text, InlineKeyboardMarkup menu) =>
-        new MultipleActionsResult(new List<IResult>
-        {
+        new MultipleActionsResult(
+        [
             Edit(messageId, text),
             Edit(messageId, menu)
-        });
+        ]);
 
     protected static IResult Multiple(params IResult[] results) =>
         new MultipleActionsResult(results);

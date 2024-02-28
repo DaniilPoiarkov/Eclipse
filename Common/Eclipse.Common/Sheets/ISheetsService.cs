@@ -20,5 +20,5 @@ public interface ISheetsService
     /// <param name="range">List name and range of columns e.g. List1!B:J</param>
     /// <param name="value">Exact value which will be parsed and added to spreadsheets</param>
     /// <param name="parser">Implementation which can parse object to list of objects</param>
-    void Append<IObject>(string sheetId, string range, IObject value, IObjectParser<IObject> parser);
+    Task AppendAsync<IObject>(string sheetId, string range, IObject value, IObjectParser<IObject> parser, CancellationToken cancellationToken = default);
 }
