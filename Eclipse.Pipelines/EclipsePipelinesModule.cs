@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Builder;
 using Serilog;
 
 using Telegram.Bot;
+using Eclipse.Pipelines.Options.Languages;
 
 namespace Eclipse.Pipelines;
 
@@ -47,7 +48,13 @@ public static class EclipsePipelinesModule
             .WithTransientLifetime());
 
         services.ConfigureOptions<QuatzOptionsConfiguration>();
-        
+
+        var configuration = services.GetConfiguration();
+
+        services.Configure<LanguageList>(
+            configuration.GetSection(nameof(LanguageList))
+        );
+
         return services;
     }
 
