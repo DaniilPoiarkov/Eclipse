@@ -15,6 +15,8 @@ internal sealed class TestPipeline : EclipsePipelineBase
 
     protected override void Initialize()
     {
+        RegisterStage(_ => Text("One more time..."));
+
         RegisterStage(async (context, token) =>
         {
             var user = await _identityUserManager.FindByChatIdAsync(context.ChatId, token);

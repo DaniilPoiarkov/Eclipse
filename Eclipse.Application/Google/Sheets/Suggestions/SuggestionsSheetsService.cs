@@ -1,18 +1,19 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
-using Eclipse.Application.Contracts.Suggestions;
+﻿using Eclipse.Common.EventBus;
 using Eclipse.Common.Sheets;
+using Eclipse.Domain.Suggestions;
 
 using Microsoft.Extensions.Configuration;
 
 namespace Eclipse.Application.Google.Sheets.Suggestions;
 
-internal sealed class SuggestionsSheetsService : EclipseSheetsService<SuggestionSheetsModel>, ISuggestionsSheetsService
+internal sealed class SuggestionsSheetsService : EclipseSheetsService<Suggestion>
 {
     public SuggestionsSheetsService(
         ISheetsService service,
-        IObjectParser<SuggestionSheetsModel> parser,
-        IConfiguration configuration)
-        : base(service, parser, configuration)
+        IObjectParser<Suggestion> parser,
+        IConfiguration configuration,
+        IEventBus eventBus)
+        : base(service, parser, configuration, eventBus)
     {
     }
 

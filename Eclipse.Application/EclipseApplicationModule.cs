@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+﻿using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
@@ -6,7 +6,6 @@ using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.Google.Sheets.Parsers;
 using Eclipse.Application.Google.Sheets.Suggestions;
 using Eclipse.Application.IdentityUsers;
 using Eclipse.Application.IdentityUsers.EventHandlers;
@@ -17,7 +16,6 @@ using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
-using Eclipse.Common.Sheets;
 
 using MediatR.NotificationPublishers;
 
@@ -47,8 +45,8 @@ public static class EclipseApplicationModule
             .AddTransient<IIdentityUserReadService, IdentityUserReadService>()
             .AddTransient<IIdentityUserService, IdentityUserService>();
 
-        services.Scan(tss => tss.FromAssemblyOf<SuggestionObjectParser>()
-            .AddClasses(c => c.AssignableTo(typeof(IObjectParser<>)))
+        services.Scan(tss => tss.FromAssemblyOf<SuggestionsSheetsService>()
+            .AddClasses(c => c.AssignableTo(typeof(IEclipseSheetsService<>)))
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
@@ -57,9 +55,6 @@ public static class EclipseApplicationModule
             cfg.NotificationPublisher = new TaskWhenAllPublisher();
             cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
         });
-
-        services
-            .AddTransient<ISuggestionsSheetsService, SuggestionsSheetsService>();
 
         services
             .Decorate<IReminderService, CachedReminderService>()

@@ -2,15 +2,19 @@
 
 using MediatR;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Eclipse.Infrastructure.EventBus;
 
 internal sealed class MediatrEventBus : IEventBus
 {
     private readonly IPublisher _publisher;
 
-    public MediatrEventBus(IPublisher publisher)
+    public MediatrEventBus(IServiceProvider services)
     {
-        _publisher = publisher;
+        _publisher = services.CreateScope()
+            .ServiceProvider
+            .GetRequiredService<IPublisher>();
     }
 
     public Task Publish<TEvent>(TEvent @event, CancellationToken cancellationToken = default)

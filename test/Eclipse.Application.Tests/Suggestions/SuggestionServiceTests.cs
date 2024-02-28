@@ -1,17 +1,15 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
-using Eclipse.Application.Contracts.Suggestions;
+﻿using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Suggestions;
+using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Domain.Suggestions;
+using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
 using NSubstitute;
 
 using Xunit;
-using Eclipse.Tests.Generators;
-using Eclipse.Application.Contracts.Telegram;
-using Microsoft.Extensions.Options;
-using Eclipse.Common.Telegram;
 
 namespace Eclipse.Application.Tests.Suggestions;
 
@@ -21,7 +19,7 @@ public class SuggestionServiceTests
 
     public SuggestionServiceTests()
     {
-        var suggestionsSheetsService = Substitute.For<ISuggestionsSheetsService>();
+        var suggestionsSheetsService = Substitute.For<IEclipseSheetsService<Suggestion>>();
         var suggestions = SuggestionsGenerator.Generate(5, 1);
 
         suggestionsSheetsService.GetAll().Returns(suggestions);
@@ -31,10 +29,7 @@ public class SuggestionServiceTests
 
         userRepository.GetAllAsync().Returns(users);
 
-        var telegramService = Substitute.For<ITelegramService>();
-        var options = Substitute.For<IOptions<TelegramOptions>>();
-
-        _sut = new SuggestionsService(suggestionsSheetsService, userRepository, telegramService, options);
+        _sut = new SuggestionsService(suggestionsSheetsService, userRepository);
     }
 
     [Fact]

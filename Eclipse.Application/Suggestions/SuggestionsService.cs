@@ -1,57 +1,28 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
+﻿using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Common.Telegram;
 using Eclipse.Common.Results;
-
-using Microsoft.Extensions.Options;
+using Eclipse.Domain.Suggestions;
 
 namespace Eclipse.Application.Suggestions;
 
 internal sealed class SuggestionsService : ISuggestionsService
 {
-    private readonly ISuggestionsSheetsService _sheetsService;
+    private readonly IEclipseSheetsService<Suggestion> _sheetsService;
 
     private readonly IIdentityUserService _userService;
 
-    private readonly ITelegramService _telegramService;
-
-    private readonly IOptions<TelegramOptions> _options;
-
-    public SuggestionsService(ISuggestionsSheetsService sheetsService, IIdentityUserService userService, ITelegramService telegramService, IOptions<TelegramOptions> options)
+    public SuggestionsService(IEclipseSheetsService<Suggestion> sheetsService, IIdentityUserService userService)
     {
         _sheetsService = sheetsService;
         _userService = userService;
-        _telegramService = telegramService;
-        _options = options;
     }
 
     public async Task<Result> CreateAsync(CreateSuggestionRequest request, CancellationToken cancellationToken = default)
     {
-        var getUserResult = await _userService.GetByChatIdAsync(request.TelegramUserId, cancellationToken);
+        var suggestion = Suggestion.Create(Guid.NewGuid(), request.Text, request.TelegramUserId, DateTime.UtcNow);
 
-        var message = getUserResult.IsSuccess
-            ? $"Suggestion from {getUserResult.Value.Name}{getUserResult.Value.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{request.Text}"
-            : $"Suggestion from unknown user:{Environment.NewLine}{request.Text}";
-
-        var suggestion = new SuggestionSheetsModel
-        {
-            Id = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            TelegramUserId = request.TelegramUserId,
-            Text = request.Text,
-        };
-
-        var send = new SendMessageModel
-        {
-            ChatId = _options.Value.Chat,
-            Message = message
-        };
-
-        await Task.WhenAll(
-            _sheetsService.AddAsync(suggestion, cancellationToken),
-            _telegramService.Send(send, cancellationToken));
+        await _sheetsService.AddAsync(suggestion, cancellationToken);
 
         return Result.Success();
     }
