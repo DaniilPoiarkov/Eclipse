@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.IdentityUsers.Events;
 
-public sealed class TestDomainEvent : DomainEvent
+public sealed class TestDomainEvent : IDomainEvent
 {
     
 }

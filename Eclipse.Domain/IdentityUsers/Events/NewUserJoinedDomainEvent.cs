@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.IdentityUsers.Events;
 
-public sealed class NewUserJoinedDomainEvent : DomainEvent
+public sealed class NewUserJoinedDomainEvent : IDomainEvent
 {
     public Guid UserId { get; }
 
