@@ -108,6 +108,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private bool SupportedLanguage(MessageContext context)
     {
-        return _languages.Value.Select(x => x.Code).Contains(context.Value);
+        return _languages.Value
+            .Exists(l => l.Code.Equals(context.Value));
     }
 }
