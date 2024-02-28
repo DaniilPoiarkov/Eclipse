@@ -3,8 +3,11 @@ using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 using Eclipse.Pipelines.Stores.Messages;
+
+using Microsoft.Extensions.Options;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -19,13 +22,18 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private readonly IMessageStore _messageStore;
 
+    private readonly IOptions<LanguageList> _languages;
+
     private static readonly string _pipelinePrefix = "Pipelines:Settings:Language";
 
-    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService, IMessageStore messageStore)
+    private static readonly int _languagesChunk = 2;
+
+    public ChangeLanguagePipeline(ICacheService cacheService, IIdentityUserService identityUserService, IMessageStore messageStore, IOptions<LanguageList> languages)
     {
         _cacheService = cacheService;
         _identityUserService = identityUserService;
         _messageStore = messageStore;
+        _languages = languages;
     }
 
     protected override void Initialize()
@@ -36,11 +44,9 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private IResult SendAvailableLanguages(MessageContext context)
     {
-        var buttons = new List<InlineKeyboardButton>
-        {
-            InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:English"], "en"),
-            InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:Ukrainian"], "uk"),
-        };
+        var buttons = _languages.Value
+            .Select(l => InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:{l.Language}"], l.Code))
+            .Chunk(_languagesChunk);
 
         return Menu(buttons, Localizer[$"{_pipelinePrefix}:Choose"]);
     }
@@ -98,10 +104,10 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
         return MenuAndRemoveOptions(
             Localizer[$"{_pipelinePrefix}:Changed"],
             message?.MessageId);
+    }
 
-        static bool SupportedLanguage(MessageContext context)
-        {
-            return context.Value.Equals("en") || context.Value.Equals("uk");
-        }
+    private bool SupportedLanguage(MessageContext context)
+    {
+        return _languages.Value.Select(x => x.Code).Contains(context.Value);
     }
 }
