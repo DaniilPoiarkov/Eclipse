@@ -1,8 +1,10 @@
 ﻿using Eclipse.Common.Cache;
+using Eclipse.Common.EventBus;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
+using Eclipse.Infrastructure.EventBus;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Google.Sheets;
 
@@ -31,6 +33,8 @@ public static class EclipseInfrastructureModule
             .AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
+
+        services.AddTransient<IEventBus, MediatrEventBus>();
 
         return new InfrastructureModuleBuilder(services);
     }
