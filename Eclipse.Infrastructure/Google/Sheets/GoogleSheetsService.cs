@@ -39,6 +39,6 @@ internal sealed class GoogleSheetsService : ISheetsService
         var appendRequest = _sheetsService.Spreadsheets.Values.Append(valueRange, sheetId, range);
         appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
 
-        return appendRequest.ExecuteAsync();
+        return appendRequest.ExecuteAsync(cancellationToken);
     }
 }
