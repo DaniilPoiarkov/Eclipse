@@ -29,8 +29,13 @@ internal sealed class SuggestionsService : ISuggestionsService
 
     public async Task<IReadOnlyList<SuggestionAndUserDto>> GetWithUserInfo(CancellationToken cancellationToken = default)
     {
-        var suggestions = _sheetsService.GetAll();
-        var users = await _userService.GetAllAsync(cancellationToken);
+        var suggestionsRequest = _sheetsService.GetAllAsync(cancellationToken);
+        var usersRequest = _userService.GetAllAsync(cancellationToken);
+
+        await Task.WhenAll(suggestionsRequest, usersRequest);
+
+        var suggestions = suggestionsRequest.Result;
+        var users = usersRequest.Result;
 
         return suggestions.Join(users, s => s.TelegramUserId, u => u.ChatId, (suggestion, user) => new SuggestionAndUserDto
         {

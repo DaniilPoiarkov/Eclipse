@@ -22,7 +22,7 @@ public class SuggestionServiceTests
         var suggestionsSheetsService = Substitute.For<IEclipseSheetsService<Suggestion>>();
         var suggestions = SuggestionsGenerator.Generate(5, 1);
 
-        suggestionsSheetsService.GetAll().Returns(suggestions);
+        suggestionsSheetsService.GetAllAsync().Returns(suggestions);
 
         var userRepository = Substitute.For<IIdentityUserService>();
         var users = IdentityUserDtoGenerator.GenerateSlim(1, 5);
