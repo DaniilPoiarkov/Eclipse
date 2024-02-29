@@ -10,7 +10,7 @@ public interface ISheetsService
     /// <param name="range">List name and range of columns e.g. List1!B:J</param>
     /// <param name="parser">Implementation which can parse list of objects to desired model</param>
     /// <returns></returns>
-    IEnumerable<TObject> Get<TObject>(string sheetId, string range, IObjectParser<TObject> parser);
+    Task<IEnumerable<TObject>> GetAsync<TObject>(string sheetId, string range, IObjectParser<TObject> parser, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 

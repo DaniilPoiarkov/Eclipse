@@ -30,9 +30,9 @@ internal abstract class EclipseSheetsService<TObject> : IEclipseSheetsService<TO
         EventBus = eventBus;
     }
 
-    public virtual IReadOnlyList<TObject> GetAll()
+    public virtual async Task<IReadOnlyList<TObject>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return Service.Get(SheetId, Range, Parser).ToList();
+        return (await Service.GetAsync(SheetId, Range, Parser, cancellationToken)).ToList();
     }
 
     public virtual async Task AddAsync(TObject value, CancellationToken cancellationToken = default)

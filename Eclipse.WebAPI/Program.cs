@@ -40,7 +40,7 @@ builder.Services
 
 builder.Services.AddEclipseLocalization(localization =>
 {
-    var options = builder.Configuration.GetSection("Localization")
+    var options = configuration.GetSection("Localization")
         .Get<LocalizationOptions>()!;
 
     var path = "EmbeddedResources/Localizations";
@@ -54,7 +54,7 @@ builder.Services.AddEclipseLocalization(localization =>
 });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(
-    builder.Configuration.GetSection("Authorization")
+    configuration.GetSection("Authorization")
 );
 
 builder.Host.UseSerilog((_, config) =>

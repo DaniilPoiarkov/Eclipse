@@ -16,10 +16,10 @@ internal sealed class GoogleSheetsService : ISheetsService
         _sheetsService = sheetsService;
     }
 
-    public IEnumerable<TObject> Get<TObject>(string sheetId, string range, IObjectParser<TObject> parser)
+    public async Task<IEnumerable<TObject>> GetAsync<TObject>(string sheetId, string range, IObjectParser<TObject> parser, CancellationToken cancellationToken = default)
     {
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
-        var values = request.Execute();
+        var values = await request.ExecuteAsync(cancellationToken);
 
         return values.Values
             .Skip(_namesRow)
