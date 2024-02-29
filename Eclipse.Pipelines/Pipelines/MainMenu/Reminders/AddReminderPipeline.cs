@@ -40,6 +40,12 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:ValueCannotBeEmpty"]);
         }
 
+        if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
+        {
+            FinishPipeline();
+            return Menu(RemindersMenuButtons, Localizer["Okay"]);
+        }
+
         _cacheService.Set(new CacheKey($"reminder-text-{context.ChatId}"), context.Value);
 
         return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
