@@ -4,17 +4,17 @@ using System.Linq.Expressions;
 
 namespace Eclipse.Common.Tests.Specifications.Utils;
 
-internal sealed class XGreaterThanSpecification : Specification<TestObject>
+internal sealed class YLowerThenSpecification : Specification<TestObject>
 {
-    private readonly int _x;
+    private readonly int _num;
 
-    public XGreaterThanSpecification(int x)
+    public YLowerThenSpecification(int num)
     {
-        _x = x;
+        _num = num;
     }
 
     public override Expression<Func<TestObject, bool>> IsSatisfied()
     {
-        return testObject => testObject.X > _x;
+        return x => x.Y < _num;
     }
 }

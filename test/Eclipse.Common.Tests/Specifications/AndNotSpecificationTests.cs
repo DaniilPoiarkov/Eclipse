@@ -5,11 +5,11 @@ using FluentAssertions;
 
 namespace Eclipse.Common.Tests.Specifications;
 
-public sealed class AndSpecificationTests
+public class AndNotSpecificationTests
 {
     private readonly IEnumerable<TestObject> _objects;
 
-    public AndSpecificationTests()
+    public AndNotSpecificationTests()
     {
         _objects = Enumerable.Range(1, 10)
             .Select(x => new TestObject
@@ -20,19 +20,19 @@ public sealed class AndSpecificationTests
     }
 
     [Fact]
-    public void AndSpecification_WhenApplied_ThenBothSpecificationMustMatch()
+    public void AndNot_WhenApplied_ThenBathSpecificationsAppliedProperly()
     {
         var xGreaterThanValue = 5;
         var yGreaterThanValue = 7;
-        var expectedCount = 3;
+        var expectedCount = 2;
 
         var specification = new XGreaterThanSpecification(xGreaterThanValue)
-            .And(new YGreaterThanSpecification(yGreaterThanValue));
+            .AndNot(new YGreaterThanSpecification(yGreaterThanValue));
 
         var results = _objects.Where(specification).ToArray();
 
         results.Length.Should().Be(expectedCount);
         results.All(x => x.X > xGreaterThanValue).Should().BeTrue();
-        results.All(x => x.Y > yGreaterThanValue).Should().BeTrue();
+        results.All(x => x.Y <= yGreaterThanValue).Should().BeTrue();
     }
 }
