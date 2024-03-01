@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Eclipse.Cli.Application.Contracts\Eclipse.Cli.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Eclipse.Cli.Common\Eclipse.Cli.Common.csproj" />
+  </ItemGroup>
+
 </Project>
