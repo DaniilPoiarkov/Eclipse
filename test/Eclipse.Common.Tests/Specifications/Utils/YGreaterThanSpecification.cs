@@ -2,7 +2,7 @@
 
 using System.Linq.Expressions;
 
-namespace Eclipse.Domain.Tests.Specifications.Utils;
+namespace Eclipse.Common.Tests.Specifications.Utils;
 
 internal sealed class YGreaterThanSpecification : Specification<TestObject>
 {

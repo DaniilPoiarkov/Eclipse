@@ -2,13 +2,13 @@
 
 namespace Eclipse.Common.Specifications.LogicalOperators;
 
-internal sealed class AndSpecification<T> : LogicalSpecification<T>
+internal sealed class OrSpecification<T> : LogicalSpecification<T>
 {
-    public AndSpecification(Specification<T> left, Specification<T> right)
+    public OrSpecification(Specification<T> left, Specification<T> right)
         : base(left, right) { }
 
     protected override BinaryExpression Combine(Expression left, Expression right)
     {
-        return Expression.AndAlso(left, right);
+        return Expression.OrElse(left, right);
     }
 }
