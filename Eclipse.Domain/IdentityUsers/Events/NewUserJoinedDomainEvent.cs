@@ -12,7 +12,7 @@ public sealed class NewUserJoinedDomainEvent : IDomainEvent
 
     public string Surname { get; }
 
-    public NewUserJoinedDomainEvent(Guid userId, string userName, string name, string surname)
+    internal NewUserJoinedDomainEvent(Guid userId, string userName, string name, string surname)
     {
         UserId = userId;
         UserName = userName;
