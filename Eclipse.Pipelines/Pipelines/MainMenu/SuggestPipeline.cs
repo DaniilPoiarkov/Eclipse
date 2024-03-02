@@ -7,11 +7,11 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu;
 [Route("Menu:MainMenu:Suggest", "/suggest")]
 public sealed class SuggestPipeline : EclipsePipelineBase
 {
-    private readonly ISuggestionsService _suggestionsService;
+    private readonly ISuggestionsService _service;
 
-    public SuggestPipeline(ISuggestionsService suggestionsService)
+    public SuggestPipeline(ISuggestionsService service)
     {
-        _suggestionsService = suggestionsService;
+        _service = service;
     }
 
     protected override void Initialize()
@@ -47,7 +47,7 @@ public sealed class SuggestPipeline : EclipsePipelineBase
             TelegramUserId = context.User.Id,
         };
 
-        await _suggestionsService.CreateAsync(request, cancellationToken);
+        await _service.CreateAsync(request, cancellationToken);
 
         return Menu(MainMenuButtons, Localizer["Pipelines:Suggest:Success"]);
     }

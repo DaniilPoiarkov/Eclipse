@@ -1,4 +1,4 @@
-﻿using Eclipse.Domain.Shared.Events;
+﻿using Eclipse.Common.Events;
 
 namespace Eclipse.Domain.Shared.Entities;
 
