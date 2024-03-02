@@ -5,11 +5,11 @@ using FluentAssertions;
 
 namespace Eclipse.Common.Tests.Specifications;
 
-public sealed class AndSpecificationTests
+public class OrSpecificationTests
 {
     private readonly IEnumerable<TestObject> _objects;
 
-    public AndSpecificationTests()
+    public OrSpecificationTests()
     {
         _objects = Enumerable.Range(1, 10)
             .Select(x => new TestObject
@@ -20,19 +20,18 @@ public sealed class AndSpecificationTests
     }
 
     [Fact]
-    public void AndSpecification_WhenApplied_ThenBothSpecificationMustMatch()
+    public void OrSpecification_WhenApplied_ThenEitherLeft_OrRightSpecificationMustMatch()
     {
         var xGreaterThanValue = 5;
-        var yGreaterThanValue = 7;
-        var expectedCount = 3;
+        var yLowerThanValue = 2;
+        var expectedCount = 6;
 
         var specification = new XGreaterThanSpecification(xGreaterThanValue)
-            .And(new YGreaterThanSpecification(yGreaterThanValue));
+            .Or(new YLowerThenSpecification(yLowerThanValue));
 
         var results = _objects.Where(specification).ToArray();
 
-        results.Length.Should().Be(expectedCount);
-        results.All(x => x.X > xGreaterThanValue).Should().BeTrue();
-        results.All(x => x.Y > yGreaterThanValue).Should().BeTrue();
+        results.Length.Should().Be(expectedCount, "Expecting to have 1 object with values (1, 1) and 5 more starting from (6, 6) up to (10, 10) inclusively.");
+        results.All(x => x.X > xGreaterThanValue || x.Y < yLowerThanValue).Should().BeTrue();
     }
 }

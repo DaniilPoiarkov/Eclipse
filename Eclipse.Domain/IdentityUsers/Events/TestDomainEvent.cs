@@ -1,8 +1,14 @@
-﻿using Eclipse.Domain.Shared.Events;
+﻿using Eclipse.Common.Events;
 
 namespace Eclipse.Domain.IdentityUsers.Events;
 
-public sealed class TestDomainEvent : IDomainEvent
+[Serializable]
+public sealed record TestDomainEvent : IDomainEvent
 {
-    
+    public long ChatId { get; }
+
+    public TestDomainEvent(long chatId)
+    {
+        ChatId = chatId;
+    }
 }
