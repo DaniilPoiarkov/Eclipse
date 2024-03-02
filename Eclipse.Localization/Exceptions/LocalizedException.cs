@@ -6,6 +6,6 @@ public class LocalizedException : Exception
 
     public LocalizedException(string message, params string[] args) : base(message)
     {
-        Args = args ?? Array.Empty<string>();
+        Args = args ?? [];
     }
 }

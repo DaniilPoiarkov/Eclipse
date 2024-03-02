@@ -38,7 +38,7 @@ builder.Services
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
-builder.Services.AddLocalization(localization =>
+builder.Services.AddEclipseLocalization(localization =>
 {
     var options = configuration.GetSection("Localization")
         .Get<LocalizationOptions>()!;

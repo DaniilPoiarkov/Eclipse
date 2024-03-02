@@ -12,7 +12,7 @@ public static class LocalizationModule
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddLocalization(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
+    public static IServiceCollection AddEclipseLocalization(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
     {
         var builder = new LocalizationBuilder();
 
@@ -20,6 +20,17 @@ public static class LocalizationModule
         var localizer = builder.Build();
 
         services.AddSingleton(localizer);
+
+        return services;
+    }
+
+    public static IServiceCollection AddEclipseLocalizationV2(this IServiceCollection services, Action<LocalizationOptions> configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+
+        services.AddLocalization();
+
+        services.Configure(configuration);
 
         return services;
     }
