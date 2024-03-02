@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.Application.Suggestions;
 
-internal sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSuggestionSentDomainEvent>
+public sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSuggestionSentDomainEvent>
 {
     private readonly ITelegramService _telegramService;
 
@@ -30,7 +30,7 @@ internal sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSu
 
         var message = userResult.IsSuccess
             ? $"Suggestion from {userResult.Value.Name}{userResult.Value.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{notification.Text}"
-            : $"Suggestion from unknown user:{Environment.NewLine}{notification.Text}";
+            : $"Suggestion from unknown user with chat id {notification.ChatId}:{Environment.NewLine}{notification.Text}";
 
         var send = new SendMessageModel
         {

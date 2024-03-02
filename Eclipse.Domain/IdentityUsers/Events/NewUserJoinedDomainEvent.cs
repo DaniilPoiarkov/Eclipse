@@ -1,8 +1,9 @@
-﻿using Eclipse.Domain.Shared.Events;
+﻿using Eclipse.Common.Events;
 
 namespace Eclipse.Domain.IdentityUsers.Events;
 
-public sealed class NewUserJoinedDomainEvent : IDomainEvent
+[Serializable]
+public sealed record NewUserJoinedDomainEvent : IDomainEvent
 {
     public Guid UserId { get; }
 

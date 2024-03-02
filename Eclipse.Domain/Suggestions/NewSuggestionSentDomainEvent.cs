@@ -1,7 +1,8 @@
-﻿using Eclipse.Domain.Shared.Events;
+﻿using Eclipse.Common.Events;
 
 namespace Eclipse.Domain.Suggestions;
 
+[Serializable]
 public sealed record NewSuggestionSentDomainEvent : IDomainEvent
 {
     public Guid SuggestionId { get; }

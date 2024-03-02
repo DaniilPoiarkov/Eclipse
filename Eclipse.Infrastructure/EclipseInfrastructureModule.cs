@@ -33,7 +33,10 @@ public static class EclipseInfrastructureModule
             .AddQuartzIntegration()
             .AddGoogleIntegration();
 
-        services.AddTransient<IEventBus, MediatrEventBus>();
+        services
+            .AddSingleton(typeof(InMemoryQueue<>))
+            .AddTransient<IEventBus, InMemoryEventBus>()
+            .AddHostedService<InMemoryChannelReadService>();
 
         return new InfrastructureModuleBuilder(services);
     }

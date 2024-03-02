@@ -5,7 +5,7 @@ using Eclipse.Pipelines.Attributes;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
-//[ComingSoonFeature]
+[AdminOnly]
 [Route("Test", "/test")]
 internal sealed class TestPipeline : EclipsePipelineBase
 {
@@ -22,7 +22,7 @@ internal sealed class TestPipeline : EclipsePipelineBase
 
         RegisterStage(async (context, token) =>
         {
-            await _eventBus.Publish(new TestDomainEvent(), token);
+            await _eventBus.Publish(new TestDomainEvent(context.ChatId), token);
             return Text("OK");
         });
     }
