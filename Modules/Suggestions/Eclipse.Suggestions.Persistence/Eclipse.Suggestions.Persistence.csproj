@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Eclipse.Application\Eclipse.Application.csproj" />
+    <ProjectReference Include="..\Eclipse.Suggestions.Domain\Eclipse.Suggestions.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
