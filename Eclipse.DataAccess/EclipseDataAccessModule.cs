@@ -1,5 +1,6 @@
 ﻿using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.EclipseCosmosDb;
+using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.IdentityUsers;
 using Eclipse.Domain.IdentityUsers;
 
@@ -24,7 +25,8 @@ public static class EclipseDataAccessModule
 
         services.Configure(builder);
 
-        services.AddCosmosDb();
+        services.AddCosmosDb()
+            .AddDataAccessHealthChecks();
 
         return services;
     }

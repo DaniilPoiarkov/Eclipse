@@ -18,6 +18,7 @@ using Serilog;
 
 using Telegram.Bot;
 using Eclipse.Pipelines.Options.Languages;
+using Eclipse.Pipelines.Health;
 
 namespace Eclipse.Pipelines;
 
@@ -54,6 +55,8 @@ public static class EclipsePipelinesModule
         services.Configure<LanguageList>(
             configuration.GetSection(nameof(LanguageList))
         );
+
+        services.AddPipelinesHealthChecks();
 
         return services;
     }
