@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Telegram;
+﻿namespace Eclipse.Telegram.Application.Contracts;
 
 public static class TelegramErrors
 {

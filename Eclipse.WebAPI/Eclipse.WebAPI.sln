@@ -54,23 +54,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{0091
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Suggestions", "Suggestions", "{7F6493D6-93E7-4F38-A61F-061002FA649E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions", "..\Modules\Suggestions\Eclipse.Suggestions\Eclipse.Suggestions.csproj", "{8EE0E03A-65FD-44B2-B5CA-5CA1CFAA89B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions", "..\Modules\Suggestions\Eclipse.Suggestions\Eclipse.Suggestions.csproj", "{8EE0E03A-65FD-44B2-B5CA-5CA1CFAA89B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions.Domain", "..\Modules\Suggestions\Eclipse.Suggestions.Domain\Eclipse.Suggestions.Domain.csproj", "{54408A4D-9C67-40C3-BA15-BCFFFDA5922D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions.Domain", "..\Modules\Suggestions\Eclipse.Suggestions.Domain\Eclipse.Suggestions.Domain.csproj", "{54408A4D-9C67-40C3-BA15-BCFFFDA5922D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions.IntegrationEvents", "..\Modules\Suggestions\Eclipse.Suggestions.IntegrationEvents\Eclipse.Suggestions.IntegrationEvents.csproj", "{86259BCF-928C-4D64-BEA1-E22793E84B4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions.IntegrationEvents", "..\Modules\Suggestions\Eclipse.Suggestions.IntegrationEvents\Eclipse.Suggestions.IntegrationEvents.csproj", "{86259BCF-928C-4D64-BEA1-E22793E84B4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions.Application", "..\Modules\Suggestions\Eclipse.Suggestions.Application\Eclipse.Suggestions.Application.csproj", "{3DC93600-B3C8-425C-B4BB-A2BF31E05D3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions.Application", "..\Modules\Suggestions\Eclipse.Suggestions.Application\Eclipse.Suggestions.Application.csproj", "{3DC93600-B3C8-425C-B4BB-A2BF31E05D3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions.Application.Contracts", "..\Modules\Suggestions\Eclipse.Suggestions.Application.Contracts\Eclipse.Suggestions.Application.Contracts.csproj", "{81D83F48-8949-4CB6-BDC0-2B4228C7B7F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions.Application.Contracts", "..\Modules\Suggestions\Eclipse.Suggestions.Application.Contracts\Eclipse.Suggestions.Application.Contracts.csproj", "{81D83F48-8949-4CB6-BDC0-2B4228C7B7F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions.Domain.Shared", "..\Modules\Suggestions\Eclipse.Suggestions.Domain.Shared\Eclipse.Suggestions.Domain.Shared.csproj", "{A003845D-9273-4725-9E88-750CB970F2F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions.Domain.Shared", "..\Modules\Suggestions\Eclipse.Suggestions.Domain.Shared\Eclipse.Suggestions.Domain.Shared.csproj", "{A003845D-9273-4725-9E88-750CB970F2F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Domain", "..\Common\Eclipse.Domain\Eclipse.Domain.csproj", "{DBEB4FF6-EB4E-4C26-A986-5A67B2BB6B68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Domain", "..\Common\Eclipse.Domain\Eclipse.Domain.csproj", "{DBEB4FF6-EB4E-4C26-A986-5A67B2BB6B68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Application", "..\Common\Eclipse.Application\Eclipse.Application.csproj", "{5C357B0F-4260-4017-8C2F-B97B348CFC27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Application", "..\Common\Eclipse.Application\Eclipse.Application.csproj", "{5C357B0F-4260-4017-8C2F-B97B348CFC27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Suggestions.Persistence", "..\Modules\Suggestions\Eclipse.Suggestions.Persistence\Eclipse.Suggestions.Persistence.csproj", "{9714C264-B2B8-448A-80E1-9FCAFF561DFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eclipse.Suggestions.Persistence", "..\Modules\Suggestions\Eclipse.Suggestions.Persistence\Eclipse.Suggestions.Persistence.csproj", "{9714C264-B2B8-448A-80E1-9FCAFF561DFA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Telegram", "Telegram", "{776C5621-643C-4FC7-8BFA-9E03D542DDF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Telegram", "..\Modules\Telegram\Eclipse.Telegram\Eclipse.Telegram.csproj", "{725F85FF-14AF-4663-9C5C-795B2A68FA9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Telegram.Application.Contracts", "..\Modules\Telegram\Eclipse.Telegram.Application.Contracts\Eclipse.Telegram.Application.Contracts.csproj", "{992E36D2-F4C7-4831-A856-11B9A737DC0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Telegram.Application", "..\Modules\Telegram\Eclipse.Telegram.Application\Eclipse.Telegram.Application.csproj", "{AAF96754-856A-47C7-873F-D35F77435138}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -190,6 +198,18 @@ Global
 		{9714C264-B2B8-448A-80E1-9FCAFF561DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9714C264-B2B8-448A-80E1-9FCAFF561DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9714C264-B2B8-448A-80E1-9FCAFF561DFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725F85FF-14AF-4663-9C5C-795B2A68FA9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725F85FF-14AF-4663-9C5C-795B2A68FA9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725F85FF-14AF-4663-9C5C-795B2A68FA9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725F85FF-14AF-4663-9C5C-795B2A68FA9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{992E36D2-F4C7-4831-A856-11B9A737DC0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{992E36D2-F4C7-4831-A856-11B9A737DC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{992E36D2-F4C7-4831-A856-11B9A737DC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{992E36D2-F4C7-4831-A856-11B9A737DC0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAF96754-856A-47C7-873F-D35F77435138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF96754-856A-47C7-873F-D35F77435138}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF96754-856A-47C7-873F-D35F77435138}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF96754-856A-47C7-873F-D35F77435138}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -214,6 +234,10 @@ Global
 		{DBEB4FF6-EB4E-4C26-A986-5A67B2BB6B68} = {E4999EA3-3B32-4C9C-B0F3-98643D580BE0}
 		{5C357B0F-4260-4017-8C2F-B97B348CFC27} = {E4999EA3-3B32-4C9C-B0F3-98643D580BE0}
 		{9714C264-B2B8-448A-80E1-9FCAFF561DFA} = {7F6493D6-93E7-4F38-A61F-061002FA649E}
+		{776C5621-643C-4FC7-8BFA-9E03D542DDF4} = {00917B78-6929-412E-909D-DE2C929003A6}
+		{725F85FF-14AF-4663-9C5C-795B2A68FA9D} = {776C5621-643C-4FC7-8BFA-9E03D542DDF4}
+		{992E36D2-F4C7-4831-A856-11B9A737DC0C} = {776C5621-643C-4FC7-8BFA-9E03D542DDF4}
+		{AAF96754-856A-47C7-873F-D35F77435138} = {776C5621-643C-4FC7-8BFA-9E03D542DDF4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F191F42F-E73C-400D-B0EF-2E6CD7145C57}
