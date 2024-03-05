@@ -2,7 +2,7 @@
 
 using Telegram.Bot;
 
-namespace Eclipse.WebAPI.HealthChecks;
+namespace Eclipse.Pipelines.Health;
 
 public sealed class BotHealthCheck : IHealthCheck
 {
