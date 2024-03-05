@@ -2,7 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.EdgeCases;
 
-public class EclipseNotFoundPipeline : EclipsePipelineBase, INotFoundPipeline
+public sealed class EclipseNotFoundPipeline : EclipsePipelineBase, INotFoundPipeline
 {
     protected override void Initialize()
     {

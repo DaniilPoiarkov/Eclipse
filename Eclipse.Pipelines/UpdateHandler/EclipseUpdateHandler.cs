@@ -5,8 +5,8 @@ using Telegram.Bot.Types;
 using Serilog;
 
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Builder;
 using Eclipse.Core.UpdateParsing;
+using Eclipse.Common.Telegram;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Exceptions;

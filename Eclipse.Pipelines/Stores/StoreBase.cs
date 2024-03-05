@@ -1,4 +1,4 @@
-﻿using Eclipse.Infrastructure.Cache;
+﻿using Eclipse.Common.Cache;
 
 namespace Eclipse.Pipelines.Stores;
 

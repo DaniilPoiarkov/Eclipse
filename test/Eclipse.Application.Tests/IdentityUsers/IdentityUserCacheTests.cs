@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.IdentityUsers;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Common.Cache;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.IdentityUsers;
 
-public class IdentityUserCacheTests
+public sealed class IdentityUserCacheTests
 {
     private readonly ICacheService _cacheService;
 
@@ -31,9 +31,10 @@ public class IdentityUserCacheTests
     [Fact]
     public void GetAll_WhenUsersCached_ThenCachedUsersReturned()
     {
-        var users = IdentityUserDtoGenerator.GenerateUsers(1, 5);
+        var users = IdentityUserDtoGenerator.Generate(1, 5);
 
-        _cacheService.Get<List<IdentityUserDto>>(_key).ReturnsForAnyArgs(users);
+        _cacheService.Get<List<IdentityUserDto>>(_key)
+            .ReturnsForAnyArgs(users);
 
         var result = Sut.GetAll();
 
@@ -45,10 +46,11 @@ public class IdentityUserCacheTests
     [Fact]
     public void AddOrUpdate_WhenUserNotCached_ThenAddUserToCachedCollection()
     {
-        var cached = IdentityUserDtoGenerator.GenerateUsers(1, 4);
-        var dto = IdentityUserDtoGenerator.GenerateUsers(5, 1).First();
+        var cached = IdentityUserDtoGenerator.Generate(1, 4);
+        var dto = IdentityUserDtoGenerator.Generate(5, 1).First();
 
-        _cacheService.Get<List<IdentityUserDto>>(_key).ReturnsForAnyArgs(cached);
+        _cacheService.Get<List<IdentityUserDto>>(_key)
+            .ReturnsForAnyArgs(cached);
 
         Sut.AddOrUpdate(dto);
 

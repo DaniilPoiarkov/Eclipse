@@ -1,12 +1,12 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
 using Eclipse.Domain.IdentityUsers;
-using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Pipelines.Decorations;
 
-public class LocalizationDecorator : IPipelineExecutionDecorator
+public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
     private readonly IdentityUserManager _userManager;
 

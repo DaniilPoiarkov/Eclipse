@@ -1,7 +1,6 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Common.EventBus;
+using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
-
-using MediatR;
 
 using System.Linq.Expressions;
 
@@ -12,15 +11,15 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 {
     protected readonly IContainer<TEntity> Container;
 
-    protected readonly IPublisher Publisher;
+    protected readonly IEventBus EventBus;
 
-    public CosmosRepository(IContainer<TEntity> container, IPublisher publisher)
+    public CosmosRepository(IContainer<TEntity> container, IEventBus eventBus)
     {
         Container = container;
-        Publisher = publisher;
+        EventBus = eventBus;
     }
 
-    public virtual async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var result = await Container.CreateAsync(entity, cancellationToken);
 
@@ -28,6 +27,9 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 
         return result;
     }
+
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) =>
+        Container.CountAsync(expression, cancellationToken);
 
     public virtual Task DeleteAsync(Guid id, CancellationToken cancellationToken = default) =>
         Container.DeleteAsync(id, cancellationToken);
@@ -41,7 +43,10 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
     public virtual Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) =>
         Container.GetByExpressionAsync(expression, cancellationToken);
 
-    public virtual async Task<TEntity?> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default) =>
+        Container.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken);
+
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var result = await Container.UpdateAsync(entity, cancellationToken);
         
@@ -66,7 +71,7 @@ internal abstract class CosmosRepository<TEntity> : IRepository<TEntity>
 
         foreach (var domainEvent in events)
         {
-            await Publisher.Publish(domainEvent, cancellationToken);
+            await EventBus.Publish(domainEvent, cancellationToken);
         }
     }
 }

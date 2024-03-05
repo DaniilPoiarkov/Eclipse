@@ -4,7 +4,7 @@ using Eclipse.Core.Core;
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
 [Route("Menu:AdminMenu", "/admin_mode")]
-internal class AdminModePipeline : AdminPipelineBase
+internal sealed class AdminModePipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {

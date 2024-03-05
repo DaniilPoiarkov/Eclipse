@@ -1,5 +1,5 @@
 {
-  "Localization": "uk",
+  "Culture": "uk",
   "Texts": {
     "Pipelines:TodoItems": "Давай подивимось що у нас тут..",
     "Pipelines:TodoItems:YourToDos": "📝 Твої плани:",

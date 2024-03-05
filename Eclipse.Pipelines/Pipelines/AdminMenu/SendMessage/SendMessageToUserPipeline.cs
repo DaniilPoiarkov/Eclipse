@@ -1,11 +1,12 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
 [Route("Menu:AdminMenu:Send:User", "/admin_send_user")]
-internal class SendMessageToUserPipeline : AdminPipelineBase
+internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 {
     private readonly ITelegramService _telegramService;
 
@@ -55,21 +56,20 @@ internal class SendMessageToUserPipeline : AdminPipelineBase
 
     private async Task<IResult> SendMessage(MessageContext context, CancellationToken cancellationToken)
     {
-        if (!context.Value.Equals("/confirm", StringComparison.CurrentCultureIgnoreCase))
+        if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        try
-        {
-            await _telegramService.Send(MessageModel, cancellationToken);
+        var result = await _telegramService.Send(MessageModel, cancellationToken);
 
+        if (result.IsSuccess)
+        {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
-        catch (Exception ex)
-        {
-            return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}" +
-                $"{ex.Message}");
-        }
+
+        var text = $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{Localizer.LocalizeError(result.Error)}";
+
+        return Menu(AdminMenuButtons, text);
     }
 }

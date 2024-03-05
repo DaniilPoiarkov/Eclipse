@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.IdentityUsers.Services;
 using Eclipse.Domain.IdentityUsers;
 
 using NSubstitute;
@@ -15,9 +15,9 @@ internal sealed class UpdateAsyncStepDefinitions
 
     private readonly IdentityUserUpdateDto _updateDto = new();
 
-    private readonly Lazy<IIdentityUserService> _lazySut;
+    private readonly Lazy<IIdentityUserCreateUpdateService> _lazySut;
 
-    private IIdentityUserService Sut => _lazySut.Value;
+    private IIdentityUserCreateUpdateService Sut => _lazySut.Value;
 
     private IdentityUserDto _result = new();
 
@@ -29,7 +29,9 @@ internal sealed class UpdateAsyncStepDefinitions
 
         _lazyManager = new Lazy<IdentityUserManager>(() => new IdentityUserManager(_repository));
 
-        _lazySut = new Lazy<IIdentityUserService>(() => new IdentityUserService(new IdentityUserMapper(), _lazyManager.Value));
+        _lazySut = new Lazy<IIdentityUserCreateUpdateService>(
+            () => new IdentityUserCreateUpdateService(_lazyManager.Value)
+        );
     }
 
     [Given("An existing user with followind data:")]

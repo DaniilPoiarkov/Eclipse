@@ -1,13 +1,14 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Localizations;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Infrastructure.Cache;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
 [Route("Menu:Reminders:Add", "/reminders_add")]
-public class AddReminderPipeline : RemindersPipelineBase
+public sealed class AddReminderPipeline : RemindersPipelineBase
 {
     private readonly ICacheService _cacheService;
 
@@ -33,10 +34,16 @@ public class AddReminderPipeline : RemindersPipelineBase
 
     private IResult AskForTime(MessageContext context)
     {
-        if (string.IsNullOrEmpty(context.Value))
+        if (context.Value.IsNullOrEmpty())
         {
             FinishPipeline();
             return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:ValueCannotBeEmpty"]);
+        }
+
+        if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
+        {
+            FinishPipeline();
+            return Menu(RemindersMenuButtons, Localizer["Okay"]);
         }
 
         _cacheService.Set(new CacheKey($"reminder-text-{context.ChatId}"), context.Value);
@@ -53,18 +60,27 @@ public class AddReminderPipeline : RemindersPipelineBase
 
         var chatId = context.ChatId;
 
-        var user = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+        var userResult = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+
+        if (!userResult.IsSuccess)
+        {
+            return Menu(RemindersMenuButtons, Localizer.LocalizeError(userResult.Error));
+        }
 
         var text = _cacheService.Get<string>(new CacheKey($"reminder-text-{chatId}"))!;
 
         var reminderCreateDto = new ReminderCreateDto
         {
             Text = text,
-            NotifyAt = time.Add(user.Gmt * -1)
+            NotifyAt = time.Add(userResult.Value.Gmt * -1)
         };
         
-        await _reminderService.CreateReminderAsync(user.Id, reminderCreateDto, cancellationToken);
+        var result = await _reminderService.CreateReminderAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
 
-        return Menu(RemindersMenuButtons, Localizer[$"{_pipelinePrefix}:Created"]);
+        var message = result.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:Created"]
+            : Localizer.LocalizeError(result.Error);
+
+        return Menu(RemindersMenuButtons, message);
     }
 }

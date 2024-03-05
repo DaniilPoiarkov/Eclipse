@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Pipelines.Stores.Messages;
@@ -45,7 +46,16 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
         var enable = context.Value.Equals("Enable");
 
-        var user = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return MenuAndRemoveOptions(
+                Localizer.LocalizeError(result.Error),
+                message?.MessageId);
+        }
+
+        var user = result.Value;
 
         if (user.NotificationsEnabled.Equals(enable))
         {
@@ -59,10 +69,12 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
             NotificationsEnabled = enable,
         };
 
-        await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
-        return MenuAndRemoveOptions(
-            Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"],
-            message?.MessageId);
+        var text = updateResult.IsSuccess
+            ? Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"]
+            : Localizer.LocalizeError(updateResult.Error);
+
+        return MenuAndRemoveOptions(text, message?.MessageId);
     }
 }

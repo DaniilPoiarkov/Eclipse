@@ -11,7 +11,8 @@ using Eclipse.Pipelines.Decorations;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
-using Eclipse.WebAPI.HealthChecks;
+using Eclipse.WebAPI.Health;
+using Eclipse.WebAPI.Options;
 
 using Serilog;
 
@@ -20,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
-    .AddEclipseHealthChecks()
     .AddApplicationModule()
     .AddDomainSharedModule()
     .AddDomainModule()
@@ -37,18 +37,23 @@ builder.Services
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
-builder.Services.AddLocalization(builder =>
+builder.Services.AddLocalization(localization =>
 {
-    var path = "EmbeddedResources/Localizations/";
+    var options = configuration.GetSection("Localization")
+        .Get<LocalizationOptions>()!;
 
-    builder.AddJsonFiles($"{path}en")
-        .AddJsonFiles($"{path}uk");
+    var path = "EmbeddedResources/Localizations";
 
-    builder.DefaultLocalization = "uk";
+    foreach (var culture in options.AvailableCultures)
+    {
+        localization.AddJsonFiles($"{path}/{culture}");
+    }
+
+    localization.DefaultLocalization = options.DefaultCulture;
 });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(
-    builder.Configuration.GetSection("Authorization")
+    configuration.GetSection("Authorization")
 );
 
 builder.Host.UseSerilog((_, config) =>
@@ -69,7 +74,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler()
     .UseHttpsRedirection();
 
-app.UseEclipseHealthCheks();
+app.UseEclipseHealthChecks();
 
 app.UseAuthentication()
     .UseAuthorization();

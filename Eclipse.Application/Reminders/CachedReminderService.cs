@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Reminders;
 
@@ -13,12 +14,12 @@ internal sealed class CachedReminderService : IdentityUserCachingFixture, IRemin
         _reminderService = reminderService;
     }
 
-    public Task<IdentityUserDto> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _reminderService.CreateReminderAsync(userId, createReminderDto, cancellationToken));
     }
 
-    public Task<IdentityUserDto> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _reminderService.RemoveRemindersForTime(userId, time, cancellationToken));
     }

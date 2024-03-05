@@ -2,7 +2,8 @@
 
 namespace Eclipse.Application.Contracts.Telegram.Commands;
 
-public class CommandDto
+[Serializable]
+public sealed class CommandDto
 {
     [Required]
     public string Command { get; set; } = string.Empty;

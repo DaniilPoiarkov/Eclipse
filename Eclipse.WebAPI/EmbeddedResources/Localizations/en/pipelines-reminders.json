@@ -1,8 +1,8 @@
 {
-  "Localization": "en",
+  "Culture": "en",
   "Texts": {
     "Pipelines:Reminders": "Let's take a look to our reminders!",
-    "Pipelines:Reminders:AskForText": "Describe what do you want me to remind you",
+    "Pipelines:Reminders:AskForText": "Describe what do you want me to remind you or press /cancel to return",
     "Pipelines:Reminders:ValueCannotBeEmpty": "I can't remind you this😢\r\nNow we need to start from the begginтing😔",
     "Pipelines:Reminders:AskForTime": "Get it, write time in forman 'hh:mm'",
     "Pipelines:Reminders:Created": "Soo..yeah!\r\nI'll send a reminder when time comes😊",

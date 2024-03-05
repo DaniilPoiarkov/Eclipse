@@ -1,14 +1,15 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets.Suggestions;
-using Eclipse.Application.Contracts.Suggestions;
+﻿using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Suggestions;
+using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Domain.Suggestions;
+using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
 using NSubstitute;
 
 using Xunit;
-using Eclipse.Tests.Generators;
 
 namespace Eclipse.Application.Tests.Suggestions;
 
@@ -18,13 +19,13 @@ public class SuggestionServiceTests
 
     public SuggestionServiceTests()
     {
-        var suggestionsSheetsService = Substitute.For<ISuggestionsSheetsService>();
+        var suggestionsSheetsService = Substitute.For<IEclipseSheetsService<Suggestion>>();
         var suggestions = SuggestionsGenerator.Generate(5, 1);
 
-        suggestionsSheetsService.GetAll().Returns(suggestions);
+        suggestionsSheetsService.GetAllAsync().Returns(suggestions);
 
         var userRepository = Substitute.For<IIdentityUserService>();
-        var users = IdentityUserDtoGenerator.GenerateUsers(1, 5);
+        var users = IdentityUserDtoGenerator.GenerateSlim(1, 5);
 
         userRepository.GetAllAsync().Returns(users);
 

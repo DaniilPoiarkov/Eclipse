@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.TodoItems;
 
@@ -12,12 +13,12 @@ internal sealed class CachedTodoItemsService : IdentityUserCachingFixture, ITodo
         _todoItemService = todoItemService;
     }
 
-    public Task<IdentityUserDto> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _todoItemService.CreateAsync(input, cancellationToken));
     }
 
-    public Task<IdentityUserDto> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _todoItemService.FinishItemAsync(chatId, itemId, cancellationToken));
     }

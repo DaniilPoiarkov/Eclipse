@@ -1,99 +1,61 @@
-﻿using Eclipse.Application.Contracts.Base;
-using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Domain.Exceptions;
-using Eclipse.Domain.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
 
 internal sealed class IdentityUserService : IIdentityUserService
 {
-    private readonly IMapper<IdentityUser, IdentityUserDto> _mapper;
+    private readonly IIdentityUserCreateUpdateService _createUpdateService;
 
-    private readonly IdentityUserManager _userManager;
+    private readonly IIdentityUserLogicService _logicService;
 
-    public IdentityUserService(IMapper<IdentityUser, IdentityUserDto> mapper, IdentityUserManager userManager)
+    private readonly IIdentityUserReadService _readService;
+
+    public IdentityUserService(IIdentityUserCreateUpdateService createUpdateService, IIdentityUserLogicService logicService, IIdentityUserReadService readService)
     {
-        _mapper = mapper;
-        _userManager = userManager;
+        _createUpdateService = createUpdateService;
+        _logicService = logicService;
+        _readService = readService;
     }
 
-    public async Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var identity = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
-
-        return _mapper.Map(identity);
+        return _createUpdateService.CreateAsync(createDto, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userManager.GetAllAsync(cancellationToken);
-        
-        return users
-            .Select(_mapper.Map)
-            .ToList();
+        return _readService.GetAllAsync(cancellationToken);
     }
 
-    public async Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
-
-        return _mapper.Map(user);
+        return _readService.GetFilteredListAsync(request, cancellationToken);
     }
 
-    public async Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await FindById(id, cancellationToken);
-        return _mapper.Map(user);
+        return _readService.GetByChatIdAsync(chatId, cancellationToken);
     }
 
-    public async Task<IdentityUserDto> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
-        var user = await FindById(id, cancellationToken);
-
-        user.SetGmt(currentUserTime);
-
-        await _userManager.UpdateAsync(user, cancellationToken);
-
-        return _mapper.Map(user);
+        return _readService.GetPaginatedListAsync(request, cancellationToken);
     }
 
-    public async Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await FindById(id, cancellationToken);
-
-        user.Name = updateDto.Name is null
-            ? user.Name
-            : updateDto.Name;
-
-        user.Surname = updateDto.Surname is null
-            ? user.Surname
-            : updateDto.Surname;
-
-        user.Username = updateDto.Username is null
-            ? user.Username
-            : updateDto.Username;
-
-        if (!string.IsNullOrEmpty(updateDto.Culture))
-        {
-            user.Culture = updateDto.Culture;
-        }
-
-        if (updateDto.NotificationsEnabled.HasValue)
-        {
-            user.NotificationsEnabled = updateDto.NotificationsEnabled.Value;
-        }
-
-        var updated = await _userManager.UpdateAsync(user, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
-
-        return _mapper.Map(updated);
+        return _readService.GetByIdAsync(id, cancellationToken);
     }
 
-    private async Task<IdentityUser> FindById(Guid id, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
-        return await _userManager.FindByIdAsync(id, cancellationToken)
-            ?? throw new EntityNotFoundException(typeof(IdentityUser));
+        return _logicService.SetUserGmtTimeAsync(id, currentUserTime, cancellationToken);
+    }
+
+    public Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    {
+        return _createUpdateService.UpdateAsync(id, updateDto, cancellationToken);
     }
 }

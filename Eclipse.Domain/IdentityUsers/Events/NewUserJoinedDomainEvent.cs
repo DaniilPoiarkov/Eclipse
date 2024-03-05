@@ -1,8 +1,9 @@
-﻿using Eclipse.Domain.Shared.Events;
+﻿using Eclipse.Common.Events;
 
 namespace Eclipse.Domain.IdentityUsers.Events;
 
-public sealed class NewUserJoinedDomainEvent : DomainEvent
+[Serializable]
+public sealed record NewUserJoinedDomainEvent : IDomainEvent
 {
     public Guid UserId { get; }
 
@@ -12,7 +13,7 @@ public sealed class NewUserJoinedDomainEvent : DomainEvent
 
     public string Surname { get; }
 
-    public NewUserJoinedDomainEvent(Guid userId, string userName, string name, string surname)
+    internal NewUserJoinedDomainEvent(Guid userId, string userName, string name, string surname)
     {
         UserId = userId;
         UserName = userName;

@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.IdentityUsers.Events;
+﻿using Eclipse.Common.Results;
+using Eclipse.Domain.IdentityUsers.Events;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
@@ -128,43 +129,45 @@ public sealed class IdentityUser : AggregateRoot
     /// <summary>Adds the todo item.</summary>
     /// <param name="text">The text.</param>
     /// <returns>Created TodoItem item</returns>
-    /// <exception cref="TodoItemLimitException">New item exceeds maximum limit</exception>
-    /// <exception cref="TodoItemValidationException">Text is empty or exceeds maximum length</exception>
-    public TodoItem AddTodoItem(string? text)
+    public Result<TodoItem> AddTodoItem(string? text)
     {
         if (_todoItems.Count == TodoItemConstants.Limit)
         {
-            throw new TodoItemLimitException(TodoItemConstants.Limit);
+            return UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         }
 
-        if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
-        {
-            throw new TodoItemValidationException(TodoItemErrors.Messages.Empty);
-        }
-
-        if (text.Length > TodoItemConstants.MaxLength)
-        {
-            throw new TodoItemValidationException(TodoItemErrors.Messages.MaxLength, TodoItemConstants.MaxLength);
-        }
-
-        var todoItem = new TodoItem(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        var result = TodoItem.Create(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
         
-        _todoItems.Add(todoItem);
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
 
-        return todoItem;
+        _todoItems.Add(result.Value);
+
+        return result;
     }
 
     /// <summary>Finishes the item.</summary>
     /// <param name="todoItemId">The todo item identifier.</param>
     /// <returns>Removed <a cref="TodoItem"></a></returns>
-    /// <exception cref="EntityNotFoundException">Item with given id not found</exception>
-    public TodoItem FinishItem(Guid todoItemId)
+    public Result<TodoItem> FinishItem(Guid todoItemId)
     {
-        var item = _todoItems.GetById(todoItemId);
+        var item = _todoItems.FirstOrDefault(e => e.Id == todoItemId);
+
+        if (item is null)
+        {
+            return UserDomainErrors.TodoItemNotFound();
+        }
 
         _todoItems.Remove(item);
 
-        item.MarkAsFinished();
+        var result = item.MarkAsFinished();
+
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
 
         return item;
     }

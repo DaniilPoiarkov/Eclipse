@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Telegram;
-using Eclipse.Infrastructure.Exceptions;
-using Eclipse.Localization.Exceptions;
+using Eclipse.Common.Results;
 
 using FluentAssertions;
 
@@ -13,9 +12,11 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.Telegram;
 
-public class TelegramServiceTests
+public sealed class TelegramServiceTests
 {
     private readonly ITelegramService _sut;
+
+    private static readonly string _errorCode = "Telegram.Send";
 
     public TelegramServiceTests()
     {
@@ -32,34 +33,36 @@ public class TelegramServiceTests
             Message = "test",
         };
 
-        var action = async () =>
-        {
-            await _sut.Send(model);
-        };
+        var result = await _sut.Send(model);
 
-        await action.Should().NotThrowAsync();
+        result.IsSuccess.Should().BeTrue();
     }
 
     [Fact]
-    public async Task Send_WhenModelHasDefaultChatId_ThenExceptionThrown()
+    public async Task Send_WhenModelHasDefaultChatId_ThenFailureResultReturned()
     {
+        var expectedError =  Error.Validation(_errorCode, "Telegram:InvalidChatId");
+
         var model = new SendMessageModel
         {
             ChatId = 0,
             Message = "test",
         };
 
-        var action = async () =>
-        {
-            await _sut.Send(model);
-        };
+        var result = await _sut.Send(model);
 
-        await action.Should().ThrowAsync<EclipseValidationException>();
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 
     [Fact]
-    public async Task Send_WhenMessageIsEmpty_ThenExceptionThrown()
+    public async Task Send_WhenMessageIsEmpty_ThenFailureResultReturned()
     {
+        var expectedError = Error.Validation(_errorCode, "Telegram:MessageCannotBeEmpty");
 
         var model = new SendMessageModel
         {
@@ -67,11 +70,13 @@ public class TelegramServiceTests
             Message = string.Empty,
         };
 
-        var action = async () =>
-        {
-            await _sut.Send(model);
-        };
+        var result = await _sut.Send(model);
 
-        await action.Should().ThrowAsync<EclipseValidationException>();
+        result.IsSuccess.Should().BeFalse();
+
+        var error = result.Error;
+        error.Code.Should().Be(expectedError.Code);
+        error.Description.Should().Be(expectedError.Description);
+        error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 }

@@ -3,7 +3,7 @@
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
 [Route("Menu:AdminMenu:SwitchToUserMode", "/user_mode")]
-internal class UserModePipeline : AdminPipelineBase
+internal sealed class UserModePipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {

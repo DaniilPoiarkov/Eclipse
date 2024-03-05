@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Common.Cache;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -40,7 +40,7 @@ internal sealed class IdentityUserCache : IIdentityUserCache
         return GetList().FirstOrDefault(u => u.Id == userId);
     }
 
-    public IReadOnlyList<IdentityUserDto> GetAll() => GetList();
+    public IReadOnlyList<IdentityUserDto> GetAll() => GetList().AsReadOnly();
 
     private List<IdentityUserDto> GetList()
     {

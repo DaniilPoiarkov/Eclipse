@@ -3,7 +3,7 @@
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Menu:MainMenu", "/main_menu")]
-internal class MainMenuPipeline : EclipsePipelineBase
+internal sealed class MainMenuPipeline : EclipsePipelineBase
 {
     private static readonly string _message = "Pipelines:MainMenu";
 

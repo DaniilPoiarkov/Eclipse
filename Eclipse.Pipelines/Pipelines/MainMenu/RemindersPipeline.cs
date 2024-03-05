@@ -4,7 +4,7 @@ using Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Menu:MainMenu:Reminders", "/reminders")]
-internal class RemindersPipeline : RemindersPipelineBase
+internal sealed class RemindersPipeline : RemindersPipelineBase
 {
     protected override void Initialize()
     {

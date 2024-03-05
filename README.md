@@ -8,7 +8,7 @@
 - [Deployment and CICD](#deployment-and-cicd)
 
 ## Architecture diagram
-![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/72b872eb-ef0e-416b-8653-9546edc51968)
+![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/6c5dfe8b-3f2a-4645-a1a6-66a4edf90faf)
 
 ## Modules
 
@@ -19,7 +19,7 @@ Basicly controllers and health-checks.
 Contain logic with telegram interaction. In other words it is available for end user functionality.
 
 This diagram shows how pipeline concept works and how user message proccedes:
-![Eclipse-pipeline-flow drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/38c678c7-864c-4232-98e2-f809da031109)
+![Eclipse-pipeline-flow drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/1b0ce07a-1aa7-4225-b25b-bc96a89e26f2)
 
 ### Application.Contracts
 Provides public API for application use cases.

@@ -2,7 +2,7 @@
 
 public interface IEclipseSheetsService<TObject>
 {
-    IReadOnlyList<TObject> GetAll();
+    Task<IReadOnlyList<TObject>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    void Add(TObject value);
+    Task AddAsync(TObject value, CancellationToken cancellationToken = default);
 }

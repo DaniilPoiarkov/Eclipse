@@ -1,10 +1,10 @@
-﻿using Eclipse.Domain.Shared.Specifications;
+﻿using Eclipse.Common.Specifications;
 
 using System.Linq.Expressions;
 
 namespace Eclipse.Domain.Reminders;
 
-public class ReminderNotifyAtSpecification : Specification<Reminder>
+public sealed class ReminderNotifyAtSpecification : Specification<Reminder>
 {
     private readonly TimeOnly _time;
 

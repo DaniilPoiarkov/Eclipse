@@ -1,5 +1,7 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Common.Linq;
+using Eclipse.Common.Results;
 
 namespace Eclipse.Application.IdentityUsers;
 
@@ -12,53 +14,60 @@ internal sealed class CachedIdentityUserService : IdentityUserCachingFixture, II
         _identityUserService = identityUserService;
     }
 
-    public Task<IdentityUserDto> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _identityUserService.CreateAsync(createDto, cancellationToken));
     }
 
-    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _identityUserService.GetAllAsync(cancellationToken);
-
-        foreach (var user in users)
-        {
-            UserCache.AddOrUpdate(user);
-        }
-
-        return users;
+        return _identityUserService.GetAllAsync(cancellationToken);
     }
 
-    public Task<IdentityUserDto> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<IdentityUserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    {
+        return _identityUserService.GetFilteredListAsync(request, cancellationToken);
+    }
+
+    public Task<PaginatedList<IdentityUserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    {
+        return _identityUserService.GetPaginatedListAsync(request, cancellationToken);
+    }
+
+    public Task<Result<IdentityUserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         var user = UserCache.GetByChatId(chatId);
 
         if (user is not null)
         {
-            return Task.FromResult(user);
+            return Task.FromResult(
+                Result<IdentityUserDto>.Success(user)
+            );
         }
 
         return WithCachingAsync(() => _identityUserService.GetByChatIdAsync(chatId, cancellationToken));
     }
 
-    public Task<IdentityUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var user = UserCache.GetById(id);
 
         if (user is not null)
         {
-            return Task.FromResult(user);
+            return Task.FromResult(
+                Result<IdentityUserDto>.Success(user)
+            );
         }
 
         return WithCachingAsync(() => _identityUserService.GetByIdAsync(id, cancellationToken));
     }
 
-    public Task<IdentityUserDto> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> SetUserGmtTimeAsync(Guid userId, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _identityUserService.SetUserGmtTimeAsync(userId, currentUserTime, cancellationToken));
     }
 
-    public Task<IdentityUserDto> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<Result<IdentityUserDto>> UpdateAsync(Guid id, IdentityUserUpdateDto updateDto, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _identityUserService.UpdateAsync(id, updateDto, cancellationToken));
     }
