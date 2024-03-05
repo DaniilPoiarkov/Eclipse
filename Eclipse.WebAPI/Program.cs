@@ -11,7 +11,7 @@ using Eclipse.Pipelines.Decorations;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
-using Eclipse.WebAPI.HealthChecks;
+using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Options;
 
 using Serilog;
@@ -21,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
-    .AddEclipseHealthChecks()
     .AddApplicationModule()
     .AddDomainSharedModule()
     .AddDomainModule()
@@ -75,7 +74,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler()
     .UseHttpsRedirection();
 
-app.UseEclipseHealthCheks();
+app.UseEclipseHealthChecks();
 
 app.UseAuthentication()
     .UseAuthorization();
