@@ -1,4 +1,4 @@
-﻿using Eclipse.WebAPI.Filters.Enpoints;
+﻿using Eclipse.WebAPI.Filters.Endpoints;
 
 using HealthChecks.UI.Client;
 

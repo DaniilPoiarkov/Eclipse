@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.WebAPI.Filters.Enpoints;
+namespace Eclipse.WebAPI.Filters.Endpoints;
 
 public sealed class ApiKeyAuthorizeEndpointFilter : IEndpointFilter
 {

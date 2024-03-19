@@ -19,16 +19,21 @@ public abstract class ApiKeyAuthorizeBaseAttribute : Attribute, IAuthorizationFi
 
         if (!context.HttpContext.Request.Headers.TryGetValue(_header, out var apiKey))
         {
-            context.Result = new UnauthorizedObjectResult("API-KEY is missing");
+            context.Result = Unauthorized("API-KEY is missing");
             return;
         }
 
         if (!expectedValue.Equals(apiKey))
         {
-            context.Result = new UnauthorizedObjectResult("API-KEY is invalid");
+            context.Result = Unauthorized("API-KEY is invalid");
             return;
         }
     }
+
+    private static UnauthorizedObjectResult Unauthorized(string error) => new(new
+    {
+        Error = error
+    });
 
     protected abstract string GetExpectedValue(AuthorizationFilterContext context);
 }
