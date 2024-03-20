@@ -2,17 +2,15 @@
 
 using Microsoft.AspNetCore.Diagnostics;
 
-using ILogger = Serilog.ILogger;
-
 namespace Eclipse.WebAPI.Middlewares;
 
 public sealed class ExceptionHandlerMiddleware : IExceptionHandler
 {
     private readonly ILocalizer _localizer;
 
-    private readonly ILogger _logger;
+    private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-    public ExceptionHandlerMiddleware(ILocalizer localizer, ILogger logger)
+    public ExceptionHandlerMiddleware(ILocalizer localizer, ILogger<ExceptionHandlerMiddleware> logger)
     {
         _localizer = localizer;
         _logger = logger;
@@ -31,9 +29,9 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
             cancellationToken: cancellationToken
         );
 
-        _logger.Error(
-            _localizer[exception.Message, "en"],
-            exception.Data.Values);
+        _logger.LogError(
+            message: _localizer[exception.Message, "en"],
+            args: exception.Data.Values);
 
         return true;
     }

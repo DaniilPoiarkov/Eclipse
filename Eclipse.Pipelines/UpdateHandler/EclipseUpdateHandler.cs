@@ -20,7 +20,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
-internal class EclipseUpdateHandler : IEclipseUpdateHandler
+internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 {
     private readonly ILogger _logger;
 

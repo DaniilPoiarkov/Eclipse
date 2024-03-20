@@ -8,6 +8,8 @@ using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.Pipelines.Users;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Options.Languages;
+using Eclipse.Pipelines.Health;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -17,8 +19,6 @@ using Microsoft.AspNetCore.Builder;
 using Serilog;
 
 using Telegram.Bot;
-using Eclipse.Pipelines.Options.Languages;
-using Eclipse.Pipelines.Health;
 
 namespace Eclipse.Pipelines;
 
@@ -76,7 +76,7 @@ public static class EclipsePipelinesModule
 
         var me = await client.GetMeAsync();
 
-        logger.Information("\tBot: {bot}", me.Username);
+        logger.Information("\tBot: {bot}", me?.Username);
         logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
     }
 
@@ -86,9 +86,11 @@ public static class EclipsePipelinesModule
 
         var webhookInfo = await client.GetWebhookInfoAsync();
 
-        if (webhookInfo is not null)
+        var url = configuration["Telegram:WebhookUrl"]!;
+        
+        if (webhookInfo is not null && webhookInfo.Url.Equals(url))
         {
-            await client.SetWebhookAsync(string.Empty);
+            return;
         }
 
         await client.SetWebhookAsync(

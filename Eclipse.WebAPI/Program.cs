@@ -85,3 +85,5 @@ await app.InitializeDataAccessModule();
 await app.InitializePipelineModuleAsync();
 
 app.Run();
+
+public partial class Program;
