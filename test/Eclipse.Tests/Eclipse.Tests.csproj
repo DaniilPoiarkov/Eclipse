@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eclipse.Pipelines\Eclipse.Pipelines.csproj" />
+    <ProjectReference Include="..\..\Eclipse.WebAPI\Eclipse.WebAPI.csproj" />
   </ItemGroup>
 
 </Project>
