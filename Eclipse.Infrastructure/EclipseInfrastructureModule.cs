@@ -15,8 +15,6 @@ using Quartz.Logging;
 
 using Serilog;
 
-using System.Diagnostics;
-
 using Telegram.Bot;
 
 namespace Eclipse.Infrastructure;
