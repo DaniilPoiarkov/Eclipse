@@ -7,12 +7,26 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.IntegrationTests;
 
+/// <summary>
+/// Base class for each integration test
+/// </summary>
+/// <seealso cref="IClassFixture&lt;TestWebAppFactory&gt;" />
+/// <seealso cref="IDisposable" />
 public abstract class IntegrationTestBase : IClassFixture<TestWebAppFactory>, IDisposable
 {
+    /// <summary>
+    /// The scope of current test execution.
+    /// </summary>
     protected readonly IServiceScope Scope;
 
+    /// <summary>
+    /// The client which calls in memory instance. No need to dispose it manually.
+    /// </summary>
     protected readonly HttpClient Client;
 
+    /// <summary>
+    /// The faker to simplify dummy data creation.
+    /// </summary>
     protected readonly Faker Faker;
 
     protected IntegrationTestBase(TestWebAppFactory factory)

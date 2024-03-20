@@ -10,7 +10,7 @@ public sealed class PingIntegrationTests : IntegrationTestBase
     [Fact]
     public async Task Get_WhenCalled_ThenTextReturned()
     {
-        var response = await Client.GetAsync("api/ping");
+        using var response = await Client.GetAsync("api/ping");
 
         var body = await response.Content.ReadAsStringAsync();
 

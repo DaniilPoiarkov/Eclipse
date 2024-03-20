@@ -9,9 +9,9 @@ using System.Net.Http.Json;
 
 namespace Eclipse.IntegrationTests.Users;
 
-public sealed class UsersIntegrationTests : IntegrationTestBase
+public sealed class UsersGetAllIntegrationTest : IntegrationTestBase
 {
-    public UsersIntegrationTests(TestWebAppFactory factory)
+    public UsersGetAllIntegrationTest(TestWebAppFactory factory)
         : base(factory) { }
 
     [Fact]

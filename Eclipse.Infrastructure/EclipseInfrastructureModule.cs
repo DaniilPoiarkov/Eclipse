@@ -15,6 +15,8 @@ using Quartz.Logging;
 
 using Serilog;
 
+using System.Diagnostics;
+
 using Telegram.Bot;
 
 namespace Eclipse.Infrastructure;
@@ -58,7 +60,7 @@ public static class EclipseInfrastructureModule
         services.AddQuartz(cfg =>
         {
             cfg.InterruptJobsOnShutdown = true;
-            cfg.SchedulerName = "EclipseScheduler";
+            cfg.SchedulerName = $"EclipseScheduler_{Guid.NewGuid()}";
         });
 
         services.AddQuartzHostedService(cfg =>
