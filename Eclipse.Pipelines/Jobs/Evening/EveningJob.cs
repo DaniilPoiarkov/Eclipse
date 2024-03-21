@@ -29,7 +29,6 @@ internal sealed class EveningJob : EclipseJobBase
 
         var users = _userStore.GetCachedUsers()
             .Where(u => u.NotificationsEnabled
-                && !u.TodoItems.IsNullOrEmpty()
                 && time.Add(u.Gmt) == Evening)
             .ToList();
 
@@ -42,12 +41,16 @@ internal sealed class EveningJob : EclipseJobBase
 
         foreach (var user in users)
         {
-            var template = _localizer["Jobs:Evening", user.Culture];
+            var template = _localizer[$"Jobs:Evening:{(user.TodoItems.IsNullOrEmpty() ? "Empty" : "RemindMarkAsFinished")}", user.Culture];
+
+            var message = user.TodoItems.IsNullOrEmpty()
+                ? string.Format(template, user.Name)
+                : string.Format(template, user.Name, user.TodoItems.Count);
 
             sendings.Add(_telegramService.Send(new SendMessageModel
             {
                 ChatId = user.ChatId,
-                Message = string.Format(template, user.Name, user.TodoItems.Count),
+                Message = message,
             }, context.CancellationToken));
         }
 
