@@ -33,15 +33,22 @@ public abstract class IntegrationTestBase : IClassFixture<TestWebAppFactory>, ID
     {
         Scope = factory.Services.CreateScope();
         Client = factory.CreateClient();
+        Faker = new Faker();
+    }
 
+    /// <summary>
+    /// Adds defined by application <b>"X-API-KEY"</b> header to access api authorized via api-key.
+    /// <para>Present by default.</para>
+    /// </summary>
+    protected void AddAppAuthorizationHeader()
+    {
         var apiKeyOptions = Scope.ServiceProvider
             .GetRequiredService<IOptions<ApiKeyAuthorizationOptions>>();
 
         Client.DefaultRequestHeaders.Add("X-API-KEY", apiKeyOptions.Value.EclipseApiKey);
-
-        Faker = new Faker();
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         Scope.Dispose();
