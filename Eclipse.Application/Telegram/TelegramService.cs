@@ -18,7 +18,7 @@ internal sealed class TelegramService : ITelegramService
 
     public async Task<Result> Send(SendMessageModel message, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(message.Message))
+        if (message.Message.IsNullOrEmpty())
         {
             return Error.Validation(_errorCode, "Telegram:MessageCannotBeEmpty");
         }

@@ -100,7 +100,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         
         _pipelineStore.Remove(key);
 
-        _localizer.CheckCulture(context.ChatId);
+        _localizer.ResetCultureForUserWithChatId(context.ChatId);
         pipeline.SetLocalizer(_localizer);
 
         var result = await pipeline.RunNext(context, cancellationToken);

@@ -21,9 +21,11 @@ internal sealed class EclipseLocalizer : IEclipseLocalizer
 
     public string this[string key] => _localizer[key, Culture];
 
-    public void CheckCulture(long chatId)
+    public void ResetCultureForUserWithChatId(long chatId)
     {
-        Culture = _cacheService.Get<string>(new CacheKey($"lang-{chatId}")) ?? "uk";
+        Culture = _cacheService.Get<string>(
+            new CacheKey($"lang-{chatId}")
+        ) ?? "uk";
     }
 
     public string ToLocalizableString(string value) =>
