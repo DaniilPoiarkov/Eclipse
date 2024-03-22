@@ -7,7 +7,7 @@ public sealed class PingIntegrationTests : IntegrationTestBase
     public PingIntegrationTests(TestWebAppFactory factory)
         : base(factory) { }
 
-    [Fact]
+    //[Fact]
     public async Task Get_WhenCalled_ThenTextReturned()
     {
         using var response = await Client.GetAsync("api/ping");

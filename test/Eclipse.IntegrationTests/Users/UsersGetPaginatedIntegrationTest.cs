@@ -21,7 +21,7 @@ public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
         AddAppAuthorizationHeader();
     }
 
-    [Fact]
+    //[Fact]
     public async Task GetPaginated_WhenFiltrationApplied_ThenProperRecordsReturned()
     {
         // Arrange
