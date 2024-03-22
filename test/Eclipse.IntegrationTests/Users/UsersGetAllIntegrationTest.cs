@@ -17,7 +17,7 @@ public sealed class UsersGetAllIntegrationTest : IntegrationTestBase
         AddAppAuthorizationHeader();
     }
 
-    //[Fact]
+    [Fact]
     public async Task GetAll_WhenCalled_ThenAllUsersReturned()
     {
         var name = Faker.Name.FirstName();

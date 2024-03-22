@@ -27,8 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eclipse.Application\Eclipse.Application.csproj" />
-    <ProjectReference Include="..\..\Eclipse.Domain\Eclipse.Domain.csproj" />
     <ProjectReference Include="..\Eclipse.Tests\Eclipse.Tests.csproj" />
   </ItemGroup>
 
