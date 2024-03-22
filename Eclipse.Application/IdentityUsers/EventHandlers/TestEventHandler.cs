@@ -14,9 +14,9 @@ public sealed class TestEventHandler : INotificationHandler<TestDomainEvent>
         _telegramService = telegramService;
     }
 
-    public async Task Handle(TestDomainEvent notification, CancellationToken cancellationToken)
+    public Task Handle(TestDomainEvent notification, CancellationToken cancellationToken)
     {
-        await _telegramService.Send(new SendMessageModel
+        return _telegramService.Send(new SendMessageModel
         {
             ChatId = notification.ChatId,
             Message = $"Test event triggered"

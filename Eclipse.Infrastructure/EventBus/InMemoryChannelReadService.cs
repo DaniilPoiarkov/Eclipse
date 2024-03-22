@@ -4,8 +4,7 @@ using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Eclipse.Infrastructure.EventBus;
 
@@ -15,9 +14,9 @@ internal sealed class InMemoryChannelReadService : BackgroundService
 
     private readonly InMemoryQueue<IDomainEvent> _queue;
 
-    private readonly ILogger _logger;
+    private readonly ILogger<InMemoryChannelReadService> _logger;
 
-    public InMemoryChannelReadService(IServiceScopeFactory scopeFactory, InMemoryQueue<IDomainEvent> queue, ILogger logger)
+    public InMemoryChannelReadService(IServiceScopeFactory scopeFactory, InMemoryQueue<IDomainEvent> queue, ILogger<InMemoryChannelReadService> logger)
     {
         _scopeFactory = scopeFactory;
         _queue = queue;
@@ -26,7 +25,7 @@ internal sealed class InMemoryChannelReadService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.Information("Start listening {service} background service.", nameof(InMemoryChannelReadService));
+        _logger.LogInformation("Start listening {service} background service.", nameof(InMemoryChannelReadService));
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -49,7 +48,7 @@ internal sealed class InMemoryChannelReadService : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error during publishing event:\n\r{error}\n\r{trace}", ex.Message, ex.StackTrace);
+            _logger.LogError(ex, "Error during publishing event:\n\r{error}\n\r{trace}", ex.Message, ex.StackTrace);
         }
     }
 }

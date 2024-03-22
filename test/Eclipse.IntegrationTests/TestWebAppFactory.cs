@@ -29,14 +29,14 @@ public sealed class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLi
         });
     }
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        await _dbContainer.StartAsync();
+        return _dbContainer.StartAsync();
     }
 
-    async Task IAsyncLifetime.DisposeAsync()
+    Task IAsyncLifetime.DisposeAsync()
     {
-        await _dbContainer.StopAsync();
+        return _dbContainer.StopAsync();
     }
 
     #region Services Configuration

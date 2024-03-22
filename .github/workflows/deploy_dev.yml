@@ -39,13 +39,13 @@ jobs:
         run: dotnet restore ./Eclipse.WebAPI/Eclipse.WebAPI.sln
 
       - name: Build
-        run: dotnet build ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
+        run: dotnet build ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release --no-restore
         
       - name: Run tests
-        run: dotnet test ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release
+        run: dotnet test ./Eclipse.WebAPI/Eclipse.WebAPI.sln --configuration Release --no-build
 
       - name: Publish
-        run: dotnet publish ./Eclipse.WebAPI/Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/eclipse
+        run: dotnet publish ./Eclipse.WebAPI/Eclipse.WebAPI.sln -c Release -o ${{env.DOTNET_ROOT}}/eclipse --no-build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4

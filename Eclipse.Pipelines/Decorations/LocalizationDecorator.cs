@@ -36,7 +36,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
         if (culture is not null)
         {
-            _localizer.CheckCulture(context.ChatId);
+            _localizer.ResetCultureForUserWithChatId(context.ChatId);
             return;
         }
 
@@ -45,7 +45,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
         if (user is not null)
         {
             _cacheService.Set(key, user.Culture);
-            _localizer.CheckCulture(user.ChatId);
+            _localizer.ResetCultureForUserWithChatId(user.ChatId);
         }
     }
 }

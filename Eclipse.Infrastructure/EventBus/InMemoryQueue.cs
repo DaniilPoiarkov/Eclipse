@@ -6,9 +6,9 @@ internal sealed class InMemoryQueue<T>
 {
     private readonly Channel<T> _channel = Channel.CreateUnbounded<T>();
 
-    public async Task WriteAsync(T item, CancellationToken cancellationToken = default)
+    public ValueTask WriteAsync(T item, CancellationToken cancellationToken = default)
     {
-        await _channel.Writer.WriteAsync(item, cancellationToken);
+        return _channel.Writer.WriteAsync(item, cancellationToken);
     }
 
     public IAsyncEnumerable<T> ReadAsync(CancellationToken cancellationToken = default)

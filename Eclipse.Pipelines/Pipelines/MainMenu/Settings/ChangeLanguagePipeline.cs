@@ -99,7 +99,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
         _cacheService.Delete(key);
         _cacheService.Set(key, context.Value);
 
-        Localizer.CheckCulture(context.ChatId);
+        Localizer.ResetCultureForUserWithChatId(context.ChatId);
 
         return MenuAndRemoveOptions(
             Localizer[$"{_pipelinePrefix}:Changed"],
