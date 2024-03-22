@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Eclipse.Common\Eclipse.Common.csproj" />
     <ProjectReference Include="..\Eclipse.Tests\Eclipse.Tests.csproj" />
   </ItemGroup>
 
