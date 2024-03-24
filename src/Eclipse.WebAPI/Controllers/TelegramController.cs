@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Common.Results;
 using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
