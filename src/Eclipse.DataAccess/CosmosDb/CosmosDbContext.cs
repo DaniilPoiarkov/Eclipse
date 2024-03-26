@@ -13,7 +13,7 @@ public abstract class CosmosDbContext
 
     protected readonly CosmosDbContextOptions Options;
 
-    public CosmosDbContext(CosmosClient client, CosmosDbContextOptions options)
+    protected CosmosDbContext(CosmosClient client, CosmosDbContextOptions options)
     {
         Client = client;
         Options = options;
