@@ -12,13 +12,13 @@ internal abstract class IdentityUserCachingFixture
         UserCache = userCache;
     }
 
-    protected async Task<Result<IdentityUserDto>> WithCachingAsync(Func<Task<Result<IdentityUserDto>>> action)
+    protected async Task<Result<IdentityUserDto>> WithCachingAsync(Func<Task<Result<IdentityUserDto>>> action, CancellationToken cancellationToken = default)
     {
         var result = await action();
 
         if (result.IsSuccess)
         {
-            UserCache.AddOrUpdate(result.Value);
+            await UserCache.AddOrUpdateAsync(result.Value, cancellationToken);
         }
 
         return result;

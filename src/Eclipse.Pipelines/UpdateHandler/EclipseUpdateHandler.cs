@@ -95,12 +95,12 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = GetPipeline(context, key) as EclipsePipelineBase
+        var pipeline = await GetPipelineAsync(context, key) as EclipsePipelineBase
             ?? new EclipseNotFoundPipeline();
         
-        _pipelineStore.Remove(key);
+        await _pipelineStore.RemoveAsync(key, cancellationToken);
 
-        _localizer.ResetCultureForUserWithChatId(context.ChatId);
+        await _localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
         pipeline.SetLocalizer(_localizer);
 
         var result = await pipeline.RunNext(context, cancellationToken);
@@ -109,20 +109,20 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (message is not null)
         {
-            _messageStore.Set(new MessageKey(context.ChatId), message);
+            await _messageStore.SetAsync(new MessageKey(context.ChatId), message, cancellationToken);
         }
 
         if (!pipeline.IsFinished)
         {
-            _pipelineStore.Set(key, pipeline);
+            await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        await _userStore.AddOrUpdate(context.User, cancellationToken);
+        await _userStore.AddOrUpdateAsync(context.User, cancellationToken);
     }
 
-    private PipelineBase GetPipeline(MessageContext context, PipelineKey key)
+    private async Task<PipelineBase> GetPipelineAsync(MessageContext context, PipelineKey key)
     {
-        var pipeline = _pipelineStore.GetOrDefault(key);
+        var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
 
         if (pipeline is not null)
         {

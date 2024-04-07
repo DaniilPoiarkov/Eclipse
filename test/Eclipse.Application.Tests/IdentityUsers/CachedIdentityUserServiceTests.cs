@@ -45,7 +45,7 @@ public sealed class CachedIdentityUserServiceTests
 
         result.IsSuccess.Should().BeTrue();
         await _userService.Received().CreateAsync(createDto);
-        _userCache.Received().AddOrUpdate(result);
+        await _userCache.Received().AddOrUpdateAsync(result);
     }
 
     [Fact]
@@ -53,11 +53,11 @@ public sealed class CachedIdentityUserServiceTests
     {
         var dto = GetDto();
 
-        _userCache.GetByChatId(dto.ChatId).Returns(dto);
+        _userCache.GetByChatIdAsync(dto.ChatId).Returns(dto);
 
         var result = await Sut.GetByChatIdAsync(dto.ChatId);
 
-        _userCache.Received().GetByChatId(dto.ChatId);
+        await _userCache.Received().GetByChatIdAsync(dto.ChatId);
         await _userService.DidNotReceive().GetByChatIdAsync(dto.ChatId);
         result.IsSuccess.Should().BeTrue();
         result.Value.ChatId.Should().Be(dto.ChatId);
@@ -76,8 +76,8 @@ public sealed class CachedIdentityUserServiceTests
         var result = await Sut.GetByChatIdAsync(dto.ChatId);
 
         await _userService.Received().GetByChatIdAsync(dto.ChatId);
-        _userCache.Received().AddOrUpdate(dto);
-        _userCache.Received().GetByChatId(dto.ChatId);
+        await _userCache.Received().AddOrUpdateAsync(dto);
+        await _userCache.Received().GetByChatIdAsync(dto.ChatId);
         
         result.IsSuccess.Should().BeTrue();
         result.Value.ChatId.Should().Be(dto.ChatId);
@@ -88,11 +88,11 @@ public sealed class CachedIdentityUserServiceTests
     {
         var dto = GetDto();
 
-        _userCache.GetById(dto.Id).Returns(dto);
+        _userCache.GetByIdAsync(dto.Id).Returns(dto);
 
         var result = await Sut.GetByIdAsync(dto.Id);
 
-        _userCache.Received().GetById(dto.Id);
+        await _userCache.Received().GetByIdAsync(dto.Id);
         await _userService.DidNotReceive().GetByIdAsync(dto.Id);
         result.IsSuccess.Should().BeTrue();
         result.Value.Id.Should().Be(dto.Id);
@@ -110,9 +110,9 @@ public sealed class CachedIdentityUserServiceTests
 
         var result = await Sut.GetByIdAsync(dto.Id);
 
-        _userCache.Received().GetById(dto.Id);
+        await _userCache.Received().GetByIdAsync(dto.Id);
         await _userService.Received().GetByIdAsync(dto.Id);
-        _userCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Id.Should().Be(dto.Id);
@@ -132,7 +132,7 @@ public sealed class CachedIdentityUserServiceTests
         var result = await Sut.SetUserGmtTimeAsync(dto.Id, time);
 
         await _userService.Received().SetUserGmtTimeAsync(dto.Id, time);
-        _userCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Id.Should().Be(dto.Id);
@@ -155,7 +155,7 @@ public sealed class CachedIdentityUserServiceTests
         result.IsSuccess.Should().BeTrue();
 
         await _userService.Received().UpdateAsync(dto.Id, updateDto);
-        _userCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
         result.Value.Id.Should().Be(dto.Id);
     }
 

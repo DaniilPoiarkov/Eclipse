@@ -29,33 +29,33 @@ public sealed class IdentityUserCacheTests
     }
 
     [Fact]
-    public void GetAll_WhenUsersCached_ThenCachedUsersReturned()
+    public async Task GetAll_WhenUsersCached_ThenCachedUsersReturned()
     {
         var users = IdentityUserDtoGenerator.Generate(1, 5);
 
-        _cacheService.Get<List<IdentityUserDto>>(_key)
-            .ReturnsForAnyArgs(users);
+        _cacheService.GetAsync<List<IdentityUserDto>>(_key)!
+            .ReturnsForAnyArgs(Task.FromResult(users));
 
-        var result = Sut.GetAll();
+        var result = await Sut.GetAllAsync();
 
         result.Count.Should().Be(users.Count);
         result.All(r => users.Exists(u => u.Id == r.Id)).Should().BeTrue();
-        _cacheService.ReceivedWithAnyArgs().Get<List<IdentityUserDto>>(_key);
+        await _cacheService.ReceivedWithAnyArgs().GetAsync<List<IdentityUserDto>>(_key);
     }
 
     [Fact]
-    public void AddOrUpdate_WhenUserNotCached_ThenAddUserToCachedCollection()
+    public async Task AddOrUpdate_WhenUserNotCached_ThenAddUserToCachedCollection()
     {
         var cached = IdentityUserDtoGenerator.Generate(1, 4);
         var dto = IdentityUserDtoGenerator.Generate(5, 1).First();
 
-        _cacheService.Get<List<IdentityUserDto>>(_key)
-            .ReturnsForAnyArgs(cached);
+        _cacheService.GetAsync<List<IdentityUserDto>>(_key)!
+            .ReturnsForAnyArgs(Task.FromResult(cached));
 
-        Sut.AddOrUpdate(dto);
+        await Sut.AddOrUpdateAsync(dto);
 
-        _cacheService.ReceivedWithAnyArgs().Get<List<IdentityUserDto>>(_key);
+        await _cacheService.ReceivedWithAnyArgs().GetAsync<List<IdentityUserDto>>(_key);
         cached.Add(dto);
-        _cacheService.ReceivedWithAnyArgs().Set(_key, cached);
+        await _cacheService.ReceivedWithAnyArgs().SetAsync(_key, cached);
     }
 }

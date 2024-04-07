@@ -53,7 +53,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
         if (!SupportedLanguage(context))
         {
@@ -96,10 +96,10 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
         var key = new CacheKey($"lang-{context.ChatId}");
 
-        _cacheService.Delete(key);
-        _cacheService.Set(key, context.Value);
+        await _cacheService.DeleteAsync(key, cancellationToken);
+        await _cacheService.SetAsync(key, context.Value, cancellationToken);
 
-        Localizer.ResetCultureForUserWithChatId(context.ChatId);
+        await Localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
 
         return MenuAndRemoveOptions(
             Localizer[$"{_pipelinePrefix}:Changed"],

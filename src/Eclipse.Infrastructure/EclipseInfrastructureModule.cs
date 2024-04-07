@@ -83,8 +83,13 @@ public static class EclipseInfrastructureModule
     private static IServiceCollection AddMemoryCacheIntegration(this IServiceCollection services)
     {
         services
-            .AddMemoryCache()
-            .AddSingleton<ICacheService, CacheService>();
+            //.AddMemoryCache()
+            .AddSingleton<ICacheService, AsyncCacheService>();
+
+        services.AddDistributedMemoryCache(options =>
+        {
+            
+        });
 
         return services;
     }

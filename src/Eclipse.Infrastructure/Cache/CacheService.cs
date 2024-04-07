@@ -1,6 +1,7 @@
 ﻿using Eclipse.Common.Cache;
 using Eclipse.Infrastructure.Builder;
 
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -23,6 +24,11 @@ internal sealed class CacheService : ICacheService
         _memoryCache.Remove(key.Key);
     }
 
+    public Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public T? Get<T>(CacheKey key) => _memoryCache.Get<T>(key.Key);
 
     public T? GetAndDelete<T>(CacheKey key)
@@ -33,8 +39,23 @@ internal sealed class CacheService : ICacheService
         return data;
     }
 
+    public Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Set<T>(CacheKey key, T value)
     {
         _memoryCache.Set(key.Key, value, _options.Value.Expiration);
+    }
+
+    public Task SetAsync<T>(CacheKey key, T value, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }
