@@ -2,60 +2,59 @@
 using Eclipse.Infrastructure.Builder;
 
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+
+using Newtonsoft.Json;
 
 namespace Eclipse.Infrastructure.Cache;
 
 internal sealed class CacheService : ICacheService
 {
-    private readonly IMemoryCache _memoryCache;
+    private readonly IDistributedCache _cache;
 
     private readonly IOptions<CacheOptions> _options;
 
-    public CacheService(IMemoryCache memoryCache, IOptions<CacheOptions> options)
+    public CacheService(IDistributedCache cache, IOptions<CacheOptions> options)
     {
-        _memoryCache = memoryCache;
+        _cache = cache;
         _options = options;
     }
 
-    public void Delete(CacheKey key)
+    public async Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
     {
-        _memoryCache.Remove(key.Key);
+        var value = await GetAsync<T>(key, cancellationToken);
+        
+        await DeleteAsync(key, cancellationToken);
+
+        return value;
     }
 
-    public Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
+    public async Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
+        var json = await _cache.GetStringAsync(key.Key, cancellationToken);
 
-    public T? Get<T>(CacheKey key) => _memoryCache.Get<T>(key.Key);
+        if (json.IsNullOrEmpty())
+        {
+            return default;
+        }
 
-    public T? GetAndDelete<T>(CacheKey key)
-    {
-        var data = _memoryCache.Get<T>(key.Key);
-        _memoryCache.Remove(key.Key);
-
-        return data;
-    }
-
-    public Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Set<T>(CacheKey key, T value)
-    {
-        _memoryCache.Set(key.Key, value, _options.Value.Expiration);
+        return JsonConvert.DeserializeObject<T>(json);
     }
 
     public Task SetAsync<T>(CacheKey key, T value, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var json = JsonConvert.SerializeObject(value);
+
+        var options = new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = _options.Value.Expiration
+        };
+
+        return _cache.SetStringAsync(key.Key, json, options, cancellationToken);
+    }
+
+    public Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
+    {
+        return _cache.RemoveAsync(key.Key, cancellationToken);
     }
 }
