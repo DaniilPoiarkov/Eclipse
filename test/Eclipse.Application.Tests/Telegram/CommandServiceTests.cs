@@ -27,7 +27,15 @@ public sealed class CommandServiceTests
     [Theory]
     [InlineData("", "description", "CommandMinLength")]
     [InlineData("commandcommandcommandcommandcommand", "description", "CommandMaxLength")]
+    [InlineData("     ", "description", "CommandInvalidFormat")]
+    [InlineData("command.1", "description", "CommandInvalidFormat")]
+    [InlineData("command?1", "description", "CommandInvalidFormat")]
+    [InlineData("command!1", "description", "CommandInvalidFormat")]
+    [InlineData("command-1", "description", "CommandInvalidFormat")]
     [InlineData("command", "", "DescriptionMinLength")]
+    [InlineData("command", "d", "DescriptionMinLength")]
+    [InlineData("command", "de", "DescriptionMinLength")]
+    [InlineData("command", "     ", "DescriptionMinLength")]
     [InlineData("command",
         "DescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLength" +
         "DescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLengthDescriptionMaxLength",
@@ -51,14 +59,19 @@ public sealed class CommandServiceTests
         error.Description.Should().Be(expectedError.Description);
     }
 
-    
-    [Fact]
-    public async Task Add_WhenRequestIsValid_ThenSuccessResultReturned()
+    [Theory]
+    [InlineData("command", "proper description")]
+    [InlineData("command_new", "description without meaning")]
+    [InlineData("command_1", "description with specific meaning")]
+    [InlineData("123_command", "description \n\t123!@#")]
+    [InlineData("123_123", "description_!@#")]
+    [InlineData("123123", "description 123")]
+    public async Task Add_WhenRequestIsValid_ThenSuccessResultReturned(string command, string description)
     {
         var request = new AddCommandRequest
         {
-            Command = "command",
-            Description = "description"
+            Command = command,
+            Description = description
         };
 
         var result = await _sut.Add(request);

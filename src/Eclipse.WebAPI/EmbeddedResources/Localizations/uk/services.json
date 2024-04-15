@@ -14,6 +14,7 @@
 
     "BotCommand:CommandMinLength": "Команда не може бути меншою за 1 символ",
     "BotCommand:CommandManLength": "Команда не може бути більшою за 32 симлова",
+    "BotCommand:CommandInvalidFormat": "Команда може складатись лише з букв, цифр та нижнього підкреслювання",
     "BotCommand:DescriptionMinLength": "Опис не може бути меншим за 3 символи",
     "BotCommand:DescriptionMaxLength": "Опис не може бути більшим за 256 символів",
 

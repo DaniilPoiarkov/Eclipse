@@ -14,6 +14,7 @@
 
     "BotCommand:CommandMinLength": "Command cant be less then 1 symbol",
     "BotCommand:CommandManLength": "Command cant be more then 32 symbols",
+    "BotCommand:CommandInvalidFormat": "Commandcan contain only alphanumeric characters and underscore",
     "BotCommand:DescriptionMinLength": "Description cannot be less then 3 symbols",
     "BotCommand:DescriptionMaxLength": "Description cannot be more then 256 symbols",
 

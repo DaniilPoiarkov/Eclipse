@@ -1,12 +1,14 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Common.Results;
 
+using System.Text.RegularExpressions;
+
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Eclipse.Application.Telegram.Commands;
 
-internal sealed class CommandService : ICommandService
+internal sealed partial class CommandService : ICommandService
 {
     private readonly ITelegramBotClient _botClient;
 
@@ -49,9 +51,19 @@ internal sealed class CommandService : ICommandService
             return Error.Validation("Command.Add", $"{_descriptionPrefix}:Command{(command.Command.IsNullOrEmpty() ? "MinLength" : "MaxLength")}");
         }
 
+        if (!CommandPattern().IsMatch(command.Command))
+        {
+            return Error.Validation("Command.Add", $"{_descriptionPrefix}:CommandInvalidFormat");
+        }
+
         if (command.Description is not { Length: >= CommandConstants.DescriptionMinLength and <= CommandConstants.DescriptionMaxLength })
         {
             return Error.Validation("Command.Add", $"{_descriptionPrefix}:Description{(command.Description?.Length < CommandConstants.DescriptionMinLength ? "MinLength" : "MaxLength")}");
+        }
+
+        if (command.Description.IsNullOrWhiteSpace())
+        {
+            return Error.Validation("Command.Add", $"{_descriptionPrefix}:DescriptionMinLength");
         }
 
         return Result.Success();
@@ -84,4 +96,7 @@ internal sealed class CommandService : ICommandService
             BotCommandScope.AllPrivateChats(),
             cancellationToken: cancellationToken);
     }
+
+    [GeneratedRegex("^[a-zA-Z0-9_]+$")]
+    private static partial Regex CommandPattern();
 }
