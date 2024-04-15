@@ -36,7 +36,7 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
     {
         var commands = new List<CommandDto>()
         {
-            new CommandDto
+            new()
             {
                 Command = "test",
                 Description = "test",
