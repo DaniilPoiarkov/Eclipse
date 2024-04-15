@@ -63,6 +63,6 @@ public sealed class LocalizationDecoratorTests
         _cacheService.ReceivedWithAnyArgs().Get<string>(default!);
         await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         _cacheService.ReceivedWithAnyArgs().Set(default!, user.Culture);
-        _localizer.Received().CheckCulture(user.ChatId);
+        _localizer.Received().ResetCultureForUserWithChatId(user.ChatId);
     }
 }

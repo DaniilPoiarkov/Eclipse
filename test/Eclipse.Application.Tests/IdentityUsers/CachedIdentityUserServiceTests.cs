@@ -64,7 +64,7 @@ public sealed class CachedIdentityUserServiceTests
     }
 
     [Fact]
-    public async Task GetByChatId_WhenUserIsNotCached_ThenServiceCalled_AndCacheUser()
+    public async Task GetByChatIdAsync_WhenUserIsNotCached_ThenServiceCalled_AndCacheUser()
     {
         var dto = GetDto();
 

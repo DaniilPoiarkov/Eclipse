@@ -8,7 +8,7 @@
 - [Deployment and CICD](#deployment-and-cicd)
 
 ## Architecture diagram
-![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/6c5dfe8b-3f2a-4645-a1a6-66a4edf90faf)
+![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
 
 ## Modules
 
@@ -46,9 +46,10 @@ Basicly contains wrappers with only necessary API and cross-cutting concerns.
 Data consistency.
 
 ## Tests
-Each Test project reference base Eclipse.Tests class library, that provides helpers which used through all tests.
-Each module has own test project.
-BDD tests written with SpecFlow are all in the single tests assembly.
+<p>Each Test project reference base Eclipse.Tests class library, that provides helpers which used through all tests.</p>
+<p>Each module has own test project.</p>
+<p>BDD tests written with SpecFlow are all in the single tests assembly.</p>
+<p>Integration tests also isolated in separate assembly called <i>Eclipse.IntegrationTests</i>.</p>
 
 ## Integrations
 ### API
@@ -71,6 +72,7 @@ BDD tests written with SpecFlow are all in the single tests assembly.
 * Bogus
 * Meziantou
 * SpecFlow
+* Testcontainers
 
 ## Deployment and CICD
 * GitHub actions
