@@ -1,6 +1,4 @@
 ﻿using Eclipse.Domain.IdentityUsers;
-using Eclipse.Domain.Shared.Repositories;
-using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
