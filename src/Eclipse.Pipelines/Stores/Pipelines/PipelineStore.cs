@@ -4,7 +4,7 @@ namespace Eclipse.Pipelines.Stores.Pipelines;
 
 internal sealed class PipelineStore : IPipelineStore
 {
-    private static readonly Dictionary<string, Type> _map = [];
+    private static readonly Dictionary<string, Value> _map = [];
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -15,14 +15,20 @@ internal sealed class PipelineStore : IPipelineStore
 
     public PipelineBase? GetOrDefault(PipelineKey key)
     {
-        if (!_map.TryGetValue(key.ToCacheKey().Key, out var type))
+        if (!_map.TryGetValue(key.ToCacheKey().Key, out var value))
         {
             return null;
         }
         
-        _ = 1;
+        if (_serviceProvider.GetService(value.Type) is not PipelineBase pipeline)
+        {
+            return null;
+        }
 
-        var pipeline = _serviceProvider.GetService(type) as PipelineBase;
+        while (pipeline.StagesLeft != value.StagesLeft)
+        {
+            pipeline.SkipStage();
+        }
 
         return pipeline;
     }
@@ -34,6 +40,13 @@ internal sealed class PipelineStore : IPipelineStore
 
     public void Set(PipelineKey key, PipelineBase value)
     {
-        _map.Add(key.ToCacheKey().Key, value.GetType());
+        _map.Add(key.ToCacheKey().Key, new Value { Type = value.GetType(), StagesLeft = value.StagesLeft });
+    }
+
+    private class Value
+    {
+        public Type Type { get; set; } = null!;
+
+        public int StagesLeft { get; set; }
     }
 }

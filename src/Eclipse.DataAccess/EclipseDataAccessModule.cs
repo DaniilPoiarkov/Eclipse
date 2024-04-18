@@ -1,10 +1,9 @@
-﻿using Azure.Identity;
-
-using Eclipse.DataAccess.Builder;
+﻿using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.IdentityUsers;
+using Eclipse.DataAccess.Interceptors;
 using Eclipse.Domain.IdentityUsers;
 
 using Microsoft.AspNetCore.Builder;
@@ -25,8 +24,8 @@ public static class EclipseDataAccessModule
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
         services
-            //.AddScoped<IIdentityUserRepository, IdentityUserRepository>()
-            .AddScoped<IIdentityUserRepository, EFCoreIdentityUserRepository>();
+            .AddScoped<IIdentityUserRepository, EFCoreIdentityUserRepository>()
+                .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
 
         services.Configure(builder);
 
@@ -38,22 +37,6 @@ public static class EclipseDataAccessModule
 
     private static IServiceCollection AddCosmosDb(this IServiceCollection services)
     {
-        //services.AddSingleton(sp =>
-        //{
-        //    var options = sp.GetRequiredService<IOptions<DataAccessModuleBuilder>>().Value;
-
-        //    // TODO: Use RBAC instead of connection string
-        //    //return new CosmosClient(
-        //    //    accountEndpoint: options.CosmosOptions.Endpoint,
-        //    //    tokenCredential: new DefaultAzureCredential());
-
-        //    return new CosmosClient(options.CosmosOptions.ConnectionString);
-        //});
-
-        //var options = services.GetConfiguration()
-        //    .GetSection("Azure:CosmosOptions")
-        //    .Get<CosmosDbContextOptions>()!;
-
         var configuration = services.GetConfiguration();
 
         services.Configure<CosmosDbContextOptions>(
@@ -64,37 +47,15 @@ public static class EclipseDataAccessModule
         {
             var options = sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value;
             var interceptors = sp.GetServices<IInterceptor>();
-
+            
+            // TODO: Use RBAC instead of connection string
             builder
                 .UseCosmos(
-                    //options.Endpoint,
-                    //new DefaultAzureCredential(),
-                    //options.DatabaseId
                     options.ConnectionString,
                     options.DatabaseId
                 )
                 .AddInterceptors(interceptors);
         });
-
-        //services.AddCosmos<EclipseDbContext>(
-        //    options.ConnectionString,
-        //    options.DatabaseId,
-        //    cosmosOptions =>
-        //    {
-
-        //    },
-        //    builder =>
-        //    {
-        //        builder.AddInterceptors();
-        //    });
-
-        //services.AddSingleton(sp =>
-        //{
-        //    var options = sp.GetRequiredService<IOptions<DataAccessModuleBuilder>>().Value;
-        //    return options.CosmosOptions;
-        //});
-
-        //services.AddSingleton<EclipseCosmosDbContext>();
 
         return services;
     }
@@ -106,28 +67,12 @@ public static class EclipseDataAccessModule
         var serviceProvider = scope.ServiceProvider;
 
         var logger = serviceProvider.GetRequiredService<Serilog.ILogger>();
-        var context = serviceProvider.GetRequiredService<EclipseCosmosDbContext>();
-        
-        logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
-
-        logger.Information("\tInitializing database");
-        await context.InitializeAsync();
-
-        logger.Information("{module} module initialized successfully", nameof(EclipseDataAccessModule));
-    }
-
-    public static async Task InitializeDataAccessModuleV2(this WebApplication app)
-    {
-        using var scope = app.Services.CreateScope();
-
-        var serviceProvider = scope.ServiceProvider;
-
-        var logger = serviceProvider.GetRequiredService<Serilog.ILogger>();
         var context = serviceProvider.GetRequiredService<EclipseDbContext>();
 
         logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
 
         logger.Information("\tInitializing database");
+
         await context.Database.EnsureCreatedAsync();
 
         logger.Information("{module} module initialized successfully", nameof(EclipseDataAccessModule));

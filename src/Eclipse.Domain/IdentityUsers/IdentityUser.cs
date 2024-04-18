@@ -5,8 +5,6 @@ using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 
-using Newtonsoft.Json;
-
 namespace Eclipse.Domain.IdentityUsers;
 
 public sealed class IdentityUser : AggregateRoot
@@ -26,37 +24,28 @@ public sealed class IdentityUser : AggregateRoot
         _todoItems = [];
     }
 
-    //[JsonConstructor]
-    private IdentityUser()
-    {
-        
-    }
+    private IdentityUser() { }
 
-    [JsonProperty(nameof(Reminders))]
     private readonly List<Reminder> _reminders = [];
 
-    [JsonProperty(nameof(TodoItems))]
     private readonly List<TodoItem> _todoItems = [];
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
-    public string? Surname { get; set; }
+    public string Surname { get; set; } = null!;
 
-    public string? Username { get; set; }
+    public string Username { get; set; } = null!;
 
     public long ChatId { get; init; }
 
-    public string? Culture { get; set; }
+    public string Culture { get; set; } = null!;
 
     public bool NotificationsEnabled { get; set; }
 
-    [JsonProperty]
     public TimeSpan Gmt { get; private set; }
 
-    [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
     
-    [JsonIgnore]
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>

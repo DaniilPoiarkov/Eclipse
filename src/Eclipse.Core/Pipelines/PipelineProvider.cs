@@ -85,7 +85,7 @@ internal sealed class PipelineProvider : IPipelineProvider
 
         if (validationAttributes.Count == 0)
         {
-            results = Enumerable.Empty<ValidationResult>();
+            results = [];
             return true;
         }
 
