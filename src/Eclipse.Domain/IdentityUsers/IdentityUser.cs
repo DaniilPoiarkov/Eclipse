@@ -16,9 +16,6 @@ public sealed class IdentityUser : AggregateRoot
         Surname = surname;
         Username = username;
         ChatId = chatId;
-        
-        Gmt = default;
-        Culture = string.Empty;
 
         _reminders = [];
         _todoItems = [];
@@ -30,15 +27,15 @@ public sealed class IdentityUser : AggregateRoot
 
     private readonly List<TodoItem> _todoItems = [];
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; } = string.Empty;
 
-    public string Surname { get; set; } = null!;
+    public string Surname { get; set; } = string.Empty;
 
-    public string Username { get; set; } = null!;
+    public string Username { get; set; } = string.Empty;
 
     public long ChatId { get; init; }
 
-    public string Culture { get; set; } = null!;
+    public string Culture { get; set; } = string.Empty;
 
     public bool NotificationsEnabled { get; set; }
 

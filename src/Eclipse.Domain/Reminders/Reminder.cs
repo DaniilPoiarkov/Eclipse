@@ -9,8 +9,7 @@ public sealed class Reminder : Entity
     public string Text { get; private set; }
 
     public TimeOnly NotifyAt { get; private set; }
-
-    //[JsonConstructor]
+    
     internal Reminder(Guid id, Guid userId, string text, TimeOnly notifyAt) : base(id)
     {
         UserId = userId;

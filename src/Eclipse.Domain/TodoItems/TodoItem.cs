@@ -6,7 +6,6 @@ namespace Eclipse.Domain.TodoItems;
 
 public sealed class TodoItem : Entity
 {
-    //[JsonConstructor]
     private TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
     {
         UserId = userId;
