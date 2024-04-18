@@ -24,7 +24,7 @@ public static class EclipseDataAccessModule
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
         services
-            .AddScoped<IIdentityUserRepository, EFCoreIdentityUserRepository>()
+            .AddScoped<IIdentityUserRepository, IdentityUserRepository>()
                 .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
 
         services.Configure(builder);
