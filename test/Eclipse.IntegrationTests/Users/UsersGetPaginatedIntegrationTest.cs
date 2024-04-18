@@ -68,7 +68,7 @@ public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
 
     private static ExpectedValues GetExpectedValues(IdentityUser[] users, string nameRequirement, int page, int pageSize)
     {
-        var expectedTotalCount = users.Count(u => Match(u.Name!, nameRequirement));
+        var expectedTotalCount = users.Count(u => Match(u.Name, nameRequirement));
 
         var expectedCount = expectedTotalCount > pageSize
             ? pageSize
