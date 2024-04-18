@@ -9,7 +9,7 @@ internal sealed class IdentityUserConfiguration : IEntityTypeConfiguration<Ident
 {
     public void Configure(EntityTypeBuilder<IdentityUser> builder)
     {
-        builder.ToContainer("TodoItems")
+        builder.ToContainer("IdentityUsers")
             .HasNoDiscriminator()
             .HasKey(u => u.Id);
     }
