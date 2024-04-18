@@ -2,6 +2,7 @@ using Eclipse.Application;
 using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
+using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
@@ -13,6 +14,8 @@ using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Options;
+
+using Microsoft.EntityFrameworkCore;
 
 using Serilog;
 
@@ -81,7 +84,7 @@ app.UseAuthentication()
 
 app.MapControllers();
 
-//await app.InitializeDataAccessModule();
+await app.InitializeDataAccessModuleV2();
 await app.InitializePipelineModuleAsync();
 
 app.Run();

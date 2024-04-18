@@ -26,29 +26,27 @@ public sealed class IdentityUser : AggregateRoot
         _todoItems = [];
     }
 
-    [JsonConstructor]
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    //[JsonConstructor]
     private IdentityUser()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         
     }
 
     [JsonProperty(nameof(Reminders))]
-    private readonly List<Reminder> _reminders;
+    private readonly List<Reminder> _reminders = [];
 
     [JsonProperty(nameof(TodoItems))]
-    private readonly List<TodoItem> _todoItems;
+    private readonly List<TodoItem> _todoItems = [];
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
-    public string Surname { get; set; }
+    public string? Surname { get; set; }
 
-    public string Username { get; set; }
+    public string? Username { get; set; }
 
     public long ChatId { get; init; }
 
-    public string Culture { get; set; }
+    public string? Culture { get; set; }
 
     public bool NotificationsEnabled { get; set; }
 

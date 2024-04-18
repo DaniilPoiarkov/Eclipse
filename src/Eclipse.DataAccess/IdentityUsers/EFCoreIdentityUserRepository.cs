@@ -7,11 +7,11 @@ using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.IdentityUsers;
 
-internal sealed class NullIdentityUserRepository : IIdentityUserRepository
+internal sealed class EFCoreIdentityUserRepository : IIdentityUserRepository
 {
-    private readonly EclipseCosmosDbContext _context;
+    private readonly EclipseDbContext _context;
 
-    public NullIdentityUserRepository(EclipseCosmosDbContext context)
+    public EFCoreIdentityUserRepository(EclipseDbContext context)
     {
         _context = context;
     }
@@ -46,7 +46,9 @@ internal sealed class NullIdentityUserRepository : IIdentityUserRepository
 
     public async Task<IReadOnlyList<IdentityUser>> GetByExpressionAsync(Expression<Func<IdentityUser, bool>> expression, CancellationToken cancellationToken = default)
     {
-        return await _context.IdentityUsers.Where(expression).ToListAsync(cancellationToken);
+        return await _context.IdentityUsers
+            .Where(expression)
+            .ToListAsync(cancellationToken);
     }
 
     public Task<IReadOnlyList<IdentityUser>> GetByExpressionAsync(Expression<Func<IdentityUser, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)

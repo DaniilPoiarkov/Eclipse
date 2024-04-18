@@ -1,4 +1,6 @@
-﻿using Eclipse.DataAccess.Builder;
+﻿using Azure.Identity;
+
+using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
@@ -6,8 +8,8 @@ using Eclipse.DataAccess.IdentityUsers;
 using Eclipse.Domain.IdentityUsers;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +26,7 @@ public static class EclipseDataAccessModule
 
         services
             //.AddScoped<IIdentityUserRepository, IdentityUserRepository>()
-            .AddScoped<IIdentityUserRepository, NullIdentityUserRepository>();
+            .AddScoped<IIdentityUserRepository, EFCoreIdentityUserRepository>();
 
         services.Configure(builder);
 
@@ -48,13 +50,43 @@ public static class EclipseDataAccessModule
         //    return new CosmosClient(options.CosmosOptions.ConnectionString);
         //});
 
-        var options = services.GetConfiguration()
-            .GetSection("Azure:CosmosOptions")
-            .Get<CosmosDbContextOptions>()!;
+        //var options = services.GetConfiguration()
+        //    .GetSection("Azure:CosmosOptions")
+        //    .Get<CosmosDbContextOptions>()!;
 
-        services.AddCosmos<EclipseCosmosDbContext>(
-            options.ConnectionString,
-            options.DatabaseId);
+        var configuration = services.GetConfiguration();
+
+        services.Configure<CosmosDbContextOptions>(
+            configuration.GetSection("Azure:CosmosOptions")
+        );
+
+        services.AddDbContextFactory<EclipseDbContext>((sp, builder) =>
+        {
+            var options = sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value;
+            var interceptors = sp.GetServices<IInterceptor>();
+
+            builder
+                .UseCosmos(
+                    //options.Endpoint,
+                    //new DefaultAzureCredential(),
+                    //options.DatabaseId
+                    options.ConnectionString,
+                    options.DatabaseId
+                )
+                .AddInterceptors(interceptors);
+        });
+
+        //services.AddCosmos<EclipseDbContext>(
+        //    options.ConnectionString,
+        //    options.DatabaseId,
+        //    cosmosOptions =>
+        //    {
+
+        //    },
+        //    builder =>
+        //    {
+        //        builder.AddInterceptors();
+        //    });
 
         //services.AddSingleton(sp =>
         //{
@@ -76,6 +108,23 @@ public static class EclipseDataAccessModule
         var logger = serviceProvider.GetRequiredService<Serilog.ILogger>();
         var context = serviceProvider.GetRequiredService<EclipseCosmosDbContext>();
         
+        logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
+
+        logger.Information("\tInitializing database");
+        await context.InitializeAsync();
+
+        logger.Information("{module} module initialized successfully", nameof(EclipseDataAccessModule));
+    }
+
+    public static async Task InitializeDataAccessModuleV2(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+
+        var serviceProvider = scope.ServiceProvider;
+
+        var logger = serviceProvider.GetRequiredService<Serilog.ILogger>();
+        var context = serviceProvider.GetRequiredService<EclipseDbContext>();
+
         logger.Information("Initializing {module} module", nameof(EclipseDataAccessModule));
 
         logger.Information("\tInitializing database");
