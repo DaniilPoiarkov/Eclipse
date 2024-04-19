@@ -2,9 +2,10 @@
 
 namespace Eclipse.Pipelines.Stores.Pipelines;
 
+// TODO: Rework and enhance
 internal sealed class PipelineStore : IPipelineStore
 {
-    private static readonly Dictionary<string, Value> _map = [];
+    private static readonly Dictionary<string, PipelineInfo> _map = [];
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -40,10 +41,10 @@ internal sealed class PipelineStore : IPipelineStore
 
     public void Set(PipelineKey key, PipelineBase value)
     {
-        _map.Add(key.ToCacheKey().Key, new Value { Type = value.GetType(), StagesLeft = value.StagesLeft });
+        _map.Add(key.ToCacheKey().Key, new PipelineInfo { Type = value.GetType(), StagesLeft = value.StagesLeft });
     }
 
-    private class Value
+    private class PipelineInfo
     {
         public Type Type { get; set; } = null!;
 
