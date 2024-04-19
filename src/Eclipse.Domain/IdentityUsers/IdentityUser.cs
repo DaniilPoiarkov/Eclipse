@@ -91,23 +91,22 @@ public sealed class IdentityUser : AggregateRoot
     /// <param name="currentUserTime">The current user time.</param>
     public void SetGmt(TimeOnly currentUserTime)
     {
-        var utc = DateTime.UtcNow;
-        var now = new TimeOnly(utc.Hour, utc.Minute);
+        var now = DateTime.UtcNow.GetTime();
 
-        Gmt = currentUserTime > now
-            ? currentUserTime - now
-            : (now - currentUserTime) * -1;
+        var offset = (currentUserTime - now);
 
-        var day = new TimeSpan(24, 0, 0);
+        var day = TimeSpan.FromHours(24);
 
-        if (Gmt < new TimeSpan(-12, 0, 0))
+        if (offset < TimeSpan.FromHours(-12))
         {
-            Gmt += day;
+            offset += day;
         }
-        if (Gmt > new TimeSpan(12, 0, 0))
+        if (offset > TimeSpan.FromHours(12))
         {
-            Gmt -= day;
+            offset -= day;
         }
+
+        Gmt = offset;
     }
 
     /// <summary>Adds the todo item.</summary>

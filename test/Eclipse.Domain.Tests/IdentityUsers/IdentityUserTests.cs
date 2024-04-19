@@ -20,20 +20,38 @@ public class IdentityUserTests
     }
 
     [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
     [InlineData(3)]
-    [InlineData(-4)]
-    [InlineData(-10)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(9)]
+    [InlineData(10)]
     [InlineData(11)]
+    [InlineData(12)]
+    [InlineData(-1)]
+    [InlineData(-2)]
+    [InlineData(-3)]
+    [InlineData(-4)]
+    [InlineData(-5)]
+    [InlineData(-6)]
+    [InlineData(-7)]
+    [InlineData(-8)]
+    [InlineData(-9)]
+    [InlineData(-10)]
+    [InlineData(-11)]
     public void SetGmt_WhenLocalTimeSpecified_ThenProperCalculationAccordingToUtcSet(int gmt)
     {
         var utc = DateTime.UtcNow;
 
-        var hour = utc.Hour + gmt > 23
-            ? utc.Hour - (24 - gmt)
-            : utc.Hour + gmt;
+        var hour = (utc.Hour + gmt + 24) % 24;
 
         var currentUserTime = new TimeOnly(hour, utc.Minute);
-        var expected = new TimeSpan(gmt, 0, 0);
+        var expected = TimeSpan.FromHours(gmt);
 
         _sut.SetGmt(currentUserTime);
 
