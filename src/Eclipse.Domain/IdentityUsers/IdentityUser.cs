@@ -16,9 +16,6 @@ public sealed class IdentityUser : AggregateRoot
         Surname = surname;
         Username = username;
         ChatId = chatId;
-
-        _reminders = [];
-        _todoItems = [];
     }
 
     private IdentityUser() { }
