@@ -90,7 +90,7 @@ public sealed class IdentityUser : AggregateRoot
     {
         var now = DateTime.UtcNow.GetTime();
 
-        var offset = (currentUserTime - now);
+        var offset = currentUserTime - now;
 
         var day = TimeSpan.FromHours(24);
 

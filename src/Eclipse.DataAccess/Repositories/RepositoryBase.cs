@@ -64,6 +64,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
     {
         return await DbSet.Where(expression)
+            .OrderBy(e => e.Id)
             .Skip(skipCount)
             .Take(takeCount)
             .ToListAsync(cancellationToken);
