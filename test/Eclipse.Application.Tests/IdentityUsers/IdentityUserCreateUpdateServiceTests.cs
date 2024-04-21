@@ -59,7 +59,7 @@ public sealed class IdentityUserCreateUpdateServiceTests
 
         var updateDto = new IdentityUserUpdateDto
         {
-            Username = "new_username",
+            UserName = "new_username",
             Name = "new_name",
             Surname = "new_surname"
         };
@@ -69,7 +69,7 @@ public sealed class IdentityUserCreateUpdateServiceTests
         result.IsSuccess.Should().BeTrue();
 
         var value = result.Value;
-        value.UserName.Should().Be(updateDto.Username);
+        value.UserName.Should().Be(updateDto.UserName);
         value.Name.Should().Be(updateDto.Name);
         value.Surname.Should().Be(updateDto.Surname);
 

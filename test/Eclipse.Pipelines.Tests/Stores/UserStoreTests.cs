@@ -148,7 +148,7 @@ public sealed class UserStoreTests
         {
             Name = "new_name",
             Surname = "new_surname",
-            Username = "new_username",
+            UserName = "new_username",
         };
     }
 }

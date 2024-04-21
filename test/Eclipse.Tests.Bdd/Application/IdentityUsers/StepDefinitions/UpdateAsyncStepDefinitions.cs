@@ -53,7 +53,7 @@ internal sealed class UpdateAsyncStepDefinitions
     {
         _updateDto.Name = table.Rows[0]["Name"];
         _updateDto.Surname = table.Rows[0]["Surname"];
-        _updateDto.Username = table.Rows[0]["Username"];
+        _updateDto.UserName = table.Rows[0]["Username"];
         _updateDto.Culture = table.Rows[0]["Culture"];
         _updateDto.NotificationsEnabled = bool.Parse(table.Rows[0]["NotificationsEnabled"]);
 

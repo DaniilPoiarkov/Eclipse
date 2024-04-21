@@ -64,7 +64,7 @@ internal sealed class UserStore : IUserStore
         var updateDto = new IdentityUserUpdateDto
         {
             Name = telegramUser.Name,
-            Username = telegramUser.Username,
+            UserName = telegramUser.Username,
             Surname = telegramUser.Surname
         };
 

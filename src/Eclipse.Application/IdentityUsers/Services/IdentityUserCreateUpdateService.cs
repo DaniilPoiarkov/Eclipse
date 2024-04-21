@@ -45,9 +45,9 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
             user.Surname = update.Surname;
         }
 
-        if (!update.Username.IsNullOrEmpty())
+        if (!update.UserName.IsNullOrEmpty())
         {
-            user.UserName = update.Username;
+            user.UserName = update.UserName;
         }
 
         if (!update.Culture.IsNullOrEmpty())
