@@ -10,7 +10,7 @@ internal sealed class IdentityUserConfiguration : IEntityTypeConfiguration<Ident
     public void Configure(EntityTypeBuilder<IdentityUser> builder)
     {
         // TODO: Adjust after migrating db.
-        builder.ToContainer("TodoItems")
+        builder.ToContainer("IdentityUsers_dev")
             .HasNoDiscriminator();
 
         builder.Property(u => u.Id)

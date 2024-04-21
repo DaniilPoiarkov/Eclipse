@@ -3,7 +3,6 @@ using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
-using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
