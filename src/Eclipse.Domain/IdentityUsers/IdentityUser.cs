@@ -46,11 +46,11 @@ public sealed class IdentityUser : AggregateRoot
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static IdentityUser Create(Guid id, string name, string surname, string username, long chatId)
+    internal static IdentityUser Create(Guid id, string name, string surname, string userName, long chatId)
     {
-        var user = new IdentityUser(id, name, surname, username, chatId);
+        var user = new IdentityUser(id, name, surname, userName, chatId);
 
-        user.AddEvent(new NewUserJoinedDomainEvent(id, username, name, surname));
+        user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
 
         return user;
     }
