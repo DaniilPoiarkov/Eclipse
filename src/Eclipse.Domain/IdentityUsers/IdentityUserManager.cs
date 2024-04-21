@@ -15,7 +15,7 @@ public sealed class IdentityUserManager
     /// <summary>Creates the user asynchronous.</summary>
     /// <param name="name">The name.</param>
     /// <param name="surname">The surname.</param>
-    /// <param name="userName">The username.</param>
+    /// <param name="userName">The userName.</param>
     /// <param name="chatId">The telegram chat identifier.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Created user</returns>
