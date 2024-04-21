@@ -35,7 +35,7 @@ internal sealed class UserStore : IUserStore
         var createUserDto = new IdentityUserCreateDto
         {
             Name = user.Name,
-            Username = user.Username ?? string.Empty,
+            UserName = user.UserName ?? string.Empty,
             Surname = user.Surname,
             ChatId = user.Id
         };
@@ -64,7 +64,7 @@ internal sealed class UserStore : IUserStore
         var updateDto = new IdentityUserUpdateDto
         {
             Name = telegramUser.Name,
-            UserName = telegramUser.Username,
+            UserName = telegramUser.UserName,
             Surname = telegramUser.Surname
         };
 
@@ -82,7 +82,7 @@ internal sealed class UserStore : IUserStore
         static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
         {
             return identityDto.Name == telegramUser.Name
-                && identityDto.UserName == telegramUser.Username
+                && identityDto.UserName == telegramUser.UserName
                 && identityDto.Surname == telegramUser.Surname;
         }
     }

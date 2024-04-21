@@ -16,7 +16,7 @@ internal sealed class IdentityUserCreateUpdateService : IIdentityUserCreateUpdat
 
     public async Task<Result<IdentityUserDto>> CreateAsync(IdentityUserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        var result = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.Username, createDto.ChatId, cancellationToken);
+        var result = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.UserName, createDto.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
