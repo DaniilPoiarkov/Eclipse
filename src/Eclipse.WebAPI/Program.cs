@@ -3,6 +3,7 @@ using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
+using Eclipse.Domain.IdentityUsers;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
@@ -81,8 +82,13 @@ app.UseAuthentication()
 
 app.MapControllers();
 
-await app.InitializeDataAccessModule();
 await app.InitializePipelineModuleAsync();
+
+using var scope = app.Services.CreateAsyncScope();
+
+var repo = scope.ServiceProvider.GetRequiredService<IIdentityUserRepository>();
+
+var users = await repo.GetAllAsync();
 
 app.Run();
 

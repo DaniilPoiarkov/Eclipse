@@ -46,7 +46,7 @@ internal sealed class PipelineProvider : IPipelineProvider
     {
         var pipeline = _pipelines.FirstOrDefault(p => p.Key.Route.Equals(route)).Value
             ?? GetNotFoundPipeline();
-        
+
         return ValidOrAccessDenied(pipeline);
     }
 
@@ -73,7 +73,7 @@ internal sealed class PipelineProvider : IPipelineProvider
         var accessDeniedPipeline = _pipelines.First(kv => kv.Value is IAccessDeniedPipeline).Value as IAccessDeniedPipeline;
 
         accessDeniedPipeline!.SetResults(results);
-        
+
         return (accessDeniedPipeline as PipelineBase)!;
     }
 

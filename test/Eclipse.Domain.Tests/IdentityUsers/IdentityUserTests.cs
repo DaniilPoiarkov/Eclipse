@@ -94,7 +94,7 @@ public class IdentityUserTests
         var result = _sut.AddTodoItem(text);
 
         result.IsSuccess.Should().BeTrue();
-        
+
         var value = result.Value;
         value.Text.Should().Be(text);
         value.Id.Should().NotBeEmpty();

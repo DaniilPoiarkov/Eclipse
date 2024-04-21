@@ -34,7 +34,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await DbSet.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-        
+
         if (entity is null)
         {
             return;

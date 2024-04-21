@@ -98,7 +98,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         }
 
         var editResult = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
-        
+
         return Multiple(menuResult, editResult);
     }
 

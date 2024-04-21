@@ -17,7 +17,7 @@ public abstract class SettingsPipelineBase : EclipsePipelineBase
     {
         var menu = Menu(SettingsMenuButtons, message);
         var edit = Edit(messageId, InlineKeyboardMarkup.Empty());
-        
+
         return Multiple(menu, edit);
     }
 

@@ -11,7 +11,7 @@ public sealed class IdentityUserDto : AggregateRootDto
 
     public string Surname { get; set; } = string.Empty;
 
-    public string Username { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
 
     public long ChatId { get; set; }
 
@@ -19,7 +19,7 @@ public sealed class IdentityUserDto : AggregateRootDto
 
     public bool NotificationsEnabled { get; set; }
 
-    public TimeSpan Gmt {  get; set; }
+    public TimeSpan Gmt { get; set; }
 
     public IReadOnlyList<ReminderDto> Reminders { get; set; } = [];
 

@@ -13,4 +13,9 @@ public abstract class Entity
     }
 
     protected Entity() { }
+
+    public override string ToString()
+    {
+        return $"Id: {Id}";
+    }
 }

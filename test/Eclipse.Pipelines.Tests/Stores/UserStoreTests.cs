@@ -68,7 +68,7 @@ public sealed class UserStoreTests
 
         _identityUserCache.GetByChatId(User.Id).Returns(dto);
 
-        var result = await Sut.AddOrUpdate(new TelegramUser(1, dto.Name, dto.Surname, dto.Username));
+        var result = await Sut.AddOrUpdate(new TelegramUser(1, dto.Name, dto.Surname, dto.UserName));
 
         result.IsSuccess.Should().BeTrue();
 
@@ -95,7 +95,7 @@ public sealed class UserStoreTests
         var result = await Sut.AddOrUpdate(User);
 
         result.IsSuccess.Should().BeTrue();
-        
+
         await _identityUserService.ReceivedWithAnyArgs()
             .UpdateAsync(dto.Id, update);
 
@@ -137,7 +137,7 @@ public sealed class UserStoreTests
             Id = Guid.NewGuid(),
             Name = "old_name",
             Surname = "old_surname",
-            Username = "old_username",
+            UserName = "old_username",
             ChatId = User.Id,
         };
     }

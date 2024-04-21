@@ -20,7 +20,7 @@ internal sealed class PipelineStore : IPipelineStore
         {
             return null;
         }
-        
+
         if (_serviceProvider.GetService(value.Type) is not PipelineBase pipeline)
         {
             return null;

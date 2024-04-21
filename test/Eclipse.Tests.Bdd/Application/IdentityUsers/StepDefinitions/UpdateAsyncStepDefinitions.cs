@@ -81,7 +81,7 @@ internal sealed class UpdateAsyncStepDefinitions
     [Then(@"The user's username should be ""(.*)""")]
     public void ThenTheUserUsernameShouldBe(string expectedUsername)
     {
-        _result.Username.Should().Be(expectedUsername);
+        _result.UserName.Should().Be(expectedUsername);
     }
 
     [Then(@"The user's culture should be ""(.*)""")]

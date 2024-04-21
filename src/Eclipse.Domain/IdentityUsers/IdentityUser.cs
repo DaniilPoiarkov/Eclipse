@@ -9,12 +9,12 @@ namespace Eclipse.Domain.IdentityUsers;
 
 public sealed class IdentityUser : AggregateRoot
 {
-    private IdentityUser(Guid id, string name, string surname, string username, long chatId)
+    private IdentityUser(Guid id, string name, string surname, string userName, long chatId)
         : base(id)
     {
         Name = name;
         Surname = surname;
-        Username = username;
+        UserName = userName;
         ChatId = chatId;
     }
 
@@ -28,7 +28,7 @@ public sealed class IdentityUser : AggregateRoot
 
     public string Surname { get; set; } = string.Empty;
 
-    public string Username { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
 
     public long ChatId { get; init; }
 
@@ -39,7 +39,7 @@ public sealed class IdentityUser : AggregateRoot
     public TimeSpan Gmt { get; private set; }
 
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
-    
+
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>
@@ -49,7 +49,7 @@ public sealed class IdentityUser : AggregateRoot
     internal static IdentityUser Create(Guid id, string name, string surname, string username, long chatId)
     {
         var user = new IdentityUser(id, name, surname, username, chatId);
-        
+
         user.AddEvent(new NewUserJoinedDomainEvent(id, username, name, surname));
 
         return user;
@@ -117,7 +117,7 @@ public sealed class IdentityUser : AggregateRoot
         }
 
         var result = TodoItem.Create(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
-        
+
         if (!result.IsSuccess)
         {
             return result.Error;
@@ -150,5 +150,10 @@ public sealed class IdentityUser : AggregateRoot
         }
 
         return item;
+    }
+
+    public override string ToString()
+    {
+        return $"Name: {Name}, UserName:{UserName} {base.ToString()}";
     }
 }

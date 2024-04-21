@@ -35,7 +35,7 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
     public async Task Handle(NewUserJoinedDomainEvent notification, CancellationToken cancellationToken)
     {
         var result = await _identityUserService.GetByChatIdAsync(_telegramOptions.Value.Chat, cancellationToken);
-        
+
         if (!result.IsSuccess)
         {
             return;

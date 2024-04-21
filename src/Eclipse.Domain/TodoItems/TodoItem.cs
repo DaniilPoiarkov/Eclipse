@@ -41,7 +41,7 @@ public sealed class TodoItem : Entity
     private TodoItem() { }
 
     public Guid UserId { get; private set; }
-    
+
     public string Text { get; private set; } = string.Empty;
 
     public bool IsFinished { get; private set; } = false;

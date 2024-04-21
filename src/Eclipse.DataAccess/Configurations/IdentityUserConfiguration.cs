@@ -9,8 +9,14 @@ internal sealed class IdentityUserConfiguration : IEntityTypeConfiguration<Ident
 {
     public void Configure(EntityTypeBuilder<IdentityUser> builder)
     {
-        builder.ToContainer("IdentityUsers")
-            .HasNoDiscriminator()
-            .HasKey(u => u.Id);
+        // TODO: Adjust after migrating db.
+        builder.ToContainer("TodoItems")
+            .HasNoDiscriminator();
+
+        builder.Property(u => u.Id)
+            .ToJsonProperty("id");
+
+        builder.Property(u => u.UserName)
+            .ToJsonProperty("Username");
     }
 }

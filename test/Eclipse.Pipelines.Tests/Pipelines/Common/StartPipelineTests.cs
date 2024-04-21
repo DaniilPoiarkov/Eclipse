@@ -25,7 +25,7 @@ public class StartPipelineTests : PipelineTestFixture<StartPipeline>
         var result = await Sut.RunNext(context);
 
         var menu = result.As<MenuResult>();
-        
+
         menu.Should().NotBeNull();
         menu.Message.Should().Be(context.User.Name);
         Sut.IsFinished.Should().BeTrue();

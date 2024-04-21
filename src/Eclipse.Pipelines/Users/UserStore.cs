@@ -82,7 +82,7 @@ internal sealed class UserStore : IUserStore
         static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
         {
             return identityDto.Name == telegramUser.Name
-                && identityDto.Username == telegramUser.Username
+                && identityDto.UserName == telegramUser.Username
                 && identityDto.Surname == telegramUser.Surname;
         }
     }

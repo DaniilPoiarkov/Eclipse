@@ -1,22 +1,22 @@
-﻿using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types;
-
-using Serilog;
-
-using Eclipse.Core.Core;
-using Eclipse.Core.UpdateParsing;
+﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Common.Telegram;
-using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Users;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Options;
+
+using Serilog;
+
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -82,9 +82,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             _logger.Information("Update of type {updateType} is not supported", update.Type);
             return;
         }
-        
+
         var context = _updateParser.Parse(update);
-        
+
         if (context is null)
         {
             _logger.Error("Context is null after parsing update of type {updateType}", update.Type);
@@ -97,7 +97,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         var pipeline = GetPipeline(context, key) as EclipsePipelineBase
             ?? new EclipseNotFoundPipeline();
-        
+
         _pipelineStore.Remove(key);
 
         _localizer.ResetCultureForUserWithChatId(context.ChatId);

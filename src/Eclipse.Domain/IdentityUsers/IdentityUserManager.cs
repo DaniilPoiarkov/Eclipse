@@ -56,7 +56,7 @@ public sealed class IdentityUserManager
 
     public async Task<IdentityUser?> FindByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-        return (await _identityUserRepository.GetByExpressionAsync(u => u.Username == username, cancellationToken))
+        return (await _identityUserRepository.GetByExpressionAsync(u => u.UserName == username, cancellationToken))
             .SingleOrDefault();
     }
 
