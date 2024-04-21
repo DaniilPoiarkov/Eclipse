@@ -11,12 +11,12 @@ public sealed class TelegramUser
 
     public string? UserName { get; set; } = string.Empty;
 
-    public TelegramUser(long id, string name, string surname, string username)
+    public TelegramUser(long id, string name, string surname, string userName)
     {
         Id = id;
         Name = name;
         Surname = surname;
-        UserName = username;
+        UserName = userName;
     }
 
     public TelegramUser() { }

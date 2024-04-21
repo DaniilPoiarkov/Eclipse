@@ -84,12 +84,6 @@ app.MapControllers();
 
 await app.InitializePipelineModuleAsync();
 
-using var scope = app.Services.CreateAsyncScope();
-
-var repo = scope.ServiceProvider.GetRequiredService<IIdentityUserRepository>();
-
-var users = await repo.GetAllAsync();
-
 app.Run();
 
 public partial class Program;
