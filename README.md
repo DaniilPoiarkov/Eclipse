@@ -43,7 +43,7 @@ Provides API for multiple language support in application. As Microsoft.Localiza
 Basicly contains wrappers with only necessary API and cross-cutting concerns.
 
 ### DataAccess
-Data consistency.
+Data persistence with EF Core Cosmos Db provider.
 
 ## Tests
 <p>Each Test project reference base Eclipse.Tests class library, that provides helpers which used through all tests.</p>
@@ -64,6 +64,7 @@ Data consistency.
 * Polly
 * Scrutor
 * Serilog
+* EFCore
 
 ### Testing
 * NSubstitute
