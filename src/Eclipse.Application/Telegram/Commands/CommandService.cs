@@ -72,7 +72,7 @@ internal sealed partial class CommandService : ICommandService
     public async Task<IReadOnlyList<CommandDto>> GetList(CancellationToken cancellationToken = default)
     {
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
-        
+
         return commands.Select(c => c.ToDto())
             .ToArray();
     }

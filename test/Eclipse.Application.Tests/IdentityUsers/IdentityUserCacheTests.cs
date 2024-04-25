@@ -16,7 +16,7 @@ public sealed class IdentityUserCacheTests
     private readonly ICacheService _cacheService;
 
     private readonly Lazy<IIdentityUserCache> _lazySut;
-    
+
     private readonly CacheKey _key;
 
     private IIdentityUserCache Sut => _lazySut.Value;

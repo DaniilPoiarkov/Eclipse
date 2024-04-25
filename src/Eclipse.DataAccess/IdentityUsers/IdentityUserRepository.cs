@@ -1,12 +1,11 @@
-﻿using Eclipse.Common.EventBus;
-using Eclipse.DataAccess.CosmosDb;
-using Eclipse.DataAccess.EclipseCosmosDb;
+﻿using Eclipse.DataAccess.EclipseCosmosDb;
+using Eclipse.DataAccess.Repositories;
 using Eclipse.Domain.IdentityUsers;
 
 namespace Eclipse.DataAccess.IdentityUsers;
 
-internal sealed class IdentityUserRepository : CosmosRepository<IdentityUser>, IIdentityUserRepository
+internal sealed class IdentityUserRepository : RepositoryBase<IdentityUser>, IIdentityUserRepository
 {
-    public IdentityUserRepository(EclipseCosmosDbContext context, IEventBus eventBus)
-        : base(context.IdentityUsers, eventBus) { }
+    public IdentityUserRepository(EclipseDbContext context)
+        : base(context) { }
 }

@@ -18,7 +18,7 @@ namespace Eclipse.Pipelines.Tests.Pipelines.Common;
 public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
 {
     private readonly ICommandService _commandService;
-    
+
     public HelpPipelineTests()
     {
         Localizer[""].ReturnsForAnyArgs("Help");

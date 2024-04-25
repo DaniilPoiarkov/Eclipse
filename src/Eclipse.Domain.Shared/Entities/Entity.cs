@@ -1,13 +1,10 @@
-﻿using Newtonsoft.Json;
-
-namespace Eclipse.Domain.Shared.Entities;
+﻿namespace Eclipse.Domain.Shared.Entities;
 
 /// <summary>
 /// Base entity class
 /// </summary>
 public abstract class Entity
 {
-    [JsonProperty(PropertyName = "id")]
     public Guid Id { get; private set; }
 
     public Entity(Guid id)
@@ -16,4 +13,9 @@ public abstract class Entity
     }
 
     protected Entity() { }
+
+    public override string ToString()
+    {
+        return $"Id: {Id}";
+    }
 }

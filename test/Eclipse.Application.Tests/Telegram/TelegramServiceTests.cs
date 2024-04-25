@@ -14,7 +14,7 @@ namespace Eclipse.Application.Tests.Telegram;
 
 public sealed class TelegramServiceTests
 {
-    private readonly ITelegramService _sut;
+    private readonly TelegramService _sut;
 
     private static readonly string _errorCode = "Telegram.Send";
 

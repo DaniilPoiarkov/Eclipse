@@ -10,6 +10,13 @@ public abstract class PipelineBase : Pipeline
 {
     public bool IsFinished => _stages.Count == 0;
 
+    public int StagesLeft => _stages.Count;
+
+    public void SkipStage()
+    {
+        _stages.Dequeue();
+    }
+
     private readonly Queue<IStage> _stages = new();
 
     public PipelineBase()

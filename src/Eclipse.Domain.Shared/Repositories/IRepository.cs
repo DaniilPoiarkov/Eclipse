@@ -9,5 +9,5 @@ namespace Eclipse.Domain.Shared.Repositories;
 public interface IRepository<TEntity> : IReadRepository<TEntity>, ICreateUpdateDeleteRepository<TEntity>
     where TEntity : Entity
 {
-    
+
 }

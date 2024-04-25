@@ -28,7 +28,7 @@ internal abstract class LogicalSpecification<T> : Specification<T>
 
         var right = new ReplaceExpressionVisitor(rightExpression.Parameters[0], param)
             .Visit(rightExpression.Body);
-        
+
         return Expression.Lambda<Func<T, bool>>(
             Combine(left, right), param
         );

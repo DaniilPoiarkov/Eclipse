@@ -6,7 +6,9 @@ public class Result
 
     private readonly Error? _error;
 
-    public Error Error { get
+    public Error Error
+    {
+        get
         {
             if (IsSuccess || _error is null)
             {
@@ -14,7 +16,8 @@ public class Result
             }
 
             return _error;
-        } }
+        }
+    }
 
     protected Result(bool isSuccess, Error? error)
     {
@@ -40,7 +43,9 @@ public class Result
 public sealed class Result<TValue> : Result
 {
     private readonly TValue? _value;
-    public TValue Value { get
+    public TValue Value
+    {
+        get
         {
             if (!IsSuccess || _value is null)
             {
@@ -48,7 +53,8 @@ public sealed class Result<TValue> : Result
             }
 
             return _value;
-        } }
+        }
+    }
 
     private Result(bool isSuccess, TValue? value) : base(isSuccess, null)
     {

@@ -14,7 +14,7 @@ public static class ObjectExtensions
 
     public static long ToLong(this object? obj)
     {
-        if (long.TryParse(obj?.ToString(),out var value))
+        if (long.TryParse(obj?.ToString(), out var value))
         {
             return value;
         }
@@ -28,7 +28,7 @@ public static class ObjectExtensions
         {
             return dateTime;
         }
-        
+
         return default;
     }
 

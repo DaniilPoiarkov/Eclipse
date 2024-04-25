@@ -14,7 +14,7 @@ internal static class UserExtensions
             Id = value.Id,
             Name = value.Name,
             Surname = value.Surname,
-            Username = value.Username,
+            UserName = value.UserName,
             ChatId = value.ChatId,
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled,
@@ -37,7 +37,7 @@ internal static class UserExtensions
             Id = value.Id,
             Name = value.Name,
             Surname = value.Surname,
-            Username = value.Username,
+            Username = value.UserName,
             ChatId = value.ChatId,
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled

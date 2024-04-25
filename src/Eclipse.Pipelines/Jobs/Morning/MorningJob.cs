@@ -80,17 +80,17 @@ internal sealed class MorningJob : EclipseJobBase
             var messageContext = new MessageContext(
                 user.ChatId,
                 string.Empty,
-                new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username),
+                new TelegramUser(user.ChatId, user.Name, user.Surname, user.UserName),
                 _serviceProvider
             );
 
             var result = await pipeline.RunNext(messageContext, context.CancellationToken);
 
             notifications.Add(result.SendAsync(_botClient, context.CancellationToken));
-            
+
             await _pipelineStore.SetAsync(key, pipeline, context.CancellationToken);
         }
-        
+
         var messages = await Task.WhenAll(notifications);
 
         foreach (var message in messages)
@@ -99,7 +99,7 @@ internal sealed class MorningJob : EclipseJobBase
             {
                 continue;
             }
-            
+
             await _messageStore.SetAsync(new MessageKey(message.Chat.Id), message, context.CancellationToken);
         }
     }

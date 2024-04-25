@@ -13,8 +13,8 @@ using Xunit;
 namespace Eclipse.Application.Tests.Telegram;
 
 public sealed class CommandServiceTests
-{    
-    private readonly ICommandService _sut;
+{
+    private readonly CommandService _sut;
 
     private static readonly string _descriptionPrefix = "BotCommand";
 

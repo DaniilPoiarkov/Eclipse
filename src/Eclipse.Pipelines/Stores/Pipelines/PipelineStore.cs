@@ -1,34 +1,54 @@
-﻿using Eclipse.Core.Pipelines;
+﻿using Eclipse.Common.Cache;
+using Eclipse.Core.Pipelines;
 
 namespace Eclipse.Pipelines.Stores.Pipelines;
 
-// TODO: Find a way to handle states without json or bytes serialization.
-//       This will work fine only in one app instance, but it will fail with multiple app instances
 internal sealed class PipelineStore : IPipelineStore
 {
-    private static readonly Dictionary<string, PipelineBase> _map = [];
+    private readonly ICacheService _cacheService;
 
-    public Task<PipelineBase?> GetOrDefaultAsync(PipelineKey key, CancellationToken cancellationToken = default)
+    private readonly IServiceProvider _serviceProvider;
+
+    public PipelineStore(ICacheService cacheService, IServiceProvider serviceProvider)
     {
-        if (_map.TryGetValue(KeyToString(key), out var pipeline))
+        _cacheService = cacheService;
+        _serviceProvider = serviceProvider;
+    }
+
+    public async Task<PipelineBase?> GetOrDefaultAsync(PipelineKey key, CancellationToken cancellationToken = default)
+    {
+        var pipelineInfo = await _cacheService.GetAsync<PipelineInfo>(key.ToCacheKey(), cancellationToken);
+
+        if (pipelineInfo is null)
         {
-            return Task.FromResult<PipelineBase?>(pipeline);
+            return null;
         }
 
-        return Task.FromResult<PipelineBase?>(null);
+        if (_serviceProvider.GetService(pipelineInfo.Type) is not PipelineBase pipeline)
+        {
+            return null;
+        }
+
+        while (pipeline.StagesLeft != pipelineInfo.StagesLeft)
+        {
+            pipeline.SkipStage();
+        }
+
+        return pipeline;
     }
 
     public Task RemoveAsync(PipelineKey key, CancellationToken cancellationToken = default)
     {
-        _map.Remove(KeyToString(key));
-        return Task.CompletedTask;
+        return _cacheService.DeleteAsync(key.ToCacheKey(), cancellationToken);
     }
 
     public Task SetAsync(PipelineKey key, PipelineBase value, CancellationToken cancellationToken = default)
     {
-        _map[KeyToString(key)] = value;
-        return Task.CompletedTask;
+        return _cacheService.SetAsync(
+            key.ToCacheKey(),
+            new PipelineInfo(value.GetType(), value.StagesLeft),
+            cancellationToken);
     }
 
-    private static string KeyToString(PipelineKey key) => key.ToCacheKey().Key;
+    private record PipelineInfo(Type Type, int StagesLeft);
 }

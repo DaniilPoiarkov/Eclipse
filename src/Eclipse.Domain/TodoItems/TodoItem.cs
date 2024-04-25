@@ -2,13 +2,10 @@
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 
-using Newtonsoft.Json;
-
 namespace Eclipse.Domain.TodoItems;
 
 public sealed class TodoItem : Entity
 {
-    [JsonConstructor]
     private TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
     {
         UserId = userId;
@@ -44,7 +41,7 @@ public sealed class TodoItem : Entity
     private TodoItem() { }
 
     public Guid UserId { get; private set; }
-    
+
     public string Text { get; private set; } = string.Empty;
 
     public bool IsFinished { get; private set; } = false;
