@@ -68,7 +68,7 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
             ReplyMarkup = new InlineKeyboardMarkup(new InlineKeyboardButton("test"))
         };
 
-        messageStore.GetOrDefault(default!).ReturnsForAnyArgs(message);
+        messageStore.GetOrDefaultAsync(default!).ReturnsForAnyArgs(message);
         var context = GetContext("/daily_morning");
 
         // First message act

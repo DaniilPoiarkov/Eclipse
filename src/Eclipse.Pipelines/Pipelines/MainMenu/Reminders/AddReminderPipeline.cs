@@ -32,7 +32,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
         RegisterStage(SaveReminder);
     }
 
-    private IResult AskForTime(MessageContext context)
+    private async Task<IResult> AskForTime(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.IsNullOrEmpty())
         {
@@ -46,7 +46,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Okay"]);
         }
 
-        _cacheService.Set(new CacheKey($"reminder-text-{context.ChatId}"), context.Value);
+        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, cancellationToken);
 
         return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }
@@ -67,11 +67,11 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer.LocalizeError(userResult.Error));
         }
 
-        var text = _cacheService.Get<string>(new CacheKey($"reminder-text-{chatId}"))!;
+        var text = await _cacheService.GetAsync<string>(new CacheKey($"reminder-text-{chatId}"), cancellationToken);
 
         var reminderCreateDto = new ReminderCreateDto
         {
-            Text = text,
+            Text = text!,
             NotifyAt = time.Add(userResult.Value.Gmt * -1)
         };
 

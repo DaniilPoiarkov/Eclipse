@@ -5,11 +5,11 @@
 /// </summary>
 public interface ICacheService
 {
-    void Set<T>(CacheKey key, T value);
+    Task SetAsync<T>(CacheKey key, T value, CancellationToken cancellationToken = default);
 
-    T? Get<T>(CacheKey key);
+    Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default);
 
-    T? GetAndDelete<T>(CacheKey key);
+    Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default);
 
-    void Delete(CacheKey key);
+    Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default);
 }

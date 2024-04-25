@@ -16,11 +16,11 @@ internal sealed class CachedReminderService : IdentityUserCachingFixture, IRemin
 
     public Task<Result<IdentityUserDto>> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
     {
-        return WithCachingAsync(() => _reminderService.CreateReminderAsync(userId, createReminderDto, cancellationToken));
+        return WithCachingAsync(() => _reminderService.CreateReminderAsync(userId, createReminderDto, cancellationToken), cancellationToken);
     }
 
     public Task<Result<IdentityUserDto>> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
     {
-        return WithCachingAsync(() => _reminderService.RemoveRemindersForTime(userId, time, cancellationToken));
+        return WithCachingAsync(() => _reminderService.RemoveRemindersForTime(userId, time, cancellationToken), cancellationToken);
     }
 }

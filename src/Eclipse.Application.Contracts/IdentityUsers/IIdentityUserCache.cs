@@ -2,11 +2,11 @@
 
 public interface IIdentityUserCache
 {
-    void AddOrUpdate(IdentityUserDto user);
+    Task AddOrUpdateAsync(IdentityUserDto user, CancellationToken cancellationToken = default);
 
-    IReadOnlyList<IdentityUserDto> GetAll();
+    Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    IdentityUserDto? GetByChatId(long chatId);
+    Task<IdentityUserDto?> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default);
 
-    IdentityUserDto? GetById(Guid userId);
+    Task<IdentityUserDto?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
 }

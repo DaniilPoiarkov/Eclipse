@@ -1,32 +1,35 @@
-﻿using Eclipse.Core.Pipelines;
+﻿using Eclipse.Common.Cache;
+using Eclipse.Core.Pipelines;
 
 namespace Eclipse.Pipelines.Stores.Pipelines;
 
-// TODO: Rework and enhance
 internal sealed class PipelineStore : IPipelineStore
 {
-    private static readonly Dictionary<string, PipelineInfo> _map = [];
+    private readonly ICacheService _cacheService;
 
     private readonly IServiceProvider _serviceProvider;
 
-    public PipelineStore(IServiceProvider serviceProvider)
+    public PipelineStore(ICacheService cacheService, IServiceProvider serviceProvider)
     {
+        _cacheService = cacheService;
         _serviceProvider = serviceProvider;
     }
 
-    public PipelineBase? GetOrDefault(PipelineKey key)
+    public async Task<PipelineBase?> GetOrDefaultAsync(PipelineKey key, CancellationToken cancellationToken = default)
     {
-        if (!_map.TryGetValue(key.ToCacheKey().Key, out var value))
+        var pipelineInfo = await _cacheService.GetAsync<PipelineInfo>(key.ToCacheKey(), cancellationToken);
+
+        if (pipelineInfo is null)
         {
             return null;
         }
 
-        if (_serviceProvider.GetService(value.Type) is not PipelineBase pipeline)
+        if (_serviceProvider.GetService(pipelineInfo.Type) is not PipelineBase pipeline)
         {
             return null;
         }
 
-        while (pipeline.StagesLeft != value.StagesLeft)
+        while (pipeline.StagesLeft != pipelineInfo.StagesLeft)
         {
             pipeline.SkipStage();
         }
@@ -34,20 +37,18 @@ internal sealed class PipelineStore : IPipelineStore
         return pipeline;
     }
 
-    public void Remove(PipelineKey key)
+    public Task RemoveAsync(PipelineKey key, CancellationToken cancellationToken = default)
     {
-        _map.Remove(key.ToCacheKey().Key);
+        return _cacheService.DeleteAsync(key.ToCacheKey(), cancellationToken);
     }
 
-    public void Set(PipelineKey key, PipelineBase value)
+    public Task SetAsync(PipelineKey key, PipelineBase value, CancellationToken cancellationToken = default)
     {
-        _map.Add(key.ToCacheKey().Key, new PipelineInfo { Type = value.GetType(), StagesLeft = value.StagesLeft });
+        return _cacheService.SetAsync(
+            key.ToCacheKey(),
+            new PipelineInfo(value.GetType(), value.StagesLeft),
+            cancellationToken);
     }
 
-    private class PipelineInfo
-    {
-        public Type Type { get; set; } = null!;
-
-        public int StagesLeft { get; set; }
-    }
+    private record PipelineInfo(Type Type, int StagesLeft);
 }

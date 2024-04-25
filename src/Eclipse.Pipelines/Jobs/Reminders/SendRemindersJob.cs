@@ -32,7 +32,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
         var specification = new ReminderDtoNotifyAtSpecification(time);
 
-        var users = _userStore.GetCachedUsers()
+        var users = (await _userStore.GetCachedUsersAsync(context.CancellationToken))
             .Where(u => u.Reminders.Any(specification))
             .ToList();
 
@@ -45,7 +45,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
         foreach (var user in users)
         {
-            _localizer.ResetCultureForUserWithChatId(user.ChatId);
+            await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, context.CancellationToken);
 
             var messageSendings = user.Reminders
                 .Where(specification)
