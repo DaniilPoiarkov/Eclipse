@@ -1,8 +1,8 @@
-﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
-using Eclipse.Application.Localizations;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 

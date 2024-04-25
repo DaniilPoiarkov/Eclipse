@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Suggestions;
 

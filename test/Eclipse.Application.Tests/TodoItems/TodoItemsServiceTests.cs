@@ -35,7 +35,7 @@ public sealed class TodoItemsServiceTests
 
     [Fact]
     public async Task CreateAsync_WhenInputValid_ThenCreatedSuccessfully()
-    {   
+    {
         var user = IdentityUserGenerator.Generate(1).First();
 
         _repository.GetByExpressionAsync(_ => true)
@@ -86,7 +86,7 @@ public sealed class TodoItemsServiceTests
         var result = await Sut.CreateAsync(createModel);
 
         result.IsSuccess.Should().BeFalse();
-        
+
         var error = result.Error;
         error.Code.Should().Be(expectedError.Code);
         error.Description.Should().Be(expectedError.Description);

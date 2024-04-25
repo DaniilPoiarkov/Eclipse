@@ -29,7 +29,7 @@ public sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSugg
         var userResult = await _userService.GetByChatIdAsync(notification.ChatId, cancellationToken);
 
         var message = userResult.IsSuccess
-            ? $"Suggestion from {userResult.Value.Name}{userResult.Value.Username.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{notification.Text}"
+            ? $"Suggestion from {userResult.Value.Name}{userResult.Value.UserName.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{notification.Text}"
             : $"Suggestion from unknown user with chat id {notification.ChatId}:{Environment.NewLine}{notification.Text}";
 
         var send = new SendMessageModel

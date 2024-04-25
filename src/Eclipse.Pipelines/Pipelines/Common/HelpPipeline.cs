@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+
 using System.Text;
 
 namespace Eclipse.Pipelines.Pipelines.Common;

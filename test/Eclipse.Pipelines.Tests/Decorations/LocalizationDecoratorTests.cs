@@ -50,7 +50,7 @@ public sealed class LocalizationDecoratorTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
         var services = new ServiceCollection().BuildServiceProvider();
-        
+
         var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
 
         _cacheService.Get<string>(default!).ReturnsNullForAnyArgs();

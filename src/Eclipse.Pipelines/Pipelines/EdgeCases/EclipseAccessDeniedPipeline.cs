@@ -6,7 +6,7 @@ namespace Eclipse.Pipelines.Pipelines.EdgeCases;
 internal sealed class EclipseAccessDeniedPipeline : EclipsePipelineBase, IAccessDeniedPipeline
 {
     public void SetResults(IEnumerable<ValidationResult> results)
-    { 
+    {
         // Just ignore. We don't let users know that this is existing command
     }
 
