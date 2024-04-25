@@ -88,7 +88,7 @@ public static class EclipseInfrastructureModule
 
         services.AddDistributedMemoryCache(options =>
         {
-            
+
         });
 
         return services;

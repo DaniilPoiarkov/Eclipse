@@ -23,7 +23,7 @@ internal sealed class CacheService : ICacheService
     public async Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
     {
         var value = await GetAsync<T>(key, cancellationToken);
-        
+
         await DeleteAsync(key, cancellationToken);
 
         return value;
