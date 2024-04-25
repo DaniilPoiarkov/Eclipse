@@ -8,6 +8,14 @@ namespace Eclipse.Localization.Localizers;
 public interface ILocalizer
 {
     /// <summary>
+    /// Gets the default culture.
+    /// </summary>
+    /// <value>
+    /// The default.
+    /// </value>
+    string DefaultCulture { get; }
+
+    /// <summary>
     /// Localize given <a cref="key"></a> using <a cref="culture"></a> specification
     /// </summary>
     /// <param name="key">String which need to be localized</param>

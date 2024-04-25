@@ -11,11 +11,12 @@ internal sealed class EclipseLocalizer : IEclipseLocalizer
 
     private readonly ICacheService _cacheService;
 
-    private string Culture { get; set; } = "uk";
+    private string Culture { get; set; }
 
     public EclipseLocalizer(ILocalizer localizer, ICacheService cacheService)
     {
         _localizer = localizer;
+        Culture = localizer.DefaultCulture;
         _cacheService = cacheService;
     }
 
@@ -23,10 +24,9 @@ internal sealed class EclipseLocalizer : IEclipseLocalizer
 
     public async Task ResetCultureForUserWithChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        // TODO: Remove hardcoded culture
         Culture = await _cacheService.GetAsync<string>(
             new CacheKey($"lang-{chatId}"), cancellationToken
-        ) ?? "uk";
+        ) ?? _localizer.DefaultCulture;
     }
 
     public string ToLocalizableString(string value) =>
