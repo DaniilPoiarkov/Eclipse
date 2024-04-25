@@ -64,6 +64,7 @@ Data consistency.
 * Polly
 * Scrutor
 * Serilog
+* EFCore
 
 ### Testing
 * NSubstitute
