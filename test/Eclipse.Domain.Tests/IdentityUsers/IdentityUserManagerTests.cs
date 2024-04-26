@@ -19,23 +19,17 @@ public class IdentityUserManagerTests
         _repository = Substitute.For<IIdentityUserRepository>();
     }
 
-    [Fact]
-    public async Task CreateAsync_WhenModelValid_ThenCreatedUserReturned()
+    [Theory]
+    [InlineData("Name", "Surname", "UserName", 1)]
+    [InlineData("John", "Doe", "john.doe", 2)]
+    [InlineData("Jane", "Doe", "", 2)]
+    public async Task CreateAsync_WhenModelValid_ThenCreatedUserReturned(string name, string surname, string userName, long chatId)
     {
-        var name = "Name";
-        var surname = "Surname";
-        var chatId = 1;
-
-        var identityUser = IdentityUser.Create(
-            Guid.NewGuid(),
-            name,
-            surname,
-            string.Empty,
-            chatId);
+        var identityUser = IdentityUser.Create(Guid.NewGuid(), name, surname, userName, chatId);
 
         _repository.CreateAsync(identityUser).ReturnsForAnyArgs(identityUser);
 
-        var result = await Sut.CreateAsync(name, surname, string.Empty, chatId);
+        var result = await Sut.CreateAsync(name, surname, userName, chatId);
 
         result.IsSuccess.Should().BeTrue();
 

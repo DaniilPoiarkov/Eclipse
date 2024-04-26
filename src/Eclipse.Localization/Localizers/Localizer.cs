@@ -4,14 +4,17 @@ namespace Eclipse.Localization.Localizers;
 
 internal sealed class Localizer : ILocalizer
 {
+    public string DefaultCulture { get; }
+
     private readonly List<LocalizationResource> _resources;
 
     private readonly LocalizationResource _default;
 
-    public Localizer(List<LocalizationResource> resources, string @default)
+    public Localizer(List<LocalizationResource> resources, string defaultCulture)
     {
         _resources = resources;
-        _default = _resources.First(l => l.Culture == @default);
+        DefaultCulture = defaultCulture;
+        _default = _resources.First(l => l.Culture == defaultCulture);
     }
 
     public string this[string key, string? culture = null]
