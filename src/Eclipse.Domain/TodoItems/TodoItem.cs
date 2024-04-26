@@ -6,13 +6,11 @@ namespace Eclipse.Domain.TodoItems;
 
 public sealed class TodoItem : Entity
 {
-    private TodoItem(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished = false, DateTime? finishedAt = null) : base(id)
+    private TodoItem(Guid id, Guid userId, string text, DateTime createdAt) : base(id)
     {
         UserId = userId;
         Text = text;
         CreatedAt = createdAt;
-        IsFinished = isFinished;
-        FinishedAt = finishedAt;
     }
 
     /// <summary>
@@ -44,7 +42,7 @@ public sealed class TodoItem : Entity
 
     public string Text { get; private set; } = string.Empty;
 
-    public bool IsFinished { get; private set; } = false;
+    public bool IsFinished { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
 
