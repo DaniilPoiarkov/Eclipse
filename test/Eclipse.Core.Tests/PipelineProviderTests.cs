@@ -15,7 +15,7 @@ namespace Eclipse.Core.Tests;
 
 public class PipelineProviderTests
 {
-    private readonly IPipelineProvider _pipelineProvider;
+    private readonly PipelineProvider _pipelineProvider;
 
     public PipelineProviderTests()
     {

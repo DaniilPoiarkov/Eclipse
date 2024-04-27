@@ -23,7 +23,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
         RegisterStage(HandleChoice);
     }
 
-    private IResult AskMood(MessageContext context)
+    private async Task<IResult> AskMood(MessageContext context, CancellationToken cancellationToken = default)
     {
         var buttons = new InlineKeyboardButton[]
         {
@@ -31,12 +31,12 @@ public sealed class MorningPipeline : EclipsePipelineBase
             InlineKeyboardButton.WithCallbackData("👎"),
         };
 
-        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
         return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:Morning:AskMood"]));
     }
 
-    private IResult HandleChoice(MessageContext context)
+    private async Task<IResult> HandleChoice(MessageContext context, CancellationToken cancellationToken = default)
     {
         var text = context.Value switch
         {
@@ -45,7 +45,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
             _ => "Pipelines:Morning:NotDefined"
         };
 
-        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
         return EditedOrDefaultResult(message, Text(Localizer[text]));
     }

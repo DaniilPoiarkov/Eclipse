@@ -12,11 +12,11 @@ internal interface IUserStore
     /// <param name="user"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Result> AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default);
+    Task<Result> AddOrUpdateAsync(TelegramUser user, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieve cached users
     /// </summary>
     /// <returns></returns>
-    IReadOnlyList<IdentityUserDto> GetCachedUsers();
+    Task<IReadOnlyList<IdentityUserDto>> GetCachedUsersAsync(CancellationToken cancellationToken = default);
 }

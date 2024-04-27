@@ -27,7 +27,7 @@ internal sealed class EveningJob : EclipseJobBase
     {
         var time = DateTime.UtcNow.GetTime();
 
-        var users = _userStore.GetCachedUsers()
+        var users = (await _userStore.GetCachedUsersAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
                 && time.Add(u.Gmt) == Evening)
             .ToList();

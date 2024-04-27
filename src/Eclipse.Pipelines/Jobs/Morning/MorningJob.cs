@@ -53,7 +53,7 @@ internal sealed class MorningJob : EclipseJobBase
     {
         var time = DateTime.UtcNow.GetTime();
 
-        var users = _identityUserStore.GetCachedUsers()
+        var users = (await _identityUserStore.GetCachedUsersAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
                 && time.Add(u.Gmt) == Morning)
             .ToList();
@@ -69,28 +69,28 @@ internal sealed class MorningJob : EclipseJobBase
         {
 
             var key = new PipelineKey(user.ChatId);
-            _pipelineStore.Remove(key);
+            await _pipelineStore.RemoveAsync(key, context.CancellationToken);
 
             var pipeline = (_pipelineProvider.Get("/daily_morning") as EclipsePipelineBase)!;
 
-            _localizer.ResetCultureForUserWithChatId(user.ChatId);
+            await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, context.CancellationToken);
 
             pipeline.SetLocalizer(_localizer);
 
             var messageContext = new MessageContext(
                 user.ChatId,
                 string.Empty,
-                new TelegramUser(user.ChatId, user.Name, user.Surname, user.Username),
+                new TelegramUser(user.ChatId, user.Name, user.Surname, user.UserName),
                 _serviceProvider
             );
 
             var result = await pipeline.RunNext(messageContext, context.CancellationToken);
 
             notifications.Add(result.SendAsync(_botClient, context.CancellationToken));
-            
-            _pipelineStore.Set(key, pipeline);
+
+            await _pipelineStore.SetAsync(key, pipeline, context.CancellationToken);
         }
-        
+
         var messages = await Task.WhenAll(notifications);
 
         foreach (var message in messages)
@@ -99,8 +99,8 @@ internal sealed class MorningJob : EclipseJobBase
             {
                 continue;
             }
-            
-            _messageStore.Set(new MessageKey(message.Chat.Id), message);
+
+            await _messageStore.SetAsync(new MessageKey(message.Chat.Id), message, context.CancellationToken);
         }
     }
 }

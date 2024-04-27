@@ -50,7 +50,7 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
                     .SelectMany(r => r!.Texts)
                     .ToDictionary()
             });
-        
+
         foreach (var resource in resources)
         {
             var existing = _resources.FirstOrDefault(l => l.Culture == resource!.Culture);

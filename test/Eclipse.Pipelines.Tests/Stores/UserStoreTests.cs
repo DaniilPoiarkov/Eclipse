@@ -33,7 +33,7 @@ public sealed class UserStoreTests
     [Fact]
     public async Task AddOrUpdate_WhenUserNotExists_ThenCreatesUser_AndAddToCache()
     {
-        _identityUserCache.GetAll()
+        _identityUserCache.GetAllAsync()
             .Returns(new List<IdentityUserDto>());
 
         _identityUserService.GetByChatIdAsync(User.Id)
@@ -51,14 +51,14 @@ public sealed class UserStoreTests
                 Task.FromResult(Result<IdentityUserDto>.Success(dto))
             );
 
-        var result = await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdateAsync(User);
 
         result.IsSuccess.Should().BeTrue();
 
         await _identityUserService.ReceivedWithAnyArgs()
             .CreateAsync(new IdentityUserCreateDto());
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _identityUserCache.Received().AddOrUpdateAsync(dto);
     }
 
     [Fact]
@@ -66,16 +66,16 @@ public sealed class UserStoreTests
     {
         var dto = GetDto();
 
-        _identityUserCache.GetByChatId(User.Id).Returns(dto);
+        _identityUserCache.GetByChatIdAsync(User.Id).Returns(dto);
 
-        var result = await Sut.AddOrUpdate(new TelegramUser(1, dto.Name, dto.Surname, dto.Username));
+        var result = await Sut.AddOrUpdateAsync(new TelegramUser(1, dto.Name, dto.Surname, dto.UserName));
 
         result.IsSuccess.Should().BeTrue();
 
         await _identityUserService.DidNotReceiveWithAnyArgs()
             .UpdateAsync(dto.Id, new IdentityUserUpdateDto());
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _identityUserCache.Received().AddOrUpdateAsync(dto);
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public sealed class UserStoreTests
     {
         var dto = GetDto();
 
-        _identityUserCache.GetByChatId(User.Id).Returns(dto);
+        _identityUserCache.GetByChatIdAsync(User.Id).Returns(dto);
 
         var update = GetUpdateDto();
 
@@ -92,20 +92,20 @@ public sealed class UserStoreTests
                 Task.FromResult(Result<IdentityUserDto>.Success(dto))
             );
 
-        var result = await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdateAsync(User);
 
         result.IsSuccess.Should().BeTrue();
-        
+
         await _identityUserService.ReceivedWithAnyArgs()
             .UpdateAsync(dto.Id, update);
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _identityUserCache.Received().AddOrUpdateAsync(dto);
     }
 
     [Fact]
     public async Task AddOrUpdate_WhenUserNotCached_AndExistsInSystem__AndHasNewData_ThenCallsService_AndUpdatesCache()
     {
-        _identityUserCache.GetAll()
+        _identityUserCache.GetAllAsync()
             .Returns(new List<IdentityUserDto>());
 
         var dto = GetDto();
@@ -120,14 +120,14 @@ public sealed class UserStoreTests
                 Task.FromResult(Result<IdentityUserDto>.Success(dto))
             );
 
-        var result = await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdateAsync(User);
 
         result.IsSuccess.Should().BeTrue();
 
         await _identityUserService.ReceivedWithAnyArgs()
             .UpdateAsync(dto.Id, update);
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _identityUserCache.Received().AddOrUpdateAsync(dto);
     }
 
     private IdentityUserDto GetDto()
@@ -137,7 +137,7 @@ public sealed class UserStoreTests
             Id = Guid.NewGuid(),
             Name = "old_name",
             Surname = "old_surname",
-            Username = "old_username",
+            UserName = "old_username",
             ChatId = User.Id,
         };
     }
@@ -148,7 +148,7 @@ public sealed class UserStoreTests
         {
             Name = "new_name",
             Surname = "new_surname",
-            Username = "new_username",
+            UserName = "new_username",
         };
     }
 }

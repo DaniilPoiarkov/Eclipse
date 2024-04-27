@@ -15,7 +15,7 @@ public sealed class IdentityUserManager
     /// <summary>Creates the user asynchronous.</summary>
     /// <param name="name">The name.</param>
     /// <param name="surname">The surname.</param>
-    /// <param name="username">The username.</param>
+    /// <param name="userName">The userName.</param>
     /// <param name="chatId">The telegram chat identifier.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Created user</returns>
@@ -23,7 +23,7 @@ public sealed class IdentityUserManager
     /// username
     /// already exists</exception>
     public async Task<Result<IdentityUser>> CreateAsync(
-        string name, string surname, string username, long chatId, CancellationToken cancellationToken = default)
+        string name, string surname, string userName, long chatId, CancellationToken cancellationToken = default)
     {
         var alreadyExist = await _identityUserRepository.ContainsAsync(
             expression: u => u.ChatId == chatId,
@@ -34,7 +34,7 @@ public sealed class IdentityUserManager
             return UserDomainErrors.DuplicateData(nameof(chatId), chatId);
         }
 
-        var identityUser = IdentityUser.Create(Guid.NewGuid(), name, surname, username, chatId);
+        var identityUser = IdentityUser.Create(Guid.NewGuid(), name, surname, userName, chatId);
 
         return await _identityUserRepository.CreateAsync(identityUser, cancellationToken);
     }
@@ -54,9 +54,9 @@ public sealed class IdentityUserManager
         return _identityUserRepository.FindAsync(id, cancellationToken);
     }
 
-    public async Task<IdentityUser?> FindByUsernameAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<IdentityUser?> FindByUsernameAsync(string userName, CancellationToken cancellationToken = default)
     {
-        return (await _identityUserRepository.GetByExpressionAsync(u => u.Username == username, cancellationToken))
+        return (await _identityUserRepository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
             .SingleOrDefault();
     }
 

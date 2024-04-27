@@ -28,8 +28,11 @@ public sealed class IdentityUserLogicServiceTests
             ));
     }
 
-    [Fact]
-    public async Task SetUserGmtTimeAsync_WhenTimeIsValid_ThenUpdatedSuccessfully()
+    [Theory]
+    [InlineData(-4)]
+    [InlineData(4)]
+    [InlineData(11)]
+    public async Task SetUserGmtTimeAsync_WhenTimeIsValid_ThenUpdatedSuccessfully(int time)
     {
         var user = IdentityUserGenerator.Generate(1).First();
 
@@ -38,12 +41,12 @@ public sealed class IdentityUserLogicServiceTests
 
         var utc = DateTime.UtcNow;
 
-        var hour = utc.Hour - 4 < 0
-            ? utc.Hour + 20
-            : utc.Hour - 4;
+        var hour = utc.Hour + time > 23
+            ? utc.Hour - (24 - time)
+            : utc.Hour + time;
 
         var currentUserTime = new TimeOnly(hour, utc.Minute);
-        var expected = new TimeSpan(-4, 0, 0);
+        var expected = new TimeSpan(time, 0, 0);
 
         var result = await Sut.SetUserGmtTimeAsync(user.Id, currentUserTime);
 

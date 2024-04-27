@@ -1,20 +1,20 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
+using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
+using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.UpdateHandler;
-using Eclipse.Pipelines.Users;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
-using Eclipse.Pipelines.Options.Languages;
-using Eclipse.Pipelines.Health;
+using Eclipse.Pipelines.UpdateHandler;
+using Eclipse.Pipelines.Users;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Builder;
 
 using Serilog;
 
@@ -87,7 +87,7 @@ public static class EclipsePipelinesModule
         var webhookInfo = await client.GetWebhookInfoAsync();
 
         var url = configuration["Telegram:WebhookUrl"]!;
-        
+
         if (webhookInfo is not null && webhookInfo.Url.Equals(url))
         {
             return;

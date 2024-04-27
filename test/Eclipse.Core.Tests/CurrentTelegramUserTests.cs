@@ -23,6 +23,6 @@ public class CurrentTelegramUserTests
         result!.Id.Should().Be(user.Id);
         result.Name.Should().Be(user.Name);
         result.Surname.Should().Be(user.Surname);
-        result.Username.Should().Be(user.Username);
+        result.UserName.Should().Be(user.UserName);
     }
 }

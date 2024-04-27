@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("Eclipse.Localization.Tests")]
+[assembly: InternalsVisibleTo("Eclipse.Localization.Tests")]

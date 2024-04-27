@@ -14,9 +14,9 @@ internal sealed class IdentityUserCache : IIdentityUserCache
         _cacheService = cacheService;
     }
 
-    public void AddOrUpdate(IdentityUserDto user)
+    public async Task AddOrUpdateAsync(IdentityUserDto user, CancellationToken cancellationToken = default)
     {
-        var users = GetList();
+        var users = await GetListAsync(cancellationToken);
 
         var existing = users.FirstOrDefault(u => u.Id == user.Id);
 
@@ -27,23 +27,23 @@ internal sealed class IdentityUserCache : IIdentityUserCache
 
         users.Add(user);
 
-        _cacheService.Set(Key, users);
+        await _cacheService.SetAsync(Key, users, cancellationToken);
     }
 
-    public IdentityUserDto? GetByChatId(long chatId)
+    public async Task<IdentityUserDto?> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        return GetList().FirstOrDefault(u => u.ChatId == chatId);
+        return (await GetListAsync(cancellationToken)).FirstOrDefault(u => u.ChatId == chatId);
     }
 
-    public IdentityUserDto? GetById(Guid userId)
+    public async Task<IdentityUserDto?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return GetList().FirstOrDefault(u => u.Id == userId);
+        return (await GetListAsync(cancellationToken)).FirstOrDefault(u => u.Id == userId);
     }
 
-    public IReadOnlyList<IdentityUserDto> GetAll() => GetList().AsReadOnly();
+    public async Task<IReadOnlyList<IdentityUserDto>> GetAllAsync(CancellationToken cancellationToken = default) => (await GetListAsync(cancellationToken)).AsReadOnly();
 
-    private List<IdentityUserDto> GetList()
+    private async Task<List<IdentityUserDto>> GetListAsync(CancellationToken cancellationToken = default)
     {
-        return _cacheService.Get<List<IdentityUserDto>>(Key) ?? [];
+        return (await _cacheService.GetAsync<List<IdentityUserDto>>(Key, cancellationToken)) ?? [];
     }
 }

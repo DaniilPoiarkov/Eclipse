@@ -8,7 +8,9 @@ namespace Eclipse.Core.Pipelines;
 
 public abstract class PipelineBase : Pipeline
 {
-    public bool IsFinished => _stages.Count == 0;
+    public bool IsFinished => StagesLeft == 0;
+
+    public int StagesLeft => _stages.Count;
 
     private readonly Queue<IStage> _stages = new();
 
@@ -72,4 +74,9 @@ public abstract class PipelineBase : Pipeline
     protected void RegisterStage(Func<MessageContext, CancellationToken, Task<IResult>> stage) => RegisterStage(new Stage(stage));
     protected void RegisterStage(Func<MessageContext, Task<IResult>> stage) => RegisterStage(new Stage(stage));
     protected void RegisterStage(Func<MessageContext, IResult> stage) => RegisterStage(new Stage(stage));
+
+    public void SkipStage()
+    {
+        _stages.Dequeue();
+    }
 }

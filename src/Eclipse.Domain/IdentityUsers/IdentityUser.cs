@@ -5,71 +5,52 @@ using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 
-using Newtonsoft.Json;
-
 namespace Eclipse.Domain.IdentityUsers;
 
 public sealed class IdentityUser : AggregateRoot
 {
-    private IdentityUser(Guid id, string name, string surname, string username, long chatId)
+    private IdentityUser(Guid id, string name, string surname, string userName, long chatId)
         : base(id)
     {
         Name = name;
         Surname = surname;
-        Username = username;
+        UserName = userName;
         ChatId = chatId;
-        
-        Gmt = default;
-        Culture = string.Empty;
-
-        _reminders = [];
-        _todoItems = [];
     }
 
-    [JsonConstructor]
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    private IdentityUser()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    {
-        
-    }
+    private IdentityUser() { }
 
-    [JsonProperty(nameof(Reminders))]
-    private readonly List<Reminder> _reminders;
+    private readonly List<Reminder> _reminders = [];
 
-    [JsonProperty(nameof(TodoItems))]
-    private readonly List<TodoItem> _todoItems;
+    private readonly List<TodoItem> _todoItems = [];
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Surname { get; set; }
+    public string Surname { get; set; } = string.Empty;
 
-    public string Username { get; set; }
+    public string UserName { get; set; } = string.Empty;
 
     public long ChatId { get; init; }
 
-    public string Culture { get; set; }
+    public string Culture { get; set; } = string.Empty;
 
     public bool NotificationsEnabled { get; set; }
 
-    [JsonProperty]
     public TimeSpan Gmt { get; private set; }
 
-    [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
-    
-    [JsonIgnore]
+
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static IdentityUser Create(Guid id, string name, string surname, string username, long chatId)
+    internal static IdentityUser Create(Guid id, string name, string surname, string userName, long chatId)
     {
-        var user = new IdentityUser(id, name, surname, username, chatId);
-        
-        user.AddEvent(new NewUserJoinedDomainEvent(id, username, name, surname));
+        var user = new IdentityUser(id, name, surname, userName, chatId);
+
+        user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
 
         return user;
     }
@@ -107,23 +88,22 @@ public sealed class IdentityUser : AggregateRoot
     /// <param name="currentUserTime">The current user time.</param>
     public void SetGmt(TimeOnly currentUserTime)
     {
-        var utc = DateTime.UtcNow;
-        var now = new TimeOnly(utc.Hour, utc.Minute);
+        var now = DateTime.UtcNow.GetTime();
 
-        Gmt = currentUserTime > now
-            ? currentUserTime - now
-            : (now - currentUserTime) * -1;
+        var offset = currentUserTime - now;
 
-        var day = new TimeSpan(24, 0, 0);
+        var day = TimeSpan.FromHours(24);
 
-        if (Gmt < new TimeSpan(-12, 0, 0))
+        if (offset < TimeSpan.FromHours(-12))
         {
-            Gmt += day;
+            offset += day;
         }
-        if (Gmt > new TimeSpan(12, 0, 0))
+        if (offset > TimeSpan.FromHours(12))
         {
-            Gmt -= day;
+            offset -= day;
         }
+
+        Gmt = offset;
     }
 
     /// <summary>Adds the todo item.</summary>
@@ -137,7 +117,7 @@ public sealed class IdentityUser : AggregateRoot
         }
 
         var result = TodoItem.Create(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
-        
+
         if (!result.IsSuccess)
         {
             return result.Error;
@@ -170,5 +150,10 @@ public sealed class IdentityUser : AggregateRoot
         }
 
         return item;
+    }
+
+    public override string ToString()
+    {
+        return $"Name: {Name}, UserName:{UserName} {base.ToString()}";
     }
 }

@@ -16,9 +16,9 @@ internal sealed class UserStore : IUserStore
         _userCache = userCache;
     }
 
-    public async Task<Result> AddOrUpdate(TelegramUser user, CancellationToken cancellationToken = default)
+    public async Task<Result> AddOrUpdateAsync(TelegramUser user, CancellationToken cancellationToken = default)
     {
-        var cached = _userCache.GetByChatId(user.Id);
+        var cached = await _userCache.GetByChatIdAsync(user.Id, cancellationToken);
 
         if (cached is not null)
         {
@@ -35,7 +35,7 @@ internal sealed class UserStore : IUserStore
         var createUserDto = new IdentityUserCreateDto
         {
             Name = user.Name,
-            Username = user.Username ?? string.Empty,
+            UserName = user.UserName ?? string.Empty,
             Surname = user.Surname,
             ChatId = user.Id
         };
@@ -47,24 +47,24 @@ internal sealed class UserStore : IUserStore
             return creationResult.Error;
         }
 
-        _userCache.AddOrUpdate(creationResult.Value);
+        await _userCache.AddOrUpdateAsync(creationResult.Value, cancellationToken);
         return Result.Success();
     }
 
-    public IReadOnlyList<IdentityUserDto> GetCachedUsers() => _userCache.GetAll();
+    public Task<IReadOnlyList<IdentityUserDto>> GetCachedUsersAsync(CancellationToken cancellationToken = default) => _userCache.GetAllAsync(cancellationToken);
 
     private async Task<Result> CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
     {
         if (HaveSameValues(identityDto, telegramUser))
         {
-            _userCache.AddOrUpdate(identityDto);
+            await _userCache.AddOrUpdateAsync(identityDto, cancellationToken);
             return Result.Success();
         }
 
         var updateDto = new IdentityUserUpdateDto
         {
             Name = telegramUser.Name,
-            Username = telegramUser.Username,
+            UserName = telegramUser.UserName,
             Surname = telegramUser.Surname
         };
 
@@ -75,14 +75,14 @@ internal sealed class UserStore : IUserStore
             return result.Error;
         }
 
-        _userCache.AddOrUpdate(result);
+        await _userCache.AddOrUpdateAsync(result, cancellationToken);
 
         return Result.Success();
 
         static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
         {
             return identityDto.Name == telegramUser.Name
-                && identityDto.Username == telegramUser.Username
+                && identityDto.UserName == telegramUser.UserName
                 && identityDto.Surname == telegramUser.Surname;
         }
     }

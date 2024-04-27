@@ -7,7 +7,7 @@ public sealed class IdentityUserUpdateDto
 
     public string? Surname { get; set; } = null;
 
-    public string? Username { get; set; } = null;
+    public string? UserName { get; set; } = null;
 
     public long? ChatId { get; init; } = null;
 

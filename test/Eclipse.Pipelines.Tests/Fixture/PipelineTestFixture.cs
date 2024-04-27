@@ -35,7 +35,7 @@ public abstract class PipelineTestFixture<TPipeline>
             .AddSingleton(CurrentTelegramUser)
             .AddSingleton(Localizer)
             .AddSingleton(BotClient);
-        
+
         ConfigureServices(services);
 
         ServiceProvider = services.BuildServiceProvider();
@@ -45,7 +45,7 @@ public abstract class PipelineTestFixture<TPipeline>
 
     protected virtual void ConfigureServices(IServiceCollection services)
     {
-        
+
     }
 
     protected MessageContext GetContext(string value)
