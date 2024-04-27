@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Eclipse.Common\Eclipse.Common.csproj" />
+    <ProjectReference Include="..\Common\Eclipse.Common\Eclipse.Common.csproj" />
     <ProjectReference Include="..\Eclipse.Localization\Eclipse.Localization.csproj" />
   </ItemGroup>
 
