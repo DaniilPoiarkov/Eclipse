@@ -5,40 +5,44 @@ services:
     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
     container_name: cosmosdb
     restart: always
+    tty: true
     ports:
       - 8081:8081
       - 8900:8900
+      - 8901:8901
+      - 8979:8979
+      - 10250:10250
+      - 10251:10251
+      - 10252:10252
+      - 10253:10253
+      - 10254:10254
+      - 10255:10255
+      - 10256:10256
+      - 10350:10350
     environment:
       - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
     networks:
       - eclipse
     volumes:
       - eclipse:/data
 
-  # backend:
-  #   image: ${DOCKER_REGISTRY-}eclipse
-  #   container_name: eclipse-webapi
-  #   build: 
-  #     context: ../
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - Azure__CosmosOptions__ConnectionString=AccountEndpoint=https://database:8900/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;
-  #     - Azure__CosmosOptions__DatabaseId=eclipse
-  #     - Telegram__Token=6159886640:AAEN05jzRHb2tEk-FtdMJ1yDpDy24aPrV-0
-  #     - Telegram__Chat=397223698
-  #     - Telegram__WebhookUrl=https://2102-46-219-229-74.ngrok-free.app/api/eclipse/_handle
-  #     - Telegram__SecetToken=my_sup3r_s3cr3t_t0k3n
-  #     - Authorization__EclipseApiKey=my_sup3r_s3cr3t_ap1_k3y
-  #   ports:
-  #     - 7236:7236
-  #   networks:
-  #     - eclipse
-  #   depends_on:
-  #     - database
+  backend:
+    image: ${DOCKER_REGISTRY-}eclipse
+    container_name: eclipse-webapi
+    build: 
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+    ports:
+      - 7236:8080
+    networks:
+      - eclipse
+    depends_on:
+      - database
 
 networks:
   eclipse:
 
 volumes:
   eclipse:
-  
