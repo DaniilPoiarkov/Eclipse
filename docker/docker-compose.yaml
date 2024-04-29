@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  database:
+  cosmosdb:
     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
     container_name: cosmosdb
     restart: always
@@ -9,16 +9,6 @@ services:
     ports:
       - 8081:8081
       - 8900:8900
-      - 8901:8901
-      - 8979:8979
-      - 10250:10250
-      - 10251:10251
-      - 10252:10252
-      - 10253:10253
-      - 10254:10254
-      - 10255:10255
-      - 10256:10256
-      - 10350:10350
     environment:
       - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
       - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
@@ -30,16 +20,26 @@ services:
   backend:
     image: ${DOCKER_REGISTRY-}eclipse
     container_name: eclipse-webapi
-    build: 
+    build:
       context: ../
       dockerfile: Dockerfile
     environment:
+      - Azure__CosmosOptions__ConnectionString=
+      - Telegram__Token=
+      - Telegram__Chat=
+      - Telegram__WebhookUrl=/api/eclipse/_handle
+      - Telegram__SecretToken=my_Sup3r_S3cr3t_T0k3n
+      - Authorization__EclipseApiKey=my_sup3r_s3cr3t_ap1_k3y
+      - Google__ServiceApiKey=
+      - 'Google__Credentials='
+      - Sheets__SheetId=
+      - Sheets__SuggestionsRange=
     ports:
-      - 7236:8080
+      - 7236:7236
     networks:
       - eclipse
     depends_on:
-      - database
+      - cosmosdb
 
 networks:
   eclipse:
