@@ -19,7 +19,7 @@ public abstract class PipelineBase : Pipeline
         Initialize();
     }
 
-    public virtual async Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
+    public virtual Task<IResult> RunNext(MessageContext context, CancellationToken cancellationToken = default)
     {
         var decorations = context.Services.GetServices<IPipelineExecutionDecorator>();
 
@@ -29,13 +29,13 @@ public abstract class PipelineBase : Pipeline
         {
             var inner = execution;
 
-            execution = async (context, token) =>
+            execution = (context, token) =>
             {
-                return await stage.Decorate(inner, context, token);
+                return stage.Decorate(inner, context, token);
             };
         }
 
-        return await execution(context, cancellationToken);
+        return execution(context, cancellationToken);
     }
 
     private async Task<IResult> RunAsync(MessageContext context, CancellationToken cancellationToken = default)

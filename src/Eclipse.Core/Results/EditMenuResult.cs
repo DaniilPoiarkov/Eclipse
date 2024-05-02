@@ -4,7 +4,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Core.Results;
 
-public class EditMenuResult : ResultBase
+public sealed class EditMenuResult : ResultBase
 {
     public int MessageId { get; }
 

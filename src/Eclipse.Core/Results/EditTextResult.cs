@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Core.Results;
 
-public class EditTextResult : ResultBase
+public sealed class EditTextResult : ResultBase
 {
     public int MessageId { get; }
 
