@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Core.Results;
 
-public class EmptyResult : ResultBase
+public sealed class EmptyResult : ResultBase
 {
     public override Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
