@@ -9,7 +9,7 @@ internal class Test2Pipeline : PipelineBase
     protected override void Initialize()
     {
         RegisterStage(_ => Empty());
-        
+
         RegisterStage(_ =>
         {
             FinishPipeline();

@@ -62,13 +62,13 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
     public async Task WhenUserHasMessage_ThenMultipleResultReturned()
     {
         var messageStore = ServiceProvider.GetRequiredService<IMessageStore>();
-        
+
         var message = new Message
         {
             ReplyMarkup = new InlineKeyboardMarkup(new InlineKeyboardButton("test"))
         };
 
-        messageStore.GetOrDefault(default!).ReturnsForAnyArgs(message);
+        messageStore.GetOrDefaultAsync(default!).ReturnsForAnyArgs(message);
         var context = GetContext("/daily_morning");
 
         // First message act

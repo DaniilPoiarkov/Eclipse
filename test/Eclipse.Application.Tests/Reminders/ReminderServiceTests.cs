@@ -116,7 +116,7 @@ public sealed class ReminderServiceTests
         dto.Should().NotBeNull();
         dto.Id.Should().Be(dto.Id);
         dto.Reminders.Count.Should().Be(1);
-        
+
         var leftReminder = dto.Reminders[0];
         leftReminder.Text.Should().Be(text);
         leftReminder.NotifyAt.Should().Be(furtureTime);

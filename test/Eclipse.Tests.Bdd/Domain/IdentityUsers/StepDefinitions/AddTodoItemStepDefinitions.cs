@@ -35,5 +35,5 @@ public sealed class AddTodoItemStepDefinitions
 
 file class CreateTodoItem
 {
-    public string? Text { get; set;}
+    public string? Text { get; set; }
 }

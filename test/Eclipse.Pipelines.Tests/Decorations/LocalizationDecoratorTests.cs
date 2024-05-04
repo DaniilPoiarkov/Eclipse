@@ -50,19 +50,19 @@ public sealed class LocalizationDecoratorTests
     {
         var user = IdentityUserGenerator.Generate(1).First();
         var services = new ServiceCollection().BuildServiceProvider();
-        
+
         var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
 
-        _cacheService.Get<string>(default!).ReturnsNullForAnyArgs();
+        _cacheService.GetAsync<string>(default!).ReturnsNullForAnyArgs();
 
         _repository.GetByExpressionAsync(_ => true)
             .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
 
         await Sut.Decorate(_execution, context);
 
-        _cacheService.ReceivedWithAnyArgs().Get<string>(default!);
+        await _cacheService.ReceivedWithAnyArgs().GetAsync<string>(default!);
         await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
-        _cacheService.ReceivedWithAnyArgs().Set(default!, user.Culture);
-        _localizer.Received().CheckCulture(user.ChatId);
+        await _cacheService.ReceivedWithAnyArgs().SetAsync(default!, user.Culture);
+        await _localizer.Received().ResetCultureForUserWithChatIdAsync(user.ChatId);
     }
 }
