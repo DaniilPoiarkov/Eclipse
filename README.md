@@ -65,6 +65,7 @@ Data persistence with EF Core Cosmos Db provider.
 * Scrutor
 * Serilog
 * EFCore
+* Redis
 
 ### Testing
 * NSubstitute
