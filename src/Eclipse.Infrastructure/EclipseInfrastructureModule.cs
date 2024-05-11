@@ -7,6 +7,7 @@ using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.EventBus;
 using Eclipse.Infrastructure.Google;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +29,7 @@ public static class EclipseInfrastructureModule
     {
         services
             .AddSerilogIntegration()
-            .AddMemoryCacheIntegration()
+            .AddCache()
             .AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
@@ -80,11 +81,23 @@ public static class EclipseInfrastructureModule
         return services;
     }
 
-    private static IServiceCollection AddMemoryCacheIntegration(this IServiceCollection services)
+    private static IServiceCollection AddCache(this IServiceCollection services)
     {
-        services
-            .AddDistributedMemoryCache()
-            .AddSingleton<ICacheService, CacheService>();
+        var configuration = services.GetConfiguration();
+
+        if (bool.Parse(configuration["IsRedisEnabled"]!))
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
+            });
+        }
+        else
+        {
+            services.AddDistributedMemoryCache();
+        }
+
+        services.AddSingleton<ICacheService, CacheService>();
 
         return services;
     }
