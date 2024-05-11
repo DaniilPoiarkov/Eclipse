@@ -5,7 +5,7 @@ namespace Eclipse.Common.Tests.Pagination;
 public class PaginationListTests
 {
     [Theory]
-    [InlineData(105, 2, 10,  10, 11, 20, 9)]
+    [InlineData(105, 2, 10, 10, 11, 20, 9)]
     [InlineData(10, 1, 5, 5, 2, 5, -1)]
     [InlineData(17, 3, 5, 5, 4, 15, 9)]
     [InlineData(22, 2, 15, 7, 2, 22, 14)]

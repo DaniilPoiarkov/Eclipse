@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Suggestions;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Tests.Generators;
@@ -15,7 +14,7 @@ namespace Eclipse.Application.Tests.Suggestions;
 
 public class SuggestionServiceTests
 {
-    private readonly ISuggestionsService _sut;
+    private readonly SuggestionsService _sut;
 
     public SuggestionServiceTests()
     {

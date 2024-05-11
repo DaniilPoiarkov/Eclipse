@@ -33,10 +33,10 @@ public sealed class ApiKeyAuthorizeEndpointFilter : IEndpointFilter
         return await next(context);
     }
 
-    private static async Task SendUnauthorizedResponse(HttpResponse response, string error)
+    private static Task SendUnauthorizedResponse(HttpResponse response, string error)
     {
         response.StatusCode = StatusCodes.Status401Unauthorized;
-        await response.WriteAsJsonAsync(new
+        return response.WriteAsJsonAsync(new
         {
             Error = error
         });

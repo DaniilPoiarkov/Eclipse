@@ -38,7 +38,10 @@ internal sealed class CacheService : ICacheService
             return default;
         }
 
-        return JsonConvert.DeserializeObject<T>(json);
+        return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
+        {
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+        });
     }
 
     public Task SetAsync<T>(CacheKey key, T value, CancellationToken cancellationToken = default)
