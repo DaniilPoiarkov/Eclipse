@@ -1,21 +1,36 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  cosmosdb:
-    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
-    container_name: cosmosdb
+  # cosmosdb:
+  #   image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+  #   container_name: cosmosdb
+  #   hostname: cosmosdb
+  #   restart: always
+  #   tty: true
+  #   ports:
+  #     - 8081:8081
+  #     - 10251:10251
+  #   environment:
+  #     - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+  #     - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+  #     - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=172.28.144.1
+  #   networks:
+  #     eclipse:
+  #       aliases:
+  #         - "cosmosdb"
+  #   volumes:
+  #     - eclipse:/data
+    
+  cache:
+    image: redis/redis-stack-server:latest
+    container_name: eclipse-cache
     restart: always
-    tty: true
     ports:
-      - 8081:8081
-      - 8900:8900
-    environment:
-      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
-      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+      - 6379:6379
+    volumes:
+      - eclipse:/cache
     networks:
       - eclipse
-    volumes:
-      - eclipse:/data
 
   backend:
     image: ${DOCKER_REGISTRY-}eclipse
@@ -23,23 +38,27 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
-    environment:
-      - Azure__CosmosOptions__ConnectionString=
-      - Telegram__Token=
-      - Telegram__Chat=
-      - Telegram__WebhookUrl=/api/eclipse/_handle
-      - Telegram__SecretToken=my_Sup3r_S3cr3t_T0k3n
-      - Authorization__EclipseApiKey=my_sup3r_s3cr3t_ap1_k3y
-      - Google__ServiceApiKey=
-      - 'Google__Credentials='
-      - Sheets__SheetId=
-      - Sheets__SuggestionsRange=
     ports:
-      - 7236:7236
+      - 8080:8080
     networks:
       - eclipse
     depends_on:
-      - cosmosdb
+      # - cosmosdb
+      - cache
+    # entrypoint: >
+    #   sh -c '
+    #   apt-get update &&
+    #   apt-get install curl -y &&
+    #   echo "Preparation and installing cosmosdb certificate.." &&
+    #   mkdir /usr/share/ca-certificates/cosmos &&
+    #   echo "Directory created" &&
+    #   curl -k https://localhost:8081/_explorer/emulator.pem > /usr/share/ca-certificates/cosmos/emulator.crt &&
+    #   echo "Certificate downloaded" &&
+    #   chmod o+r /usr/share/ca-certificates/cosmos/emulator.crt &&
+    #   echo "cosmos/emulator.crt" >> /etc/ca-certificates.conf &&
+    #   update-ca-certificates &&
+    #   echo "Downloaded certificate." &&
+    #   dotnet Eclipse.WebAPI.dll'
 
 networks:
   eclipse:

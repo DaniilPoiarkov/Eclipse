@@ -1,0 +1,26 @@
+version: '3.8'
+
+# To use Google sheets go to google console, create new project, enable sheets API, and paste credentials in Google__Credentials variable.
+# Also set:
+#   Settings__IsGoogleEnabled=true
+#   Sheets__SheetId=<Your sheet id>
+#   Sheets__SuggestionsRange=<page and range>(e.g. Page1!A:D)
+
+# Here specified default cosmosdb emulator connection string.
+# You can replace it with real connection to your Azure CosmosDb instance.
+
+# Specify your own telegram bot token
+# Specify your telegram id to obtain access to admin menu
+# Replace {host} in Telegram__WebhookUrl variable with webhook url. See ngrok documentation.
+
+services:
+  backend:
+    environment:
+      - Azure__CosmosOptions__ConnectionString=AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+      - Telegram__Token=      
+      - Telegram__Chat=
+      - Telegram__WebhookUrl={host}/api/eclipse/_handle
+      - 'Google__Credentials='
+      - Sheets__SheetId=
+      - Sheets__SuggestionsRange=
+      - Settings__IsGoogleEnabled=false

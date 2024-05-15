@@ -44,6 +44,14 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
+        var configuration = services.GetConfiguration();
+
+        if (!bool.Parse(configuration["Settings:IsGoogleEnabled"]!))
+        {
+            return services
+                .AddSingleton<ISheetsService, NullSheetsService>();
+        }
+
         services
             .AddSingleton<IGoogleClient, GoogleClient>()
             .AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
@@ -85,7 +93,7 @@ public static class EclipseInfrastructureModule
     {
         var configuration = services.GetConfiguration();
 
-        if (bool.Parse(configuration["IsRedisEnabled"]!))
+        if (bool.Parse(configuration["Settings:IsRedisEnabled"]!))
         {
             services.AddStackExchangeRedisCache(options =>
             {
