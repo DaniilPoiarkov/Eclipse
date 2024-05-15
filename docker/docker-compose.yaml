@@ -1,25 +1,28 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # cosmosdb:
-  #   image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
-  #   container_name: cosmosdb
-  #   hostname: cosmosdb
-  #   restart: always
-  #   tty: true
-  #   ports:
-  #     - 8081:8081
-  #     - 10251:10251
-  #   environment:
-  #     - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
-  #     - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
-  #     - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=172.28.144.1
-  #   networks:
-  #     eclipse:
-  #       aliases:
-  #         - "cosmosdb"
-  #   volumes:
-  #     - eclipse:/data
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    container_name: cosmosdb
+    restart: always
+    ports:
+      - 8081:8081
+      - 10251:10251
+      - 10252:10252
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE="cosmosdb"
+    networks:
+      - eclipse
+    volumes:
+      - eclipse:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:8081/_explorer/emulator.pem"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 40s
     
   cache:
     image: redis/redis-stack-server:latest
@@ -31,6 +34,12 @@ services:
       - eclipse:/cache
     networks:
       - eclipse
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
 #git stash pop
   backend:
     image: ${DOCKER_REGISTRY-}eclipse
@@ -38,30 +47,20 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
+    
     ports:
       - 8080:8080
     networks:
       - eclipse
     depends_on:
-      # - cosmosdb
-      - cache
-    # entrypoint: >
-    #   sh -c '
-    #   apt-get update &&
-    #   apt-get install curl -y &&
-    #   echo "Preparation and installing cosmosdb certificate.." &&
-    #   mkdir /usr/share/ca-certificates/cosmos &&
-    #   echo "Directory created" &&
-    #   curl -k https://localhost:8081/_explorer/emulator.pem > /usr/share/ca-certificates/cosmos/emulator.crt &&
-    #   echo "Certificate downloaded" &&
-    #   chmod o+r /usr/share/ca-certificates/cosmos/emulator.crt &&
-    #   echo "cosmos/emulator.crt" >> /etc/ca-certificates.conf &&
-    #   update-ca-certificates &&
-    #   echo "Downloaded certificate." &&
-    #   dotnet Eclipse.WebAPI.dll'
+      cosmosdb:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
 
 networks:
   eclipse:
+    driver: bridge
 
 volumes:
   eclipse:

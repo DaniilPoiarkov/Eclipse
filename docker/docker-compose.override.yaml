@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 # To use Google sheets go to google console, create new project, enable sheets API, and paste credentials in Google__Credentials variable.
 # Also set:
