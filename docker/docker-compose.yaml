@@ -31,7 +31,7 @@ services:
       - eclipse:/cache
     networks:
       - eclipse
-
+#git stash pop
   backend:
     image: ${DOCKER_REGISTRY-}eclipse
     container_name: eclipse-webapi
