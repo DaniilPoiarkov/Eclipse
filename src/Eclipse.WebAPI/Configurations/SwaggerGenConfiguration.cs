@@ -28,5 +28,39 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 
             options.SwaggerDoc(description.GroupName, openApiInfo);
         }
+
+        ConfigureApiKeySecurityDefinition(options);
+    }
+
+    private static void ConfigureApiKeySecurityDefinition(SwaggerGenOptions options)
+    {
+        var apiKeySecurity = "X-Api-Key";
+
+        options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
+        {
+            Description = "API-KEY based authorization. Enter your API-KEY to access not public API",
+            Scheme = "ApiKeyScheme",
+            Name = apiKeySecurity,
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+        });
+
+        var scheme = new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = apiKeySecurity
+            },
+
+            In = ParameterLocation.Header
+        };
+
+        var requirement = new OpenApiSecurityRequirement
+        {
+            { scheme, Array.Empty<string>() }
+        };
+
+        options.AddSecurityRequirement(requirement);
     }
 }
