@@ -15,7 +15,7 @@ namespace Eclipse.IntegrationTests.Users;
 
 public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
 {
-    public UsersGetPaginatedIntegrationTest(TestWebAppFactory factory)
+    public UsersGetPaginatedIntegrationTest(WebAppFactoryWithTestcontainers factory)
         : base(factory)
     {
         AddAppAuthorizationHeader();
