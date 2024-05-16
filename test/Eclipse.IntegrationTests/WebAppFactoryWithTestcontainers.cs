@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Eclipse.Domain.Shared.Repositories;
+
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -10,14 +13,20 @@ using NSubstitute;
 using Telegram.Bot;
 
 using Testcontainers.CosmosDb;
+using Testcontainers.Redis;
 
 namespace Eclipse.IntegrationTests;
 
-public sealed class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly CosmosDbContainer _dbContainer = new CosmosDbBuilder()
         .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
         .WithName($"eclipse_cosmosdb_{Guid.NewGuid()}")
+        .Build();
+
+    private readonly RedisContainer _redisContainer = new RedisBuilder()
+        .WithImage("redis/redis-stack-server:latest")
+        .WithName("eclipse_redis")
         .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -26,20 +35,32 @@ public sealed class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLi
         {
             ConfigureCosmosClient(services);
             ConfigureTelegramBot(services);
+            ConfigureRedis(services);
         });
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        return _dbContainer.StartAsync();
+        await _dbContainer.StartAsync();
+        await _redisContainer.StartAsync();
     }
 
-    Task IAsyncLifetime.DisposeAsync()
+    async Task IAsyncLifetime.DisposeAsync()
     {
-        return _dbContainer.StopAsync();
+        await _dbContainer.StopAsync();
+        await _redisContainer.StopAsync();
     }
 
     #region Services Configuration
+
+    private void ConfigureRedis(IServiceCollection services)
+    {
+        services.RemoveAll<IDistributedCache>();
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = _redisContainer.GetConnectionString();
+        });
+    }
 
     private static void ConfigureTelegramBot(IServiceCollection services)
     {
