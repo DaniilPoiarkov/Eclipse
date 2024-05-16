@@ -1,4 +1,7 @@
-﻿using Eclipse.WebAPI.Filters.Authorization;
+﻿using Asp.Versioning;
+
+using Eclipse.WebAPI.Configurations;
+using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
 using Microsoft.OpenApi.Models;
@@ -14,6 +17,8 @@ public static class EclipseWebApiModule
 {
     public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
+        var configuration = services.GetConfiguration();
+
         services
             .AddControllers()
             .AddNewtonsoftJson();
@@ -31,19 +36,38 @@ public static class EclipseWebApiModule
             .AddExceptionHandler<ExceptionHandlerMiddleware>()
             .AddProblemDetails();
 
+        services.AddApiVersioning(options =>
+        {
+            var apiVersioningConfiguration = configuration.GetSection("ApiVersioningOptions");
+
+            options.DefaultApiVersion = new ApiVersion(
+                apiVersioningConfiguration.GetValue<double>("DefaultVersion")
+            );
+
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new QueryStringApiVersionReader(),
+                new HeaderApiVersionReader(apiVersioningConfiguration["Header"]!)
+            );
+
+            options.ReportApiVersions = apiVersioningConfiguration.GetValue<bool>("ReportApiVersions");
+            options.AssumeDefaultVersionWhenUnspecified = apiVersioningConfiguration.GetValue<bool>("AssumeDefaultVersionWhenUnspecified");
+        }).AddMvc()
+        .AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+
+        services
+            .ConfigureOptions<SwaggerUIConfiguration>()
+            .ConfigureOptions<SwaggerGenConfiguration>();
+
         return services;
     }
 
     private static void ConfigureSwagger(SwaggerGenOptions options)
     {
-        options.SwaggerDoc("v1", new OpenApiInfo
-        {
-            Title = "Eclipse",
-            Description = "Open API to test an app. Some features might require special access via API-KEY",
-            Version = "v1",
-        });
-
-        var apiKeySecurity = "X-API-KEY";
+        var apiKeySecurity = "X-Api-Key";
 
         options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
         {
