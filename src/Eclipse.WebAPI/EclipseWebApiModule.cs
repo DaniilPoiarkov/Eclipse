@@ -38,11 +38,14 @@ public static class EclipseWebApiModule
             .AddMvc()
             .AddApiExplorer();
 
+        services.AddApplicationInsightsTelemetry();
+
         services
             .ConfigureOptions<ApiExplorerConfiguration>()
             .ConfigureOptions<ApiVersioningConfiguration>()
             .ConfigureOptions<SwaggerUIConfiguration>()
-            .ConfigureOptions<SwaggerGenConfiguration>();
+            .ConfigureOptions<SwaggerGenConfiguration>()
+            .ConfigureOptions<ApplicationInsightsConfiguration>();
 
         return services;
     }

@@ -30,8 +30,8 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
         );
 
         _logger.LogError(
-            message: _localizer[exception.Message, "en"],
-            args: exception.Data.Values);
+            message: "Unhandled exception:\n{error}",
+            args: string.Format(_localizer[exception.Message, "en"], exception.Data.Values));
 
         return true;
     }

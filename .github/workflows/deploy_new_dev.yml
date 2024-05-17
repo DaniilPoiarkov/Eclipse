@@ -9,6 +9,8 @@ env:
   DOTNET_CONFIGURATION: 'Release'
 
 on:
+  push:
+    branches: [ "develop" ]
   workflow_dispatch:
 
 permissions:
