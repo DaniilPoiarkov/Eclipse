@@ -2,10 +2,6 @@
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
-using Microsoft.OpenApi.Models;
-
-using Swashbuckle.AspNetCore.SwaggerGen;
-
 namespace Eclipse.WebAPI;
 
 /// <summary>

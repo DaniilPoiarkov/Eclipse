@@ -15,6 +15,6 @@ public sealed class NameSpecification : Specification<IdentityUser>
 
     public override Expression<Func<IdentityUser, bool>> IsSatisfied()
     {
-        return u => u.Name.Contains(_name, StringComparison.OrdinalIgnoreCase);
+        return u => u.Name.Contains(_name);
     }
 }

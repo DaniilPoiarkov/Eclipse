@@ -11,7 +11,7 @@ namespace Eclipse.WebAPI.Controllers.Users.V2;
 
 [ApiController]
 [ApiKeyAuthorize]
-[Route("api/v{v:apiVersion}/[controller]")]
+[Route("api/[controller]")]
 [ApiVersion(ApiVersions.V2.Version, Deprecated = ApiVersions.V2.Deprecated)]
 public sealed class UsersController : ControllerBase
 {
@@ -23,26 +23,14 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken)
     {
-        var options = new PaginationRequest<GetUsersRequest>
-        {
-            Page = 1,
-            PageSize = 10
-        };
-
-        return Ok(await _service.GetPaginatedListAsync(options, cancellationToken));
+        return Ok(await _service.GetPaginatedListAsync(request, cancellationToken));
     }
 
     [HttpPost]
     public async Task<IActionResult> GetFilteredList([FromBody] GetUsersRequest request, CancellationToken cancellationToken)
     {
         return Ok(await _service.GetFilteredListAsync(request, cancellationToken));
-    }
-
-    [HttpPost("paginated")]
-    public async Task<IActionResult> GetPaginatedList([FromBody] PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken)
-    {
-        return Ok(await _service.GetPaginatedListAsync(request, cancellationToken));
     }
 }

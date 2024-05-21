@@ -59,13 +59,13 @@ Data persistence with EF Core Cosmos Db provider.
 ### Tech stack
 * ASP.NET 8
 * Quartz
-* FluentValidation
 * Azure CosmosDb
 * Polly
 * Scrutor
 * Serilog
 * EFCore
 * Redis
+* Azure Application Insights
 
 ### Testing
 * NSubstitute
