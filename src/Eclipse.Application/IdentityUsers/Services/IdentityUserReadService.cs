@@ -45,7 +45,7 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
         var skip = (request.Page - 1) * request.PageSize;
 
         var count = await _repository.CountAsync(specification, cancellationToken);
-        
+
         var users = (await _repository.GetByExpressionAsync(specification, skip, request.PageSize, cancellationToken))
             .Select(u => u.ToSlimDto())
             .ToArray();
