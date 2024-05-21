@@ -1,5 +1,5 @@
 
-name: Manually triggered Development Build, Test and deploy to an Azure
+name: New Development Build, Test and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-prod-app

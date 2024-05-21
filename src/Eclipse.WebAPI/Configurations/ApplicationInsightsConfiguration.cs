@@ -1,6 +1,8 @@
 ﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
 
+using System.Diagnostics;
+
 namespace Eclipse.WebAPI.Configurations;
 
 public sealed class ApplicationInsightsConfiguration : IConfigureOptions<ApplicationInsightsServiceOptions>
@@ -15,5 +17,7 @@ public sealed class ApplicationInsightsConfiguration : IConfigureOptions<Applica
     public void Configure(ApplicationInsightsServiceOptions options)
     {
         options.ConnectionString = _configuration.GetConnectionString("ApplicationInsights");
+
+        options.DeveloperMode = Debugger.IsAttached;
     }
 }

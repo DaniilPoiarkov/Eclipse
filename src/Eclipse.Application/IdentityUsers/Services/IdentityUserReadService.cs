@@ -44,13 +44,9 @@ internal sealed class IdentityUserReadService : IIdentityUserReadService
         var specification = request.Options.GetSpecification();
         var skip = (request.Page - 1) * request.PageSize;
 
-        var countRequest = _repository.CountAsync(specification, cancellationToken);
-        var usersRequest = _repository.GetByExpressionAsync(specification, skip, request.PageSize, cancellationToken);
-
-        await Task.WhenAll(countRequest, usersRequest);
-
-        var count = countRequest.Result;
-        var users = usersRequest.Result
+        var count = await _repository.CountAsync(specification, cancellationToken);
+        
+        var users = (await _repository.GetByExpressionAsync(specification, skip, request.PageSize, cancellationToken))
             .Select(u => u.ToSlimDto())
             .ToArray();
 

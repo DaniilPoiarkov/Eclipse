@@ -11,6 +11,11 @@ internal static class GetUsersRequestExtensions
     {
         var specification = Specification<IdentityUser>.Empty;
 
+        if (request is null)
+        {
+            return specification;
+        }
+
         if (!request.Name.IsNullOrEmpty())
         {
             specification = specification
