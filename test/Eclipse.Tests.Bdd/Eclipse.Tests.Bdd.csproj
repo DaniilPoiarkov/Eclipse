@@ -20,8 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Application\Extensions\Features\" />
-    <Folder Include="Application\IdentityUsers\Features\" />
-    <Folder Include="Domain\IdentityUsers\Features\" />
     <Folder Include="Drivers\" />
     <Folder Include="Support\" />
   </ItemGroup>

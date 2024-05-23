@@ -1,28 +1,28 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.IdentityUsers;
+using Eclipse.Application.Users;
 using Eclipse.Common.Results;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
 
 namespace Eclipse.Application.TodoItems;
 
 internal sealed class TodoItemService : ITodoItemService
 {
-    private readonly IdentityUserManager _userManager;
+    private readonly UserManager _userManager;
 
-    public TodoItemService(IdentityUserManager userManager)
+    public TodoItemService(UserManager userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<Result<IdentityUserDto>> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByChatIdAsync(input.UserId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+            return DefaultErrors.EntityNotFound(typeof(User));
         }
 
         var result = user.AddTodoItem(input.Text);
@@ -37,13 +37,13 @@ internal sealed class TodoItemService : ITodoItemService
         return user.ToDto();
     }
 
-    public async Task<Result<IdentityUserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(IdentityUser));
+            return DefaultErrors.EntityNotFound(typeof(User));
         }
 
         user.FinishItem(itemId);

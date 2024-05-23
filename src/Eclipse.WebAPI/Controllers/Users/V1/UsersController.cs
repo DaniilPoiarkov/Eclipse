@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 
-using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Filters.Authorization;
 
@@ -14,9 +14,9 @@ namespace Eclipse.WebAPI.Controllers.Users.V1;
 [ApiVersion(ApiVersions.V1.Version, Deprecated = ApiVersions.V1.Deprecated)]
 public class UsersController : ControllerBase
 {
-    private readonly IIdentityUserService _service;
+    private readonly IUserService _service;
 
-    public UsersController(IIdentityUserService service)
+    public UsersController(IUserService service)
     {
         _service = service;
     }

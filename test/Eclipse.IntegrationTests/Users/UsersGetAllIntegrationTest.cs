@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
-using Eclipse.Domain.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Domain.Users;
 
 using FluentAssertions;
 
@@ -27,11 +27,11 @@ public sealed class UsersGetAllIntegrationTest : IntegrationTestBase
 
         var expectedCount = 1;
 
-        var manager = Scope.ServiceProvider.GetRequiredService<IdentityUserManager>();
+        var manager = Scope.ServiceProvider.GetRequiredService<UserManager>();
 
         _ = await manager.CreateAsync(name, surname, userName, chatId);
 
-        var users = await Client.GetFromJsonAsync<List<IdentityUserSlimDto>>("api/users");
+        var users = await Client.GetFromJsonAsync<List<UserSlimDto>>("api/users");
 
         users.Should().NotBeNullOrEmpty();
         users!.Count.Should().Be(expectedCount);

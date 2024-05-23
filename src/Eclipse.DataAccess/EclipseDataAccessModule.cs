@@ -2,9 +2,9 @@
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
-using Eclipse.DataAccess.IdentityUsers;
+using Eclipse.DataAccess.Users;
 using Eclipse.DataAccess.Interceptors;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -23,7 +23,7 @@ public static class EclipseDataAccessModule
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
         services
-            .AddScoped<IIdentityUserRepository, IdentityUserRepository>()
+            .AddScoped<IUserRepository, UserRepository>()
                 .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
 
         services.Configure(builder);
