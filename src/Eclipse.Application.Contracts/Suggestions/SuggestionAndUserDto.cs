@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Entities;
-using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Users;
 
 namespace Eclipse.Application.Contracts.Suggestions;
 
@@ -10,5 +10,5 @@ public sealed class SuggestionAndUserDto : EntityDto
 
     public DateTime CreatedAt { get; set; }
 
-    public IdentityUserSlimDto? User { get; set; }
+    public UserSlimDto? User { get; set; }
 }

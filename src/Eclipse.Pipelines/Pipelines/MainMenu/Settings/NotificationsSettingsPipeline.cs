@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
@@ -11,15 +11,15 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 [Route("Menu:Settings:Notifications", "/settings_notifications")]
 internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 {
-    private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService _userService;
 
     private readonly IMessageStore _messageStore;
 
     private static readonly string _pipelinePrefix = "Pipelines:Settings:Notifications";
 
-    public NotificationsSettingsPipeline(IIdentityUserService identityUserService, IMessageStore messageStore)
+    public NotificationsSettingsPipeline(IUserService userService, IMessageStore messageStore)
     {
-        _identityUserService = identityUserService;
+        _userService = userService;
         _messageStore = messageStore;
     }
 
@@ -46,7 +46,7 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
         var enable = context.Value.Equals("Enable");
 
-        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -64,12 +64,12 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
                 message?.MessageId);
         }
 
-        var updateDto = new IdentityUserUpdateDto
+        var updateDto = new UserUpdateDto
         {
             NotificationsEnabled = enable,
         };
 
-        var updateResult = await _identityUserService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _userService.UpdateAsync(user.Id, updateDto, cancellationToken);
 
         var text = updateResult.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"]

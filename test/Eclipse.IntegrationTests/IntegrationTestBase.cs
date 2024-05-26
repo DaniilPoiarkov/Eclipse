@@ -12,7 +12,7 @@ namespace Eclipse.IntegrationTests;
 /// </summary>
 /// <seealso cref="IClassFixture&lt;TestWebAppFactory&gt;" />
 /// <seealso cref="IDisposable" />
-public abstract class IntegrationTestBase : IClassFixture<TestWebAppFactory>, IDisposable
+public abstract class IntegrationTestBase : IClassFixture<WebAppFactoryWithTestcontainers>, IDisposable
 {
     /// <summary>
     /// The scope of current test execution.
@@ -29,7 +29,7 @@ public abstract class IntegrationTestBase : IClassFixture<TestWebAppFactory>, ID
     /// </summary>
     protected readonly Faker Faker;
 
-    protected IntegrationTestBase(TestWebAppFactory factory)
+    protected IntegrationTestBase(WebAppFactoryWithTestcontainers factory)
     {
         Scope = factory.Services.CreateScope();
         Client = factory.CreateClient();
@@ -45,7 +45,7 @@ public abstract class IntegrationTestBase : IClassFixture<TestWebAppFactory>, ID
         var apiKeyOptions = Scope.ServiceProvider
             .GetRequiredService<IOptions<ApiKeyAuthorizationOptions>>();
 
-        Client.DefaultRequestHeaders.Add("X-API-KEY", apiKeyOptions.Value.EclipseApiKey);
+        Client.DefaultRequestHeaders.Add("X-Api-Key", apiKeyOptions.Value.EclipseApiKey);
     }
 
     /// <inheritdoc/>

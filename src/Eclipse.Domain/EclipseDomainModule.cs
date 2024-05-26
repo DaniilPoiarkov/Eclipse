@@ -1,5 +1,5 @@
 ﻿using Eclipse.Common.Sheets;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 using Eclipse.Domain.Suggestions;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,7 @@ public static class EclipseDomainModule
     public static IServiceCollection AddDomainModule(this IServiceCollection services)
     {
         services
-            .AddTransient<IdentityUserManager>()
+            .AddTransient<UserManager>()
             .AddSingleton<IObjectParser<Suggestion>, SuggestionParser>();
 
         return services;

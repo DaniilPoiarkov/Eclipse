@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
@@ -9,13 +9,13 @@ namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 [Route("Menu:AdminMenu:Send:All", "/admin_send_all")]
 internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 {
-    private readonly IIdentityUserService _userService;
+    private readonly IUserService _userService;
 
     private readonly ITelegramService _telegramService;
 
     private string Content { get; set; } = string.Empty;
 
-    public SendMessageToAllPipeline(IIdentityUserService userService, ITelegramService telegramService)
+    public SendMessageToAllPipeline(IUserService userService, ITelegramService telegramService)
     {
         _userService = userService;
         _telegramService = telegramService;

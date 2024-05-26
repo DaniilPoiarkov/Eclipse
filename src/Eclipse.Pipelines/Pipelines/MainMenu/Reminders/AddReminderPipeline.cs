@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
@@ -12,16 +12,16 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 {
     private readonly ICacheService _cacheService;
 
-    private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService _userService;
 
     private readonly IReminderService _reminderService;
 
     private static readonly string _pipelinePrefix = "Pipelines:Reminders";
 
-    public AddReminderPipeline(ICacheService cacheService, IIdentityUserService identityUserService, IReminderService reminderService)
+    public AddReminderPipeline(ICacheService cacheService, IUserService userService, IReminderService reminderService)
     {
         _cacheService = cacheService;
-        _identityUserService = identityUserService;
+        _userService = userService;
         _reminderService = reminderService;
     }
 
@@ -60,7 +60,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 
         var chatId = context.ChatId;
 
-        var userResult = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+        var userResult = await _userService.GetByChatIdAsync(chatId, cancellationToken);
 
         if (!userResult.IsSuccess)
         {

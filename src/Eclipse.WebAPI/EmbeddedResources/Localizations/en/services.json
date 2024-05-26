@@ -20,7 +20,7 @@
 
     "Entity:NotFound": "Entity of type {0} not found",
 
-    "IdentityUser:Events:NewUserJoined": "New user started to use bot!\n\rId: {0}\n\rUserName: {1}\n\rFull name: {2} {3}",
-    "IdentityUser:DuplicateData": "User with {0} {1} already exists."
+    "User:Events:NewUserJoined": "New user started to use bot!\n\rId: {0}\n\rUserName: {1}\n\rFull name: {2} {3}",
+    "User:DuplicateData": "User with {0} {1} already exists."
   }
 }
