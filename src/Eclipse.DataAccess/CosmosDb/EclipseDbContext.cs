@@ -1,4 +1,4 @@
-﻿using Eclipse.Domain.IdentityUsers;
+﻿using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace Eclipse.DataAccess.EclipseCosmosDb;
 
 public sealed class EclipseDbContext : DbContext
 {
-    public DbSet<IdentityUser> IdentityUsers { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public EclipseDbContext(DbContextOptions<EclipseDbContext> options)
         : base(options) { }

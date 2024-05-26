@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 
 using FluentAssertions;
 
@@ -49,7 +49,7 @@ public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var json = await response.Content.ReadAsStringAsync();
-        var list = JsonConvert.DeserializeObject<PaginatedList<IdentityUserSlimDto>>(json);
+        var list = JsonConvert.DeserializeObject<PaginatedList<UserSlimDto>>(json);
 
         // Assert
         list.Should().NotBeNull();
@@ -66,7 +66,7 @@ public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
         return name.Contains(option, StringComparison.OrdinalIgnoreCase);
     }
 
-    private static ExpectedValues GetExpectedValues(IdentityUser[] users, string nameRequirement, int page, int pageSize)
+    private static ExpectedValues GetExpectedValues(User[] users, string nameRequirement, int page, int pageSize)
     {
         var expectedTotalCount = users.Count(u => Match(u.Name, nameRequirement));
 
@@ -81,10 +81,10 @@ public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
         return new ExpectedValues(expectedTotalCount, expectedCount, expectedPages);
     }
 
-    private async Task<IdentityUser[]> ArrangeData(int count)
+    private async Task<User[]> ArrangeData(int count)
     {
-        var insertings = new List<Task<Result<IdentityUser>>>(count);
-        var manager = Scope.ServiceProvider.GetRequiredService<IdentityUserManager>();
+        var insertings = new List<Task<Result<User>>>(count);
+        var manager = Scope.ServiceProvider.GetRequiredService<UserManager>();
 
         for (int i = 0; i < count; i++)
         {

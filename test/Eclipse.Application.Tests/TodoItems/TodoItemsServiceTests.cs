@@ -2,7 +2,7 @@
 
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.TodoItems;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
@@ -18,7 +18,7 @@ namespace Eclipse.Application.Tests.TodoItems;
 
 public sealed class TodoItemsServiceTests
 {
-    private readonly IIdentityUserRepository _repository;
+    private readonly IUserRepository _repository;
 
     private readonly Lazy<ITodoItemService> _lazySut;
 
@@ -26,20 +26,20 @@ public sealed class TodoItemsServiceTests
 
     public TodoItemsServiceTests()
     {
-        _repository = Substitute.For<IIdentityUserRepository>();
+        _repository = Substitute.For<IUserRepository>();
         _lazySut = new Lazy<ITodoItemService>(
             () => new TodoItemService(
-                new IdentityUserManager(_repository)
+                new UserManager(_repository)
             ));
     }
 
     [Fact]
     public async Task CreateAsync_WhenInputValid_ThenCreatedSuccessfully()
     {
-        var user = IdentityUserGenerator.Generate(1).First();
+        var user = UserGenerator.Generate(1).First();
 
         _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
@@ -65,7 +65,7 @@ public sealed class TodoItemsServiceTests
     public async Task CreateAsync_WhenUserReachLimitOfItems_ThenFailureResultReturned()
     {
         var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
-        var user = IdentityUserGenerator.Generate(1).First();
+        var user = UserGenerator.Generate(1).First();
 
         var faker = new Faker();
 
@@ -75,7 +75,7 @@ public sealed class TodoItemsServiceTests
         }
 
         _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
@@ -97,10 +97,10 @@ public sealed class TodoItemsServiceTests
     public async Task CreateAsync_WhenTextIsEmpty_ThenFailureResultReturned()
     {
         var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
-        var user = IdentityUserGenerator.Generate(1).First();
+        var user = UserGenerator.Generate(1).First();
 
         _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<IdentityUser>>([user]));
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
@@ -121,7 +121,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserNotExists_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
 
         var createModel = new CreateTodoItemDto
         {
