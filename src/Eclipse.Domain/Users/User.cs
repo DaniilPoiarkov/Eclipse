@@ -154,6 +154,6 @@ public sealed class User : AggregateRoot
 
     public override string ToString()
     {
-        return $"Name: {Name}, UserName:{UserName} {base.ToString()}";
+        return $"{nameof(Name)}: {Name}, {nameof(UserName)}:{UserName} {base.ToString()}";
     }
 }

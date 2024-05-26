@@ -1,6 +1,5 @@
 using Eclipse.Application;
 using Eclipse.Application.Contracts;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
@@ -63,10 +62,6 @@ builder.Host.UseSerilog((_, config) =>
 });
 
 var app = builder.Build();
-
-//using var scope = app.Services.CreateScope();
-
-//var users = await scope.ServiceProvider.GetRequiredService<IUserService>().GetAllAsync();
 
 app.UseSwagger();
 app.UseSwaggerUI();
