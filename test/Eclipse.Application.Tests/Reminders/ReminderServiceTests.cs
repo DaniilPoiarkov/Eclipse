@@ -1,9 +1,9 @@
 ﻿using Bogus;
 
-using Eclipse.Application.Contracts.IdentityUsers;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Reminders;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Tests.Generators;
 
@@ -17,24 +17,24 @@ namespace Eclipse.Application.Tests.Reminders;
 
 public sealed class ReminderServiceTests
 {
-    private readonly IIdentityUserRepository _repository;
+    private readonly IUserRepository _repository;
 
     private readonly Lazy<IReminderService> _lazySut;
     private IReminderService Sut => _lazySut.Value;
 
     public ReminderServiceTests()
     {
-        _repository = Substitute.For<IIdentityUserRepository>();
+        _repository = Substitute.For<IUserRepository>();
         _lazySut = new Lazy<IReminderService>(
             () => new ReminderService(
-                new IdentityUserManager(_repository)
+                new UserManager(_repository)
             ));
     }
 
     [Fact]
     public async Task CreateReminderAsync_WhenUserExists_ThenReturnesDtoWithCreatedReminder()
     {
-        var identityUser = IdentityUserGenerator.Generate(1).First();
+        var user = UserGenerator.Generate(1).First();
 
         var reminderCreateDto = new ReminderCreateDto
         {
@@ -42,28 +42,28 @@ public sealed class ReminderServiceTests
             Text = "Test"
         };
 
-        _repository.FindAsync(identityUser.Id)!.Returns(Task.FromResult(identityUser));
+        _repository.FindAsync(user.Id)!.Returns(Task.FromResult(user));
 
-        var result = await Sut.CreateReminderAsync(identityUser.Id, reminderCreateDto);
+        var result = await Sut.CreateReminderAsync(user.Id, reminderCreateDto);
 
         result.IsSuccess.Should().BeTrue();
 
-        var user = result.Value;
-        user.Reminders.Count.Should().Be(1);
+        var userDto = result.Value;
+        userDto.Reminders.Count.Should().Be(1);
 
-        var reminder = user.Reminders[0];
+        var reminder = userDto.Reminders[0];
         reminder.Text.Should().Be(reminderCreateDto.Text);
         reminder.NotifyAt.Should().Be(reminderCreateDto.NotifyAt);
-        reminder.UserId.Should().Be(identityUser.Id);
+        reminder.UserId.Should().Be(user.Id);
         reminder.Id.Should().NotBeEmpty();
 
-        await _repository.Received().UpdateAsync(identityUser);
+        await _repository.Received().UpdateAsync(user);
     }
 
     [Fact]
     public async Task CreateReminderAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(IdentityUser));
+        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
 
         var reminderCreateDto = new ReminderCreateDto
         {
@@ -87,7 +87,7 @@ public sealed class ReminderServiceTests
     public async Task RemoveRemindersForTime_WhenUserHaveRemindersForTime_ThenDtoWithoutSpecifiedRemindersReturned()
     {
         // Arrange
-        var user = IdentityUserGenerator.Generate(1).First();
+        var user = UserGenerator.Generate(1).First();
 
         var faker = new Faker();
 
@@ -104,7 +104,7 @@ public sealed class ReminderServiceTests
         user.AddReminder(text, furtureTime);
 
         _repository.FindAsync(user.Id)
-            .Returns(Task.FromResult<IdentityUser?>(user));
+            .Returns(Task.FromResult<User?>(user));
 
         // Act
         var result = await Sut.RemoveRemindersForTime(user.Id, time);
@@ -116,7 +116,7 @@ public sealed class ReminderServiceTests
         dto.Should().NotBeNull();
         dto.Id.Should().Be(dto.Id);
         dto.Reminders.Count.Should().Be(1);
-        
+
         var leftReminder = dto.Reminders[0];
         leftReminder.Text.Should().Be(text);
         leftReminder.NotifyAt.Should().Be(furtureTime);

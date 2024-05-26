@@ -2,19 +2,19 @@
 using Eclipse.Common.Cache;
 using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Pipelines.Decorations;
 
 public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
-    private readonly IdentityUserManager _userManager;
+    private readonly UserManager _userManager;
 
     private readonly ICacheService _cacheService;
 
     private readonly IEclipseLocalizer _localizer;
 
-    public LocalizationDecorator(IdentityUserManager userManager, ICacheService cacheService, IEclipseLocalizer localizer)
+    public LocalizationDecorator(UserManager userManager, ICacheService cacheService, IEclipseLocalizer localizer)
     {
         _userManager = userManager;
         _cacheService = cacheService;
@@ -32,11 +32,11 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
     {
         var key = new CacheKey($"lang-{context.ChatId}");
 
-        var culture = _cacheService.Get<string>(key);
+        var culture = await _cacheService.GetAsync<string>(key, cancellationToken);
 
         if (culture is not null)
         {
-            _localizer.ResetCultureForUserWithChatId(context.ChatId);
+            await _localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
             return;
         }
 
@@ -44,8 +44,8 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
         if (user is not null)
         {
-            _cacheService.Set(key, user.Culture);
-            _localizer.ResetCultureForUserWithChatId(user.ChatId);
+            await _cacheService.SetAsync(key, user.Culture, cancellationToken);
+            await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, cancellationToken);
         }
     }
 }

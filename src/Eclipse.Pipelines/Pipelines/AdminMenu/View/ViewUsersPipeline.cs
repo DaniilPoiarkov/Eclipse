@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -7,9 +7,9 @@ namespace Eclipse.Pipelines.Pipelines.AdminMenu.View;
 [Route("Menu:AdminMenu:View:Users", "/admin_view_users")]
 internal sealed class ViewUsersPipeline : AdminPipelineBase
 {
-    private readonly IIdentityUserService _userService;
+    private readonly IUserService _userService;
 
-    public ViewUsersPipeline(IIdentityUserService userService)
+    public ViewUsersPipeline(IUserService userService)
     {
         _userService = userService;
     }

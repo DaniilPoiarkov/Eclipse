@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 using Eclipse.Core.Models;
-using Eclipse.Domain.IdentityUsers;
+using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Pipelines.Users;
 
@@ -15,9 +15,9 @@ namespace Eclipse.Pipelines.Tests.Stores;
 
 public sealed class UserStoreTests
 {
-    private readonly IIdentityUserService _identityUserService = Substitute.For<IIdentityUserService>();
+    private readonly IUserService _userService = Substitute.For<IUserService>();
 
-    private readonly IIdentityUserCache _identityUserCache = Substitute.For<IIdentityUserCache>();
+    private readonly IUserCache _userCache = Substitute.For<IUserCache>();
 
     private readonly Lazy<IUserStore> _lazySut;
 
@@ -27,38 +27,38 @@ public sealed class UserStoreTests
 
     public UserStoreTests()
     {
-        _lazySut = new Lazy<IUserStore>(() => new UserStore(_identityUserService, _identityUserCache));
+        _lazySut = new Lazy<IUserStore>(() => new UserStore(_userService, _userCache));
     }
 
     [Fact]
     public async Task AddOrUpdate_WhenUserNotExists_ThenCreatesUser_AndAddToCache()
     {
-        _identityUserCache.GetAll()
-            .Returns(new List<IdentityUserDto>());
+        _userCache.GetAllAsync()
+            .Returns([]);
 
-        _identityUserService.GetByChatIdAsync(User.Id)
+        _userService.GetByChatIdAsync(User.Id)
             .Returns(
                 Task.FromResult(
-                    Result<IdentityUserDto>.Failure(
-                        DefaultErrors.EntityNotFound(typeof(IdentityUser))
+                    Result<UserDto>.Failure(
+                        DefaultErrors.EntityNotFound(typeof(User))
                     )
                 ));
 
         var dto = GetDto();
 
-        _identityUserService.CreateAsync(default!)
+        _userService.CreateAsync(default!)
             .ReturnsForAnyArgs(
-                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+                Task.FromResult(Result<UserDto>.Success(dto))
             );
 
-        var result = await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdateAsync(User);
 
         result.IsSuccess.Should().BeTrue();
 
-        await _identityUserService.ReceivedWithAnyArgs()
-            .CreateAsync(new IdentityUserCreateDto());
+        await _userService.ReceivedWithAnyArgs()
+            .CreateAsync(new UserCreateDto());
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
     }
 
     [Fact]
@@ -66,16 +66,16 @@ public sealed class UserStoreTests
     {
         var dto = GetDto();
 
-        _identityUserCache.GetByChatId(User.Id).Returns(dto);
+        _userCache.GetByChatIdAsync(User.Id).Returns(dto);
 
-        var result = await Sut.AddOrUpdate(new TelegramUser(1, dto.Name, dto.Surname, dto.Username));
+        var result = await Sut.AddOrUpdateAsync(new TelegramUser(1, dto.Name, dto.Surname, dto.UserName));
 
         result.IsSuccess.Should().BeTrue();
 
-        await _identityUserService.DidNotReceiveWithAnyArgs()
-            .UpdateAsync(dto.Id, new IdentityUserUpdateDto());
+        await _userService.DidNotReceiveWithAnyArgs()
+            .UpdateAsync(dto.Id, new UserUpdateDto());
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
     }
 
     [Fact]
@@ -83,72 +83,72 @@ public sealed class UserStoreTests
     {
         var dto = GetDto();
 
-        _identityUserCache.GetByChatId(User.Id).Returns(dto);
+        _userCache.GetByChatIdAsync(User.Id).Returns(dto);
 
         var update = GetUpdateDto();
 
-        _identityUserService.UpdateAsync(dto.Id, update)
+        _userService.UpdateAsync(dto.Id, update)
             .ReturnsForAnyArgs(
-                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+                Task.FromResult(Result<UserDto>.Success(dto))
             );
 
-        var result = await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdateAsync(User);
 
         result.IsSuccess.Should().BeTrue();
-        
-        await _identityUserService.ReceivedWithAnyArgs()
+
+        await _userService.ReceivedWithAnyArgs()
             .UpdateAsync(dto.Id, update);
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
     }
 
     [Fact]
     public async Task AddOrUpdate_WhenUserNotCached_AndExistsInSystem__AndHasNewData_ThenCallsService_AndUpdatesCache()
     {
-        _identityUserCache.GetAll()
-            .Returns(new List<IdentityUserDto>());
+        _userCache.GetAllAsync()
+            .Returns([]);
 
         var dto = GetDto();
 
-        _identityUserService.GetByChatIdAsync(User.Id)
+        _userService.GetByChatIdAsync(User.Id)
             .Returns(dto);
 
         var update = GetUpdateDto();
 
-        _identityUserService.UpdateAsync(dto.Id, update)
+        _userService.UpdateAsync(dto.Id, update)
             .ReturnsForAnyArgs(
-                Task.FromResult(Result<IdentityUserDto>.Success(dto))
+                Task.FromResult(Result<UserDto>.Success(dto))
             );
 
-        var result = await Sut.AddOrUpdate(User);
+        var result = await Sut.AddOrUpdateAsync(User);
 
         result.IsSuccess.Should().BeTrue();
 
-        await _identityUserService.ReceivedWithAnyArgs()
+        await _userService.ReceivedWithAnyArgs()
             .UpdateAsync(dto.Id, update);
 
-        _identityUserCache.Received().AddOrUpdate(dto);
+        await _userCache.Received().AddOrUpdateAsync(dto);
     }
 
-    private IdentityUserDto GetDto()
+    private UserDto GetDto()
     {
-        return new IdentityUserDto
+        return new UserDto
         {
             Id = Guid.NewGuid(),
             Name = "old_name",
             Surname = "old_surname",
-            Username = "old_username",
+            UserName = "old_username",
             ChatId = User.Id,
         };
     }
 
-    private static IdentityUserUpdateDto GetUpdateDto()
+    private static UserUpdateDto GetUpdateDto()
     {
-        return new IdentityUserUpdateDto
+        return new UserUpdateDto
         {
             Name = "new_name",
             Surname = "new_surname",
-            Username = "new_username",
+            UserName = "new_username",
         };
     }
 }

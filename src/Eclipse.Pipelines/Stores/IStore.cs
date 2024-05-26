@@ -2,9 +2,9 @@
 
 public interface IStore<TObject, TKey>
 {
-    TObject? GetOrDefault(TKey key);
+    Task<TObject?> GetOrDefaultAsync(TKey key, CancellationToken cancellationToken = default);
 
-    void Set(TKey key, TObject value);
+    Task SetAsync(TKey key, TObject value, CancellationToken cancellationToken = default);
 
-    void Remove(TKey key);
+    Task RemoveAsync(TKey key, CancellationToken cancellationToken = default);
 }

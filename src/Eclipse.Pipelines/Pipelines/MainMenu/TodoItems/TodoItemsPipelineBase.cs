@@ -38,7 +38,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
             .ToString();
     }
 
-    protected IEnumerable<IEnumerable<InlineKeyboardButton>> BuildButtons(IEnumerable<TodoItemDto> items)
+    protected List<InlineKeyboardButton[]> BuildButtons(IEnumerable<TodoItemDto> items)
     {
         var buttons = items
             .Select(item => InlineKeyboardButton.WithCallbackData(
@@ -48,7 +48,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
             .Select(button => new InlineKeyboardButton[] { button })
             .ToList();
 
-        buttons.Add(new InlineKeyboardButton[] { InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back") });
+        buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
 
         return buttons;
     }
@@ -98,7 +98,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         }
 
         var editResult = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
-        
+
         return Multiple(menuResult, editResult);
     }
 

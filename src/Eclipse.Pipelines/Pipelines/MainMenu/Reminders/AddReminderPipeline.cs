@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
@@ -12,16 +12,16 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 {
     private readonly ICacheService _cacheService;
 
-    private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService _userService;
 
     private readonly IReminderService _reminderService;
 
     private static readonly string _pipelinePrefix = "Pipelines:Reminders";
 
-    public AddReminderPipeline(ICacheService cacheService, IIdentityUserService identityUserService, IReminderService reminderService)
+    public AddReminderPipeline(ICacheService cacheService, IUserService userService, IReminderService reminderService)
     {
         _cacheService = cacheService;
-        _identityUserService = identityUserService;
+        _userService = userService;
         _reminderService = reminderService;
     }
 
@@ -32,7 +32,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
         RegisterStage(SaveReminder);
     }
 
-    private IResult AskForTime(MessageContext context)
+    private async Task<IResult> AskForTime(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.IsNullOrEmpty())
         {
@@ -46,7 +46,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Okay"]);
         }
 
-        _cacheService.Set(new CacheKey($"reminder-text-{context.ChatId}"), context.Value);
+        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, cancellationToken);
 
         return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }
@@ -60,21 +60,21 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 
         var chatId = context.ChatId;
 
-        var userResult = await _identityUserService.GetByChatIdAsync(chatId, cancellationToken);
+        var userResult = await _userService.GetByChatIdAsync(chatId, cancellationToken);
 
         if (!userResult.IsSuccess)
         {
             return Menu(RemindersMenuButtons, Localizer.LocalizeError(userResult.Error));
         }
 
-        var text = _cacheService.Get<string>(new CacheKey($"reminder-text-{chatId}"))!;
+        var text = await _cacheService.GetAsync<string>(new CacheKey($"reminder-text-{chatId}"), cancellationToken);
 
         var reminderCreateDto = new ReminderCreateDto
         {
-            Text = text,
+            Text = text!,
             NotifyAt = time.Add(userResult.Value.Gmt * -1)
         };
-        
+
         var result = await _reminderService.CreateReminderAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
 
         var message = result.IsSuccess

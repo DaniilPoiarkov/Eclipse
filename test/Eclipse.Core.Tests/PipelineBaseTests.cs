@@ -22,7 +22,7 @@ public class PipelineBaseTests
     private readonly IServiceCollection _services;
 
     private MessageContext MessageContext
-    { 
+    {
         get
         {
             return new MessageContext(0, string.Empty, new TelegramUser(), _services.BuildServiceProvider());
@@ -96,7 +96,7 @@ public class PipelineBaseTests
 
         while (!_pipeline1.IsFinished)
         {
-            _ =await _pipeline1.RunNext(MessageContext);
+            _ = await _pipeline1.RunNext(MessageContext);
         }
 
         touched.Should().Be(0);

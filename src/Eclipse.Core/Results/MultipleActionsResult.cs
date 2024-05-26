@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Core.Results;
 
-internal class MultipleActionsResult : ResultBase
+public sealed class MultipleActionsResult : ResultBase
 {
     public IList<IResult> Results { get; }
 

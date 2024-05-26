@@ -1,7 +1,7 @@
-﻿using Google.Apis.Sheets.v4.Data;
-using Google.Apis.Sheets.v4;
+﻿using Eclipse.Common.Sheets;
 
-using Eclipse.Common.Sheets;
+using Google.Apis.Sheets.v4;
+using Google.Apis.Sheets.v4.Data;
 
 namespace Eclipse.Infrastructure.Google;
 

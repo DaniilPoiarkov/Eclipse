@@ -22,7 +22,7 @@ public sealed class SuggestPipeline : EclipsePipelineBase
 
     private IResult SendInfo(MessageContext context)
     {
-        var greeting = Localizer!["Pipelines:Suggest:Greetings"]
+        var greeting = Localizer["Pipelines:Suggest:Greetings"]
             .Split(';', StringSplitOptions.RemoveEmptyEntries)
             .GetRandomItem();
 

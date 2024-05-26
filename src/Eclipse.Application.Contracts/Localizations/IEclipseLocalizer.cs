@@ -8,7 +8,7 @@ namespace Eclipse.Application.Contracts.Localizations;
 public interface IEclipseLocalizer
 {
     /// <summary>
-    /// Localize given <a cref="key"></a> using culture of current user. Enshure to call <a cref="ResetCultureForUserWithChatId"></a> method to have consistent localization
+    /// Localize given <a cref="key"></a> using culture of current user. Enshure to call <a cref="ResetCultureForUserWithChatIdAsync"></a> method to have consistent localization
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
@@ -26,7 +26,7 @@ public interface IEclipseLocalizer
     /// Updates culture for as for user with specified id
     /// </summary>
     /// <param name="id"></param>
-    void ResetCultureForUserWithChatId(long id);
+    Task ResetCultureForUserWithChatIdAsync(long id, CancellationToken cancellationToken = default);
     /// <summary>
     /// Converts Localizable exception to user-friendly message
     /// </summary>

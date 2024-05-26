@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Application.Contracts.IdentityUsers;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Suggestions;
 
@@ -10,9 +10,9 @@ internal sealed class SuggestionsService : ISuggestionsService
 {
     private readonly IEclipseSheetsService<Suggestion> _sheetsService;
 
-    private readonly IIdentityUserService _userService;
+    private readonly IUserService _userService;
 
-    public SuggestionsService(IEclipseSheetsService<Suggestion> sheetsService, IIdentityUserService userService)
+    public SuggestionsService(IEclipseSheetsService<Suggestion> sheetsService, IUserService userService)
     {
         _sheetsService = sheetsService;
         _userService = userService;

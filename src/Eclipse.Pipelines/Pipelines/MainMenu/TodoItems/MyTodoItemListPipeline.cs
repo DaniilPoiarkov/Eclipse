@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
@@ -12,7 +12,7 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
-    private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService _userService;
 
     private readonly IMessageStore _messageStore;
 
@@ -20,10 +20,10 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private static readonly string _errorMessage = $"{_pipelinePrefix}:Error";
 
-    public MyTodoItemListPipeline(ITodoItemService todoItemService, IIdentityUserService identityUserService, IMessageStore messageStore)
+    public MyTodoItemListPipeline(ITodoItemService todoItemService, IUserService userService, IMessageStore messageStore)
     {
         _todoItemService = todoItemService;
-        _identityUserService = identityUserService;
+        _userService = userService;
         _messageStore = messageStore;
     }
 
@@ -35,7 +35,7 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> SendList(MessageContext context, CancellationToken cancellationToken)
     {
-        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -58,7 +58,7 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = _messageStore.GetOrDefault(new MessageKey(context.ChatId));
+        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
         if (context.Value.Equals("go_back"))
         {

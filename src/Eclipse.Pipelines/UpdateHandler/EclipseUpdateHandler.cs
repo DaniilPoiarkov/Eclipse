@@ -1,22 +1,22 @@
-﻿using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types;
-
-using Serilog;
-
-using Eclipse.Core.Core;
-using Eclipse.Core.UpdateParsing;
+﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Common.Telegram;
-using Eclipse.Application.Contracts.Localizations;
+using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Users;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Options;
+
+using Serilog;
+
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -82,9 +82,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             _logger.Information("Update of type {updateType} is not supported", update.Type);
             return;
         }
-        
+
         var context = _updateParser.Parse(update);
-        
+
         if (context is null)
         {
             _logger.Error("Context is null after parsing update of type {updateType}", update.Type);
@@ -95,12 +95,12 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = GetPipeline(context, key) as EclipsePipelineBase
+        var pipeline = await GetPipelineAsync(context, key) as EclipsePipelineBase
             ?? new EclipseNotFoundPipeline();
-        
-        _pipelineStore.Remove(key);
 
-        _localizer.ResetCultureForUserWithChatId(context.ChatId);
+        await _pipelineStore.RemoveAsync(key, cancellationToken);
+
+        await _localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
         pipeline.SetLocalizer(_localizer);
 
         var result = await pipeline.RunNext(context, cancellationToken);
@@ -109,20 +109,20 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (message is not null)
         {
-            _messageStore.Set(new MessageKey(context.ChatId), message);
+            await _messageStore.SetAsync(new MessageKey(context.ChatId), message, cancellationToken);
         }
 
         if (!pipeline.IsFinished)
         {
-            _pipelineStore.Set(key, pipeline);
+            await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        await _userStore.AddOrUpdate(context.User, cancellationToken);
+        await _userStore.AddOrUpdateAsync(context.User, cancellationToken);
     }
 
-    private PipelineBase GetPipeline(MessageContext context, PipelineKey key)
+    private async Task<PipelineBase> GetPipelineAsync(MessageContext context, PipelineKey key)
     {
-        var pipeline = _pipelineStore.GetOrDefault(key);
+        var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
 
         if (pipeline is not null)
         {

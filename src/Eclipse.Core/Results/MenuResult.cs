@@ -4,12 +4,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Core.Results;
 
-public class MenuResult : ResultBase
+public sealed class MenuResult : ResultBase
 {
     public string Message { get; }
 
     public IReplyMarkup Menu { get; }
-    
+
     public MenuResult(string message, IReplyMarkup menu)
     {
         Message = message;

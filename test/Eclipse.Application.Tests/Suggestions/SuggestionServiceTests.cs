@@ -1,7 +1,6 @@
-﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Suggestions;
-using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Tests.Generators;
 
@@ -15,7 +14,7 @@ namespace Eclipse.Application.Tests.Suggestions;
 
 public class SuggestionServiceTests
 {
-    private readonly ISuggestionsService _sut;
+    private readonly SuggestionsService _sut;
 
     public SuggestionServiceTests()
     {
@@ -24,8 +23,8 @@ public class SuggestionServiceTests
 
         suggestionsSheetsService.GetAllAsync().Returns(suggestions);
 
-        var userRepository = Substitute.For<IIdentityUserService>();
-        var users = IdentityUserDtoGenerator.GenerateSlim(1, 5);
+        var userRepository = Substitute.For<IUserService>();
+        var users = UserDtoGenerator.GenerateSlim(1, 5);
 
         userRepository.GetAllAsync().Returns(users);
 

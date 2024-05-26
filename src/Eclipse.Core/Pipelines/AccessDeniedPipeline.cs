@@ -7,7 +7,7 @@ namespace Eclipse.Core.Pipelines;
 [Route("", "/href_access_denied")]
 public class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
 {
-    protected IReadOnlyList<ValidationResult> Errors { get; private set; } = new List<ValidationResult>();
+    protected IReadOnlyList<ValidationResult> Errors { get; private set; } = [];
 
     public virtual void SetResults(IEnumerable<ValidationResult> results)
     {
