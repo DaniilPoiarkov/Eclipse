@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Results;
 
+using Microsoft.Extensions.Configuration;
+
 using Telegram.Bot;
 
 namespace Eclipse.Application.Telegram;
@@ -9,13 +11,16 @@ internal sealed class TelegramService : ITelegramService
 {
     private readonly ITelegramBotClient _botClient;
 
+    private readonly IConfiguration _configuration;
+
     private static readonly string _errorSendCode = "Telegram.Send";
 
     private static readonly string _errorWebhookCode = "Telegram.Webhook";
 
-    public TelegramService(ITelegramBotClient botClient)
+    public TelegramService(ITelegramBotClient botClient, IConfiguration configuration)
     {
         _botClient = botClient;
+        _configuration = configuration;
     }
 
     public async Task<Result> Send(SendMessageModel message, CancellationToken cancellationToken = default)
@@ -38,15 +43,17 @@ internal sealed class TelegramService : ITelegramService
         return Result.Success();
     }
 
-    public async Task<Result> SetWebhookUrlAsync(string? webhookUrl, string secretToken, CancellationToken cancellationToken)
+    public async Task<Result> SetWebhookUrlAsync(string? webhookUrl, CancellationToken cancellationToken = default)
     {
-        if (webhookUrl.IsNullOrEmpty())
+        if (webhookUrl.IsNullOrEmpty() || !webhookUrl.StartsWith("https"))
         {
-            return Error.Validation(_errorWebhookCode, "Telegram:WebhookEmpty");
+            return Error.Validation(_errorWebhookCode, "Telegram:WebhookInvalid");
         }
 
         try
         {
+            var secretToken = _configuration["Telegram:SecretToken"];
+
             await _botClient.SetWebhookAsync(
                 webhookUrl,
                 secretToken: secretToken,

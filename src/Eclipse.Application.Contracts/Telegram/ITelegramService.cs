@@ -6,5 +6,5 @@ public interface ITelegramService
 {
     Task<Result> Send(SendMessageModel message, CancellationToken cancellationToken = default);
 
-    Task<Result> SetWebhookUrlAsync(string? webhookUrl, string secretToken, CancellationToken cancellationToken);
+    Task<Result> SetWebhookUrlAsync(string? webhookUrl, CancellationToken cancellationToken = default);
 }

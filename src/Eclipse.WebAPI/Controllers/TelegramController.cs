@@ -38,11 +38,11 @@ public sealed class TelegramController : ControllerBase
         var webhook = request.Type switch
         {
             HandlerType.Active => telegramConfiguration["WebhookUrl"],
-            HandlerType.Disabled => telegramConfiguration["DisableWebhookUrl"],
+            HandlerType.Disabled => telegramConfiguration["DisabledWebhookUrl"],
             _ => string.Empty,
         };
 
-        var result = await _service.SetWebhookUrlAsync(webhook, telegramConfiguration["SecretToken"]!, cancellationToken);
+        var result = await _service.SetWebhookUrlAsync(webhook, cancellationToken);
 
         return result.ToActionResult(Ok);
     }
