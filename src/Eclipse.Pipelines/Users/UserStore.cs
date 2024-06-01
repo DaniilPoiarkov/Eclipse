@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 using Eclipse.Core.Models;
 
@@ -6,13 +6,13 @@ namespace Eclipse.Pipelines.Users;
 
 internal sealed class UserStore : IUserStore
 {
-    private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService _userService;
 
-    private readonly IIdentityUserCache _userCache;
+    private readonly IUserCache _userCache;
 
-    public UserStore(IIdentityUserService identityUserService, IIdentityUserCache userCache)
+    public UserStore(IUserService userService, IUserCache userCache)
     {
-        _identityUserService = identityUserService;
+        _userService = userService;
         _userCache = userCache;
     }
 
@@ -25,14 +25,14 @@ internal sealed class UserStore : IUserStore
             return await CheckAndUpdate(cached, user, cancellationToken);
         }
 
-        var userResult = await _identityUserService.GetByChatIdAsync(user.Id, cancellationToken);
+        var userResult = await _userService.GetByChatIdAsync(user.Id, cancellationToken);
 
         if (userResult.IsSuccess)
         {
             return await CheckAndUpdate(userResult.Value, user, cancellationToken);
         }
 
-        var createUserDto = new IdentityUserCreateDto
+        var createUserDto = new UserCreateDto
         {
             Name = user.Name,
             UserName = user.UserName ?? string.Empty,
@@ -40,7 +40,7 @@ internal sealed class UserStore : IUserStore
             ChatId = user.Id
         };
 
-        var creationResult = await _identityUserService.CreateAsync(createUserDto, cancellationToken);
+        var creationResult = await _userService.CreateAsync(createUserDto, cancellationToken);
 
         if (!creationResult.IsSuccess)
         {
@@ -51,24 +51,24 @@ internal sealed class UserStore : IUserStore
         return Result.Success();
     }
 
-    public Task<IReadOnlyList<IdentityUserDto>> GetCachedUsersAsync(CancellationToken cancellationToken = default) => _userCache.GetAllAsync(cancellationToken);
+    public Task<IReadOnlyList<UserDto>> GetCachedUsersAsync(CancellationToken cancellationToken = default) => _userCache.GetAllAsync(cancellationToken);
 
-    private async Task<Result> CheckAndUpdate(IdentityUserDto identityDto, TelegramUser telegramUser, CancellationToken cancellationToken)
+    private async Task<Result> CheckAndUpdate(UserDto userDto, TelegramUser telegramUser, CancellationToken cancellationToken)
     {
-        if (HaveSameValues(identityDto, telegramUser))
+        if (HaveSameValues(userDto, telegramUser))
         {
-            await _userCache.AddOrUpdateAsync(identityDto, cancellationToken);
+            await _userCache.AddOrUpdateAsync(userDto, cancellationToken);
             return Result.Success();
         }
 
-        var updateDto = new IdentityUserUpdateDto
+        var updateDto = new UserUpdateDto
         {
             Name = telegramUser.Name,
             UserName = telegramUser.UserName,
             Surname = telegramUser.Surname
         };
 
-        var result = await _identityUserService.UpdateAsync(identityDto.Id, updateDto, cancellationToken);
+        var result = await _userService.UpdateAsync(userDto.Id, updateDto, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -79,11 +79,11 @@ internal sealed class UserStore : IUserStore
 
         return Result.Success();
 
-        static bool HaveSameValues(IdentityUserDto identityDto, TelegramUser telegramUser)
+        static bool HaveSameValues(UserDto user, TelegramUser telegramUser)
         {
-            return identityDto.Name == telegramUser.Name
-                && identityDto.UserName == telegramUser.UserName
-                && identityDto.Surname == telegramUser.Surname;
+            return user.Name == telegramUser.Name
+                && user.UserName == telegramUser.UserName
+                && user.Surname == telegramUser.Surname;
         }
     }
 }

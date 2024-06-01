@@ -3,10 +3,11 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.WebAPI.Filters.Authorization;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class ApiKeyAuthorizeAttribute : ApiKeyAuthorizeBaseAttribute
 {
     public ApiKeyAuthorizeAttribute()
-        : base("X-API-KEY") { }
+        : base("X-Api-Key") { }
 
     protected override string GetExpectedValue(AuthorizationFilterContext context)
     {

@@ -23,7 +23,7 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IUserStore _identityUserStore;
+    private readonly IUserStore _userStore;
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -35,7 +35,7 @@ internal sealed class MorningJob : EclipseJobBase
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
-        IUserStore identityUserStore,
+        IUserStore userStore,
         IServiceProvider serviceProvider,
         IEclipseLocalizer localizer,
         IMessageStore messageStore)
@@ -43,7 +43,7 @@ internal sealed class MorningJob : EclipseJobBase
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
-        _identityUserStore = identityUserStore;
+        _userStore = userStore;
         _serviceProvider = serviceProvider;
         _localizer = localizer;
         _messageStore = messageStore;
@@ -53,7 +53,7 @@ internal sealed class MorningJob : EclipseJobBase
     {
         var time = DateTime.UtcNow.GetTime();
 
-        var users = (await _identityUserStore.GetCachedUsersAsync(context.CancellationToken))
+        var users = (await _userStore.GetCachedUsersAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
                 && time.Add(u.Gmt) == Morning)
             .ToList();

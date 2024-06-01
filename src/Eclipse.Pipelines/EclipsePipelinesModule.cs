@@ -33,6 +33,7 @@ public static class EclipsePipelinesModule
             .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>())
             .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+                .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
                 .AddTransient<IUserStore, UserStore>()
                 .AddTransient<IMessageStore, MessageStore>()
                 .AddTransient<IPipelineStore, PipelineStore>();

@@ -22,6 +22,8 @@ namespace Eclipse.Pipelines.UpdateHandler;
 
 internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 {
+    public HandlerType Type => HandlerType.Active;
+
     private readonly ILogger _logger;
 
     private readonly IUserStore _userStore;

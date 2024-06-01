@@ -5,4 +5,6 @@ namespace Eclipse.Application.Contracts.Telegram;
 public interface ITelegramService
 {
     Task<Result> Send(SendMessageModel message, CancellationToken cancellationToken = default);
+
+    Task<Result> SetWebhookUrlAsync(string? webhookUrl, CancellationToken cancellationToken = default);
 }

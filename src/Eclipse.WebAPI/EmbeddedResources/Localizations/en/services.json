@@ -4,6 +4,7 @@
     "Telegram:BotAlreadyRunning": "Cannot start bot as it is already running",
     "Telegram:MessageCannotBeEmpty": "Message can not be empty",
     "Telegram:InvalidChatId": "Chat id cannot be 0",
+    "Telegram:WebhookInvalid": "Webhook cannot be empty and must use https protocol.",
 
     "TodoItem:AlreadyFinished": "Todo item '{0}' already finished",
     "TodoItem:Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",
@@ -20,7 +21,7 @@
 
     "Entity:NotFound": "Entity of type {0} not found",
 
-    "IdentityUser:Events:NewUserJoined": "New user started to use bot!\n\rId: {0}\n\rUserName: {1}\n\rFull name: {2} {3}",
-    "IdentityUser:DuplicateData": "User with {0} {1} already exists."
+    "User:Events:NewUserJoined": "New user started to use bot!\n\rId: {0}\n\rUserName: {1}\n\rFull name: {2} {3}",
+    "User:DuplicateData": "User with {0} {1} already exists."
   }
 }

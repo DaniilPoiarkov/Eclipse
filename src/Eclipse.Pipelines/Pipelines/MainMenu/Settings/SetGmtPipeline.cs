@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
@@ -8,13 +8,13 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 [Route("Menu:Settings:SetGmt", "/settings_setgmt")]
 internal sealed class SetGmtPipeline : SettingsPipelineBase
 {
-    private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService _userService;
 
     private static readonly string _pipelinePrefix = "Pipelines:Settings:SetGmt";
 
-    public SetGmtPipeline(IIdentityUserService identityUserService)
+    public SetGmtPipeline(IUserService userService)
     {
-        _identityUserService = identityUserService;
+        _userService = userService;
     }
 
     protected override void Initialize()
@@ -25,7 +25,7 @@ internal sealed class SetGmtPipeline : SettingsPipelineBase
 
     private async Task<IResult> SendKnownDataAndAskForNewGmt(MessageContext context, CancellationToken cancellationToken)
     {
-        var result = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -57,14 +57,14 @@ internal sealed class SetGmtPipeline : SettingsPipelineBase
             return Menu(SettingsMenuButtons, Localizer[$"{_pipelinePrefix}:CannotParseTime"]);
         }
 
-        var userResult = await _identityUserService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var userResult = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!userResult.IsSuccess)
         {
             return Menu(SettingsMenuButtons, Localizer.LocalizeError(userResult.Error));
         }
 
-        var result = await _identityUserService.SetUserGmtTimeAsync(userResult.Value.Id, time, cancellationToken);
+        var result = await _userService.SetUserGmtTimeAsync(userResult.Value.Id, time, cancellationToken);
 
         var text = result.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:Success"]

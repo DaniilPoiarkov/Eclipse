@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.IdentityUsers;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Telegram;
 using Eclipse.Domain.Suggestions;
@@ -15,9 +15,9 @@ public sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSugg
 
     private readonly IOptions<TelegramOptions> _options;
 
-    private readonly IIdentityUserService _userService;
+    private readonly IUserService _userService;
 
-    public NewSuggestionSentEventHandler(ITelegramService telegramService, IOptions<TelegramOptions> options, IIdentityUserService userService)
+    public NewSuggestionSentEventHandler(ITelegramService telegramService, IOptions<TelegramOptions> options, IUserService userService)
     {
         _telegramService = telegramService;
         _options = options;
