@@ -38,9 +38,9 @@ public static class EclipseDataAccessModule
     {
         var configuration = services.GetConfiguration();
 
-        services.Configure<CosmosDbContextOptions>(
-            configuration.GetSection("Azure:CosmosOptions")
-        );
+        services.AddOptions<CosmosDbContextOptions>()
+            .BindConfiguration("Azure:CosmosOptions")
+            .ValidateOnStart();
 
         services.AddDbContextFactory<EclipseDbContext>((sp, builder) =>
         {
