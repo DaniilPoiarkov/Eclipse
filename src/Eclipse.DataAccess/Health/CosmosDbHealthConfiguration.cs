@@ -15,7 +15,7 @@ internal static class CosmosDbHealthConfiguration
         services.AddHealthChecks()
             .AddAzureCosmosDB(GetCosmosClient, sp => new AzureCosmosDbHealthCheckOptions
             {
-                DatabaseId = sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value.DatabaseId,
+                DatabaseId = GetOptions(sp).DatabaseId,
                 ContainerIds = ["IdentityUsers"]
             }, tags: ["database"]);
 
@@ -24,8 +24,13 @@ internal static class CosmosDbHealthConfiguration
 
     private static CosmosClient GetCosmosClient(IServiceProvider serviceProvider)
     {
-        var options = serviceProvider.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value;
+        var options = GetOptions(serviceProvider);
 
         return new CosmosClient(options.ConnectionString);
+    }
+
+    private static CosmosDbContextOptions GetOptions(IServiceProvider serviceProvider)
+    {
+        return serviceProvider.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value;
     }
 }
