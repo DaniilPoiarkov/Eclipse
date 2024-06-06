@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Caching;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Reminders;

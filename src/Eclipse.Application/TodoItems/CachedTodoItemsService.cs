@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Caching;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 
 namespace Eclipse.Application.TodoItems;
