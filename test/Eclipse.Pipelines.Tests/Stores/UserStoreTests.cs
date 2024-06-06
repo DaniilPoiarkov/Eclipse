@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 using Eclipse.Core.Models;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Users;
 using Eclipse.Pipelines.Users;
 
 using FluentAssertions;

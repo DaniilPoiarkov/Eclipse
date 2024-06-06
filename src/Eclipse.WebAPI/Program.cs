@@ -1,5 +1,6 @@
 using Eclipse.Application;
 using Eclipse.Application.Contracts;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
@@ -82,6 +83,10 @@ app.UseAuthentication()
 app.MapControllers();
 
 await app.InitializePipelineModuleAsync();
+
+using var scope = app.Services.CreateScope();
+
+var users = await scope.ServiceProvider.GetRequiredService<IUserService>().GetAllAsync();
 
 app.Run();
 

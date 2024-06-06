@@ -1,4 +1,6 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Azure.Identity;
+
+using Eclipse.DataAccess.CosmosDb;
 
 using HealthChecks.CosmosDb;
 
@@ -26,7 +28,7 @@ internal static class CosmosDbHealthConfiguration
     {
         var options = GetOptions(serviceProvider);
 
-        return new CosmosClient(options.ConnectionString);
+        return new CosmosClient(options.Endpoint, new DefaultAzureCredential());
     }
 
     private static CosmosDbContextOptions GetOptions(IServiceProvider serviceProvider)
