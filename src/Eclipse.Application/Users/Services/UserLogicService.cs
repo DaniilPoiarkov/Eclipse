@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Users.Services;
 

@@ -2,10 +2,10 @@
 
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.TodoItems;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
+using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

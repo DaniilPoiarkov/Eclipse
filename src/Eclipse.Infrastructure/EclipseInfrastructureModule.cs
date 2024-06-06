@@ -1,10 +1,12 @@
 ﻿using Eclipse.Common.Cache;
 using Eclipse.Common.EventBus;
+using Eclipse.Common.Excel;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.EventBus;
+using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
 
 using Microsoft.Extensions.Configuration;
@@ -38,6 +40,8 @@ public static class EclipseInfrastructureModule
             .AddSingleton(typeof(InMemoryQueue<>))
             .AddTransient<IEventBus, InMemoryEventBus>()
             .AddHostedService<InMemoryChannelReadService>();
+
+        services.AddSingleton<IExcelManager, ExcelManager>();
 
         return new InfrastructureModuleBuilder(services);
     }

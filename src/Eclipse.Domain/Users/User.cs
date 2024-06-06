@@ -1,9 +1,9 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Users.Events;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
+using Eclipse.Domain.Users.Events;
 
 namespace Eclipse.Domain.Users;
 
