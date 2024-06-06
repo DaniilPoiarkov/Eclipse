@@ -1,9 +1,11 @@
-﻿using Eclipse.DataAccess.Builder;
+﻿using Azure.Identity;
+
+using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
-using Eclipse.DataAccess.Users;
 using Eclipse.DataAccess.Interceptors;
+using Eclipse.DataAccess.Users;
 using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
@@ -47,12 +49,11 @@ public static class EclipseDataAccessModule
             var options = sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value;
             var interceptors = sp.GetServices<IInterceptor>();
 
-            // TODO: Use RBAC instead of connection string
             builder
                 .UseCosmos(
-                    options.ConnectionString,
-                    options.DatabaseId
-                )
+                    options.Endpoint,
+                    new DefaultAzureCredential(),
+                    options.DatabaseId)
                 .AddInterceptors(interceptors);
         });
 

@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users.Services;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

@@ -1,9 +1,9 @@
-﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Contracts.Reminders;
+﻿using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
 using Eclipse.Common.Results;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Reminders;
 

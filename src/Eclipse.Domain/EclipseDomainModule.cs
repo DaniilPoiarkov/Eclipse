@@ -1,6 +1,6 @@
 ﻿using Eclipse.Common.Sheets;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Suggestions;
+using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.DependencyInjection;
 
