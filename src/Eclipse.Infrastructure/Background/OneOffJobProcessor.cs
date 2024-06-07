@@ -1,5 +1,7 @@
 ﻿using Eclipse.Common.Background;
 
+using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 using Quartz;
@@ -13,15 +15,19 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
 
     private readonly TBackgroundJob _job;
 
-    public OneOffJobProcessor(TBackgroundJob job)
+    private readonly ILogger<OneOffJobProcessor<TBackgroundJob, TArgs>> _logger;
+
+    public OneOffJobProcessor(TBackgroundJob job, ILogger<OneOffJobProcessor<TBackgroundJob, TArgs>> logger)
     {
         _job = job;
+        _logger = logger;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
         if (context.RefireCount > _maxRefireCount)
         {
+            _logger.LogError("Exceded refire count for job {job}.", typeof(TBackgroundJob).Name);
             return;
         }
 
@@ -39,7 +45,7 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
         {
             throw new JobExecutionException(
                 msg: $"Failed to process job {typeof(TBackgroundJob).Name}.",
-                refireImmediately: true,
+                refireImmediately: false,
                 cause: ex
             );
         }
