@@ -22,6 +22,8 @@
     "Menu:AdminMenu:Send:User": "Відправити користувачу",
     "Menu:AdminMenu:Send:All": "Відправити всім",
 
+    "Menu:AdminMenu:Export:Users": "Експортувати користувачів",
+
     "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
     "Menu:TodoItemsMenu:AddItem": "Запланувати ✏️",

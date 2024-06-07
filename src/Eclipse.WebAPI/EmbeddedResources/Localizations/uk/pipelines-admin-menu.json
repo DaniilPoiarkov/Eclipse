@@ -14,6 +14,8 @@
     "Pipelines:AdminMenu:UserMode": "Включено режим користувача",
 
     "Pipelines:AdminMenu:View": "Меню перегляду",
-    "Pipelines:AdminMenu:Send": "Меню надсилань"
+    "Pipelines:AdminMenu:Send": "Меню надсилань",
+
+    "Pipelines:Admin:Export:Requested": "Експортування у процесі"
   }
 }

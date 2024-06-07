@@ -68,7 +68,7 @@ public static class EclipseInfrastructureModule
         {
             cfg.InterruptJobsOnShutdown = true;
             cfg.SchedulerName = $"eclipse";
-            
+
         });
 
         services.AddQuartzHostedService(cfg =>

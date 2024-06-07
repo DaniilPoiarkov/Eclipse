@@ -22,6 +22,8 @@
     "Menu:AdminMenu:Send:User": "Send to user",
     "Menu:AdminMenu:Send:All": "Send to all",
 
+    "Menu:AdminMenu:Export:Users": "Export users",
+
     "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 
     "Menu:TodoItemsMenu:AddItem": "Add item ✏️",
