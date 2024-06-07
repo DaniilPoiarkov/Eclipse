@@ -1,8 +1,10 @@
-﻿using Eclipse.Common.Cache;
+﻿using Eclipse.Common.Background;
+using Eclipse.Common.Cache;
 using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
+using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Builder;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.EventBus;
@@ -41,7 +43,9 @@ public static class EclipseInfrastructureModule
             .AddTransient<IEventBus, InMemoryEventBus>()
             .AddHostedService<InMemoryChannelReadService>();
 
-        services.AddSingleton<IExcelManager, ExcelManager>();
+        services
+            .AddSingleton<IExcelManager, ExcelManager>()
+            .AddSingleton<IBackgroundJobManager, BackgroundJobManager>();
 
         return new InfrastructureModuleBuilder(services);
     }
@@ -63,7 +67,8 @@ public static class EclipseInfrastructureModule
         services.AddQuartz(cfg =>
         {
             cfg.InterruptJobsOnShutdown = true;
-            cfg.SchedulerName = $"EclipseScheduler_{Guid.NewGuid()}";
+            cfg.SchedulerName = $"eclipse";
+            
         });
 
         services.AddQuartzHostedService(cfg =>
