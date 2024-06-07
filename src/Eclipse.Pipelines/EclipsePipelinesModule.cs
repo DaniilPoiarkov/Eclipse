@@ -1,4 +1,5 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Common.Background;
+using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Health;
@@ -47,6 +48,11 @@ public static class EclipsePipelinesModule
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
             .AddClasses(c => c.AssignableTo<EclipseJobBase>())
             .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AsSelf()
             .WithTransientLifetime());
 
         services.ConfigureOptions<QuatzOptionsConfiguration>();
