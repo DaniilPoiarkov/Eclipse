@@ -58,7 +58,11 @@ builder.Services.Configure<ApiKeyAuthorizationOptions>(
 
 builder.Host.UseSerilog((_, config) =>
 {
-    config.WriteTo.Console();
+    config.WriteTo.Console()
+        .WriteTo.File("eclipse-api.log",
+            rollingInterval: RollingInterval.Day,
+            rollOnFileSizeLimit: true
+        );
 });
 
 var app = builder.Build();

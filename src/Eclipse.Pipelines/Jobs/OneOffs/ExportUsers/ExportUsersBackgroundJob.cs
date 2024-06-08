@@ -20,7 +20,7 @@ internal sealed class ExportUsersBackgroundJob : IBackgroundJob<ExportUsersBackg
 
     public async Task ExecureAsync(ExportUsersBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
-        var stream = await _userExporter.ExportAllAsync(cancellationToken);
+        using var stream = await _userExporter.ExportAllAsync(cancellationToken);
 
         await _botClient.SendDocumentAsync(
             args.ChatId,

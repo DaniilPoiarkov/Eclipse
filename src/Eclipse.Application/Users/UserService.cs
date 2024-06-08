@@ -29,19 +29,14 @@ internal sealed class UserService : IUserService
         return _readService.GetAllAsync(cancellationToken);
     }
 
-    public Task<IReadOnlyList<UserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        return _readService.GetFilteredListAsync(request, cancellationToken);
-    }
-
     public Task<Result<UserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return _readService.GetByChatIdAsync(chatId, cancellationToken);
     }
 
-    public Task<PaginatedList<UserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
-        return _readService.GetPaginatedListAsync(request, cancellationToken);
+        return _readService.GetListAsync(request, cancellationToken);
     }
 
     public Task<Result<UserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
