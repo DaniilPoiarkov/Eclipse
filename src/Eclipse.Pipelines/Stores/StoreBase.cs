@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Cache;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Common.Cache;
 
 namespace Eclipse.Pipelines.Stores;
 
@@ -24,6 +25,6 @@ internal abstract class StoreBase<TObject, TKey> : IStore<TObject, TKey>
 
     public virtual Task SetAsync(TKey key, TObject value, CancellationToken cancellationToken = default)
     {
-        return _cacheService.SetAsync(key.ToCacheKey(), value, cancellationToken);
+        return _cacheService.SetAsync(key.ToCacheKey(), value, CacheConsts.OneDay, cancellationToken);
     }
 }

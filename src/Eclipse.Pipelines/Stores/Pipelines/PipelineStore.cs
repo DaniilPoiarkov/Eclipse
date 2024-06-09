@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Cache;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Pipelines;
 
 namespace Eclipse.Pipelines.Stores.Pipelines;
@@ -47,7 +48,9 @@ internal sealed class PipelineStore : IPipelineStore
         return _cacheService.SetAsync(
             key.ToCacheKey(),
             new PipelineInfo(value.GetType(), value.StagesLeft),
-            cancellationToken);
+            CacheConsts.OneDay,
+            cancellationToken
+        );
     }
 
     private record PipelineInfo(Type Type, int StagesLeft);

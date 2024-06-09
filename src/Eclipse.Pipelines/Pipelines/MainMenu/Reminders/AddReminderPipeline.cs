@@ -46,7 +46,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Okay"]);
         }
 
-        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, cancellationToken);
+        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, TimeSpan.FromDays(1), cancellationToken);
 
         return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }

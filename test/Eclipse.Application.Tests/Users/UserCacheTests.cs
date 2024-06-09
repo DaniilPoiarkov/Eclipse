@@ -56,6 +56,6 @@ public sealed class UserCacheTests
 
         await _cacheService.ReceivedWithAnyArgs().GetAsync<List<UserDto>>(_key);
         cached.Add(dto);
-        await _cacheService.ReceivedWithAnyArgs().SetAsync(_key, cached);
+        await _cacheService.ReceivedWithAnyArgs().SetAsync(_key, cached, TimeSpan.FromDays(1));
     }
 }

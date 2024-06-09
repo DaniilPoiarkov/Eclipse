@@ -1,7 +1,10 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Cache;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
+
+using Newtonsoft.Json;
 
 namespace Eclipse.Application.Users;
 
@@ -9,29 +12,45 @@ internal sealed class CachedUserService : UserCachingFixture, IUserService
 {
     private readonly IUserService _userService;
 
-    public CachedUserService(IUserCache userCache, IUserService userService) : base(userCache)
+    private readonly ICacheService _cacheService;
+
+    public CachedUserService(IUserCache userCache, IUserService userService, ICacheService cacheService) : base(userCache)
     {
         _userService = userService;
+        _cacheService = cacheService;
     }
 
-    public Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        return WithCachingAsync(() => _userService.CreateAsync(createDto, cancellationToken), cancellationToken);
+        await _cacheService.DeleteAsync("users-all", cancellationToken);
+        var result = await _userService.CreateAsync(createDto, cancellationToken);
+
+        await _cacheService.SetAsync($"users-id-{result.Value.Id}", result, CacheConsts.OneDay, cancellationToken);
+        await _cacheService.SetAsync($"users-chat-id-{result.Value.ChatId}", result, CacheConsts.OneDay, cancellationToken);
+
+        return result;
+        
+        return await WithCachingAsync(() => _userService.CreateAsync(createDto, cancellationToken), cancellationToken);
     }
 
     public Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _userService.GetAllAsync(cancellationToken);
+        return _cacheService.GetOrCreateAsync("users-all", () => _userService.GetAllAsync(cancellationToken), CacheConsts.OneDay, cancellationToken);
     }
 
     public Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
-        return _userService.GetListAsync(request, cancellationToken);
+        return _cacheService.GetOrCreateAsync(
+            JsonConvert.SerializeObject(request),
+            () => _userService.GetListAsync(request, cancellationToken),
+            CacheConsts.FiveMinutes,
+            cancellationToken
+        );
     }
 
     public async Task<Result<UserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await UserCache.GetByChatIdAsync(chatId, cancellationToken);
+        var user = await _cacheService.GetAsync<UserDto>("users-chat-id", cancellationToken);// await UserCache.GetByChatIdAsync(chatId, cancellationToken);
 
         if (user is not null)
         {

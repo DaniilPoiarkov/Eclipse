@@ -97,7 +97,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
         var key = new CacheKey($"lang-{context.ChatId}");
 
         await _cacheService.DeleteAsync(key, cancellationToken);
-        await _cacheService.SetAsync(key, context.Value, cancellationToken);
+        await _cacheService.SetAsync(key, context.Value, TimeSpan.FromDays(1), cancellationToken);
 
         await Localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
 
