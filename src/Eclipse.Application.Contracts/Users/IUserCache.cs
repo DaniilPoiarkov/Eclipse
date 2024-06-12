@@ -6,8 +6,6 @@ public interface IUserCache
 
     Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task InvalidateAllKeyAsync(CancellationToken cancellationToken = default);
-
     Task<UserDto?> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default);
 
     Task<UserDto?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
