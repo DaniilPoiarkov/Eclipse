@@ -31,6 +31,11 @@ internal sealed class UserCache : IUserCache
         await _cacheService.SetAsync(Key, users, CacheConsts.OneDay, cancellationToken);
     }
 
+    public Task InvalidateAllKeyAsync(CancellationToken cancellationToken = default)
+    {
+        return _cacheService.DeleteAsync(Key, cancellationToken);
+    }
+
     public async Task<UserDto?> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
         return (await GetListAsync(cancellationToken)).FirstOrDefault(u => u.ChatId == chatId);
