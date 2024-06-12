@@ -24,14 +24,9 @@ internal sealed class CachedUserService : UserCachingFixture, IUserService
         return _userService.GetAllAsync(cancellationToken);
     }
 
-    public Task<IReadOnlyList<UserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
+    public Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
-        return _userService.GetFilteredListAsync(request, cancellationToken);
-    }
-
-    public Task<PaginatedList<UserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
-    {
-        return _userService.GetPaginatedListAsync(request, cancellationToken);
+        return _userService.GetListAsync(request, cancellationToken);
     }
 
     public async Task<Result<UserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)

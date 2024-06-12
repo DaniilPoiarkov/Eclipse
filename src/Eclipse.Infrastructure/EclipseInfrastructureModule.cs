@@ -114,7 +114,12 @@ public static class EclipseInfrastructureModule
     {
         services.AddSerilog((_, configuration) =>
         {
-            configuration.WriteTo.Console();
+            configuration
+                .WriteTo.Console()
+                .WriteTo.File("eclipse-api.log",
+                    rollOnFileSizeLimit: true,
+                    rollingInterval: RollingInterval.Day
+                );
         });
 
         return services;

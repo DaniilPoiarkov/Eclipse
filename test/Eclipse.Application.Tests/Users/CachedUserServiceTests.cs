@@ -25,7 +25,7 @@ public sealed class CachedUserServiceTests
     {
         _userCache = Substitute.For<IUserCache>();
         _userService = Substitute.For<IUserService>();
-
+        
         _lazySut = new Lazy<IUserService>(() => new CachedUserService(_userCache, _userService));
     }
 

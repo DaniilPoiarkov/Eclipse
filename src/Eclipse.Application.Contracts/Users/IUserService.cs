@@ -12,9 +12,7 @@ public interface IUserReadService
 {
     Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<UserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default);
-
-    Task<PaginatedList<UserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default);
+    Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default);
 
     Task<Result<UserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 

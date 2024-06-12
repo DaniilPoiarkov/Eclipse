@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Localizations;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
@@ -44,7 +45,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
         if (user is not null)
         {
-            await _cacheService.SetAsync(key, user.Culture, cancellationToken);
+            await _cacheService.SetAsync(key, user.Culture, CacheConsts.ThreeDays, cancellationToken);
             await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, cancellationToken);
         }
     }

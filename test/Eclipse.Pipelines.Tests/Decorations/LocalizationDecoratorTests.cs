@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Localizations;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
@@ -62,7 +63,7 @@ public sealed class LocalizationDecoratorTests
 
         await _cacheService.ReceivedWithAnyArgs().GetAsync<string>(default!);
         await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
-        await _cacheService.ReceivedWithAnyArgs().SetAsync(default!, user.Culture);
+        await _cacheService.ReceivedWithAnyArgs().SetAsync(default!, user.Culture, CacheConsts.ThreeDays);
         await _localizer.Received().ResetCultureForUserWithChatIdAsync(user.ChatId);
     }
 }

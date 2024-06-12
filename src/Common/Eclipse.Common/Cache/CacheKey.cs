@@ -8,4 +8,6 @@ public class CacheKey
     {
         Key = key;
     }
+
+    public static implicit operator CacheKey(string key) => new(key);
 }

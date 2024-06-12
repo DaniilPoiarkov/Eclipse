@@ -33,7 +33,6 @@ builder.Services
 builder.Services
     .AddInfrastructureModule()
     .UseTelegramHandler<IEclipseUpdateHandler>()
-    .ConfigureCacheOptions(options => options.Expiration = TimeSpan.FromDays(3))
     .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
     .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
 
@@ -58,7 +57,11 @@ builder.Services.Configure<ApiKeyAuthorizationOptions>(
 
 builder.Host.UseSerilog((_, config) =>
 {
-    config.WriteTo.Console();
+    config.WriteTo.Console()
+        .WriteTo.File("eclipse-api.log",
+            rollingInterval: RollingInterval.Day,
+            rollOnFileSizeLimit: true
+        );
 });
 
 var app = builder.Build();
