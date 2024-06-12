@@ -12,45 +12,29 @@ internal sealed class CachedUserService : UserCachingFixture, IUserService
 {
     private readonly IUserService _userService;
 
-    private readonly ICacheService _cacheService;
-
-    public CachedUserService(IUserCache userCache, IUserService userService, ICacheService cacheService) : base(userCache)
+    public CachedUserService(IUserCache userCache, IUserService userService) : base(userCache)
     {
         _userService = userService;
-        _cacheService = cacheService;
     }
 
-    public async Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
     {
-        await _cacheService.DeleteAsync("users-all", cancellationToken);
-        var result = await _userService.CreateAsync(createDto, cancellationToken);
-
-        await _cacheService.SetAsync($"users-id-{result.Value.Id}", result, CacheConsts.OneDay, cancellationToken);
-        await _cacheService.SetAsync($"users-chat-id-{result.Value.ChatId}", result, CacheConsts.OneDay, cancellationToken);
-
-        return result;
-        
-        return await WithCachingAsync(() => _userService.CreateAsync(createDto, cancellationToken), cancellationToken);
+        return WithCachingAsync(() => _userService.CreateAsync(createDto, cancellationToken), cancellationToken);
     }
 
     public Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _cacheService.GetOrCreateAsync("users-all", () => _userService.GetAllAsync(cancellationToken), CacheConsts.OneDay, cancellationToken);
+        return _userService.GetAllAsync(cancellationToken);
     }
 
     public Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
-        return _cacheService.GetOrCreateAsync(
-            JsonConvert.SerializeObject(request),
-            () => _userService.GetListAsync(request, cancellationToken),
-            CacheConsts.FiveMinutes,
-            cancellationToken
-        );
+        return _userService.GetListAsync(request, cancellationToken);
     }
 
     public async Task<Result<UserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await _cacheService.GetAsync<UserDto>("users-chat-id", cancellationToken);// await UserCache.GetByChatIdAsync(chatId, cancellationToken);
+        var user = await UserCache.GetByChatIdAsync(chatId, cancellationToken);
 
         if (user is not null)
         {

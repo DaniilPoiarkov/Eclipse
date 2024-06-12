@@ -18,8 +18,6 @@ public sealed class CachedUserServiceTests
 
     private readonly IUserService _userService;
 
-    private readonly ICacheService _cacheService;
-
     private readonly Lazy<IUserService> _lazySut;
 
     private IUserService Sut => _lazySut.Value;
@@ -28,9 +26,8 @@ public sealed class CachedUserServiceTests
     {
         _userCache = Substitute.For<IUserCache>();
         _userService = Substitute.For<IUserService>();
-        _cacheService = Substitute.For<ICacheService>();
-
-        _lazySut = new Lazy<IUserService>(() => new CachedUserService(_userCache, _userService, _cacheService));
+        
+        _lazySut = new Lazy<IUserService>(() => new CachedUserService(_userCache, _userService));
     }
 
     [Fact]
