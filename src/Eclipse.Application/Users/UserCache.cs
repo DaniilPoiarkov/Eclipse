@@ -8,7 +8,7 @@ internal sealed class UserCache : IUserCache
 {
     private readonly ICacheService _cacheService;
 
-    private static readonly CacheKey Key = new("Users");
+    private static readonly CacheKey Key = new("users");
 
     public UserCache(ICacheService cacheService)
     {

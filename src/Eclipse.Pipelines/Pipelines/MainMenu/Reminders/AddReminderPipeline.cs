@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Reminders;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
@@ -46,7 +47,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Okay"]);
         }
 
-        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, TimeSpan.FromDays(1), cancellationToken);
+        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, CacheConsts.OneDay, cancellationToken);
 
         return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }

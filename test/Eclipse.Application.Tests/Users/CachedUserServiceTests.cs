@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
-using Eclipse.Common.Cache;
 using Eclipse.Common.Results;
 using Eclipse.Tests.Generators;
 
