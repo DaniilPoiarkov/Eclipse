@@ -1,10 +1,7 @@
 ﻿using Eclipse.Application.Caching;
 using Eclipse.Application.Contracts.Users;
-using Eclipse.Common.Cache;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
-
-using Newtonsoft.Json;
 
 namespace Eclipse.Application.Users;
 
