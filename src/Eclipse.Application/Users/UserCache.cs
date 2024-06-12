@@ -28,7 +28,7 @@ internal sealed class UserCache : IUserCache
 
         users.Add(user);
 
-        await _cacheService.SetAsync(Key, users, CacheConsts.OneDay, cancellationToken);
+        await _cacheService.SetAsync(Key, users, CacheConsts.ThreeDays, cancellationToken);
     }
 
     public async Task<UserDto?> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)

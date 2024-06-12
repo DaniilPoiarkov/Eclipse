@@ -45,7 +45,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
         if (user is not null)
         {
-            await _cacheService.SetAsync(key, user.Culture, CacheConsts.OneDay, cancellationToken);
+            await _cacheService.SetAsync(key, user.Culture, CacheConsts.ThreeDays, cancellationToken);
             await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, cancellationToken);
         }
     }

@@ -48,7 +48,7 @@ internal sealed class PipelineStore : IPipelineStore
         return _cacheService.SetAsync(
             key.ToCacheKey(),
             new PipelineInfo(value.GetType(), value.StagesLeft),
-            CacheConsts.OneDay,
+            CacheConsts.ThreeDays,
             cancellationToken
         );
     }
