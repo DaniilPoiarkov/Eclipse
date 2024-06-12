@@ -28,9 +28,6 @@ internal sealed class InfrastructureModuleBuilder : IInfrastructureModuleBuilder
     public IInfrastructureModuleBuilder ConfigureGoogleOptions(Action<GoogleOptions> options)
         => Configure(options);
 
-    public IInfrastructureModuleBuilder ConfigureCacheOptions(Action<CacheOptions> options)
-        => Configure(options);
-
     private InfrastructureModuleBuilder Configure<TOptions>(Action<TOptions> options)
         where TOptions : class
     {

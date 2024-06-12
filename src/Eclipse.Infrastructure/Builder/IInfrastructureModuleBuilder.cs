@@ -12,6 +12,4 @@ public interface IInfrastructureModuleBuilder
     IInfrastructureModuleBuilder ConfigureTelegramOptions(Action<TelegramOptions> options);
 
     IInfrastructureModuleBuilder ConfigureGoogleOptions(Action<GoogleOptions> options);
-
-    IInfrastructureModuleBuilder ConfigureCacheOptions(Action<CacheOptions> options);
 }
