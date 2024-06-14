@@ -1,4 +1,6 @@
-﻿using Eclipse.WebAPI.Configurations;
+﻿using Eclipse.Common.Background;
+using Eclipse.WebAPI.Background;
+using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
@@ -42,6 +44,11 @@ public static class EclipseWebApiModule
             .ConfigureOptions<SwaggerUIConfiguration>()
             .ConfigureOptions<SwaggerGenConfiguration>()
             .ConfigureOptions<ApplicationInsightsConfiguration>();
+
+        services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AsSelf()
+            .WithTransientLifetime());
 
         return services;
     }
