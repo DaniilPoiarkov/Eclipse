@@ -51,6 +51,17 @@ internal sealed class ImportService : IImportService
             failed.AddRange(grouping);
         }
 
+        if (failed.IsNullOrEmpty())
+        {
+            await _telegramBotClient.SendTextMessageAsync(
+                _options.Value.Chat,
+                "All reminders imported successfully.",
+                cancellationToken: cancellationToken
+            );
+
+            return;
+        }
+
         using var failedStream = _excelManager.Write(failed);
 
         await SendFailedExcel(
@@ -80,6 +91,17 @@ internal sealed class ImportService : IImportService
             SetErrors(grouping, result.Error.Description);
 
             failed.AddRange(grouping);
+        }
+
+        if (failed.IsNullOrEmpty())
+        {
+            await _telegramBotClient.SendTextMessageAsync(
+                _options.Value.Chat,
+                "All todo items imported successfully.",
+                cancellationToken: cancellationToken
+            );
+
+            return;
         }
 
         using var failedStream = _excelManager.Write(failed);
@@ -115,6 +137,17 @@ internal sealed class ImportService : IImportService
                 entity.Exception = ex.Message;
                 failed.Add(entity);
             }
+        }
+
+        if (failed.IsNullOrEmpty())
+        {
+            await _telegramBotClient.SendTextMessageAsync(
+                _options.Value.Chat,
+                "All users imported successfully.",
+                cancellationToken: cancellationToken
+            );
+
+            return;
         }
 
         using var failedToImportUsersExcel = _excelManager.Write(failed);

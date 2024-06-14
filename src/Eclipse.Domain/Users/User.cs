@@ -61,7 +61,7 @@ public sealed class User : AggregateRoot
         return new User(model.Id, model.Name, model.Surname, model.UserName, model.ChatId)
         {
             NotificationsEnabled = model.NotificationsEnabled,
-            Gmt = model.Gmt,
+            Gmt = TimeSpan.Parse(model.Gmt),
             Culture = model.Culture
         };
     }

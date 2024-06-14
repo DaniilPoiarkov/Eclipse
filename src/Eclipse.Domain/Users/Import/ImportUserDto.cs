@@ -16,5 +16,5 @@ public class ImportUserDto : ImportEntityBase
 
     public bool NotificationsEnabled { get; set; }
 
-    public TimeSpan Gmt { get; set; }
+    public string Gmt { get; set; } = string.Empty;
 }
