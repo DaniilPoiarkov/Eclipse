@@ -5,7 +5,7 @@
 /// </summary>
 public interface ICacheService
 {
-    Task SetAsync<T>(CacheKey key, T value, CancellationToken cancellationToken = default);
+    Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, CancellationToken cancellationToken = default);
 
     Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default);
 

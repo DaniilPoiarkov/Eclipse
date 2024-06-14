@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Users;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
 using Eclipse.Common.Cache;
 using Eclipse.Tests.Generators;
@@ -56,6 +57,6 @@ public sealed class UserCacheTests
 
         await _cacheService.ReceivedWithAnyArgs().GetAsync<List<UserDto>>(_key);
         cached.Add(dto);
-        await _cacheService.ReceivedWithAnyArgs().SetAsync(_key, cached);
+        await _cacheService.ReceivedWithAnyArgs().SetAsync(_key, cached, CacheConsts.ThreeDays);
     }
 }

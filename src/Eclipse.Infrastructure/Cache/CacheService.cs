@@ -1,8 +1,6 @@
 ﻿using Eclipse.Common.Cache;
-using Eclipse.Infrastructure.Builder;
 
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
 
 using Newtonsoft.Json;
 
@@ -12,12 +10,9 @@ internal sealed class CacheService : ICacheService
 {
     private readonly IDistributedCache _cache;
 
-    private readonly IOptions<CacheOptions> _options;
-
-    public CacheService(IDistributedCache cache, IOptions<CacheOptions> options)
+    public CacheService(IDistributedCache cache)
     {
         _cache = cache;
-        _options = options;
     }
 
     public async Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
@@ -44,13 +39,13 @@ internal sealed class CacheService : ICacheService
         });
     }
 
-    public Task SetAsync<T>(CacheKey key, T value, CancellationToken cancellationToken = default)
+    public Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, CancellationToken cancellationToken = default)
     {
         var json = JsonConvert.SerializeObject(value);
 
         var options = new DistributedCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = _options.Value.Expiration
+            AbsoluteExpirationRelativeToNow = expiration
         };
 
         return _cache.SetStringAsync(key.Key, json, options, cancellationToken);
