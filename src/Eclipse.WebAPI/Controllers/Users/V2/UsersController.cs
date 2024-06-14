@@ -11,7 +11,7 @@ namespace Eclipse.WebAPI.Controllers.Users.V2;
 
 [ApiController]
 [ApiKeyAuthorize]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiVersion(ApiVersions.V2.Version, Deprecated = ApiVersions.V2.Deprecated)]
 public sealed class UsersController : ControllerBase
 {
@@ -23,14 +23,8 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetList([FromQuery] PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken)
     {
-        return Ok(await _service.GetPaginatedListAsync(request, cancellationToken));
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> GetFilteredList([FromBody] GetUsersRequest request, CancellationToken cancellationToken)
-    {
-        return Ok(await _service.GetFilteredListAsync(request, cancellationToken));
+        return Ok(await _service.GetListAsync(request, cancellationToken));
     }
 }
