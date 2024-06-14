@@ -40,6 +40,7 @@ public static class EclipseApplicationModule
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IReminderService, ReminderService>()
                 .AddTransient<IExportService, ExportService>()
+                .AddTransient<IImportService, ImportService>()
             .AddScoped<IEclipseLocalizer, EclipseLocalizer>();
 
         services
