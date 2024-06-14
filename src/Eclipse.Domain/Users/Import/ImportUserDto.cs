@@ -1,9 +1,9 @@
-﻿namespace Eclipse.Domain.Users.Import;
+﻿using Eclipse.Domain.Shared.Importing;
 
-public class ImportUserDto
+namespace Eclipse.Domain.Users.Import;
+
+public class ImportUserDto : ImportEntityBase
 {
-    public Guid Id { get; set; }
-
     public string Name { get; set; } = string.Empty;
 
     public string Surname { get; set; } = string.Empty;
@@ -17,11 +17,4 @@ public class ImportUserDto
     public bool NotificationsEnabled { get; set; }
 
     public TimeSpan Gmt { get; set; }
-
-    public string? Exception { get; set; }
-
-    public bool CanBeImported()
-    {
-        return Exception.IsNullOrEmpty();
-    }
 }

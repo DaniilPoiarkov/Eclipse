@@ -46,6 +46,22 @@ public sealed class UserManager
         return _userRepository.CreateAsync(user, cancellationToken);
     }
 
+    public async Task<Result> ImportTodoItemsAsync(Guid userId, IEnumerable<ImportTodoItemDto> todoItems, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
+
+        if (user == null)
+        {
+            return Error.NotFound("Users.Import.TodoItems", "User not found");
+        }
+
+        user.ImportTodoItems(todoItems);
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return Result.Success();
+    }
+
     public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
         return _userRepository.UpdateAsync(user, cancellationToken);

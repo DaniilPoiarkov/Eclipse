@@ -66,6 +66,13 @@ public sealed class User : AggregateRoot
         };
     }
 
+    internal void ImportTodoItems(IEnumerable<ImportTodoItemDto> models)
+    {
+        var todoItems = models.Select(m => TodoItem.Import(m.Id, m.UserId, m.Text, m.CreatedAt, m.IsFinished, m.FinishedAt));
+
+        _todoItems.AddRange(todoItems);
+    }
+
     /// <summary>Adds the reminder.</summary>
     /// <param name="text">The text.</param>
     /// <param name="notifyAt">The notify at.</param>

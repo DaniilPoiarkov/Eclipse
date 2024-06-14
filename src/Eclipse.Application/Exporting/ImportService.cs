@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Telegram;
+using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Import;
 
@@ -34,47 +36,72 @@ internal sealed class ImportService : IImportService
         throw new NotImplementedException();
     }
 
-    public Task AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default)
+    public async Task AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var todoItems = _excelManager.Read<ImportTodoItemDto>(stream)
+            .GroupBy(item => item.UserId);
+
+        var failed = new List<ImportTodoItemDto>();
+
+        foreach (var grouping in todoItems)
+        {
+            var result = await _userManager.ImportTodoItemsAsync(grouping.Key, grouping, cancellationToken);
+
+            if (result.IsSuccess)
+            {
+                continue;
+            }
+
+            failed.AddRange(
+                grouping.Select(x =>
+                { 
+                    x.Exception = result.Error.Description;
+                    return x; 
+                })
+            );
+        }
+
+        using var failedStream = _excelManager.Write(failed);
+
+        await SendFailedExcel(
+            failedStream,
+            "failed-to-import-todo-items.xlsx",
+            "Failed to import following todo items",
+            cancellationToken
+        );
     }
 
     public async Task AddUsersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
-        var users = _excelManager.Read<ImportUserDto>(stream);
+        var entities = _excelManager.Read<ImportUserDto>(stream);
 
-        var failedToAddUsers = new List<ImportUserDto>();
+        var failed = new List<ImportUserDto>();
 
-        foreach (var user in users)
+        foreach (var entity in entities)
         {
-            if (!user.CanBeImported())
+            if (!entity.CanBeImported())
             {
-                failedToAddUsers.Add(user);
+                failed.Add(entity);
                 continue;
             }
 
             try
             {
-                await _userManager.ImportAsync(user, cancellationToken);
+                await _userManager.ImportAsync(entity, cancellationToken);
             }
             catch (Exception ex)
             {
-                user.Exception = ex.Message;
-                failedToAddUsers.Add(user);
+                entity.Exception = ex.Message;
+                failed.Add(entity);
             }
         }
 
-        if (failedToAddUsers.IsNullOrEmpty())
-        {
-            return;
-        }
-
-        using var failedToImportUsersExcel = _excelManager.Write(failedToAddUsers);
+        using var failedToImportUsersExcel = _excelManager.Write(failed);
 
         await SendFailedExcel(
             failedToImportUsersExcel,
-            "failed-to-upload-users.xlsx",
-            "Failed to upload following users",
+            "failed-to-import-users.xlsx",
+            "Failed to import following users",
             cancellationToken
         );
     }
