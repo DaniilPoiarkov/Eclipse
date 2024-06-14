@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Telegram;
-using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Import;
@@ -31,9 +30,35 @@ internal sealed class ImportService : IImportService
         _options = options;
     }
 
-    public Task AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
+    public async Task AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var reminders = _excelManager.Read<ImportReminderDto>(stream)
+            .GroupBy(item => item.UserId);
+
+        var failed = new List<ImportReminderDto>();
+
+        foreach (var grouping in reminders)
+        {
+            var result = await _userManager.ImportRemindersAsync(grouping.Key, grouping, cancellationToken);
+
+            if (result.IsSuccess)
+            {
+                continue;
+            }
+
+            SetErrors(grouping, result.Error.Description);
+
+            failed.AddRange(grouping);
+        }
+
+        using var failedStream = _excelManager.Write(failed);
+
+        await SendFailedExcel(
+            failedStream,
+            "failed-to-import-reminders.xlsx",
+            "Failed to import following reminders",
+            cancellationToken
+        );
     }
 
     public async Task AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default)
@@ -51,14 +76,10 @@ internal sealed class ImportService : IImportService
             {
                 continue;
             }
+            
+            SetErrors(grouping, result.Error.Description);
 
-            failed.AddRange(
-                grouping.Select(x =>
-                { 
-                    x.Exception = result.Error.Description;
-                    return x; 
-                })
-            );
+            failed.AddRange(grouping);
         }
 
         using var failedStream = _excelManager.Write(failed);
@@ -104,6 +125,14 @@ internal sealed class ImportService : IImportService
             "Failed to import following users",
             cancellationToken
         );
+    }
+
+    private static void SetErrors(IEnumerable<ImportEntityBase> models, string error)
+    {
+        foreach (var entity in models)
+        {
+            entity.Exception = error;
+        }
     }
 
     private async Task SendFailedExcel(MemoryStream stream, string fileName, string caption, CancellationToken cancellationToken)
