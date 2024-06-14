@@ -4,6 +4,7 @@ using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
+using Eclipse.Domain.Users.Import;
 
 namespace Eclipse.Domain.Users;
 
@@ -53,6 +54,16 @@ public sealed class User : AggregateRoot
         user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
 
         return user;
+    }
+
+    internal static User Import(ImportUserDto model)
+    {
+        return new User(model.Id, model.Name, model.Surname, model.UserName, model.ChatId)
+        {
+            NotificationsEnabled = model.NotificationsEnabled,
+            Gmt = model.Gmt,
+            Culture = model.Culture
+        };
     }
 
     /// <summary>Adds the reminder.</summary>

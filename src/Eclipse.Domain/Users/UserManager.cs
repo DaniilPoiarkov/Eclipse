@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Repositories;
+using Eclipse.Domain.Users.Import;
 
 namespace Eclipse.Domain.Users;
 
@@ -36,6 +37,13 @@ public sealed class UserManager
         var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId);
 
         return await _userRepository.CreateAsync(user, cancellationToken);
+    }
+
+    public Task ImportAsync(ImportUserDto model, CancellationToken cancellationToken = default)
+    {
+        var user = User.Import(model);
+
+        return _userRepository.CreateAsync(user, cancellationToken);
     }
 
     public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
