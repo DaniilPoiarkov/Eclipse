@@ -22,7 +22,10 @@
     "Menu:AdminMenu:Send:User": "Send to user",
     "Menu:AdminMenu:Send:All": "Send to all",
 
+    "Menu:AdminMenu:Export": "Export",
     "Menu:AdminMenu:Export:Users": "Export users",
+    "Menu:AdminMenu:Export:TodoItems": "Export todo items",
+    "Menu:AdminMenu:Export:Reminders": "Export reminders",
 
     "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 

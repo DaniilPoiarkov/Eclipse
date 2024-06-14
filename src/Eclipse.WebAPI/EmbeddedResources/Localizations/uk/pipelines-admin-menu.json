@@ -15,6 +15,7 @@
 
     "Pipelines:AdminMenu:View": "Меню перегляду",
     "Pipelines:AdminMenu:Send": "Меню надсилань",
+    "Pipelines:AdminMenu:Export": "Меню експортування",
 
     "Pipelines:Admin:Export:Requested": "Експортування у процесі"
   }
