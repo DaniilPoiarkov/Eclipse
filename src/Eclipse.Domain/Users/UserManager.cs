@@ -50,7 +50,7 @@ public sealed class UserManager
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
-        if (user == null)
+        if (user is null)
         {
             return Error.NotFound("Users.Import.TodoItems", "User not found");
         }
@@ -66,7 +66,7 @@ public sealed class UserManager
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
-        if (user == null)
+        if (user is null)
         {
             return Error.NotFound("Users.Import.Reminders", "User not found");
         }
