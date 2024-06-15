@@ -33,6 +33,7 @@ internal sealed class ImportService : IImportService
     public async Task AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var reminders = _excelManager.Read<ImportReminderDto>(stream)
+            .Where(u => u.UserId != Guid.Empty)
             .GroupBy(item => item.UserId);
 
         var failed = new List<ImportReminderDto>();
@@ -75,6 +76,7 @@ internal sealed class ImportService : IImportService
     public async Task AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var todoItems = _excelManager.Read<ImportTodoItemDto>(stream)
+            .Where(u => u.UserId != Guid.Empty)
             .GroupBy(item => item.UserId);
 
         var failed = new List<ImportTodoItemDto>();
@@ -116,7 +118,8 @@ internal sealed class ImportService : IImportService
 
     public async Task AddUsersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
-        var entities = _excelManager.Read<ImportUserDto>(stream);
+        var entities = _excelManager.Read<ImportUserDto>(stream)
+            .Where(u => u.ChatId != default && u.Id != Guid.Empty);
 
         var failed = new List<ImportUserDto>();
 
