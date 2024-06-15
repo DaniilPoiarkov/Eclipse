@@ -8,8 +8,8 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.WebAPI.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 [TelegramBotApiSecretTokenAuthorize]
 public sealed class EclipseController : ControllerBase
 {
