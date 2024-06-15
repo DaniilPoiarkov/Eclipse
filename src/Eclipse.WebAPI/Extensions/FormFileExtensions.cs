@@ -11,7 +11,7 @@ public static class FormFileExtensions
 
     public static async Task<MemoryStream> OpenMemoryStreamAsync(this IFormFile formFile, CancellationToken cancellationToken = default)
     {
-        var stream = formFile.OpenReadStream();
+        using var stream = formFile.OpenReadStream();
 
         if (stream is MemoryStream memoryStream)
         {
