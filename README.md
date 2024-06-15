@@ -66,6 +66,7 @@ Data persistence with EF Core Cosmos Db provider.
 * EFCore
 * Redis
 * Azure Application Insights
+* MiniExcel
 
 ### Testing
 * NSubstitute

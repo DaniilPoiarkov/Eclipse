@@ -75,7 +75,7 @@ public sealed class User : AggregateRoot
 
     internal void ImportReminders(IEnumerable<ImportReminderDto> models)
     {
-        var reminders = models.Select(m => Reminder.Import(m.Id, m.UserId, m.Text, m.NotifyAt));
+        var reminders = models.Select(m => Reminder.Import(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
 
         _reminders.AddRange(reminders);
     }
