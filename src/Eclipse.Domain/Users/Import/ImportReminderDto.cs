@@ -8,5 +8,5 @@ public class ImportReminderDto : ImportEntityBase
 
     public string Text { get; set; } = string.Empty;
 
-    public TimeOnly NotifyAt { get; set; }
+    public string NotifyAt { get; set; } = string.Empty;
 }
