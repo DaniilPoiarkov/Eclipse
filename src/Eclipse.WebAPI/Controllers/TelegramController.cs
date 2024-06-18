@@ -36,9 +36,7 @@ public sealed class TelegramController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SwichHandlerType([FromBody] SwichHandlerTypeRequest request, CancellationToken cancellationToken)
     {
-        var telegramConfiguration = _configuration.GetSection("Telegram");
-
-        var endpoint = telegramConfiguration[$"{Enum.GetName(request.Type)}Endpoint"];
+        var endpoint = _configuration[$"Telegram:{Enum.GetName(request.Type)}Endpoint"];
 
         var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl}/{endpoint}", cancellationToken);
 
