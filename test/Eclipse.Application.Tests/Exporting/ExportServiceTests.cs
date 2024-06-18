@@ -8,8 +8,6 @@ using FluentAssertions;
 
 using MiniExcelLibs;
 
-using Newtonsoft.Json;
-
 using NSubstitute;
 
 using Xunit;
