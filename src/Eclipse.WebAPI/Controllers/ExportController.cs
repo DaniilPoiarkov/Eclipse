@@ -9,7 +9,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [ApiKeyAuthorize]
 [Route("api/[controller]/[action]")]
-public class ExportController : ControllerBase
+public sealed class ExportController : ControllerBase
 {
     private readonly IExportService _exportService;
 

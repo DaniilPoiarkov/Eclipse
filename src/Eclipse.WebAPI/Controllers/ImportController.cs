@@ -10,7 +10,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [ApiKeyAuthorize]
 [Route("api/[controller]/[action]")]
-public class ImportController : ControllerBase
+public sealed class ImportController : ControllerBase
 {
     private readonly IBackgroundJobManager _jobManager;
 
