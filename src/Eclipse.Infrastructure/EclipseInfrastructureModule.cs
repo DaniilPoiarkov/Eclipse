@@ -93,7 +93,7 @@ public static class EclipseInfrastructureModule
     {
         var configuration = services.GetConfiguration();
 
-        if (bool.Parse(configuration["IsRedisEnabled"]!))
+        if (configuration.GetValue<bool>("IsRedisEnabled"))
         {
             services.AddStackExchangeRedisCache(options =>
             {
