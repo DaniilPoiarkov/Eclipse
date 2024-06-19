@@ -8,7 +8,6 @@ using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
-using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Health;
