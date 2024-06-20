@@ -82,7 +82,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
         var model = new SendMessageModel
         {
             ChatId = chatId,
-            Message = message ?? string.Empty
+            Message = message
         };
 
         var result = await _telegramService.Send(model, cancellationToken);
