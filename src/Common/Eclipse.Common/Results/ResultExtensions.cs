@@ -1,13 +1,12 @@
 ﻿using Eclipse.Common.Results.ErrorParsers;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eclipse.Common.Results;
 
 public static class ResultExtensions
 {
-    public static IActionResult ToProblemActionResult(this Result result)
+    public static IActionResult ToProblem(this Result result)
     {
         var parser = result.ThrowOrGetErrorParser();
 
@@ -26,20 +25,6 @@ public static class ResultExtensions
         {
             StatusCode = problemDetails.Status
         };
-    }
-
-    public static IResult ToProblemResult(this Result result)
-    {
-        var parser = result.ThrowOrGetErrorParser();
-
-        return Microsoft.AspNetCore.Http.Results.Problem(
-            statusCode: parser.StatusCode,
-            title: parser.Title,
-            type: parser.Type,
-            extensions: new Dictionary<string, object?>
-            {
-                ["errors"] = new[] { result.Error }
-            });
     }
 
     private static IErrorParser ThrowOrGetErrorParser(this Result result)
@@ -67,13 +52,6 @@ public static class ResultExtensions
     {
         return result.IsSuccess
             ? okResult()
-            : result.ToProblemActionResult();
-    }
-
-    public static IResult ToResult(this Result result, Func<IResult> okResult)
-    {
-        return result.IsSuccess
-            ? okResult()
-            : result.ToProblemResult();
+            : result.ToProblem();
     }
 }

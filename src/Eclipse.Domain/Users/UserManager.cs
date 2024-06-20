@@ -93,7 +93,7 @@ public sealed class UserManager
         return _userRepository.FindAsync(id, cancellationToken);
     }
 
-    public async Task<User?> FindByUsernameAsync(string userName, CancellationToken cancellationToken = default)
+    public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
     {
         return (await _userRepository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
             .SingleOrDefault();

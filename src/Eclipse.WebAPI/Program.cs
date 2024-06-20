@@ -8,7 +8,6 @@ using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
-using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Health;
@@ -28,13 +27,8 @@ builder.Services
     .AddApplicationContractsModule()
     .AddPipelinesModule()
     .AddWebApiModule()
-    .AddDataAccessModule(options => configuration.GetSection("Azure").Bind(options));
-
-builder.Services
-    .AddInfrastructureModule()
-    .UseTelegramHandler<IEclipseUpdateHandler>()
-    .ConfigureGoogleOptions(options => configuration.GetSection("Google").Bind(options))
-    .ConfigureTelegramOptions(options => configuration.GetSection("Telegram").Bind(options));
+    .AddDataAccessModule()
+    .AddInfrastructureModule();
 
 builder.Services.AddEclipseLocalization(localization =>
 {

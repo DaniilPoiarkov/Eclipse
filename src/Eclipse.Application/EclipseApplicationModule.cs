@@ -6,6 +6,7 @@ using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
 using Eclipse.Application.Google.Sheets;
@@ -15,6 +16,7 @@ using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
+using Eclipse.Application.Url;
 using Eclipse.Application.Users;
 using Eclipse.Application.Users.EventHandlers;
 using Eclipse.Application.Users.Services;
@@ -34,6 +36,7 @@ public static class EclipseApplicationModule
     {
         services
             .AddSingleton<IUserCache, UserCache>()
+            .AddSingleton<IAppUrlProvider, AppUrlProvider>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
