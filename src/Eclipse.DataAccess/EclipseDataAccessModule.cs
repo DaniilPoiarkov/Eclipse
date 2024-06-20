@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 
-using Eclipse.DataAccess.Builder;
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
@@ -22,16 +21,12 @@ namespace Eclipse.DataAccess;
 /// </summary>
 public static class EclipseDataAccessModule
 {
-    public static IServiceCollection AddDataAccessModule(this IServiceCollection services, Action<DataAccessModuleBuilder> builder)
+    public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(builder, nameof(builder));
-
         services
             .AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>))
             .AddScoped<IUserRepository, UserRepository>()
                 .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
-
-        services.Configure(builder);
 
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
