@@ -1,6 +1,8 @@
-﻿using Eclipse.Application.Contracts.Telegram;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
+using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -13,12 +15,13 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
     private readonly ITelegramService _telegramService;
 
-    private string Content { get; set; } = string.Empty;
+    private readonly ICacheService _cacheService;
 
-    public SendMessageToAllPipeline(IUserService userService, ITelegramService telegramService)
+    public SendMessageToAllPipeline(IUserService userService, ITelegramService telegramService, ICacheService cacheService)
     {
         _userService = userService;
         _telegramService = telegramService;
+        _cacheService = cacheService;
     }
 
     protected override void Initialize()
@@ -33,30 +36,41 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
         return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
     }
 
-    private IResult Confirm(MessageContext context)
+    private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(context.Value))
+        if (context.Value.IsNullOrEmpty())
         {
             FinishPipeline();
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        Content = context.Value;
+        await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, CacheConsts.ThreeDays, cancellationToken);
+
         return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
+        var messageKey = $"send-all-{context.ChatId}";
+
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
+            await _cacheService.DeleteAsync(messageKey, cancellationToken);
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
+        }
+
+        var message = await _cacheService.GetAndDeleteAsync<string>(messageKey, cancellationToken);
+
+        if (message.IsNullOrEmpty())
+        {
+            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
         var notifications = (await _userService.GetAllAsync(cancellationToken))
             .Select(u => new SendMessageModel
             {
                 ChatId = u.ChatId,
-                Message = Content
+                Message = message
             })
             .Select(m => _telegramService.Send(m, cancellationToken));
 
