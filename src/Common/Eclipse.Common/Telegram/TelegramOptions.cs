@@ -1,8 +1,11 @@
-﻿namespace Eclipse.Common.Telegram;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Eclipse.Common.Telegram;
 
 public sealed class TelegramOptions
 {
-    public string Token { get; set; } = string.Empty;
+    [Required]
+    public string Token { get; set; } = null!;
 
     public long Chat { get; set; }
 }

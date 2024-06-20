@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Eclipse.WebAPI.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
 [ApiKeyAuthorize]
+[Route("api/suggestions")]
 public sealed class SuggestionsController : ControllerBase
 {
     private readonly ISuggestionsService _suggestionsService;
