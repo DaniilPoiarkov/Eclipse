@@ -4,7 +4,7 @@ using Eclipse.WebAPI.Constants;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Eclipse.WebAPI.Controllers;
+namespace Eclipse.WebAPI.Controllers.Ping.V2;
 
 [ApiController]
 [Route("api/ping")]
