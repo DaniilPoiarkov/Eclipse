@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.Repositories;
 
-public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
+public class RepositoryBase<TEntity> : IRepository<TEntity>
     where TEntity : Entity
 {
     protected readonly EclipseDbContext Context;

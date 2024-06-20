@@ -1,6 +1,7 @@
 ﻿using Eclipse.Localization.Localizers;
 
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Eclipse.WebAPI.Middlewares;
 
@@ -24,14 +25,19 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
             _ => StatusCodes.Status500InternalServerError
         };
 
-        await context.Response.WriteAsJsonAsync(
-            new { Error = "Internal error." },
-            cancellationToken: cancellationToken
-        );
+        var problems = new ProblemDetails()
+        {
+            Status = context.Response.StatusCode,
+            Title = "Internal error.",
+            Detail = "Internal error occured.",
+        };
+
+        await context.Response.WriteAsJsonAsync(problems, cancellationToken);
 
         _logger.LogError(
             message: "Unhandled exception:\n{error}",
-            args: string.Format(_localizer[exception.Message, "en"], exception.Data.Values));
+            args: string.Format(_localizer[exception.Message, "en"], exception.Data.Values)
+        );
 
         return true;
     }

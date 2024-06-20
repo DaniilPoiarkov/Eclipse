@@ -10,7 +10,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [ApiKeyAuthorize]
-[Route("api/[controller]/[action]")]
+[Route("api/telegram")]
 public sealed class TelegramController : ControllerBase
 {
     private readonly ITelegramService _service;
@@ -26,14 +26,14 @@ public sealed class TelegramController : ControllerBase
         _appUrlProvider = appUrlProvider;
     }
 
-    [HttpPost]
+    [HttpPost("send")]
     public async Task<IActionResult> Send([FromBody] SendMessageModel message, CancellationToken cancellationToken)
     {
         var result = await _service.Send(message, cancellationToken);
         return result.ToActionResult(NoContent);
     }
 
-    [HttpPost]
+    [HttpPost("switch-handler")]
     public async Task<IActionResult> SwichHandlerType([FromBody] SwichHandlerTypeRequest request, CancellationToken cancellationToken)
     {
         var endpoint = _configuration[$"Telegram:{Enum.GetName(request.Type)}Endpoint"];

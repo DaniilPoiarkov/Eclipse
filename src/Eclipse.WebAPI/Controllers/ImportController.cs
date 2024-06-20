@@ -9,8 +9,8 @@ namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [ApiKeyAuthorize]
-[Route("api/[controller]/[action]")]
-public class ImportController : ControllerBase
+[Route("api/import")]
+public sealed class ImportController : ControllerBase
 {
     private readonly IBackgroundJobManager _jobManager;
 
@@ -19,7 +19,7 @@ public class ImportController : ControllerBase
         _jobManager = jobManager;
     }
 
-    [HttpPost]
+    [HttpPost("users")]
     public async Task<IActionResult> Users(IFormFile file, CancellationToken cancellationToken)
     {
         await EnqueueJob<ImportUsersBackgroundJob>(file, cancellationToken);
@@ -27,7 +27,7 @@ public class ImportController : ControllerBase
         return Accepted();
     }
 
-    [HttpPost]
+    [HttpPost("todo-items")]
     public async Task<IActionResult> TodoItems(IFormFile file, CancellationToken cancellationToken)
     {
         await EnqueueJob<ImportTodoItemsBackgroundJob>(file, cancellationToken);
@@ -35,7 +35,7 @@ public class ImportController : ControllerBase
         return Accepted();
     }
 
-    [HttpPost]
+    [HttpPost("reminders")]
     public async Task<IActionResult> Reminders(IFormFile file, CancellationToken cancellationToken)
     {
         await EnqueueJob<ImportRemindersBackgroundJob>(file, cancellationToken);

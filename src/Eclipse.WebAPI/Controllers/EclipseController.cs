@@ -9,7 +9,7 @@ using Telegram.Bot.Types;
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/eclipse")]
 [TelegramBotApiSecretTokenAuthorize]
 public sealed class EclipseController : ControllerBase
 {
