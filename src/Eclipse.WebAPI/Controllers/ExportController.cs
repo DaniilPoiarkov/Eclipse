@@ -8,7 +8,7 @@ namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [ApiKeyAuthorize]
-[Route("api/[controller]/[action]")]
+[Route("api/export")]
 public sealed class ExportController : ControllerBase
 {
     private readonly IExportService _exportService;
@@ -18,7 +18,7 @@ public sealed class ExportController : ControllerBase
         _exportService = exportService;
     }
 
-    [HttpGet]
+    [HttpGet("users")]
     public async Task<IActionResult> Users(CancellationToken cancellationToken)
     {
         var stream = await _exportService.GetUsersAsync(cancellationToken);
@@ -26,7 +26,7 @@ public sealed class ExportController : ControllerBase
         return File(stream, MimeContentTypes.ApplicationVndOpenxmlformattsOfficedocumentSpreadsheetmlSheet, "users.xlsx");
     }
 
-    [HttpGet]
+    [HttpGet("todo-items")]
     public async Task<IActionResult> TodoItems(CancellationToken cancellationToken)
     {
         var stream = await _exportService.GetTodoItemsAsync(cancellationToken);
@@ -34,7 +34,7 @@ public sealed class ExportController : ControllerBase
         return File(stream, MimeContentTypes.ApplicationVndOpenxmlformattsOfficedocumentSpreadsheetmlSheet, "todo-items.xlsx");
     }
 
-    [HttpGet]
+    [HttpGet("reminders")]
     public async Task<IActionResult> Reminders(CancellationToken cancellationToken)
     {
         var stream = await _exportService.GetRemindersAsync(cancellationToken);
