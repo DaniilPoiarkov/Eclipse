@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.Users;
+﻿using Eclipse.Application.Caching;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Cache;
 
 namespace Eclipse.Application.Users;
@@ -7,7 +8,7 @@ internal sealed class UserCache : IUserCache
 {
     private readonly ICacheService _cacheService;
 
-    private static readonly CacheKey Key = new("Users");
+    private static readonly CacheKey Key = new("users");
 
     public UserCache(ICacheService cacheService)
     {
@@ -27,7 +28,7 @@ internal sealed class UserCache : IUserCache
 
         users.Add(user);
 
-        await _cacheService.SetAsync(Key, users, cancellationToken);
+        await _cacheService.SetAsync(Key, users, CacheConsts.ThreeDays, cancellationToken);
     }
 
     public async Task<UserDto?> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)

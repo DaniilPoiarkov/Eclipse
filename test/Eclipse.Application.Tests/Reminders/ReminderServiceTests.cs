@@ -1,10 +1,10 @@
 ﻿using Bogus;
 
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Reminders;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

@@ -14,6 +14,9 @@
     "Pipelines:AdminMenu:UserMode": "Switched to user mode",
 
     "Pipelines:AdminMenu:View": "View menu",
-    "Pipelines:AdminMenu:Send": "Send menu"
+    "Pipelines:AdminMenu:Send": "Send menu",
+    "Pipelines:AdminMenu:Export": "Exporting menu",
+
+    "Pipelines:Admin:Export:Requested": "Exporting in progress"
   }
 }

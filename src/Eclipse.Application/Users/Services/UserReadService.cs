@@ -2,8 +2,8 @@
 using Eclipse.Application.Users.Extensions;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Users.Services;
 
@@ -28,18 +28,7 @@ internal sealed class UserReadService : IUserReadService
             .ToList();
     }
 
-    public async Task<IReadOnlyList<UserSlimDto>> GetFilteredListAsync(GetUsersRequest request, CancellationToken cancellationToken = default)
-    {
-        var users = await _repository.GetByExpressionAsync(
-            request.GetSpecification(),
-            cancellationToken);
-
-        return users
-            .Select(u => u.ToSlimDto())
-            .ToArray();
-    }
-
-    public async Task<PaginatedList<UserSlimDto>> GetPaginatedListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
         var specification = request.Options.GetSpecification();
         var skip = (request.Page - 1) * request.PageSize;

@@ -1,9 +1,10 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Users.Events;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
+using Eclipse.Domain.Users.Events;
+using Eclipse.Domain.Users.Import;
 
 namespace Eclipse.Domain.Users;
 
@@ -53,6 +54,30 @@ public sealed class User : AggregateRoot
         user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
 
         return user;
+    }
+
+    internal static User Import(ImportUserDto model)
+    {
+        return new User(model.Id, model.Name, model.Surname, model.UserName, model.ChatId)
+        {
+            NotificationsEnabled = model.NotificationsEnabled,
+            Gmt = TimeSpan.Parse(model.Gmt),
+            Culture = model.Culture
+        };
+    }
+
+    internal void ImportTodoItems(IEnumerable<ImportTodoItemDto> models)
+    {
+        var todoItems = models.Select(m => TodoItem.Import(m.Id, m.UserId, m.Text, m.CreatedAt, m.IsFinished, m.FinishedAt));
+
+        _todoItems.AddRange(todoItems);
+    }
+
+    internal void ImportReminders(IEnumerable<ImportReminderDto> models)
+    {
+        var reminders = models.Select(m => Reminder.Import(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
+
+        _reminders.AddRange(reminders);
     }
 
     /// <summary>Adds the reminder.</summary>

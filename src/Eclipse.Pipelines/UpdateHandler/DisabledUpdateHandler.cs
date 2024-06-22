@@ -37,7 +37,7 @@ public sealed class DisabledUpdateHandler : IEclipseUpdateHandler
     {
         var context = _parser.Parse(update);
 
-        if (context == null)
+        if (context is null)
         {
             _logger.LogError("Context is null after parsing update of type {updateType}", update.Type);
             return Task.CompletedTask;

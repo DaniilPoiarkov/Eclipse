@@ -1,10 +1,13 @@
-﻿using Eclipse.Common.Cache;
+﻿using Eclipse.Common.Background;
+using Eclipse.Common.Cache;
 using Eclipse.Common.EventBus;
+using Eclipse.Common.Excel;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
-using Eclipse.Infrastructure.Builder;
+using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Cache;
 using Eclipse.Infrastructure.EventBus;
+using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
 
 using Microsoft.Extensions.Configuration;
@@ -25,7 +28,7 @@ namespace Eclipse.Infrastructure;
 /// </summary>
 public static class EclipseInfrastructureModule
 {
-    public static IInfrastructureModuleBuilder AddInfrastructureModule(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructureModule(this IServiceCollection services)
     {
         services
             .AddSerilogIntegration()
@@ -39,11 +42,19 @@ public static class EclipseInfrastructureModule
             .AddTransient<IEventBus, InMemoryEventBus>()
             .AddHostedService<InMemoryChannelReadService>();
 
-        return new InfrastructureModuleBuilder(services);
+        services
+            .AddSingleton<IExcelManager, ExcelManager>()
+            .AddSingleton<IBackgroundJobManager, BackgroundJobManager>();
+
+        return services;
     }
 
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
+        services.AddOptions<GoogleOptions>()
+            .BindConfiguration("Google")
+            .ValidateOnStart();
+
         services
             .AddSingleton<IGoogleClient, GoogleClient>()
             .AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
@@ -59,7 +70,7 @@ public static class EclipseInfrastructureModule
         services.AddQuartz(cfg =>
         {
             cfg.InterruptJobsOnShutdown = true;
-            cfg.SchedulerName = $"EclipseScheduler_{Guid.NewGuid()}";
+            cfg.SchedulerName = $"eclipse";
         });
 
         services.AddQuartzHostedService(cfg =>
@@ -72,6 +83,10 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
     {
+        services.AddOptions<TelegramOptions>()
+            .BindConfiguration("Telegram")
+            .ValidateOnStart();
+
         services.AddSingleton<ITelegramBotClient>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<TelegramOptions>>().Value;
@@ -85,7 +100,7 @@ public static class EclipseInfrastructureModule
     {
         var configuration = services.GetConfiguration();
 
-        if (bool.Parse(configuration["IsRedisEnabled"]!))
+        if (configuration.GetValue<bool>("IsRedisEnabled"))
         {
             services.AddStackExchangeRedisCache(options =>
             {

@@ -1,4 +1,6 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Application.Contracts.Url;
+using Eclipse.Common.Background;
+using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Health;
@@ -49,6 +51,11 @@ public static class EclipsePipelinesModule
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
+        services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AsSelf()
+            .WithTransientLifetime());
+
         services.ConfigureOptions<QuatzOptionsConfiguration>();
 
         var configuration = services.GetConfiguration();
@@ -84,18 +91,21 @@ public static class EclipsePipelinesModule
     private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)
     {
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var appUrlProvider = serviceProvider.GetRequiredService<IAppUrlProvider>();
 
         var webhookInfo = await client.GetWebhookInfoAsync();
 
-        var url = configuration["Telegram:WebhookUrl"]!;
+        var endpoint = configuration["Telegram:ActiveEndpoint"]!;
 
-        if (webhookInfo is not null && webhookInfo.Url.Equals(url))
+        var webhook = $"{appUrlProvider.AppUrl}/{endpoint}";
+
+        if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {
             return;
         }
 
         await client.SetWebhookAsync(
-            url: configuration["Telegram:WebhookUrl"]!,
+            url: webhook,
             secretToken: configuration["Telegram:SecretToken"]
         );
     }

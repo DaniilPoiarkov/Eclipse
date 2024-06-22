@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Repositories;
+using Eclipse.Domain.Users.Import;
 
 namespace Eclipse.Domain.Users;
 
@@ -38,6 +39,45 @@ public sealed class UserManager
         return await _userRepository.CreateAsync(user, cancellationToken);
     }
 
+    public Task ImportAsync(ImportUserDto model, CancellationToken cancellationToken = default)
+    {
+        var user = User.Import(model);
+
+        return _userRepository.CreateAsync(user, cancellationToken);
+    }
+
+    public async Task<Result> ImportTodoItemsAsync(Guid userId, IEnumerable<ImportTodoItemDto> todoItems, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return Error.NotFound("Users.Import.TodoItems", "User not found");
+        }
+
+        user.ImportTodoItems(todoItems);
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ImportRemindersAsync(Guid userId, IEnumerable<ImportReminderDto> reminders, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return Error.NotFound("Users.Import.Reminders", "User not found");
+        }
+
+        user.ImportReminders(reminders);
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return Result.Success();
+    }
+
     public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
         return _userRepository.UpdateAsync(user, cancellationToken);
@@ -53,7 +93,7 @@ public sealed class UserManager
         return _userRepository.FindAsync(id, cancellationToken);
     }
 
-    public async Task<User?> FindByUsernameAsync(string userName, CancellationToken cancellationToken = default)
+    public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
     {
         return (await _userRepository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
             .SingleOrDefault();

@@ -1,9 +1,12 @@
-﻿using Eclipse.DataAccess.Builder;
+﻿using Azure.Identity;
+
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
-using Eclipse.DataAccess.Users;
 using Eclipse.DataAccess.Interceptors;
+using Eclipse.DataAccess.Repositories;
+using Eclipse.DataAccess.Users;
+using Eclipse.Domain.Shared.Repositories;
 using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
@@ -18,15 +21,12 @@ namespace Eclipse.DataAccess;
 /// </summary>
 public static class EclipseDataAccessModule
 {
-    public static IServiceCollection AddDataAccessModule(this IServiceCollection services, Action<DataAccessModuleBuilder> builder)
+    public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(builder, nameof(builder));
-
         services
+            .AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>))
             .AddScoped<IUserRepository, UserRepository>()
                 .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
-
-        services.Configure(builder);
 
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
@@ -38,21 +38,20 @@ public static class EclipseDataAccessModule
     {
         var configuration = services.GetConfiguration();
 
-        services.Configure<CosmosDbContextOptions>(
-            configuration.GetSection("Azure:CosmosOptions")
-        );
+        services.AddOptions<CosmosDbContextOptions>()
+            .BindConfiguration("Azure:CosmosOptions")
+            .ValidateOnStart();
 
         services.AddDbContextFactory<EclipseDbContext>((sp, builder) =>
         {
             var options = sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value;
             var interceptors = sp.GetServices<IInterceptor>();
 
-            // TODO: Use RBAC instead of connection string
             builder
                 .UseCosmos(
-                    options.ConnectionString,
-                    options.DatabaseId
-                )
+                    options.Endpoint,
+                    new DefaultAzureCredential(),
+                    options.DatabaseId)
                 .AddInterceptors(interceptors);
         });
 

@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Contracts.Telegram;
+﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Telegram;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Localizers;

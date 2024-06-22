@@ -1,7 +1,7 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Users;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.TodoItems;
+using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

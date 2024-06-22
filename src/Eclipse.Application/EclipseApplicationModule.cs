@@ -1,21 +1,25 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Users;
+﻿using Eclipse.Application.Contracts.Exporting;
+using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Contracts.Url;
+using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Exporting;
 using Eclipse.Application.Google.Sheets;
-using Eclipse.Application.Users;
-using Eclipse.Application.Users.EventHandlers;
-using Eclipse.Application.Users.Services;
 using Eclipse.Application.Localizations;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
+using Eclipse.Application.Url;
+using Eclipse.Application.Users;
+using Eclipse.Application.Users.EventHandlers;
+using Eclipse.Application.Users.Services;
 
 using MediatR.NotificationPublishers;
 
@@ -32,11 +36,14 @@ public static class EclipseApplicationModule
     {
         services
             .AddSingleton<IUserCache, UserCache>()
+            .AddSingleton<IAppUrlProvider, AppUrlProvider>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IReminderService, ReminderService>()
+                .AddTransient<IExportService, ExportService>()
+                .AddTransient<IImportService, ImportService>()
             .AddScoped<IEclipseLocalizer, EclipseLocalizer>();
 
         services

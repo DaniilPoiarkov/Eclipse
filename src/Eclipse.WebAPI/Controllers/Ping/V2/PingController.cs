@@ -4,10 +4,10 @@ using Eclipse.WebAPI.Constants;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Eclipse.WebAPI.Controllers;
+namespace Eclipse.WebAPI.Controllers.Ping.V2;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/ping")]
 [ApiVersion(ApiVersions.V2.Version, Deprecated = ApiVersions.V2.Deprecated)]
 public sealed class PingController : ControllerBase
 {
