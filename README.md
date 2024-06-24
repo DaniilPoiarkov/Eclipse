@@ -17,6 +17,9 @@
 
 Go to __docker__ directory, create here a copy of __docker-compose.override.yaml__ file with name __docker-compose.local.yaml__.
 Follow instructions in this file to up the solution locally.
+After entering all required values for your __docker-compose.local.yaml__ file run .\build.ps1 script.
+It will take a few minutes to start web api as cosmosdb emulator takes a while to prepare itself for work.
+Check __eclipse-webapi__ container logs.
 
 ## Architecture diagram
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)

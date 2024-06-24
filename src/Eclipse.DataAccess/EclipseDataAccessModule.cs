@@ -92,11 +92,11 @@ public static class EclipseDataAccessModule
         using var scope = app.Services.CreateScope();
 
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<CosmosClient>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<EclipseDbContext>>();
 
         if (!configuration.GetValue<bool>("Settings:IsDocker"))
         {
-            logger.LogInformation("Initializing data access module is available only for docker environment.");
+            logger.LogInformation("Initializing {module} is available only for docker environment.", nameof(EclipseDataAccessModule));
             return;
         }
 
@@ -114,6 +114,6 @@ public static class EclipseDataAccessModule
             PartitionKeyPath = "/Id",
         });
 
-        logger.LogInformation("Initialized data access module successfully.");
+        logger.LogInformation("{module} module initialized successfully", nameof(EclipseDataAccessModule));
     }
 }
