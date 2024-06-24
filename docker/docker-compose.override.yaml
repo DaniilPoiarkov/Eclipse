@@ -1,26 +1,37 @@
 version: '3.9'
 
-# To use Google sheets go to google console, create new project, enable sheets API, and paste credentials in Google__Credentials variable.
+# Create a copy of this file in this directory
+# Give it a name docker-compose.local.yaml
+# It will be ignored by .gitignore
+
+# To use Google sheets go to google console, create new project
+# enable sheets API, copy and paste your credentials in Google__Credentials variable.
+# Then create desired sheet and page named "Suggestions"
 # Also set:
 #   Settings__IsGoogleEnabled=true
 #   Sheets__SheetId=<Your sheet id>
-#   Sheets__SuggestionsRange=<page and range>(e.g. Page1!A:D)
 
-# Here specified default cosmosdb emulator connection string.
+# In base docker-compose file specified default cosmosdb emulator connection string.
 # You can replace it with real connection to your Azure CosmosDb instance.
+# In this case specify Settings__IsDocker=false as this config used to determine how to connect to database
+# You MUST create database with id 'eclipse' and container named 'Aggregates' manually. 
+# Automatic database and container creation is configured ONLY for emulator instance.
 
-# Specify your own telegram bot token
+# Specify your own telegram bot token (create one using botfather telegram bot)
 # Specify your telegram id to obtain access to admin menu
-# Replace {host} in Telegram__WebhookUrl variable with webhook url. See ngrok documentation.
+# It is required to set App__SelfUrl
+# Download ngrok and use 'ngrok http http://localhost:8080' command to obtain temporary url
+# See ngrok documentation for more.
+
+# Now you can run .\build.ps1 command to up this project.
 
 services:
   backend:
     environment:
-      - Azure__CosmosOptions__ConnectionString=AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
-      - Telegram__Token=      
-      - Telegram__Chat=
-      - Telegram__WebhookUrl={host}/api/eclipse/_handle
-      - 'Google__Credentials='
-      - Sheets__SheetId=
-      - Sheets__SuggestionsRange=
+      - Authorization__EclipseApiKey=my_sup3r_s3cr3t_ap1_k3y
+      - App__SelfUrl=<expose api with ngrok and paste it here>
+      - Telegram__Token=<your bot token>
+      - Telegram__Chat=<your telegram chat id>
+      - 'Google__Credentials=<json file>'
+      - Sheets__SheetId=<your sheet id>
       - Settings__IsGoogleEnabled=false

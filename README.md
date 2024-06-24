@@ -1,11 +1,22 @@
 # Eclipse
 
+- [Getting started](#getting-started)
 - [Architecture diagram](#architecture-diagram)
 - [Modules](#modules)
 - [Tests](#tests)
 - [Integrations](#integrations)
 - [Tech stack](#tech-stack)
 - [Deployment and CICD](#deployment-and-cicd)
+
+## Getting started
+
+### Requirements
+* Docker
+* ngrok
+* .NET 8
+
+Go to __docker__ directory, create here a copy of __docker-compose.override.yaml__ file with name __docker-compose.local.yaml__.
+Follow instructions in this file to up the solution locally.
 
 ## Architecture diagram
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
@@ -37,7 +48,7 @@ Contains domain logic of application.
 Provides easy API to build and retrieve pipelines.
 
 ### Localization
-Provides API for multiple language support in application. As Microsoft.Localization is not very sutable for this purposes and works with XML schemas I desided to create own engine. Here we have ability to dynamicly set culture for localization (Without taking it from request headers) and using json as a schema for resoures. Planning to combine this engine and Microsoft.Localization abstractions.
+Provides API for multiple language support in application. As Microsoft.Localization is not very sutable for this purposes and works with XML schemas I desided to create own engine. Here we have ability to dynamicly set culture for localization (Without taking it from request headers) and using json as a schema for resources. Planning to combine this engine and Microsoft.Localization abstractions.
 
 ### Infrastructure
 Basicly contains wrappers with only necessary API and cross-cutting concerns.

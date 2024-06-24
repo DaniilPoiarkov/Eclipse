@@ -3,26 +3,19 @@ version: '3.9'
 services:
   cosmosdb:
     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
-    container_name: cosmosdb
+    container_name: eclipse-cosmosdb
+    hostname: cosmos.domain
     restart: always
+    mem_limit: 4GB
     ports:
       - 8081:8081
-      - 10251:10251
-      - 10252:10252
     environment:
-      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=5
       - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
-      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE="cosmosdb"
     networks:
-      - eclipse
+      eclipse:
     volumes:
       - eclipse:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:8081/_explorer/emulator.pem"]
-      interval: 30s
-      timeout: 30s
-      retries: 3
-      start_period: 40s
     
   cache:
     image: redis/redis-stack-server:latest
@@ -34,29 +27,26 @@ services:
       - eclipse:/cache
     networks:
       - eclipse
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 30s
-      retries: 3
 
-#git stash pop
   backend:
     image: ${DOCKER_REGISTRY-}eclipse
     container_name: eclipse-webapi
     build:
       context: ../
       dockerfile: Dockerfile
-    
+    environment:
+      - ConnectionStrings__Emulator=AccountEndpoint=https://cosmos.domain:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+      - ConnectionStrings__Redis=cache:6379
+      - Telegram__SecretToken=my_Sup3r_S3cr3t_T0k3n
+      - Sheets__SuggestionsRange=Suggestions!B:E
+      - Settings__IsDocker=true
     ports:
       - 8080:8080
     networks:
       - eclipse
     depends_on:
-      cosmosdb:
-        condition: service_healthy
-      cache:
-        condition: service_healthy
+      - cosmosdb
+      - cache
 
 networks:
   eclipse:

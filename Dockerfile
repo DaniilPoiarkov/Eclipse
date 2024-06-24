@@ -2,6 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
+RUN apt-get update && apt-get install -y curl
 EXPOSE 80
 EXPOSE 443
 
@@ -20,4 +21,6 @@ RUN dotnet publish "Eclipse.WebAPI/Eclipse.WebAPI.csproj" -c Release -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Eclipse.WebAPI.dll"]
+COPY ./entrypoint.sh ./entrypoint.sh
+
+ENTRYPOINT ["./entrypoint.sh", "cosmos.domain", "8081"]
