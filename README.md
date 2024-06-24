@@ -15,11 +15,11 @@
 * ngrok
 * .NET 8
 
-Go to __docker__ directory, create here a copy of __docker-compose.override.yaml__ file with name __docker-compose.local.yaml__.
-Follow instructions in this file to up the solution locally.
-After entering all required values for your __docker-compose.local.yaml__ file run .\build.ps1 script.
-It will take a few minutes to start web api as cosmosdb emulator takes a while to prepare itself for work.
-Check __eclipse-webapi__ container logs.
+<p>Go to <i>docker</i> directory, create here a copy of <i>docker-compose.override.yaml</i> file with name <i>docker-compose.local.yaml</i>.</p>
+<p>Follow instructions in this file to up the solution locally.</p>
+<p>After entering all required values for your <i>docker-compose.local.yaml</i> file run <i>.\build.ps1</i> script.</p>
+<p>It will take a few minutes to start web api as cosmosdb emulator takes a while to prepare itself for work.</p>
+<p>Check <i>eclipse-webapi</i> container logs.</p>
 
 ## Architecture diagram
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
@@ -81,6 +81,7 @@ Data persistence with EF Core Cosmos Db provider.
 * Redis
 * Azure Application Insights
 * MiniExcel
+* Docker
 
 ### Testing
 * NSubstitute
