@@ -16,7 +16,7 @@
 * .NET 8
 
 <p>Go to <i>docker</i> directory, create here a copy of <i>docker-compose.override.yaml</i> file with name <i>docker-compose.local.yaml</i>.</p>
-<p>Follow instructions in this file to up the solution locally.</p>
+<p>Follow instructions in this file to build the solution locally.</p>
 <p>After entering all required values for your <i>docker-compose.local.yaml</i> file run <i>.\build.ps1</i> script.</p>
 <p>It will take a few minutes to start web api as cosmosdb emulator takes a while to prepare itself for work.</p>
 <p>Check <i>eclipse-webapi</i> container logs.</p>
