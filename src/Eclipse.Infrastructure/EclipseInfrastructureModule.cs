@@ -63,7 +63,6 @@ public static class EclipseInfrastructureModule
             .BindConfiguration("Google")
             .ValidateOnStart();
 
-
         services
             .AddSingleton<IGoogleClient, GoogleClient>()
             .AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
