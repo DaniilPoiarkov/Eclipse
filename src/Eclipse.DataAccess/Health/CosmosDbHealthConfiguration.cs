@@ -1,10 +1,12 @@
 ﻿using Azure.Identity;
 
+using Eclipse.DataAccess.Constants;
 using Eclipse.DataAccess.CosmosDb;
 
 using HealthChecks.CosmosDb;
 
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +20,7 @@ internal static class CosmosDbHealthConfiguration
             .AddAzureCosmosDB(GetCosmosClient, sp => new AzureCosmosDbHealthCheckOptions
             {
                 DatabaseId = GetOptions(sp).DatabaseId,
-                ContainerIds = ["IdentityUsers"]
+                ContainerIds = [ContainerNames.Aggregates]
             }, tags: ["database"]);
 
         return services;
@@ -26,6 +28,13 @@ internal static class CosmosDbHealthConfiguration
 
     private static CosmosClient GetCosmosClient(IServiceProvider serviceProvider)
     {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        if (configuration.GetValue<bool>("Settings:IsDocker"))
+        {
+            return new CosmosClient(configuration.GetConnectionString("Emulator"));
+        }
+
         var options = GetOptions(serviceProvider);
 
         return new CosmosClient(options.Endpoint, new DefaultAzureCredential());

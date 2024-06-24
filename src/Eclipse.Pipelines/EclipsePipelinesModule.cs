@@ -17,8 +17,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 
@@ -75,17 +74,17 @@ public static class EclipsePipelinesModule
 
         var serviceProvider = scope.ServiceProvider;
 
-        var logger = serviceProvider.GetRequiredService<ILogger>();
+        var logger = serviceProvider.GetRequiredService<ILogger<TelegramBotClient>>();
         var client = serviceProvider.GetRequiredService<ITelegramBotClient>();
 
-        logger.Information("Initializing {module} module", nameof(EclipsePipelinesModule));
+        logger.LogInformation("Initializing {module} module", nameof(EclipsePipelinesModule));
 
         await ResetWebhookAsync(serviceProvider, client);
 
         var me = await client.GetMeAsync();
 
-        logger.Information("\tBot: {bot}", me?.Username);
-        logger.Information("{module} module initialized successfully", nameof(EclipsePipelinesModule));
+        logger.LogInformation("\tBot: {bot}", me?.Username);
+        logger.LogInformation("{module} module initialized successfully", nameof(EclipsePipelinesModule));
     }
 
     private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)

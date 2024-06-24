@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Users;
+﻿using Eclipse.DataAccess.Constants;
+using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,7 +10,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToContainer("Aggregates")
+        builder.ToContainer(ContainerNames.Aggregates)
             .HasPartitionKey(u => u.Id);
     }
 }
