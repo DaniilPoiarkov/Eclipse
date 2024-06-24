@@ -1,11 +1,25 @@
 # Eclipse
 
+- [Getting started](#getting-started)
 - [Architecture diagram](#architecture-diagram)
 - [Modules](#modules)
 - [Tests](#tests)
 - [Integrations](#integrations)
 - [Tech stack](#tech-stack)
 - [Deployment and CICD](#deployment-and-cicd)
+
+## Getting started
+
+### Requirements
+* Docker
+* ngrok
+* .NET 8
+
+<p>Go to <i>docker</i> directory, create here a copy of <i>docker-compose.override.yaml</i> file with name <i>docker-compose.local.yaml</i>.</p>
+<p>Follow instructions in this file to build the solution locally.</p>
+<p>After entering all required values for your <i>docker-compose.local.yaml</i> file run <i>.\build.ps1</i> script.</p>
+<p>It will take a few minutes to start web api as cosmosdb emulator takes a while to prepare itself for work.</p>
+<p>Check <i>eclipse-webapi</i> container logs.</p>
 
 ## Architecture diagram
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
@@ -37,7 +51,7 @@ Contains domain logic of application.
 Provides easy API to build and retrieve pipelines.
 
 ### Localization
-Provides API for multiple language support in application. As Microsoft.Localization is not very sutable for this purposes and works with XML schemas I desided to create own engine. Here we have ability to dynamicly set culture for localization (Without taking it from request headers) and using json as a schema for resoures. Planning to combine this engine and Microsoft.Localization abstractions.
+Provides API for multiple language support in application. As Microsoft.Localization is not very sutable for this purposes and works with XML schemas I desided to create own engine. Here we have ability to dynamicly set culture for localization (Without taking it from request headers) and using json as a schema for resources. Planning to combine this engine and Microsoft.Localization abstractions.
 
 ### Infrastructure
 Basicly contains wrappers with only necessary API and cross-cutting concerns.
@@ -67,6 +81,7 @@ Data persistence with EF Core Cosmos Db provider.
 * Redis
 * Azure Application Insights
 * MiniExcel
+* Docker
 
 ### Testing
 * NSubstitute

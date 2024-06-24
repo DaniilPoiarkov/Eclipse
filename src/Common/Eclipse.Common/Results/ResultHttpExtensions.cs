@@ -1,31 +1,13 @@
+﻿using Eclipse.Common.Results;
 using Eclipse.Common.Results.ErrorParsers;
 
-using Microsoft.AspNetCore.Mvc;
+namespace Microsoft.AspNetCore.Mvc;
 
-namespace Eclipse.Common.Results;
-
-public static class ResultExtensions
+public static class ResultHttpExtensions
 {
-    /// <summary>
-    /// Converts <a cref="result"></a> to <typeparamref name="T"/> based on <a cref="Result.IsSuccess"></a> status
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="result"></param>
-    /// <param name="ok"></param>
-    /// <param name="error"></param>
-    /// <returns>
-    /// </returns>
-    public static T Match<T>(this Result result, Func<T> ok, Func<T> error)
+    public static IActionResult ToProblemActionResult(this Result result)
     {
-        ArgumentNullException.ThrowIfNull(ok, nameof(ok));
-        ArgumentNullException.ThrowIfNull(error, nameof(error));
-
-        return result.IsSuccess ? ok() : error();
-    }
-
-    public static IActionResult ToProblem(this Result result)
-    {
-        var parser = ThrowOrGetErrorParser(result);
+        var parser = result.ThrowOrGetErrorParser();
 
         var problemDetails = new ProblemDetails
         {
@@ -63,5 +45,10 @@ public static class ResultExtensions
             ErrorType.Conflict => new ConflictErrorParser(),
             _ => new ServerErrorErrorParser(),
         };
+    }
+
+    public static IActionResult ToActionResult(this Result result, Func<IActionResult> okResult)
+    {
+        return result.Match(okResult, result.ToProblemActionResult);
     }
 }

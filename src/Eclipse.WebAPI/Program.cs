@@ -74,6 +74,7 @@ app.UseAuthentication()
 
 app.MapControllers();
 
+await app.InitializaDataAccessModule();
 await app.InitializePipelineModuleAsync();
 
 app.Run();

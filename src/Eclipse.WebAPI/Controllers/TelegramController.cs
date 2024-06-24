@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Url;
-using Eclipse.Common.Results;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Models;
 
