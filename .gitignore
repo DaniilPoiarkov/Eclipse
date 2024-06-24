@@ -11,6 +11,7 @@ CHECKLIST.md
 *.sln.docstates
 .vscode/
 
+docker/docker-compose.local.yaml
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

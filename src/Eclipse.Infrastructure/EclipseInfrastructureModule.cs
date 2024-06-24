@@ -51,6 +51,14 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
+        var configuration = services.GetConfiguration();
+
+        if (!configuration.GetValue<bool>("Settings:IsGoogleEnabled"))
+        {
+            return services
+                .AddSingleton<ISheetsService, NullSheetsService>();
+        }
+
         services.AddOptions<GoogleOptions>()
             .BindConfiguration("Google")
             .ValidateOnStart();
