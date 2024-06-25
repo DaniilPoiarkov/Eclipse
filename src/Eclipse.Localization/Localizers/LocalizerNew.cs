@@ -14,6 +14,8 @@ internal sealed class LocalizerNew : ILocalizer
 
     private List<LocalizationResource> Localizations => _resources.Value;
 
+    public string DefaultCulture => throw new NotImplementedException();
+
     public LocalizerNew(List<string> resourcePaths, string @default)
     {
         _resourcePaths = resourcePaths;
