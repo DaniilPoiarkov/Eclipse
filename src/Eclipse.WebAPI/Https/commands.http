@@ -7,7 +7,7 @@
 GET https://{{hostname}}:{{port}}/api/commands/list
 X-Api-Key: {{apiKey}}
 
-### Commands add
+### Add
 
 POST https://{{hostname}}:{{port}}/api/commands/add
 Content-Type: application/json
@@ -18,7 +18,7 @@ X-Api-Key: {{apiKey}}
   "description": "Test description for command"
 }
 
-### Commands remove
+### Remove
 
 DELETE https://{{hostname}}:{{port}}/api/commands/remove/{{command}}
 X-Api-Key: {{apiKey}}
