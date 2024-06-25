@@ -1,7 +1,4 @@
 # For more info on HTTP files go to https://aka.ms/vs/httpfile
-@hostname=localhost
-@port=7236
-@apiKey=secret-key
 @command=test_command
 
 GET https://{{hostname}}:{{port}}/api/commands/list
