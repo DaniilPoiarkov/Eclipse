@@ -1,0 +1,24 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@hostname=localhost
+@port=7236
+@apiKey=secret-key
+@command=test_command
+
+GET https://{{hostname}}:{{port}}/api/commands/list
+X-Api-Key: {{apiKey}}
+
+### Commands add
+
+POST https://{{hostname}}:{{port}}/api/commands/add
+Content-Type: application/json
+X-Api-Key: {{apiKey}}
+
+{
+  "command": {{command}},
+  "description": "Test description for command"
+}
+
+### Commands remove
+
+DELETE https://{{hostname}}:{{port}}/api/commands/remove/{{command}}
+X-Api-Key: {{apiKey}}
