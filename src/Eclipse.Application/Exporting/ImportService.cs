@@ -1,14 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Telegram;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
-using Eclipse.Domain.Users.Import;
-
-using Microsoft.Extensions.Options;
-
-using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace Eclipse.Application.Exporting;
 
@@ -18,19 +11,13 @@ internal sealed class ImportService : IImportService
 
     private readonly IExcelManager _excelManager;
 
-    private readonly ITelegramBotClient _telegramBotClient;
-
-    private readonly IOptions<TelegramOptions> _options;
-
-    public ImportService(UserManager userManager, IExcelManager excelManager, ITelegramBotClient telegramBotClient, IOptions<TelegramOptions> options)
+    public ImportService(UserManager userManager, IExcelManager excelManager)
     {
         _userManager = userManager;
         _excelManager = excelManager;
-        _telegramBotClient = telegramBotClient;
-        _options = options;
     }
 
-    public async Task AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
+    public async Task<ImportResult<ImportReminderDto>> AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var reminders = _excelManager.Read<ImportReminderDto>(stream)
             .Where(u => u.UserId != Guid.Empty)
@@ -52,28 +39,13 @@ internal sealed class ImportService : IImportService
             failed.AddRange(grouping);
         }
 
-        if (failed.IsNullOrEmpty())
+        return new ImportResult<ImportReminderDto>
         {
-            await _telegramBotClient.SendTextMessageAsync(
-                _options.Value.Chat,
-                "All reminders imported successfully.",
-                cancellationToken: cancellationToken
-            );
-
-            return;
-        }
-
-        using var failedStream = _excelManager.Write(failed);
-
-        await SendFailedExcel(
-            failedStream,
-            "failed-to-import-reminders.xlsx",
-            "Failed to import following reminders",
-            cancellationToken
-        );
+            FailedRows = failed,
+        };
     }
 
-    public async Task AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default)
+    public async Task<ImportResult<ImportTodoItemDto>> AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var todoItems = _excelManager.Read<ImportTodoItemDto>(stream)
             .Where(u => u.UserId != Guid.Empty)
@@ -95,28 +67,13 @@ internal sealed class ImportService : IImportService
             failed.AddRange(grouping);
         }
 
-        if (failed.IsNullOrEmpty())
+        return new ImportResult<ImportTodoItemDto>
         {
-            await _telegramBotClient.SendTextMessageAsync(
-                _options.Value.Chat,
-                "All todo items imported successfully.",
-                cancellationToken: cancellationToken
-            );
-
-            return;
-        }
-
-        using var failedStream = _excelManager.Write(failed);
-
-        await SendFailedExcel(
-            failedStream,
-            "failed-to-import-todo-items.xlsx",
-            "Failed to import following todo items",
-            cancellationToken
-        );
+            FailedRows = failed,
+        };
     }
 
-    public async Task AddUsersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
+    public async Task<ImportResult<ImportUserDto>> AddUsersAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var entities = _excelManager.Read<ImportUserDto>(stream)
             .Where(u => u.ChatId != default && u.Id != Guid.Empty);
@@ -142,25 +99,10 @@ internal sealed class ImportService : IImportService
             }
         }
 
-        if (failed.IsNullOrEmpty())
+        return new ImportResult<ImportUserDto>
         {
-            await _telegramBotClient.SendTextMessageAsync(
-                _options.Value.Chat,
-                "All users imported successfully.",
-                cancellationToken: cancellationToken
-            );
-
-            return;
-        }
-
-        using var failedToImportUsersExcel = _excelManager.Write(failed);
-
-        await SendFailedExcel(
-            failedToImportUsersExcel,
-            "failed-to-import-users.xlsx",
-            "Failed to import following users",
-            cancellationToken
-        );
+            FailedRows = failed
+        };
     }
 
     private static void SetErrors(IEnumerable<ImportEntityBase> models, string error)
@@ -169,15 +111,5 @@ internal sealed class ImportService : IImportService
         {
             entity.Exception = error;
         }
-    }
-
-    private async Task SendFailedExcel(MemoryStream stream, string fileName, string caption, CancellationToken cancellationToken)
-    {
-        await _telegramBotClient.SendDocumentAsync(
-            _options.Value.Chat,
-            InputFile.FromStream(stream, fileName),
-            caption: caption,
-            cancellationToken: cancellationToken
-        );
     }
 }

@@ -41,4 +41,25 @@ public static class FormFileExtensions
 
         return memoryStream;
     }
+
+    public static MemoryStream CreateMemoryStream(this Stream stream)
+    {
+        if (stream.CanSeek)
+        {
+            stream.Position = 0;
+        }
+
+        var memoryStream = new MemoryStream();
+
+        stream.CopyTo(memoryStream);
+
+        if (stream.CanSeek)
+        {
+            stream.Position = 0;
+        }
+
+        memoryStream.Position = 0;
+
+        return memoryStream;
+    }
 }

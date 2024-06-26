@@ -1,6 +1,4 @@
-﻿using Eclipse.Domain.Shared.Importing;
-
-namespace Eclipse.Domain.Users.Import;
+﻿namespace Eclipse.Domain.Shared.Importing;
 
 public class ImportUserDto : ImportEntityBase
 {

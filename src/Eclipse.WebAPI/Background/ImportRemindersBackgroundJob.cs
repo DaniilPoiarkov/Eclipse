@@ -1,18 +1,23 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
-using Eclipse.Common.Background;
+using Eclipse.Common.Excel;
+using Eclipse.Common.Telegram;
+
+using Microsoft.Extensions.Options;
+
+using Telegram.Bot;
 
 namespace Eclipse.WebAPI.Background;
 
-public sealed class ImportRemindersBackgroundJob : IBackgroundJob<ImportEntitiesBackgroundJobArgs>
+public sealed class ImportRemindersBackgroundJob : ImportBackgroundJobBase
 {
-    private readonly IImportService _importService;
+    public ImportRemindersBackgroundJob(
+        IImportService importService,
+        IExcelManager excelManager,
+        ITelegramBotClient botClient,
+        IOptions<TelegramOptions> options)
+        : base(importService, excelManager, botClient, options) { }
 
-    public ImportRemindersBackgroundJob(IImportService importService)
-    {
-        _importService = importService;
-    }
-
-    public async Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    public async override Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         if (args.BytesAsBase64.IsNullOrEmpty())
         {
@@ -23,6 +28,19 @@ public sealed class ImportRemindersBackgroundJob : IBackgroundJob<ImportEntities
 
         using var stream = new MemoryStream(bytes);
 
-        await _importService.AddRemindersAsync(stream, cancellationToken);
+        var result = await ImportService.AddRemindersAsync(stream, cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            await SendSuccessResult("All reminders imported successfully.", cancellationToken);
+            return;
+        }
+
+        await SendFailedResult(
+            "Failed to import following reminders",
+            "failed-to-import-reminders.xlsx",
+            result.FailedRows,
+            cancellationToken
+        );
     }
 }
