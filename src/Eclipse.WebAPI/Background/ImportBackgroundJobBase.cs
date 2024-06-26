@@ -5,12 +5,8 @@ using Eclipse.Common.Telegram;
 
 using Microsoft.Extensions.Options;
 
-using System.IO;
-
 using Telegram.Bot;
 using Telegram.Bot.Types;
-
-using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace Eclipse.WebAPI.Background;
 
