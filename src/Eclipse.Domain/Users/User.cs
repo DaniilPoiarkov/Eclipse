@@ -1,10 +1,10 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
-using Eclipse.Domain.Users.Import;
 
 namespace Eclipse.Domain.Users;
 

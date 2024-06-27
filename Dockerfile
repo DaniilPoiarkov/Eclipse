@@ -23,4 +23,8 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY ./entrypoint.sh ./entrypoint.sh
 
+RUN apt-get update && \
+    apt-get install -y dos2unix && \
+    dos2unix ./entrypoint.sh
+
 ENTRYPOINT ["./entrypoint.sh", "cosmos.domain", "8081"]

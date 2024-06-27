@@ -1,10 +1,12 @@
-﻿namespace Eclipse.Application.Contracts.Exporting;
+﻿using Eclipse.Domain.Shared.Importing;
+
+namespace Eclipse.Application.Contracts.Exporting;
 
 public interface IImportService
 {
-    Task AddUsersAsync(MemoryStream stream, CancellationToken cancellationToken = default);
+    Task<ImportResult<ImportUserDto>> AddUsersAsync(MemoryStream stream, CancellationToken cancellationToken = default);
 
-    Task AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default);
+    Task<ImportResult<ImportTodoItemDto>> AddTodoItemsAsync(MemoryStream stream, CancellationToken cancellationToken = default);
 
-    Task AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default);
+    Task<ImportResult<ImportReminderDto>> AddRemindersAsync(MemoryStream stream, CancellationToken cancellationToken = default);
 }
