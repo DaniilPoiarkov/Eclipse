@@ -20,6 +20,7 @@
 <p>After entering all required values for your <i>docker-compose.local.yaml</i> file run <i>.\build.ps1</i> script.</p>
 <p>It will take a few minutes to start web api as cosmosdb emulator takes a while to prepare itself for work.</p>
 <p>Check <i>eclipse-webapi</i> container logs.</p>
+<p>Run <i>.\stop.ps1</i> script to stop container. It will also remove image.</p>
 
 ## Architecture diagram
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
