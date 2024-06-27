@@ -10,23 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Files\invalid-users.xlsx" />
-    <None Remove="Files\valid-reminders.xlsx" />
-    <None Remove="Files\valid-todo-items.xlsx" />
-    <None Remove="Files\valid-users.xlsx" />
+    <None Remove="Files\*"/>
   </ItemGroup>
-
+	
   <ItemGroup>
-    <EmbeddedResource Include="Files\invalid-users.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Files\valid-reminders.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Files\valid-todo-items.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Files\valid-users.xlsx">
+    <EmbeddedResource Include="Files\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
