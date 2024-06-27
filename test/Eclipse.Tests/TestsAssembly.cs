@@ -1,10 +1,17 @@
 ﻿using Eclipse.WebAPI.Extensions;
 
+using System.Text;
+
 namespace Eclipse.Tests;
 
 public static class TestsAssembly
 {
     private static readonly string _basePath = "Eclipse.Tests.Files";
+
+    public static string ToBase64String(string value)
+    {
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+    }
 
     public static MemoryStream GetValidUsersExcelFile()
     {

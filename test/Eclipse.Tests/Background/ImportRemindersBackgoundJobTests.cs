@@ -48,7 +48,7 @@ public sealed class ImportRemindersBackgoundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = Convert.ToBase64String([1, 2, 3]) });
+        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
             .MakeRequestAsync(
@@ -74,7 +74,7 @@ public sealed class ImportRemindersBackgoundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = Convert.ToBase64String([1, 2, 3]) });
+        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
             .MakeRequestAsync(
