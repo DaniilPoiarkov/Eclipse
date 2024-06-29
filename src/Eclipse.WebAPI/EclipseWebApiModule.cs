@@ -4,6 +4,8 @@ using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 namespace Eclipse.WebAPI;
 
 /// <summary>
@@ -14,6 +16,9 @@ public static class EclipseWebApiModule
     public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
         var configuration = services.GetConfiguration();
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(new JwtBearerOptionsConfiguration(configuration).Configure);
 
         services
             .AddControllers()
