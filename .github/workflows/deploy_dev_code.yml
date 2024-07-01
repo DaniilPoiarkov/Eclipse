@@ -1,5 +1,5 @@
 
-name: Development Build, Test and deploy to an Azure
+name: Development Code-based Build, Test and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-prod-app
@@ -9,8 +9,8 @@ env:
   DOTNET_CONFIGURATION: 'Release'
 
 on:
-  push:
-    branches: [ "develop" ]
+  # push:
+  #   branches: [ "develop" ]
   workflow_dispatch:
 
 permissions:
