@@ -1,15 +1,18 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.WebAPI.Background;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [ApiKeyAuthorize]
 [Route("api/import")]
+[EnableRateLimiting(RateLimiterPolicies.IpAddress)]
 public sealed class ImportController : ControllerBase
 {
     private readonly IBackgroundJobManager _jobManager;
