@@ -1,6 +1,6 @@
 ﻿using Eclipse.Common.Results;
+using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.Repositories;
-using Eclipse.Domain.Users.Import;
 
 namespace Eclipse.Domain.Users;
 

@@ -1,18 +1,23 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
-using Eclipse.Common.Background;
+using Eclipse.Common.Excel;
+using Eclipse.Common.Telegram;
+
+using Microsoft.Extensions.Options;
+
+using Telegram.Bot;
 
 namespace Eclipse.WebAPI.Background;
 
-public sealed class ImportUsersBackgroundJob : IBackgroundJob<ImportEntitiesBackgroundJobArgs>
+public sealed class ImportUsersBackgroundJob : ImportBackgroundJobBase
 {
-    private readonly IImportService _importService;
+    public ImportUsersBackgroundJob(
+        IImportService importService,
+        IExcelManager excelManager,
+        ITelegramBotClient botClient,
+        IOptions<TelegramOptions> options)
+        : base(importService, excelManager, botClient, options) { }
 
-    public ImportUsersBackgroundJob(IImportService importService)
-    {
-        _importService = importService;
-    }
-
-    public async Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    public async override Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         if (args.BytesAsBase64.IsNullOrEmpty())
         {
@@ -23,6 +28,19 @@ public sealed class ImportUsersBackgroundJob : IBackgroundJob<ImportEntitiesBack
 
         using var stream = new MemoryStream(bytes);
 
-        await _importService.AddUsersAsync(stream, cancellationToken);
+        var result = await ImportService.AddUsersAsync(stream, cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            await SendSuccessResult("All users imported successfully.", cancellationToken);
+            return;
+        }
+
+        await SendFailedResult(
+            "Failed to import following users",
+            "failed-to-import-users.xlsx",
+            result.FailedRows,
+            cancellationToken
+        );
     }
 }

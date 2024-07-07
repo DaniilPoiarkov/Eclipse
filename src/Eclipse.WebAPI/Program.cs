@@ -69,6 +69,8 @@ app.UseExceptionHandler()
 
 app.UseEclipseHealthChecks();
 
+app.UseRateLimiter();
+
 app.UseAuthentication()
     .UseAuthorization();
 
