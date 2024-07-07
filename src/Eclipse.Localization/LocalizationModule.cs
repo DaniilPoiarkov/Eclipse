@@ -28,7 +28,10 @@ public static class LocalizationModule
     {
         ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
 
-        services.AddLocalization();
+        services.AddLocalization(options =>
+        {
+            
+        });
 
         services.Configure(configuration);
 
