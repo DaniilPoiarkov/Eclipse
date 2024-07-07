@@ -1,12 +1,9 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
-using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
-
-using System.Threading.RateLimiting;
 
 namespace Eclipse.WebAPI;
 
