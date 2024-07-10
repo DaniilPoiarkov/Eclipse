@@ -1,0 +1,8 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Test": "Тест",
+    "ExceptionMessage": "Помилка {0}",
+    "Arg": "Аргумент"
+  }
+}

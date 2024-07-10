@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Eclipse.Localization.Tests;
 
-public class LocalizationBuilderTests
+public sealed class LocalizationBuilderTests
 {
-    private readonly ILocalizationBuilder _builder;
+    private readonly LocalizationBuilder _builder;
 
     public LocalizationBuilderTests()
     {
@@ -23,20 +23,22 @@ public class LocalizationBuilderTests
         action.Should().Throw<LocalizationFileNotExistException>();
     }
 
-    [Fact]
-    public void AddJsonFile_WhenFileIsWrongFormat_ThenExceptionThrown()
+    [Theory]
+    [InlineData("empty.json")]
+    [InlineData("invalid.json")]
+    public void AddJsonFile_WhenFileIsWrongFormat_ThenExceptionThrown(string file)
     {
-        var action = () => _builder.AddJsonFile("Localization/invalid.json");
+        var action = () => _builder.AddJsonFile($"Resources/Invalid/{file}");
         action.Should().Throw<UnableToParseLocalizationResourceException>();
     }
 
     [Fact]
     public void AddJsonFiles_WhenMultipleJsonFilesWithSameCulture_ThenCombinedTogether()
     {
-        _builder.DefaultLocalization = "en";
+        _builder.DefaultCulture = "en";
+        _builder.AddJsonFiles("Resources/Valid");
 
-        var localizer = _builder.AddJsonFiles("Resources")
-            .Build();
+        var localizer = _builder.Build();
 
         var strings = new List<string>(4);
 
@@ -52,11 +54,11 @@ public class LocalizationBuilderTests
     [Fact]
     public void AddJsonFiles_WhenAddingInfoFromDifferentDirectories_AndHaveSameCultures_ThenCombinedTogether()
     {
-        _builder.DefaultLocalization = "en";
+        _builder.DefaultCulture = "en";
 
-        var localizer = _builder.AddJsonFiles("Resources")
-            .AddJsonFiles("Localization")
-            .Build();
+        _builder.AddJsonFiles("Resources");
+
+        var localizer = _builder.Build();
 
         var strings = new List<string>(6);
 
@@ -66,10 +68,10 @@ public class LocalizationBuilderTests
         }
 
         strings.Add(localizer["Test"]);
-        strings.Add(localizer["ExArg"]);
+        strings.Add(localizer["Arg"]);
 
         var result = string.Join(" ", strings);
 
-        result.Should().Be("Test 1 Test 2 Test 3 Test 4 Test ExArg");
+        result.Should().Be("Test 1 Test 2 Test 3 Test 4 Test Arg");
     }
 }

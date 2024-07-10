@@ -12,15 +12,13 @@ public class LocalizerTests
 {
     private readonly ILocalizer _sut = GetLocalizer();
 
-    [Fact]
-    public void Localize_WhenCanBeLocalized_ThenLocalizedValueReturned()
+    [Theory]
+    [InlineData("Test", "en", "Test")]
+    [InlineData("Test", "uk", "Тест")]
+    public void Localize_WhenCanBeLocalized_ThenLocalizedValueReturned(string key, string culture, string expectedResult)
     {
-        var key = "Test";
-        var localizedAsEn = _sut[key, "en"];
-        var localizedAsUk = _sut[key, "uk"];
-
-        localizedAsEn.Should().Be("Test");
-        localizedAsUk.Should().Be("Тест");
+        var localizedAsEn = _sut[key, culture];
+        localizedAsEn.Should().Be(expectedResult);
     }
 
     [Fact]
@@ -30,16 +28,16 @@ public class LocalizerTests
         localized.Should().Be("Test");
     }
 
-    [Fact]
-    public void ToLocalizableString_WhenLocalizationExist_ThenKeyReturned()
+    [Theory]
+    [InlineData("Test", "Тест")]
+    [InlineData("Test 1", "Тест 1")]
+    [InlineData("Test 2", "Тест 2")]
+    public void ToLocalizableString_WhenLocalizationExist_ThenKeyReturned(string leftLocalized, string rightLocalized)
     {
-        var localizedAsEn = "Test";
-        var localizedAsUk = "Тест";
+        var keyFromLeft = _sut.ToLocalizableString(leftLocalized);
+        var keyFromRight = _sut.ToLocalizableString(rightLocalized);
 
-        var keyFromEnLocalization = _sut.ToLocalizableString(localizedAsEn);
-        var keyFromUkLocalization = _sut.ToLocalizableString(localizedAsUk);
-
-        keyFromEnLocalization.Should().Be(keyFromUkLocalization);
+        keyFromLeft.Should().Be(keyFromRight);
     }
 
     [Fact]
@@ -52,22 +50,23 @@ public class LocalizerTests
         action.Should().Throw<LocalizationNotFoundException>();
     }
 
-    [Fact]
-    public void FormatLocalizableException_WhenCanBeFormatted_ThenShouldReturnFormattedString()
+    [Theory]
+    [InlineData("en", "Exception Arg")]
+    [InlineData("uk", "Помилка Аргумент")]
+    public void FormatLocalizableException_WhenCanBeFormatted_ThenShouldReturnFormattedString(string culture, string expectedResult)
     {
-        var exception = new LocalizedException("ExMessage", "ExArg");
-        var localized = _sut.FormatLocalizedException(exception, "en");
+        var exception = new LocalizedException("ExceptionMessage", "Arg");
+        var localized = _sut.FormatLocalizedException(exception, culture);
 
-        localized.Should().Be("Exception ExArg");
+        localized.Should().Be(expectedResult);
     }
 
     private static ILocalizer GetLocalizer()
     {
-        var localizationDirectory = "Localization";
+        var builder = new LocalizationBuilder();
 
-        return new LocalizationBuilder()
-            .AddJsonFile($"{localizationDirectory}/en.json")
-            .AddJsonFile($"{localizationDirectory}/uk.json")
-            .Build();
+        builder.AddJsonFiles("Resources/Valid");
+
+        return builder.Build();
     }
 }

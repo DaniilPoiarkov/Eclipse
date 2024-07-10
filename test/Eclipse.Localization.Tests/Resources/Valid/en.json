@@ -2,8 +2,7 @@
   "Culture": "en",
   "Texts": {
     "Test": "Test",
-
-    "ExMessage": "Exception {0}",
-    "ExArg": "ExArg"
+    "ExceptionMessage": "Exception {0}",
+    "Arg": "Arg"
   }
 }
