@@ -1,5 +1,6 @@
 ﻿using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
+using Eclipse.Localization.Resources;
 
 using Newtonsoft.Json;
 
@@ -9,7 +10,7 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
 {
     private readonly List<LocalizationResource> _resources = [];
 
-    public string DefaultLocalization { get; set; } = "en";
+    public string DefaultCulture { get; set; } = "en";
 
     public ILocalizationBuilder AddJsonFile(string path)
     {
@@ -38,7 +39,7 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
     {
         var fullPath = Path.GetFullPath(path);
 
-        var resources = Directory.GetFiles(fullPath, "*.json")
+        var resources = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
             .Select(File.ReadAllText)
             .Select(JsonConvert.DeserializeObject<LocalizationResource>)
             .Where(resource => resource is not null)
@@ -69,5 +70,5 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
         return this;
     }
 
-    public ILocalizer Build() => new Localizer(_resources, DefaultLocalization);
+    public ILocalizer Build() => new Localizer(_resources, DefaultCulture);
 }

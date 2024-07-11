@@ -1,4 +1,7 @@
 ﻿using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Resources;
+
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 
@@ -17,7 +20,7 @@ internal sealed class Localizer : ILocalizer
         _default = _resources.First(l => l.Culture == defaultCulture);
     }
 
-    public string this[string key, string? culture = null]
+    public LocalizedString this[string key, string? culture = null]
     {
         get
         {
@@ -25,15 +28,15 @@ internal sealed class Localizer : ILocalizer
                 ?? _default;
 
             return localizer.Texts.TryGetValue(key, out var localization)
-                ? localization
-                : key;
+                ? new LocalizedString(key, localization)
+                : new LocalizedString(key, key, true);
         }
     }
 
     public string FormatLocalizedException(LocalizedException exception, string? culture = null)
     {
         var message = this[exception.Message, culture];
-        return string.Format(message, exception.Args.Select(a => this[a, culture]).ToArray());
+        return string.Format(message, exception.Args);
     }
 
     public string ToLocalizableString(string value)

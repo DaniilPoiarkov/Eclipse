@@ -1,5 +1,7 @@
 ﻿using Eclipse.Localization.Exceptions;
 
+using Microsoft.Extensions.Localization;
+
 namespace Eclipse.Localization.Localizers;
 
 /// <summary>
@@ -21,7 +23,7 @@ public interface ILocalizer
     /// <param name="key">String which need to be localized</param>
     /// <param name="culture">Cultute info</param>
     /// <returns></returns>
-    string this[string key, string? culture = null] { get; }
+    LocalizedString this[string key, string? culture = null] { get; }
 
     /// <summary>
     /// Converts Localizable exception to user-friendly message

@@ -18,14 +18,14 @@ public class LocalizerTests
     public void Localize_WhenCanBeLocalized_ThenLocalizedValueReturned(string key, string culture, string expectedResult)
     {
         var localizedAsEn = _sut[key, culture];
-        localizedAsEn.Should().Be(expectedResult);
+        localizedAsEn.Value.Should().Be(expectedResult);
     }
 
     [Fact]
     public void Localize_WhenLocalizationNotExist_ThenDefaultLocalizationUsed()
     {
         var localized = _sut["Test", "fr"];
-        localized.Should().Be("Test");
+        localized.Value.Should().Be("Test");
     }
 
     [Theory]
@@ -52,7 +52,7 @@ public class LocalizerTests
 
     [Theory]
     [InlineData("en", "Exception Arg")]
-    [InlineData("uk", "Помилка Аргумент")]
+    [InlineData("uk", "Помилка Arg")]
     public void FormatLocalizableException_WhenCanBeFormatted_ThenShouldReturnFormattedString(string culture, string expectedResult)
     {
         var exception = new LocalizedException("ExceptionMessage", "Arg");

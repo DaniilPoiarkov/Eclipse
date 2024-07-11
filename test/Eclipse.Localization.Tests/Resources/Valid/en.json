@@ -3,6 +3,7 @@
   "Texts": {
     "Test": "Test",
     "ExceptionMessage": "Exception {0}",
-    "Arg": "Arg"
+    "Arg": "Arg",
+    "{0}Message{1}":  "{0} message {1}"
   }
 }

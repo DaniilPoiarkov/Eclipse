@@ -1,6 +1,4 @@
-﻿using Eclipse.Localization.Localizers;
-
-namespace Eclipse.Localization.Builder;
+﻿namespace Eclipse.Localization.Builder;
 
 public interface ILocalizationBuilder
 {
@@ -21,11 +19,5 @@ public interface ILocalizationBuilder
     /// <summary>
     /// Default localization if localization culture not defined
     /// </summary>
-    string DefaultLocalization { get; set; }
-
-    /// <summary>
-    /// Build localizer
-    /// </summary>
-    /// <returns cref="ILocalizer"></returns>
-    ILocalizer Build();
+    string DefaultCulture { get; set; }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Eclipse.Localization.Exceptions;
 
 [Serializable]
-internal sealed class UnableToParseLocalizationResourceException : LocalizedException
+internal sealed class UnableToParseLocalizationResourceException : ArgumentException
 {
-    internal UnableToParseLocalizationResourceException(string file)
-        : base("UnableToParseLocalizationExceptionMessage", file) { }
+    internal UnableToParseLocalizationResourceException(string fileFullPath)
+        : base($"Unable to parse localization file: {fileFullPath}") { }
 }
