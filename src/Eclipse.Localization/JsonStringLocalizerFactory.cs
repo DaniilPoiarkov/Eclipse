@@ -4,6 +4,7 @@ using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 using Eclipse.Localization.Resources;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
@@ -11,15 +12,21 @@ namespace Eclipse.Localization;
 
 internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILocalizer
 {
-    private readonly ICurrentCulture _currentCulture;
+    private ICurrentCulture CurrentCulture { get
+        {
+            //using var scope = _serviceProvider.CreateScope();
+            return _serviceProvider.GetRequiredService<ICurrentCulture>();
+        } }
 
     private readonly IResourceProvider _resourceProvider;
 
+    private readonly IServiceProvider _serviceProvider;
+
     public string DefaultCulture { get; }
 
-    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, ICurrentCulture currentCulture, IResourceProvider resourceProvider)
+    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IServiceProvider serviceProvider, IResourceProvider resourceProvider)
     {
-        _currentCulture = currentCulture;
+        _serviceProvider = serviceProvider;
         _resourceProvider = resourceProvider;
 
         DefaultCulture = options.Value.DefaultCulture;
@@ -29,7 +36,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     public IStringLocalizer Create(Type resourceSource)
     {
-        var culture = _currentCulture.Culture ?? DefaultCulture;
+        var culture = CurrentCulture.Culture ?? DefaultCulture;
 
         var resource = _resourceProvider.Get(culture);
 
@@ -38,7 +45,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     public IStringLocalizer Create(string baseName, string location)
     {
-        var culture = _currentCulture.Culture ?? DefaultCulture;
+        var culture = CurrentCulture.Culture ?? DefaultCulture;
 
         var resource = _resourceProvider.Get(culture, location);
 
@@ -53,7 +60,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
     {
         get
         {
-            using var _ = _currentCulture.UsingCulture(culture ?? DefaultCulture);
+            using var _ = CurrentCulture.UsingCulture(culture ?? DefaultCulture);
             var localizer = Create(GetType());
             return localizer[key];
         }
@@ -68,7 +75,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     private string FormatLocalizedExceptionInternal(LocalizedException exception, string culture)
     {
-        using var _ = _currentCulture.UsingCulture(culture);
+        using var _ = CurrentCulture.UsingCulture(culture);
         return FormatLocalizedExceptionInternal(exception);
     }
 

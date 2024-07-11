@@ -5,6 +5,7 @@ using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -34,7 +35,10 @@ public sealed class JsonStringLocalizerFactoryTests
 
         var options = Options.Create(builder);
 
-        _sut = new(() => new JsonStringLocalizerFactory(options, _currentCulture, new ResourceProvider(options)));
+        var serviceProvider = Substitute.For<IServiceProvider>();
+        serviceProvider.GetService(typeof(ICurrentCulture)).Returns(_currentCulture);
+
+        _sut = new(() => new JsonStringLocalizerFactory(options, serviceProvider, new ResourceProvider(options)));
     }
 
     #region IStringLocalizerFactory Tests
