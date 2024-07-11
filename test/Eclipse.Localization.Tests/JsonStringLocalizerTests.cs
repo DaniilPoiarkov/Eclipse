@@ -13,7 +13,7 @@ public sealed class JsonStringLocalizerTests
 {
     private readonly LocalizationResource _resource;
 
-    private readonly IStringLocalizer _sut;
+    private readonly JsonStringLocalizer _sut;
 
     public JsonStringLocalizerTests()
     {

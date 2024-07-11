@@ -13,7 +13,7 @@ public sealed class CurrentCultureTests
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private IStringLocalizerFactory Localizer => _serviceProvider.GetRequiredService<IStringLocalizerFactory>();
+    private IStringLocalizerFactory Factory => _serviceProvider.GetRequiredService<IStringLocalizerFactory>();
     private ICurrentCulture Sut => _serviceProvider.GetRequiredService<ICurrentCulture>();
 
     public CurrentCultureTests()
@@ -34,16 +34,16 @@ public sealed class CurrentCultureTests
     [InlineData("ExceptionMessage", "uk", "Exception {0}", "Помилка {0}")]
     public void UsingCulture_WhenSpecified_ThenLocalizerUsesSpecificCultureInScope(string key, string culture, string expectedWithDefault, string expectedWithUsing)
     {
-        var testBeforeUsing = Localizer.Create(GetType())[key];
+        var testBeforeUsing = Factory.Create(GetType())[key];
 
         var testWithUsing = new LocalizedString(string.Empty, string.Empty);
 
         using (var _ = Sut.UsingCulture(culture))
         {
-            testWithUsing = Localizer.Create(GetType())[key];
+            testWithUsing = Factory.Create(GetType())[key];
         }
 
-        var testAfterUsing = Localizer.Create(GetType())[key];
+        var testAfterUsing = Factory.Create(GetType())[key];
 
         testBeforeUsing.Value.Should().Be(expectedWithDefault);
         testWithUsing.Value.Should().Be(expectedWithUsing);

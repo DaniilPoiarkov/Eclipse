@@ -55,16 +55,4 @@ internal sealed class JsonStringLocalizer : IStringLocalizer
         _resource.Texts.TryGetValue(name, out var value);
         return value;
     }
-
-    internal bool ContainsValue(string value)
-    {
-        return _resource.Texts.Any(pair => pair.Value == value);
-    }
-
-    internal bool TryGetKey(string value, out string key)
-    {
-        key = _resource.Texts.FirstOrDefault(pair => pair.Value == value).Key;
-
-        return key is { Length: > 0 };
-    }
 }
