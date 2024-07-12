@@ -1,4 +1,5 @@
 ﻿using Eclipse.Localization.Exceptions;
+
 using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization;

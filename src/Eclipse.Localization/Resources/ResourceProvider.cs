@@ -35,7 +35,7 @@ internal sealed class ResourceProvider : IResourceProvider
         }
 
         ReadAndCacheLocalizationResources();
-        
+
         if (!_resourceCache.TryGetValue(culture, out resource))
         {
             _missingResources[culture] = null;

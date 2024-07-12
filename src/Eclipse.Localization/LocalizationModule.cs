@@ -47,7 +47,6 @@ public static class LocalizationModule
 
         services.RemoveAll(typeof(IStringLocalizer<>))
             .AddTransient(typeof(IStringLocalizer<>), typeof(TypedJsonStringLocalizer<>))
-            .AddTransient(typeof(IStringLocalizer<>), typeof(TypedJsonStringLocalizer<>))
             .AddTransient(sp => sp.GetRequiredService<ILocalizerFactory>().Create());
 
         services.AddScoped<CurrentCulture>()

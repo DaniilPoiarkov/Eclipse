@@ -14,7 +14,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     private readonly IResourceProvider _resourceProvider;
 
-    private ICurrentCulture? CurrentCulture { get; set; }
+    private ICurrentCulture? CurrentCulture { get; set; } = new CurrentCulture();
 
     public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IResourceProvider resourceProvider)
     {
@@ -22,7 +22,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
         _resourceProvider = resourceProvider;
     }
 
-    public JsonStringLocalizerFactory(
+    internal JsonStringLocalizerFactory(
         IOptions<LocalizationBuilderV2> options,
         IResourceProvider resourceProvider,
         ICurrentCulture? currentCulture)

@@ -13,7 +13,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
     private readonly IOptions<LocalizationBuilderV2> _options;
 
     private readonly IResourceProvider _resourceProvider;
-    
+
     private readonly ICurrentCulture _currentCulture;
 
     private readonly string? _location;
@@ -70,7 +70,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
             }
 
             var value = string.Format(template, arguments);
-            return new LocalizedString(name, value);
+            return new LocalizedString(name, value, false, _location);
         }
     }
 
