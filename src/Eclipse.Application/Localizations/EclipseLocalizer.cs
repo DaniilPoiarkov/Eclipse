@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Common.Cache;
+using Eclipse.Localization;
 using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Localizers;
 
 namespace Eclipse.Application.Localizations;
 

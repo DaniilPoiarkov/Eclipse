@@ -3,7 +3,9 @@
   "Texts": {
     "Test": "Test",
     "ExceptionMessage": "Exception {0}",
-    "Arg": "Arg",
-    "{0}Message{1}":  "{0} message {1}"
+    "Arg": "Argument",
+    "Message{0}": "Message {0}",
+    "{0}Message{1}": "{0} message {1}",
+    "Message{0}{1}": "Message {0} with {1}"
   }
 }

@@ -5,7 +5,6 @@ using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -35,10 +34,7 @@ public sealed class JsonStringLocalizerFactoryTests
 
         var options = Options.Create(builder);
 
-        var serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(ICurrentCulture)).Returns(_currentCulture);
-
-        _sut = new(() => new JsonStringLocalizerFactory(options, serviceProvider, new ResourceProvider(options)));
+        _sut = new(() => new JsonStringLocalizerFactory(options, new ResourceProvider(options), _currentCulture));
     }
 
     #region IStringLocalizerFactory Tests
@@ -86,7 +82,7 @@ public sealed class JsonStringLocalizerFactoryTests
 
     #endregion
 
-    #region ILocalizer Tests
+    #region ILocalizerFactory Tests
 
     [Theory]
     [InlineData("Test", "en", "Test", false)]
@@ -99,7 +95,7 @@ public sealed class JsonStringLocalizerFactoryTests
     {
         _currentCulture.Culture.Returns(culture);
 
-        var str = Sut[key, culture];
+        var str = Sut.Create()[key, culture];
 
         str.Name.Should().Be(key);
         str.Value.Should().Be(expected);
@@ -113,7 +109,7 @@ public sealed class JsonStringLocalizerFactoryTests
     {
         _currentCulture.Culture.Returns(culture);
 
-        var action = () => Sut[key, culture];
+        var action = () => Sut.Create()[key, culture];
         action.Should().ThrowExactly<LocalizationFileNotExistException>();
     }
 
@@ -128,7 +124,7 @@ public sealed class JsonStringLocalizerFactoryTests
 
         var exception = new LocalizedException(template, arguments);
 
-        var actual = Sut.FormatLocalizedException(exception);
+        var actual = Sut.Create().FormatLocalizedException(exception);
 
         actual.Should().Be(expected);
     }
@@ -142,7 +138,7 @@ public sealed class JsonStringLocalizerFactoryTests
     [InlineData("Тест 2", "Test2")]
     public void ToLocalizableString_WhenCalled_ThenReturnsProperKey(string value, string expected)
     {
-        var key = Sut.ToLocalizableString(value);
+        var key = Sut.Create().ToLocalizableString(value);
         key.Should().Be(expected);
     }
 
@@ -153,7 +149,7 @@ public sealed class JsonStringLocalizerFactoryTests
     [InlineData("!@#5569-=-03123")]
     public void ToLocalizableString_WhenLocalizationNotFound_ThenExceptionThrown(string value)
     {
-        var action = () => Sut.ToLocalizableString(value);
+        var action = () => Sut.Create().ToLocalizableString(value);
         action.Should().ThrowExactly<LocalizationNotFoundException>();
     }
 

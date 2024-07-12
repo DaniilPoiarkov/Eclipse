@@ -72,6 +72,6 @@ public sealed class LocalizationBuilderTests
 
         var result = string.Join(" ", strings);
 
-        result.Should().Be("Test 1 Test 2 Test 3 Test 4 Test Arg");
+        result.Should().Be("Test 1 Test 2 Test 3 Test 4 Test Argument");
     }
 }

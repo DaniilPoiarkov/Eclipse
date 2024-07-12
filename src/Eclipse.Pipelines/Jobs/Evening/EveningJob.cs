@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Localization.Localizers;
+using Eclipse.Localization;
 using Eclipse.Pipelines.Users;
 
 using Quartz;

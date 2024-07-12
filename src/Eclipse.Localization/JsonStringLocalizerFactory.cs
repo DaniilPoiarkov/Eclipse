@@ -1,98 +1,58 @@
 ﻿using Eclipse.Localization.Builder;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 using Eclipse.Localization.Resources;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace Eclipse.Localization;
 
-internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILocalizer
+internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILocalizerFactory
 {
-    private ICurrentCulture CurrentCulture { get
-        {
-            //using var scope = _serviceProvider.CreateScope();
-            return _serviceProvider.GetRequiredService<ICurrentCulture>();
-        } }
+    private readonly IOptions<LocalizationBuilderV2> _options;
 
     private readonly IResourceProvider _resourceProvider;
 
-    private readonly IServiceProvider _serviceProvider;
+    private ICurrentCulture? CurrentCulture { get; set; }
 
-    public string DefaultCulture { get; }
-
-    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IServiceProvider serviceProvider, IResourceProvider resourceProvider)
+    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IResourceProvider resourceProvider)
     {
-        _serviceProvider = serviceProvider;
+        _options = options;
         _resourceProvider = resourceProvider;
-
-        DefaultCulture = options.Value.DefaultCulture;
     }
 
-    #region IStringLocalizerFactory
+    public JsonStringLocalizerFactory(
+        IOptions<LocalizationBuilderV2> options,
+        IResourceProvider resourceProvider,
+        ICurrentCulture? currentCulture)
+        : this(options, resourceProvider)
+    {
+        CurrentCulture = currentCulture;
+    }
+
+    internal void SetCurrentCulture(ICurrentCulture currentCulture)
+    {
+        CurrentCulture = currentCulture;
+    }
+
+    public ILocalizer Create()
+    {
+        return CreateJsonLocalizer();
+    }
 
     public IStringLocalizer Create(Type resourceSource)
     {
-        var culture = CurrentCulture.Culture ?? DefaultCulture;
-
-        var resource = _resourceProvider.Get(culture);
-
-        return new JsonStringLocalizer(resource);
+        return CreateJsonLocalizer();
     }
 
     public IStringLocalizer Create(string baseName, string location)
     {
-        var culture = CurrentCulture.Culture ?? DefaultCulture;
-
-        var resource = _resourceProvider.Get(culture, location);
-
-        return new JsonStringLocalizer(resource, location);
+        return CreateJsonLocalizer(location);
     }
 
-    #endregion
-
-    #region ILocalizer
-
-    public LocalizedString this[string key, string? culture = null]
+    private JsonStringLocalizer CreateJsonLocalizer(string? location = null)
     {
-        get
-        {
-            using var _ = CurrentCulture.UsingCulture(culture ?? DefaultCulture);
-            var localizer = Create(GetType());
-            return localizer[key];
-        }
+        return new JsonStringLocalizer(_options, _resourceProvider, CurrentCulture ?? new CurrentCulture(), location);
     }
-
-    public string FormatLocalizedException(LocalizedException exception, string? culture = null)
-    {
-        return culture is null
-            ? FormatLocalizedExceptionInternal(exception)
-            : FormatLocalizedExceptionInternal(exception, culture);
-    }
-
-    private string FormatLocalizedExceptionInternal(LocalizedException exception, string culture)
-    {
-        using var _ = CurrentCulture.UsingCulture(culture);
-        return FormatLocalizedExceptionInternal(exception);
-    }
-
-    private string FormatLocalizedExceptionInternal(LocalizedException exception)
-    {
-        var localizer = Create(GetType());
-        return localizer[exception.Message, exception.Args];
-    }
-
-    public string ToLocalizableString(string value)
-    {
-        var resource = _resourceProvider.GetWithValue(value);
-
-        var pair = resource.Texts.FirstOrDefault(p => p.Value == value);
-
-        return pair.Key;
-    }
-
-    #endregion
 }

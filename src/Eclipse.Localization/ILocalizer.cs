@@ -1,8 +1,7 @@
 ﻿using Eclipse.Localization.Exceptions;
-
 using Microsoft.Extensions.Localization;
 
-namespace Eclipse.Localization.Localizers;
+namespace Eclipse.Localization;
 
 /// <summary>
 /// Provides api to localize string

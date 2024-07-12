@@ -3,7 +3,7 @@
 namespace Eclipse.Application.Contracts.Localizations;
 
 /// <summary>
-/// Wrapper around <a cref="Localization.Localizers.ILocalizer"></a> to track current user culture
+/// Wrapper around <a cref="Localization.ILocalizer"></a> to track current user culture
 /// </summary>
 public interface IEclipseLocalizer
 {

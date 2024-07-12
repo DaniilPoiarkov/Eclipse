@@ -49,36 +49,59 @@ internal sealed class ResourceProvider : IResourceProvider
     {
         var key = $"location={location};culture={culture}";
 
-        if (!_resourceCache.TryGetValue(key, out var resource))
+        if (_resourceCache.TryGetValue(key, out var resource))
         {
-            if (_missingResources.ContainsKey(key))
-            {
-                throw new LocalizationFileNotExistException(location, culture);
-            }
-
-            var fullPath = Path.GetFullPath(location);
-
-            resource = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
-                .Select(File.ReadAllText)
-                .Select(JsonConvert.DeserializeObject<LocalizationResource>)
-                .GroupBy(r => r!.Culture)
-                .Select(g => new LocalizationResource
-                {
-                    Culture = g.Key,
-                    Texts = g.SelectMany(r => r!.Texts).ToDictionary()
-                })
-                .FirstOrDefault(r => r.Culture == culture);
-
-            if (resource is null)
-            {
-                _missingResources[key] = null;
-                throw new LocalizationFileNotExistException(location, culture);
-            }
-
-            _resourceCache[key] = resource;
+            return resource;
         }
 
+        if (_missingResources.ContainsKey(key))
+        {
+            throw new LocalizationFileNotExistException(location, culture);
+        }
+
+        var fullPath = Path.GetFullPath(location);
+
+        if (fullPath.EndsWith(".json"))
+        {
+            return ParseAndCacheFile(culture, location, key, fullPath);
+        }
+
+        resource = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
+            .Select(File.ReadAllText)
+            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
+            .GroupBy(r => r!.Culture)
+            .Select(g => new LocalizationResource
+            {
+                Culture = g.Key,
+                Texts = g.SelectMany(r => r!.Texts).ToDictionary()
+            })
+            .FirstOrDefault(r => r.Culture == culture);
+
+        if (resource is null)
+        {
+            _missingResources[key] = null;
+            throw new LocalizationFileNotExistException(location, culture);
+        }
+
+        _resourceCache[key] = resource;
+
         return resource;
+    }
+
+    private LocalizationResource ParseAndCacheFile(string culture, string location, string key, string fullPath)
+    {
+        var json = File.ReadAllText(fullPath);
+
+        var r = JsonConvert.DeserializeObject<LocalizationResource>(json);
+
+        if (r is null)
+        {
+            _missingResources[key] = null;
+            throw new LocalizationFileNotExistException(location, culture);
+        }
+
+        _resourceCache[key] = r;
+        return r;
     }
 
     public LocalizationResource GetWithValue(string value)
@@ -141,7 +164,9 @@ internal sealed class ResourceProvider : IResourceProvider
     {
         return _options.Value.Resources
             .Select(Path.GetFullPath)
-            .SelectMany(path => Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
+            .SelectMany(path => path.EndsWith(".json")
+                ? [path]
+                : Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             .Select(File.ReadAllText)
             .Select(JsonConvert.DeserializeObject<LocalizationResource>)
             .Where(r => r is not null)

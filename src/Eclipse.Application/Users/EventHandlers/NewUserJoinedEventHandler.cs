@@ -2,8 +2,7 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Telegram;
 using Eclipse.Domain.Users.Events;
-using Eclipse.Localization.Localizers;
-
+using Eclipse.Localization;
 using MediatR;
 
 using Microsoft.Extensions.Options;

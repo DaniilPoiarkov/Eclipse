@@ -13,8 +13,9 @@ public sealed class CurrentCultureTests
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private IStringLocalizerFactory Factory => _serviceProvider.GetRequiredService<IStringLocalizerFactory>();
-    private ICurrentCulture Sut => _serviceProvider.GetRequiredService<ICurrentCulture>();
+    private readonly IStringLocalizer<CurrentCultureTests> _localizer;
+
+    private readonly ICurrentCulture _sut;
 
     public CurrentCultureTests()
     {
@@ -25,6 +26,9 @@ public sealed class CurrentCultureTests
                 options.DefaultCulture = "en";
             })
             .BuildServiceProvider();
+
+        _localizer = _serviceProvider.GetRequiredService<IStringLocalizer<CurrentCultureTests>>();
+        _sut = _serviceProvider.GetRequiredService<ICurrentCulture>();
     }
 
     [Theory]
@@ -34,19 +38,19 @@ public sealed class CurrentCultureTests
     [InlineData("ExceptionMessage", "uk", "Exception {0}", "Помилка {0}")]
     public void UsingCulture_WhenSpecified_ThenLocalizerUsesSpecificCultureInScope(string key, string culture, string expectedWithDefault, string expectedWithUsing)
     {
-        var testBeforeUsing = Factory.Create(GetType())[key];
+        var beforeUsing = _localizer[key];
 
-        var testWithUsing = new LocalizedString(string.Empty, string.Empty);
+        var withUsing = new LocalizedString(string.Empty, string.Empty);
 
-        using (var _ = Sut.UsingCulture(culture))
+        using (var _ = _sut.UsingCulture(culture))
         {
-            testWithUsing = Factory.Create(GetType())[key];
+            withUsing = _localizer[key];
         }
 
-        var testAfterUsing = Factory.Create(GetType())[key];
+        var afterUsing = _localizer[key];
 
-        testBeforeUsing.Value.Should().Be(expectedWithDefault);
-        testWithUsing.Value.Should().Be(expectedWithUsing);
-        testAfterUsing.Value.Should().Be(expectedWithDefault);
+        beforeUsing.Value.Should().Be(expectedWithDefault);
+        withUsing.Value.Should().Be(expectedWithUsing);
+        afterUsing.Value.Should().Be(expectedWithDefault);
     }
 }

@@ -1,8 +1,8 @@
-﻿using Eclipse.Localization.Builder;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Exceptions;
 
 using FluentAssertions;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 
@@ -10,7 +10,22 @@ namespace Eclipse.Localization.Tests;
 
 public class LocalizerTests
 {
-    private readonly ILocalizer _sut = GetLocalizer();
+    private readonly ILocalizer _sut;
+
+    private readonly IServiceProvider _serviceProvider;
+
+    public LocalizerTests()
+    {
+        _serviceProvider = new ServiceCollection()
+            .AddLocalizationV2(b =>
+            {
+                b.DefaultCulture = "en";
+                b.AddJsonFiles("Resources/Valid");
+            })
+            .BuildServiceProvider();
+
+        _sut = _serviceProvider.GetRequiredService<ILocalizer>();
+    }
 
     [Theory]
     [InlineData("Test", "en", "Test")]
@@ -22,10 +37,10 @@ public class LocalizerTests
     }
 
     [Fact]
-    public void Localize_WhenLocalizationNotExist_ThenDefaultLocalizationUsed()
+    public void Localize_WhenLocalizationNotExist_ThenExceptionThrown()
     {
-        var localized = _sut["Test", "fr"];
-        localized.Value.Should().Be("Test");
+        var action = () => _sut["Test", "fr"];
+        action.Should().ThrowExactly<LocalizationFileNotExistException>();
     }
 
     [Theory]
@@ -47,7 +62,7 @@ public class LocalizerTests
 
         var action = () => _sut.ToLocalizableString(value);
 
-        action.Should().Throw<LocalizationNotFoundException>();
+        action.Should().ThrowExactly<LocalizationNotFoundException>();
     }
 
     [Theory]
@@ -59,14 +74,5 @@ public class LocalizerTests
         var localized = _sut.FormatLocalizedException(exception, culture);
 
         localized.Should().Be(expectedResult);
-    }
-
-    private static ILocalizer GetLocalizer()
-    {
-        var builder = new LocalizationBuilder();
-
-        builder.AddJsonFiles("Resources/Valid");
-
-        return builder.Build();
     }
 }
