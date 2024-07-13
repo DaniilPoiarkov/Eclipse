@@ -5,6 +5,7 @@ using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
 using Eclipse.Domain.Users;
+using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Tests.Generators;
 
@@ -23,7 +24,7 @@ public sealed class LocalizationDecoratorTests
 
     private readonly ICacheService _cacheService;
 
-    private readonly IEclipseLocalizer _localizer;
+    private readonly ICurrentCulture _currentCulture;
 
     private readonly Lazy<LocalizationDecorator> _lazySut;
 
@@ -35,7 +36,7 @@ public sealed class LocalizationDecoratorTests
     {
         _repository = Substitute.For<IUserRepository>();
         _cacheService = Substitute.For<ICacheService>();
-        _localizer = Substitute.For<IEclipseLocalizer>();
+        _currentCulture = Substitute.For<ICurrentCulture>();
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
 
@@ -43,7 +44,7 @@ public sealed class LocalizationDecoratorTests
             () => new LocalizationDecorator(
                 new UserManager(_repository),
                 _cacheService,
-                _localizer));
+                _currentCulture));
     }
 
     [Fact]
@@ -61,9 +62,9 @@ public sealed class LocalizationDecoratorTests
 
         await Sut.Decorate(_execution, context);
 
+        _currentCulture.Received().UsingCulture(user.Culture);
         await _cacheService.ReceivedWithAnyArgs().GetAsync<string>(default!);
         await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         await _cacheService.ReceivedWithAnyArgs().SetAsync(default!, user.Culture, CacheConsts.ThreeDays);
-        await _localizer.Received().ResetCultureForUserWithChatIdAsync(user.ChatId);
     }
 }

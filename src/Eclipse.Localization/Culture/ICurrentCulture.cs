@@ -2,7 +2,7 @@
 
 public interface ICurrentCulture
 {
-    string? Culture { get; }
+    string Culture { get; }
 
     /// <summary>
     /// Sets the culture in disposable scope.

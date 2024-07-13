@@ -14,12 +14,13 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     private readonly IResourceProvider _resourceProvider;
 
-    private ICurrentCulture? CurrentCulture { get; set; } = new CurrentCulture();
+    private ICurrentCulture? CurrentCulture { get; set; }
 
     public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IResourceProvider resourceProvider)
     {
         _options = options;
         _resourceProvider = resourceProvider;
+        CurrentCulture = new CurrentCulture(options);
     }
 
     internal JsonStringLocalizerFactory(
@@ -53,6 +54,6 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     private JsonStringLocalizer CreateJsonLocalizer(string? location = null)
     {
-        return new JsonStringLocalizer(_options, _resourceProvider, CurrentCulture ?? new CurrentCulture(), location);
+        return new JsonStringLocalizer(_options, _resourceProvider, CurrentCulture ?? new CurrentCulture(_options), location);
     }
 }

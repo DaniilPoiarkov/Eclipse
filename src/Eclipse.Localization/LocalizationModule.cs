@@ -39,9 +39,9 @@ public static class LocalizationModule
         services.AddSingleton<IResourceProvider, ResourceProvider>();
 
         services.RemoveAll<IStringLocalizerFactory>()
-            .AddSingleton<JsonStringLocalizerFactory>()
-            .AddSingleton<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>())
-            .AddSingleton<ILocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
+            .AddTransient<JsonStringLocalizerFactory>()
+            .AddTransient<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>())
+            .AddTransient<ILocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
 
         services.AddTransient(sp => sp.GetRequiredService<JsonStringLocalizerFactory>().Create());
 

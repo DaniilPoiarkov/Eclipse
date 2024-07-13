@@ -1,4 +1,5 @@
 ﻿using Eclipse.Localization.Culture;
+using Eclipse.Localization.Localizers;
 
 using FluentAssertions;
 
@@ -11,15 +12,13 @@ namespace Eclipse.Localization.Tests;
 
 public sealed class CurrentCultureTests
 {
-    private readonly IServiceProvider _serviceProvider;
-
     private readonly IStringLocalizer<CurrentCultureTests> _localizer;
 
     private readonly ICurrentCulture _sut;
 
     public CurrentCultureTests()
     {
-        _serviceProvider = new ServiceCollection()
+        var serviceProvider = new ServiceCollection()
             .AddLocalizationV2(options =>
             {
                 options.AddJsonFiles("Resources");
@@ -27,8 +26,14 @@ public sealed class CurrentCultureTests
             })
             .BuildServiceProvider();
 
-        _localizer = _serviceProvider.GetRequiredService<IStringLocalizer<CurrentCultureTests>>();
-        _sut = _serviceProvider.GetRequiredService<ICurrentCulture>();
+        using var scope = serviceProvider.CreateScope();
+
+        _sut = scope.ServiceProvider.GetRequiredService<ICurrentCulture>();
+        
+        var factory = scope.ServiceProvider.GetRequiredService<JsonStringLocalizerFactory>();
+        factory.SetCurrentCulture(_sut);
+
+        _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);
     }
 
     [Theory]

@@ -23,11 +23,6 @@ public interface IEclipseLocalizer
     string ToLocalizableString(string value);
 
     /// <summary>
-    /// Updates culture for as for user with specified id
-    /// </summary>
-    /// <param name="id"></param>
-    Task ResetCultureForUserWithChatIdAsync(long id, CancellationToken cancellationToken = default);
-    /// <summary>
     /// Converts Localizable exception to user-friendly message
     /// </summary>
     /// <param name="exception"></param>

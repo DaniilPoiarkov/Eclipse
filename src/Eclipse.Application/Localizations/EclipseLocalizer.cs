@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Common.Cache;
 using Eclipse.Localization;
+using Eclipse.Localization.Culture;
 using Eclipse.Localization.Exceptions;
 
 namespace Eclipse.Application.Localizations;
@@ -9,25 +9,18 @@ internal sealed class EclipseLocalizer : IEclipseLocalizer
 {
     private readonly ILocalizer _localizer;
 
-    private readonly ICacheService _cacheService;
+    private readonly ICurrentCulture _currentCulture;
 
     private string Culture { get; set; }
 
-    public EclipseLocalizer(ILocalizer localizer, ICacheService cacheService)
+    public EclipseLocalizer(ILocalizer localizer, ICurrentCulture currentCulture)
     {
         _localizer = localizer;
         Culture = localizer.DefaultCulture;
-        _cacheService = cacheService;
+        _currentCulture = currentCulture;
     }
 
-    public string this[string key] => _localizer[key, Culture];
-
-    public async Task ResetCultureForUserWithChatIdAsync(long chatId, CancellationToken cancellationToken = default)
-    {
-        Culture = await _cacheService.GetAsync<string>(
-            new CacheKey($"lang-{chatId}"), cancellationToken
-        ) ?? _localizer.DefaultCulture;
-    }
+    public string this[string key] => _localizer[key, _currentCulture.Culture];
 
     public string ToLocalizableString(string value) =>
         _localizer.ToLocalizableString(value);

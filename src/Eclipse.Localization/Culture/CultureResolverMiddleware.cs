@@ -19,7 +19,7 @@ internal sealed class CultureResolverMiddleware : IMiddleware
     {
         if (context.Request.Headers.TryGetValue("Content-Language", out var culture))
         {
-            _currentCulture.SetCulture(culture);
+            _currentCulture.SetCulture(culture!);
         }
 
         if (_localizationFactory is JsonStringLocalizerFactory jsonStringLocalizerFactory)

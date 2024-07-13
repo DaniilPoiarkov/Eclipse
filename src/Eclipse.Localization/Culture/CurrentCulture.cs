@@ -1,11 +1,20 @@
 ﻿
+using Eclipse.Localization.Builder;
+
+using Microsoft.Extensions.Options;
+
 namespace Eclipse.Localization.Culture;
 
 internal sealed class CurrentCulture : ICurrentCulture
 {
-    public string? Culture { get; private set; }
+    public string Culture { get; private set; }
 
-    internal void SetCulture(string? culture)
+    public CurrentCulture(IOptions<LocalizationBuilderV2> options)
+    {
+        Culture = options.Value.DefaultCulture;
+    }
+
+    internal void SetCulture(string culture)
     {
         Culture = culture;
     }
@@ -21,11 +30,11 @@ internal sealed class CurrentCulture : ICurrentCulture
 
     private class CultureScope : IDisposable
     {
-        private readonly string? _fallbackCulture;
+        private readonly string _fallbackCulture;
 
         private readonly CurrentCulture _currentCulture;
 
-        public CultureScope(string? fallbackCulture, CurrentCulture currentCulture)
+        public CultureScope(string fallbackCulture, CurrentCulture currentCulture)
         {
             _fallbackCulture = fallbackCulture;
             _currentCulture = currentCulture;

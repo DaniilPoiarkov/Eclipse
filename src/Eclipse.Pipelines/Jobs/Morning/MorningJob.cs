@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
+using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
@@ -31,6 +32,8 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IMessageStore _messageStore;
 
+    private readonly ICurrentCulture _currentCulture;
+
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
@@ -38,7 +41,8 @@ internal sealed class MorningJob : EclipseJobBase
         IUserStore userStore,
         IServiceProvider serviceProvider,
         IEclipseLocalizer localizer,
-        IMessageStore messageStore)
+        IMessageStore messageStore,
+        ICurrentCulture currentCulture)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -47,6 +51,7 @@ internal sealed class MorningJob : EclipseJobBase
         _serviceProvider = serviceProvider;
         _localizer = localizer;
         _messageStore = messageStore;
+        _currentCulture = currentCulture;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -67,13 +72,12 @@ internal sealed class MorningJob : EclipseJobBase
 
         foreach (var user in users)
         {
-
             var key = new PipelineKey(user.ChatId);
             await _pipelineStore.RemoveAsync(key, context.CancellationToken);
 
             var pipeline = (_pipelineProvider.Get("/daily_morning") as EclipsePipelineBase)!;
 
-            await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, context.CancellationToken);
+            using var _ = _currentCulture.UsingCulture(user.Culture);
 
             pipeline.SetLocalizer(_localizer);
 
