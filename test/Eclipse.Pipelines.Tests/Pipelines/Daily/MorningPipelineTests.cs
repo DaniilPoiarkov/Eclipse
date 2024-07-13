@@ -22,7 +22,7 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
     public MorningPipelineTests()
     {
         Localizer["Pipelines:Morning:AskMood"].Returns(new LocalizedString("Pipelines:Morning:AskMood", "AskMood"));
-        Localizer["Pipelines:Morning:GoodMood"].Returns( new LocalizedString("Pipelines:Morning:GoodMood", "Good"));
+        Localizer["Pipelines:Morning:GoodMood"].Returns(new LocalizedString("Pipelines:Morning:GoodMood", "Good"));
         Localizer["Pipelines:Morning:BadMood"].Returns(new LocalizedString("Pipelines:Morning:BadMood", "Bad"));
         Localizer["Pipelines:Morning:NotDefined"].Returns(new LocalizedString("Pipelines:Morning:NotDefined", "NotDefined"));
     }

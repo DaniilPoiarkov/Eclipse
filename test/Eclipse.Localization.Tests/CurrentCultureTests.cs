@@ -29,7 +29,7 @@ public sealed class CurrentCultureTests
         using var scope = serviceProvider.CreateScope();
 
         _sut = scope.ServiceProvider.GetRequiredService<ICurrentCulture>();
-        
+
         var factory = scope.ServiceProvider.GetRequiredService<JsonStringLocalizerFactory>();
         //factory.SetCurrentCulture(_sut);
 
