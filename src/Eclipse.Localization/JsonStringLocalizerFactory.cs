@@ -3,6 +3,8 @@ using Eclipse.Localization.Culture;
 using Eclipse.Localization.Localizers;
 using Eclipse.Localization.Resources;
 
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
@@ -14,27 +16,13 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     private readonly IResourceProvider _resourceProvider;
 
-    private ICurrentCulture? CurrentCulture { get; set; }
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IResourceProvider resourceProvider)
+    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IResourceProvider resourceProvider, IHttpContextAccessor httpContextAccessor)
     {
         _options = options;
         _resourceProvider = resourceProvider;
-        CurrentCulture = new CurrentCulture(options);
-    }
-
-    internal JsonStringLocalizerFactory(
-        IOptions<LocalizationBuilderV2> options,
-        IResourceProvider resourceProvider,
-        ICurrentCulture? currentCulture)
-        : this(options, resourceProvider)
-    {
-        CurrentCulture = currentCulture;
-    }
-
-    internal void SetCurrentCulture(ICurrentCulture currentCulture)
-    {
-        CurrentCulture = currentCulture;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public ILocalizer Create()
@@ -54,6 +42,9 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
 
     private JsonStringLocalizer CreateJsonLocalizer(string? location = null)
     {
-        return new JsonStringLocalizer(_options, _resourceProvider, CurrentCulture ?? new CurrentCulture(_options), location);
+        var currentCulture = _httpContextAccessor.HttpContext?.RequestServices.GetRequiredService<ICurrentCulture>()
+            ?? new CurrentCulture(_options);
+
+        return new JsonStringLocalizer(_options, _resourceProvider, currentCulture, location);
     }
 }

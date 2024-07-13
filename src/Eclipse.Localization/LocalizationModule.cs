@@ -18,7 +18,7 @@ public static class LocalizationModule
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddLocalization(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
+    public static IServiceCollection AddLocalizationV1(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
     {
         var builder = new LocalizationBuilder();
 
@@ -36,12 +36,14 @@ public static class LocalizationModule
 
         services.Configure<LocalizationBuilderV2>(configuration.Invoke);
 
+        services.AddHttpContextAccessor();
+
         services.AddSingleton<IResourceProvider, ResourceProvider>();
 
         services.RemoveAll<IStringLocalizerFactory>()
-            .AddTransient<JsonStringLocalizerFactory>()
-            .AddTransient<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>())
-            .AddTransient<ILocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
+            .AddSingleton<JsonStringLocalizerFactory>()
+            .AddSingleton<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>())
+            .AddSingleton<ILocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
 
         services.AddTransient(sp => sp.GetRequiredService<JsonStringLocalizerFactory>().Create());
 

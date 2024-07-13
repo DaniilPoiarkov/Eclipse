@@ -31,7 +31,7 @@ public sealed class CurrentCultureTests
         _sut = scope.ServiceProvider.GetRequiredService<ICurrentCulture>();
         
         var factory = scope.ServiceProvider.GetRequiredService<JsonStringLocalizerFactory>();
-        factory.SetCurrentCulture(_sut);
+        //factory.SetCurrentCulture(_sut);
 
         _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);
     }

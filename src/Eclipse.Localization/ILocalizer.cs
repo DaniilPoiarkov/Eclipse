@@ -1,4 +1,5 @@
-﻿using Eclipse.Localization.Exceptions;
+﻿using Eclipse.Localization.Culture;
+using Eclipse.Localization.Exceptions;
 
 using Microsoft.Extensions.Localization;
 
@@ -9,14 +10,6 @@ namespace Eclipse.Localization;
 /// </summary>
 public interface ILocalizer
 {
-    /// <summary>
-    /// Gets the default culture.
-    /// </summary>
-    /// <value>
-    /// The default.
-    /// </value>
-    string DefaultCulture { get; }
-
     /// <summary>
     /// Localize given <a cref="key"></a> using <a cref="culture"></a> specification
     /// </summary>
@@ -40,4 +33,10 @@ public interface ILocalizer
     /// <returns></returns>
     /// <exception cref="LocalizationNotFoundException"></exception>
     string ToLocalizableString(string value);
+
+    /// <summary>
+    /// Uses the current culture.
+    /// </summary>
+    /// <param name="currentCulture">The current culture.</param>
+    void UseCurrentCulture(ICurrentCulture currentCulture);
 }

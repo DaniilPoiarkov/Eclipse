@@ -78,6 +78,7 @@ internal sealed class MorningJob : EclipseJobBase
             var pipeline = (_pipelineProvider.Get("/daily_morning") as EclipsePipelineBase)!;
 
             using var _ = _currentCulture.UsingCulture(user.Culture);
+            _localizer.UseCurrentCulture(_currentCulture);
 
             pipeline.SetLocalizer(_localizer);
 

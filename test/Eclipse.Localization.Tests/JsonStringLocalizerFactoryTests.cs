@@ -5,6 +5,7 @@ using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 using NSubstitute;
@@ -34,7 +35,13 @@ public sealed class JsonStringLocalizerFactoryTests
 
         var options = Options.Create(builder);
 
-        _sut = new(() => new JsonStringLocalizerFactory(options, new ResourceProvider(options), _currentCulture));
+        var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+
+        httpContextAccessor.HttpContext?.RequestServices
+            .GetService(typeof(ICurrentCulture))
+            .ReturnsForAnyArgs(_currentCulture);
+
+        _sut = new(() => new JsonStringLocalizerFactory(options, new ResourceProvider(options), httpContextAccessor));
     }
 
     #region IStringLocalizerFactory Tests

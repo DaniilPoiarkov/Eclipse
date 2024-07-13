@@ -14,11 +14,9 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
 
     private readonly IResourceProvider _resourceProvider;
 
-    private readonly ICurrentCulture _currentCulture;
+    private ICurrentCulture CurrentCulture { get; set; }
 
     private readonly string? _location;
-
-    public string DefaultCulture => _options.Value.DefaultCulture;
 
     public JsonStringLocalizer(
         IOptions<LocalizationBuilderV2> options,
@@ -27,7 +25,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
     {
         _options = options;
         _resourceProvider = resourceProvider;
-        _currentCulture = currentCulture;
+        CurrentCulture = currentCulture;
     }
 
     public JsonStringLocalizer(
@@ -44,7 +42,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
     {
         get
         {
-            using var _ = _currentCulture.UsingCulture(culture ?? DefaultCulture);
+            using var _ = CurrentCulture.UsingCulture(culture ?? CurrentCulture.Culture);
             return this[key];
         }
     }
@@ -76,7 +74,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
-        var culture = _currentCulture.Culture ?? _options.Value.DefaultCulture;
+        var culture = CurrentCulture.Culture ?? _options.Value.DefaultCulture;
 
         var resource = _resourceProvider.Get(culture);
 
@@ -92,7 +90,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
 
     private string FormatLocalizedExceptionInternal(LocalizedException exception, string culture)
     {
-        using var _ = _currentCulture.UsingCulture(culture);
+        using var _ = CurrentCulture.UsingCulture(culture);
         return FormatLocalizedExceptionInternal(exception);
     }
 
@@ -109,14 +107,17 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
 
     private string? GetStringSafely(string key)
     {
-        var culture = _currentCulture.Culture ?? _options.Value.DefaultCulture;
-
         var resource = _location is null
-            ? _resourceProvider.Get(culture)
-            : _resourceProvider.Get(culture, _location);
+            ? _resourceProvider.Get(CurrentCulture.Culture)
+            : _resourceProvider.Get(CurrentCulture.Culture, _location);
 
         resource.Texts.TryGetValue(key, out var value);
 
         return value;
+    }
+
+    public void UseCurrentCulture(ICurrentCulture currentCulture)
+    {
+        CurrentCulture = currentCulture;
     }
 }
