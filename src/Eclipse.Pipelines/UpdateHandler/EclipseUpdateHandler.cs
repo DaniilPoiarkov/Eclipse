@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.UpdateParsing;
+using Eclipse.Localization;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
@@ -35,7 +35,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
-    private readonly IEclipseLocalizer _localizer;
+    //private readonly IEclipseLocalizer _localizer;
+
+    private readonly ILocalizer _localizer;
 
 
     private static readonly UpdateType[] _allowedUpdateTypes =
@@ -51,7 +53,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
-        IEclipseLocalizer localizer)
+        ILocalizer localizer)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;

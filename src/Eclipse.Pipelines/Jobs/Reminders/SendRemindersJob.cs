@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Application.Contracts.Reminders;
+﻿using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Localization;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Users;
 
@@ -13,7 +13,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
 {
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IEclipseLocalizer _localizer;
+    private readonly ILocalizer _localizer;
 
     private readonly IUserStore _userStore;
 
@@ -21,7 +21,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
     private readonly ICurrentCulture _currentCulture;
 
-    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IUserStore userStore, IReminderService reminderService, ICurrentCulture currentCulture)
+    public SendRemindersJob(ITelegramBotClient botClient, ILocalizer localizer, IUserStore userStore, IReminderService reminderService, ICurrentCulture currentCulture)
     {
         _botClient = botClient;
         _localizer = localizer;

@@ -27,7 +27,7 @@ internal sealed class ViewSuggestionsPipeline : AdminPipelineBase
 
         var tabs = new string('=', 5);
 
-        var sb = new StringBuilder($"{tabs} {Localizer["Suggestions"].ToUpper()} {tabs}")
+        var sb = new StringBuilder($"{tabs} {Localizer["Suggestions"].Value.ToUpper()} {tabs}")
             .AppendLine()
             .AppendLine();
 

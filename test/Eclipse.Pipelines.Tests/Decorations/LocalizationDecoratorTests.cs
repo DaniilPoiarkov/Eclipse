@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Caching;
-using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;

@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Core;
 using Eclipse.Core.Models;
+using Eclipse.Localization;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
@@ -28,7 +28,7 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IEclipseLocalizer _localizer;
+    private readonly ILocalizer _localizer;
 
     private readonly IMessageStore _messageStore;
 
@@ -40,7 +40,7 @@ internal sealed class MorningJob : EclipseJobBase
         ITelegramBotClient botClient,
         IUserStore userStore,
         IServiceProvider serviceProvider,
-        IEclipseLocalizer localizer,
+        ILocalizer localizer,
         IMessageStore messageStore,
         ICurrentCulture currentCulture)
     {

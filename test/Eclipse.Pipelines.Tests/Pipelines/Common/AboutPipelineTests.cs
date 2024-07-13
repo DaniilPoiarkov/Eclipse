@@ -4,6 +4,8 @@ using Eclipse.Pipelines.Tests.Fixture;
 
 using FluentAssertions;
 
+using Microsoft.Extensions.Localization;
+
 using NSubstitute;
 
 using Xunit;
@@ -14,7 +16,7 @@ public class AboutPipelineTests : PipelineTestFixture<AboutPipeline>
 {
     public AboutPipelineTests()
     {
-        Localizer[""].ReturnsForAnyArgs("{name}");
+        Localizer[""].ReturnsForAnyArgs(new LocalizedString("{name}", "{name}"));
     }
 
     [Fact]

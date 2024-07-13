@@ -6,6 +6,7 @@ using Eclipse.Pipelines.Tests.Fixture;
 using FluentAssertions;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -21,7 +22,7 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
 
     public HelpPipelineTests()
     {
-        Localizer[""].ReturnsForAnyArgs("Help");
+        Localizer[""].ReturnsForAnyArgs(new LocalizedString("Help", "Help"));
         _commandService = ServiceProvider.GetRequiredService<ICommandService>();
     }
 
