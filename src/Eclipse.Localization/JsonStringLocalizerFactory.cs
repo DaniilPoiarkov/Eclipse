@@ -12,13 +12,13 @@ namespace Eclipse.Localization;
 
 internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILocalizerFactory
 {
-    private readonly IOptions<LocalizationBuilderV2> _options;
+    private readonly IOptions<LocalizationBuilder> _options;
 
     private readonly IResourceProvider _resourceProvider;
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public JsonStringLocalizerFactory(IOptions<LocalizationBuilderV2> options, IResourceProvider resourceProvider, IHttpContextAccessor httpContextAccessor)
+    public JsonStringLocalizerFactory(IOptions<LocalizationBuilder> options, IResourceProvider resourceProvider, IHttpContextAccessor httpContextAccessor)
     {
         _options = options;
         _resourceProvider = resourceProvider;

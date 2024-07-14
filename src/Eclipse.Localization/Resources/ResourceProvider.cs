@@ -15,9 +15,9 @@ internal sealed class ResourceProvider : IResourceProvider
 
     private readonly ConcurrentDictionary<string, object?> _missingResources = [];
 
-    private readonly IOptions<LocalizationBuilderV2> _options;
+    private readonly IOptions<LocalizationBuilder> _options;
 
-    public ResourceProvider(IOptions<LocalizationBuilderV2> options)
+    public ResourceProvider(IOptions<LocalizationBuilder> options)
     {
         _options = options;
     }
@@ -63,7 +63,7 @@ internal sealed class ResourceProvider : IResourceProvider
 
         if (fullPath.EndsWith(".json"))
         {
-            return ParseAndCacheFile(culture, location, key, fullPath);
+            return ParseAndCacheFile(location, key, fullPath);
         }
 
         resource = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
@@ -88,20 +88,20 @@ internal sealed class ResourceProvider : IResourceProvider
         return resource;
     }
 
-    private LocalizationResource ParseAndCacheFile(string culture, string location, string key, string fullPath)
+    private LocalizationResource ParseAndCacheFile(string location, string key, string fullPath)
     {
         var json = File.ReadAllText(fullPath);
 
-        var r = JsonConvert.DeserializeObject<LocalizationResource>(json);
+        var resource = JsonConvert.DeserializeObject<LocalizationResource>(json);
 
-        if (r is null)
+        if (resource is null || string.IsNullOrEmpty(resource.Culture))
         {
             _missingResources[key] = null;
-            throw new LocalizationFileNotExistException(location, culture);
+            throw new UnableToParseLocalizationResourceException(location);
         }
 
-        _resourceCache[key] = r;
-        return r;
+        _resourceCache[key] = resource;
+        return resource;
     }
 
     public LocalizationResource GetWithValue(string value)

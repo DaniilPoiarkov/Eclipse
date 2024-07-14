@@ -67,7 +67,7 @@ public sealed class JsonStringLocalizerTests
     [Fact]
     public void GetAllStrings_WhenCalled_ThenAllValuesReturned()
     {
-        var builder = new LocalizationBuilderV2();
+        var builder = new LocalizationBuilder();
         builder.AddJsonFile(_file);
         var resourceProvider = new ResourceProvider(Options.Create(builder));
 

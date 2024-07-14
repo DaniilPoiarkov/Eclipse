@@ -6,7 +6,6 @@ using Eclipse.Localization.Resources;
 using FluentAssertions;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +23,7 @@ public sealed class CurrentCultureTests
 
     public CurrentCultureTests()
     {
-        var builder = new LocalizationBuilderV2
+        var builder = new LocalizationBuilder
         {
             DefaultCulture = "en"
         };

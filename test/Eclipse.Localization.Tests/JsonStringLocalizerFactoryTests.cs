@@ -26,7 +26,7 @@ public sealed class JsonStringLocalizerFactoryTests
     {
         _currentCulture = Substitute.For<ICurrentCulture>();
 
-        var builder = new LocalizationBuilderV2
+        var builder = new LocalizationBuilder
         {
             DefaultCulture = "en"
         };

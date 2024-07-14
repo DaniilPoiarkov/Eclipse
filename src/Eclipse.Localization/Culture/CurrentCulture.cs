@@ -9,7 +9,7 @@ internal sealed class CurrentCulture : ICurrentCulture
 {
     public string Culture { get; private set; }
 
-    public CurrentCulture(IOptions<LocalizationBuilderV2> options)
+    public CurrentCulture(IOptions<LocalizationBuilder> options)
     {
         Culture = options.Value.DefaultCulture;
     }
