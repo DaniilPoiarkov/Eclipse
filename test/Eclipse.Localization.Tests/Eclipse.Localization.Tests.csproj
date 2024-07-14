@@ -10,18 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Localization\en.json" />
-    <None Remove="Localization\invalid.json" />
-    <None Remove="Localization\uk.json" />
+	<None Remove="Resources\**\*.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Localization\*.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-	  <EmbeddedResource Include="Resources\*.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </EmbeddedResource>
+	<EmbeddedResource Include="Resources\**\*.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

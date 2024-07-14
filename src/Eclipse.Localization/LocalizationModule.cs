@@ -1,26 +1,55 @@
 ﻿using Eclipse.Localization.Builder;
+using Eclipse.Localization.Culture;
+using Eclipse.Localization.Localizers;
+using Eclipse.Localization.Resources;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization;
 
 public static class LocalizationModule
 {
     /// <summary>
-    /// Registers <a cref="Localizers.ILocalizer"></a> with provided configuration
+    /// Registers <a cref="IStringLocalizer{T}"></a>, <a cref="ILocalizer"></a>, and <a cref="ICurrentCulture"></a> to use localization
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddLocalization(this IServiceCollection services, Action<ILocalizationBuilder>? configuration = null)
+    public static IServiceCollection AddLocalization(this IServiceCollection services, Action<ILocalizationBuilder> configuration)
     {
-        var builder = new LocalizationBuilder();
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
 
-        configuration?.Invoke(builder);
-        var localizer = builder.Build();
+        services.Configure<LocalizationBuilder>(configuration.Invoke);
 
-        services.AddSingleton(localizer);
+        services.AddHttpContextAccessor();
+
+        services.AddSingleton<IResourceProvider, ResourceProvider>();
+
+        services.RemoveAll<IStringLocalizerFactory>()
+            .AddSingleton<JsonStringLocalizerFactory>()
+            .AddSingleton<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>())
+            .AddSingleton<ILocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
+
+        services.AddTransient(sp => sp.GetRequiredService<JsonStringLocalizerFactory>().Create());
+
+        services.RemoveAll(typeof(IStringLocalizer<>))
+            .AddTransient(typeof(IStringLocalizer<>), typeof(TypedJsonStringLocalizer<>))
+            .AddTransient(sp => sp.GetRequiredService<ILocalizerFactory>().Create());
+
+        services.AddScoped<CurrentCulture>()
+            .AddScoped<ICurrentCulture>(sp => sp.GetRequiredService<CurrentCulture>());
+
+        services.AddScoped<CultureResolverMiddleware>();
 
         return services;
+    }
+
+    public static WebApplication UseLocalization(this WebApplication app)
+    {
+        app.UseMiddleware<CultureResolverMiddleware>();
+        return app;
     }
 }

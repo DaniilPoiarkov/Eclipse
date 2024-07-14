@@ -2,9 +2,9 @@
 
 public class LocalizedException : Exception
 {
-    public string[] Args { get; private set; }
+    public object[] Args { get; private set; }
 
-    public LocalizedException(string message, params string[] args) : base(message)
+    public LocalizedException(string message, params object[] args) : base(message)
     {
         Args = args ?? [];
     }

@@ -13,7 +13,7 @@ public sealed class AboutPipeline : EclipsePipelineBase
 
     public IResult SendAbout(MessageContext context)
     {
-        var about = Localizer["Pipelines:Common:About"]
+        var about = Localizer["Pipelines:Common:About"].Value
             .Replace("{name}", context.User.Name.Trim());
 
         return Text(about);

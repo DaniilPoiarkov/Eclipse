@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Localizations;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
@@ -10,7 +9,6 @@ using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
 using Eclipse.Application.Google.Sheets;
-using Eclipse.Application.Localizations;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
@@ -43,8 +41,7 @@ public static class EclipseApplicationModule
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IReminderService, ReminderService>()
                 .AddTransient<IExportService, ExportService>()
-                .AddTransient<IImportService, ImportService>()
-            .AddScoped<IEclipseLocalizer, EclipseLocalizer>();
+                .AddTransient<IImportService, ImportService>();
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()

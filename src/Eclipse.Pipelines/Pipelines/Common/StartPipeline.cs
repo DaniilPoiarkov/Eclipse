@@ -13,7 +13,7 @@ public sealed class StartPipeline : EclipsePipelineBase
 
     private IResult Start(MessageContext context)
     {
-        var message = Localizer["Pipelines:Common:Start"]
+        var message = Localizer["Pipelines:Common:Start"].Value
             .Replace("{name}", context.User.Name.TrimEnd());
 
         return Menu(MainMenuButtons, message);

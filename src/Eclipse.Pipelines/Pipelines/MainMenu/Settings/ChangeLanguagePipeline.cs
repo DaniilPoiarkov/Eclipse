@@ -4,6 +4,7 @@ using Eclipse.Application.Localizations;
 using Eclipse.Common.Cache;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 using Eclipse.Pipelines.Stores.Messages;
@@ -25,16 +26,19 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private readonly IOptions<LanguageList> _languages;
 
+    private readonly ICurrentCulture _currentCulture;
+
     private static readonly string _pipelinePrefix = "Pipelines:Settings:Language";
 
     private static readonly int _languagesChunk = 2;
 
-    public ChangeLanguagePipeline(ICacheService cacheService, IUserService userService, IMessageStore messageStore, IOptions<LanguageList> languages)
+    public ChangeLanguagePipeline(ICacheService cacheService, IUserService userService, IMessageStore messageStore, IOptions<LanguageList> languages, ICurrentCulture currentCulture)
     {
         _cacheService = cacheService;
         _userService = userService;
         _messageStore = messageStore;
         _languages = languages;
+        _currentCulture = currentCulture;
     }
 
     protected override void Initialize()
@@ -100,7 +104,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
         await _cacheService.DeleteAsync(key, cancellationToken);
         await _cacheService.SetAsync(key, context.Value, CacheConsts.ThreeDays, cancellationToken);
 
-        await Localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
+        using var _ = _currentCulture.UsingCulture(context.Value);
 
         return MenuAndRemoveOptions(
             Localizer[$"{_pipelinePrefix}:Changed"],

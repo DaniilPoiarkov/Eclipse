@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 
-namespace Eclipse.Localization.Localizers;
+namespace Eclipse.Localization.Resources;
 
-[DebuggerDisplay("{Culture}")]
 [Serializable]
+[DebuggerDisplay("{Culture}: {Texts.Count}")]
 internal sealed class LocalizationResource
 {
     public string Culture { get; set; } = string.Empty;

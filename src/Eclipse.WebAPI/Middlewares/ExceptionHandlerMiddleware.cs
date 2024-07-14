@@ -1,4 +1,4 @@
-﻿using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;

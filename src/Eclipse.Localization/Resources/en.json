@@ -1,7 +1,0 @@
-{
-  "Culture": "en",
-  "Texts": {
-    "UnableToParseLocalizationExceptionMessage": "Unable to parse {0} file as localization resource",
-    "LocalizationFileNotExistExceptionMessage": "Localization file not found in dirrectory {0}"
-  }
-}

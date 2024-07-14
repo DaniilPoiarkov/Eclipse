@@ -1,7 +1,0 @@
-{
-  "Culture": "ua",
-  "Texts": {
-    "UnableToParseLocalizationExceptionMessage": "Неможливо обробити файл {0} як ресурс локалізації",
-    "LocalizationFileNotExistExceptionMessage": "Ресурс локалізації не знайдено за шляхом {0}"
-  }
-}

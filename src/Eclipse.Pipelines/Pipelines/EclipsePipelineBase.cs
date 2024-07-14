@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Core.Pipelines;
+﻿using Eclipse.Core.Pipelines;
+using Eclipse.Localization;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -7,7 +7,7 @@ namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
-    protected IEclipseLocalizer Localizer { get; private set; } = null!;
+    protected ILocalizer Localizer { get; private set; } = null!;
 
     protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> MainMenuButtons => new List<KeyboardButton[]>
     {
@@ -15,7 +15,7 @@ public abstract class EclipsePipelineBase : PipelineBase
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]), new KeyboardButton(Localizer["Menu:MainMenu:Settings"]) }
     };
 
-    internal void SetLocalizer(IEclipseLocalizer localizer)
+    internal void SetLocalizer(ILocalizer localizer)
     {
         Localizer = localizer;
     }

@@ -42,7 +42,7 @@ builder.Services.AddLocalization(localization =>
         localization.AddJsonFiles($"{path}/{culture}");
     }
 
-    localization.DefaultLocalization = options.DefaultCulture;
+    localization.DefaultCulture = options.DefaultCulture;
 });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(
@@ -73,6 +73,8 @@ app.UseRateLimiter();
 
 app.UseAuthentication()
     .UseAuthorization();
+
+app.UseLocalization();
 
 app.MapControllers();
 
