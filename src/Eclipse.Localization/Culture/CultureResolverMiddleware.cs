@@ -13,7 +13,7 @@ internal sealed class CultureResolverMiddleware : IMiddleware
 
     public Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        if (context.Request.Headers.TryGetValue("Content-Language", out var culture))
+        if (context.Request.Headers.TryGetValue("Content-Language", out var culture) && !string.IsNullOrEmpty(culture[0]))
         {
             _currentCulture.SetCulture(culture!);
         }
