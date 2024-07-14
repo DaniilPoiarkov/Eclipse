@@ -1,8 +1,8 @@
-﻿using Eclipse.Localization.Builder;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Exceptions;
 
 using FluentAssertions;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 
@@ -10,36 +10,49 @@ namespace Eclipse.Localization.Tests;
 
 public class LocalizerTests
 {
-    private readonly ILocalizer _sut = GetLocalizer();
+    private readonly ILocalizer _sut;
 
-    [Fact]
-    public void Localize_WhenCanBeLocalized_ThenLocalizedValueReturned()
+    private readonly IServiceProvider _serviceProvider;
+
+    public LocalizerTests()
     {
-        var key = "Test";
-        var localizedAsEn = _sut[key, "en"];
-        var localizedAsUk = _sut[key, "uk"];
+        _serviceProvider = new ServiceCollection()
+            .AddLocalization(b =>
+            {
+                b.DefaultCulture = "en";
+                b.AddJsonFiles("Resources/Valid");
+            })
+            .BuildServiceProvider();
 
-        localizedAsEn.Should().Be("Test");
-        localizedAsUk.Should().Be("Тест");
+        _sut = _serviceProvider.GetRequiredService<ILocalizer>();
+    }
+
+    [Theory]
+    [InlineData("Test", "en", "Test")]
+    [InlineData("Test", "uk", "Тест")]
+    public void Localize_WhenCanBeLocalized_ThenLocalizedValueReturned(string key, string culture, string expectedResult)
+    {
+        var localizedAsEn = _sut[key, culture];
+        localizedAsEn.Value.Should().Be(expectedResult);
     }
 
     [Fact]
-    public void Localize_WhenLocalizationNotExist_ThenDefaultLocalizationUsed()
+    public void Localize_WhenLocalizationNotExist_ThenExceptionThrown()
     {
-        var localized = _sut["Test", "fr"];
-        localized.Should().Be("Test");
+        var action = () => _sut["Test", "fr"];
+        action.Should().ThrowExactly<LocalizationFileNotExistException>();
     }
 
-    [Fact]
-    public void ToLocalizableString_WhenLocalizationExist_ThenKeyReturned()
+    [Theory]
+    [InlineData("Test", "Тест")]
+    [InlineData("Test 1", "Тест 1")]
+    [InlineData("Test 2", "Тест 2")]
+    public void ToLocalizableString_WhenLocalizationExist_ThenKeyReturned(string leftLocalized, string rightLocalized)
     {
-        var localizedAsEn = "Test";
-        var localizedAsUk = "Тест";
+        var keyFromLeft = _sut.ToLocalizableString(leftLocalized);
+        var keyFromRight = _sut.ToLocalizableString(rightLocalized);
 
-        var keyFromEnLocalization = _sut.ToLocalizableString(localizedAsEn);
-        var keyFromUkLocalization = _sut.ToLocalizableString(localizedAsUk);
-
-        keyFromEnLocalization.Should().Be(keyFromUkLocalization);
+        keyFromLeft.Should().Be(keyFromRight);
     }
 
     [Fact]
@@ -49,25 +62,17 @@ public class LocalizerTests
 
         var action = () => _sut.ToLocalizableString(value);
 
-        action.Should().Throw<LocalizationNotFoundException>();
+        action.Should().ThrowExactly<LocalizationNotFoundException>();
     }
 
-    [Fact]
-    public void FormatLocalizableException_WhenCanBeFormatted_ThenShouldReturnFormattedString()
+    [Theory]
+    [InlineData("en", "Exception Arg")]
+    [InlineData("uk", "Помилка Arg")]
+    public void FormatLocalizableException_WhenCanBeFormatted_ThenShouldReturnFormattedString(string culture, string expectedResult)
     {
-        var exception = new LocalizedException("ExMessage", "ExArg");
-        var localized = _sut.FormatLocalizedException(exception, "en");
+        var exception = new LocalizedException("ExceptionMessage", "Arg");
+        var localized = _sut.FormatLocalizedException(exception, culture);
 
-        localized.Should().Be("Exception ExArg");
-    }
-
-    private static ILocalizer GetLocalizer()
-    {
-        var localizationDirectory = "Localization";
-
-        return new LocalizationBuilder()
-            .AddJsonFile($"{localizationDirectory}/en.json")
-            .AddJsonFile($"{localizationDirectory}/uk.json")
-            .Build();
+        localized.Should().Be(expectedResult);
     }
 }

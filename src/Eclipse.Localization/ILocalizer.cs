@@ -1,6 +1,9 @@
-﻿using Eclipse.Localization.Exceptions;
+﻿using Eclipse.Localization.Culture;
+using Eclipse.Localization.Exceptions;
 
-namespace Eclipse.Localization.Localizers;
+using Microsoft.Extensions.Localization;
+
+namespace Eclipse.Localization;
 
 /// <summary>
 /// Provides api to localize string
@@ -8,20 +11,12 @@ namespace Eclipse.Localization.Localizers;
 public interface ILocalizer
 {
     /// <summary>
-    /// Gets the default culture.
-    /// </summary>
-    /// <value>
-    /// The default.
-    /// </value>
-    string DefaultCulture { get; }
-
-    /// <summary>
-    /// Localize given <a cref="key"></a> using <a cref="culture"></a> specification
+    /// Localize given <a href="key"></a> using <a href="culture"></a> specification
     /// </summary>
     /// <param name="key">String which need to be localized</param>
     /// <param name="culture">Cultute info</param>
     /// <returns></returns>
-    string this[string key, string? culture = null] { get; }
+    LocalizedString this[string key, string? culture = null] { get; }
 
     /// <summary>
     /// Converts Localizable exception to user-friendly message
@@ -38,4 +33,10 @@ public interface ILocalizer
     /// <returns></returns>
     /// <exception cref="LocalizationNotFoundException"></exception>
     string ToLocalizableString(string value);
+
+    /// <summary>
+    /// Uses the current culture.
+    /// </summary>
+    /// <param name="currentCulture">The current culture.</param>
+    void UseCurrentCulture(ICurrentCulture currentCulture);
 }

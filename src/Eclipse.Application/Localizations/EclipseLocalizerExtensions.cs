@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Common.Results;
+﻿using Eclipse.Common.Results;
+using Eclipse.Localization;
 
 namespace Eclipse.Application.Localizations;
 
@@ -11,7 +11,7 @@ public static class EclipseLocalizerExtensions
     /// <param name="localizer"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public static string LocalizeError(this IEclipseLocalizer localizer, Error error)
+    public static string LocalizeError(this ILocalizer localizer, Error error)
     {
         ArgumentNullException.ThrowIfNull(localizer, nameof(localizer));
         ArgumentNullException.ThrowIfNull(error, nameof(error));
@@ -19,6 +19,12 @@ public static class EclipseLocalizerExtensions
         try
         {
             var description = localizer[error.Description];
+
+            if (description.ResourceNotFound)
+            {
+                return error.Description;
+            }
+
             return string.Format(description, error.Args);
         }
         catch

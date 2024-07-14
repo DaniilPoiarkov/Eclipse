@@ -42,7 +42,7 @@ builder.Services.AddLocalization(localization =>
         localization.AddJsonFiles($"{path}/{culture}");
     }
 
-    localization.DefaultLocalization = options.DefaultCulture;
+    localization.DefaultCulture = options.DefaultCulture;
 });
 
 builder.Services.Configure<ApiKeyAuthorizationOptions>(
@@ -69,8 +69,12 @@ app.UseExceptionHandler()
 
 app.UseEclipseHealthChecks();
 
+app.UseRateLimiter();
+
 app.UseAuthentication()
     .UseAuthorization();
+
+app.UseLocalization();
 
 app.MapControllers();
 

@@ -1,8 +1,6 @@
-﻿using Eclipse.Common.Telegram;
-using Eclipse.Core.UpdateParsing;
+﻿using Eclipse.Core.UpdateParsing;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -17,20 +15,10 @@ public sealed class DisabledUpdateHandler : IEclipseUpdateHandler
 
     private readonly ILogger<DisabledUpdateHandler> _logger;
 
-    private readonly IOptions<TelegramOptions> _options;
-
-    public DisabledUpdateHandler(IUpdateParser parser, ILogger<DisabledUpdateHandler> logger, IOptions<TelegramOptions> options)
+    public DisabledUpdateHandler(IUpdateParser parser, ILogger<DisabledUpdateHandler> logger)
     {
         _parser = parser;
         _logger = logger;
-        _options = options;
-    }
-
-    public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-    {
-        _logger.LogError("Telegram error: {ex}", exception.Message);
-
-        return botClient.SendTextMessageAsync(_options.Value.Chat, exception.Message, cancellationToken: cancellationToken);
     }
 
     public Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)

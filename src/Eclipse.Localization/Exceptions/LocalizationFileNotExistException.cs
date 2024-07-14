@@ -1,8 +1,11 @@
 ﻿namespace Eclipse.Localization.Exceptions;
 
 [Serializable]
-internal sealed class LocalizationFileNotExistException : LocalizedException
+internal sealed class LocalizationFileNotExistException : ArgumentException
 {
-    internal LocalizationFileNotExistException(params string[] args)
-        : base("LocalizationFileNotExistExceptionMessage", args) { }
+    internal LocalizationFileNotExistException(string location)
+        : base($"Localization file not found on path: {location}") { }
+
+    internal LocalizationFileNotExistException(string location, string culture)
+        : base($"Localization file not found for culture '{culture}' on path: {location}") { }
 }

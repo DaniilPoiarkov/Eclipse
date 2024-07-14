@@ -1,5 +1,6 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Application.Contracts.Reminders;
+﻿using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Localization;
+using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Users;
 
 using Quartz;
@@ -12,18 +13,21 @@ internal sealed class SendRemindersJob : EclipseJobBase
 {
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IEclipseLocalizer _localizer;
+    private readonly ILocalizer _localizer;
 
     private readonly IUserStore _userStore;
 
     private readonly IReminderService _reminderService;
 
-    public SendRemindersJob(ITelegramBotClient botClient, IEclipseLocalizer localizer, IUserStore userStore, IReminderService reminderService)
+    private readonly ICurrentCulture _currentCulture;
+
+    public SendRemindersJob(ITelegramBotClient botClient, ILocalizer localizer, IUserStore userStore, IReminderService reminderService, ICurrentCulture currentCulture)
     {
         _botClient = botClient;
         _localizer = localizer;
         _userStore = userStore;
         _reminderService = reminderService;
+        _currentCulture = currentCulture;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -45,7 +49,8 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
         foreach (var user in users)
         {
-            await _localizer.ResetCultureForUserWithChatIdAsync(user.ChatId, context.CancellationToken);
+            using var _ = _currentCulture.UsingCulture(user.Culture);
+            _localizer.UseCurrentCulture(_currentCulture);
 
             var messageSendings = user.Reminders
                 .Where(specification)
