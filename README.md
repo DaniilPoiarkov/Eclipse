@@ -52,7 +52,8 @@ Contains domain logic of application.
 Provides easy API to build and retrieve pipelines.
 
 ### Localization
-Provides API for multiple language support in application. As Microsoft.Localization is not very sutable for this purposes and works with XML schemas I desided to create own engine. Here we have ability to dynamicly set culture for localization (Without taking it from request headers) and using json as a schema for resources. Planning to combine this engine and Microsoft.Localization abstractions.
+Built on top of __Microsoft.Extensions.Localization__ engine to work with json files as resource source with bunch of useful stuff.
+Additionally provides an api which allows you to use another culture in disposable scope.
 
 ### Infrastructure
 Basicly contains wrappers with only necessary API and cross-cutting concerns.
