@@ -1,17 +1,13 @@
-﻿using Eclipse.Localization.Builder;
-using Eclipse.Localization.Culture;
+﻿using Eclipse.Localization.Culture;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Resources;
 
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 
 namespace Eclipse.Localization.Localizers;
 
 internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
 {
-    private readonly IOptions<LocalizationBuilderV2> _options;
-
     private readonly IResourceProvider _resourceProvider;
 
     private ICurrentCulture CurrentCulture { get; set; }
@@ -19,21 +15,18 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
     private readonly string? _location;
 
     public JsonStringLocalizer(
-        IOptions<LocalizationBuilderV2> options,
         IResourceProvider resourceProvider,
         ICurrentCulture currentCulture)
     {
-        _options = options;
         _resourceProvider = resourceProvider;
         CurrentCulture = currentCulture;
     }
 
     public JsonStringLocalizer(
-        IOptions<LocalizationBuilderV2> options,
         IResourceProvider resourceProvider,
         ICurrentCulture currentCulture,
         string? location)
-        : this(options, resourceProvider, currentCulture)
+        : this(resourceProvider, currentCulture)
     {
         _location = location;
     }
@@ -74,7 +67,7 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
-        var culture = CurrentCulture.Culture ?? _options.Value.DefaultCulture;
+        var culture = CurrentCulture.Culture;
 
         var resource = _resourceProvider.Get(culture);
 

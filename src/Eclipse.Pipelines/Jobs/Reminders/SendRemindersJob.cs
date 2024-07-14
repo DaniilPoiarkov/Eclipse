@@ -50,6 +50,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
         foreach (var user in users)
         {
             using var _ = _currentCulture.UsingCulture(user.Culture);
+            _localizer.UseCurrentCulture(_currentCulture);
 
             var messageSendings = user.Reminders
                 .Where(specification)

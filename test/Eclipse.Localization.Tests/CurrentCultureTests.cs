@@ -1,10 +1,16 @@
-﻿using Eclipse.Localization.Culture;
+﻿using Eclipse.Localization.Builder;
+using Eclipse.Localization.Culture;
 using Eclipse.Localization.Localizers;
+using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
+
+using NSubstitute;
 
 using Xunit;
 
@@ -14,24 +20,29 @@ public sealed class CurrentCultureTests
 {
     private readonly IStringLocalizer<CurrentCultureTests> _localizer;
 
-    private readonly ICurrentCulture _sut;
+    private readonly CurrentCulture _sut;
 
     public CurrentCultureTests()
     {
-        var serviceProvider = new ServiceCollection()
-            .AddLocalizationV2(options =>
-            {
-                options.AddJsonFiles("Resources");
-                options.DefaultCulture = "en";
-            })
-            .BuildServiceProvider();
+        var builder = new LocalizationBuilderV2
+        {
+            DefaultCulture = "en"
+        };
 
-        using var scope = serviceProvider.CreateScope();
+        builder.AddJsonFiles("Resources");
 
-        _sut = scope.ServiceProvider.GetRequiredService<ICurrentCulture>();
+        var options = Options.Create(builder);
 
-        var factory = scope.ServiceProvider.GetRequiredService<JsonStringLocalizerFactory>();
-        //factory.SetCurrentCulture(_sut);
+        var resourceProvider = new ResourceProvider(options);
+        var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+
+        _sut = new CurrentCulture(options);
+
+        httpContextAccessor.HttpContext?.RequestServices
+            .GetService(typeof(ICurrentCulture))
+            .Returns(_sut);
+
+        var factory = new JsonStringLocalizerFactory(options, resourceProvider, httpContextAccessor);
 
         _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);
     }

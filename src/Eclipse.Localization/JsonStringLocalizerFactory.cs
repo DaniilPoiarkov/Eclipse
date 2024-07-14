@@ -45,6 +45,6 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
         var currentCulture = _httpContextAccessor.HttpContext?.RequestServices.GetRequiredService<ICurrentCulture>()
             ?? new CurrentCulture(_options);
 
-        return new JsonStringLocalizer(_options, _resourceProvider, currentCulture, location);
+        return new JsonStringLocalizer(_resourceProvider, currentCulture, location);
     }
 }
