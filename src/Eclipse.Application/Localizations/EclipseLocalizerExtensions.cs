@@ -19,6 +19,12 @@ public static class EclipseLocalizerExtensions
         try
         {
             var description = localizer[error.Description];
+
+            if (description.ResourceNotFound)
+            {
+                return error.Description;
+            }
+
             return string.Format(description, error.Args);
         }
         catch
