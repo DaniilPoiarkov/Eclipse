@@ -17,7 +17,7 @@ public class LocalizerTests
     public LocalizerTests()
     {
         _serviceProvider = new ServiceCollection()
-            .AddLocalizationV2(b =>
+            .AddLocalization(b =>
             {
                 b.DefaultCulture = "en";
                 b.AddJsonFiles("Resources/Valid");

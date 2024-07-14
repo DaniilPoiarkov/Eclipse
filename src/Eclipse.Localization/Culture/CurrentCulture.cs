@@ -1,5 +1,4 @@
-﻿
-using Eclipse.Localization.Builder;
+﻿using Eclipse.Localization.Builder;
 
 using Microsoft.Extensions.Options;
 

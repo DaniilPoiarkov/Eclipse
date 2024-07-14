@@ -11,7 +11,7 @@ namespace Eclipse.Localization;
 public interface ILocalizer
 {
     /// <summary>
-    /// Localize given <a cref="key"></a> using <a cref="culture"></a> specification
+    /// Localize given <a href="key"></a> using <a href="culture"></a> specification
     /// </summary>
     /// <param name="key">String which need to be localized</param>
     /// <param name="culture">Cultute info</param>

@@ -13,12 +13,12 @@ namespace Eclipse.Localization;
 public static class LocalizationModule
 {
     /// <summary>
-    /// Registers <a cref="ILocalizer"></a> with provided configuration
+    /// Registers <a cref="IStringLocalizer{T}"></a>, <a cref="ILocalizer"></a>, and <a cref="ICurrentCulture"></a> to use localization
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddLocalizationV2(this IServiceCollection services, Action<ILocalizationBuilder> configuration)
+    public static IServiceCollection AddLocalization(this IServiceCollection services, Action<ILocalizationBuilder> configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
 

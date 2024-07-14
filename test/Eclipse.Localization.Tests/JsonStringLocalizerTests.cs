@@ -22,10 +22,10 @@ public sealed class JsonStringLocalizerTests
     public JsonStringLocalizerTests()
     {
         var serviceProvider = new ServiceCollection()
-            .AddLocalizationV2(options =>
+            .AddLocalization(options =>
             {
-                options.DefaultCulture = "en";
-                options.AddJsonFile("Resources/Valid/en.json");
+                options.DefaultCulture = _culture;
+                options.AddJsonFiles(_file);
             })
             .BuildServiceProvider();
 
@@ -68,7 +68,7 @@ public sealed class JsonStringLocalizerTests
     public void GetAllStrings_WhenCalled_ThenAllValuesReturned()
     {
         var builder = new LocalizationBuilder();
-        builder.AddJsonFile(_file);
+        builder.AddJsonFiles(_file);
         var resourceProvider = new ResourceProvider(Options.Create(builder));
 
         var resource = resourceProvider.Get(_culture, _file);

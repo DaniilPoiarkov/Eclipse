@@ -8,11 +8,6 @@ internal sealed class LocalizationBuilder : ILocalizationBuilder
 
     public string DefaultCulture { get; set; } = "en";
 
-    public ILocalizationBuilder AddJsonFile(string path)
-    {
-        return AddJsonFiles(path);
-    }
-
     public ILocalizationBuilder AddJsonFiles(string path)
     {
         _resources.Add(path);

@@ -30,7 +30,7 @@ builder.Services
     .AddDataAccessModule()
     .AddInfrastructureModule();
 
-builder.Services.AddLocalizationV2(localization =>
+builder.Services.AddLocalization(localization =>
 {
     var options = configuration.GetSection("Localization")
         .Get<LocalizationOptions>()!;
