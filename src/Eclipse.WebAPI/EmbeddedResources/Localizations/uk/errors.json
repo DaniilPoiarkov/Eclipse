@@ -2,6 +2,6 @@
   "culture": "uk",
   "texts": {
     "InternalError_Title": "Внутрішня помилка.",
-    "InternalError_Details": "СТалась внутрішня помилка."
+    "InternalError_Details": "Сталась внутрішня помилка."
   }
 }

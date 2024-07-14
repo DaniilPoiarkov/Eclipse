@@ -8,12 +8,9 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
 {
     private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-    private readonly IStringLocalizer<ExceptionHandlerMiddleware> _stringLocalizer;
-
-    public ExceptionHandlerMiddleware(ILogger<ExceptionHandlerMiddleware> logger, IStringLocalizer<ExceptionHandlerMiddleware> stringLocalizer)
+    public ExceptionHandlerMiddleware(ILogger<ExceptionHandlerMiddleware> logger)
     {
         _logger = logger;
-        _stringLocalizer = stringLocalizer;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
@@ -24,18 +21,20 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
             _ => StatusCodes.Status500InternalServerError
         };
 
+        var stringLocalizer = context.RequestServices.GetRequiredService<IStringLocalizer<ExceptionHandlerMiddleware>>();
+
         var problems = new ProblemDetails()
         {
             Status = context.Response.StatusCode,
-            Title = _stringLocalizer["InternalError_Title"],
-            Detail = _stringLocalizer["InternalError_Title"]
+            Title = stringLocalizer["InternalError_Title"],
+            Detail = stringLocalizer["InternalError_Details"]
         };
 
         await context.Response.WriteAsJsonAsync(problems, cancellationToken);
 
         _logger.LogError(
             message: "Unhandled exception:\n{error}",
-            args: _stringLocalizer[exception.Message, exception.Data.Values]
+            args: stringLocalizer[exception.Message, exception.Data.Values]
         );
 
         return true;
