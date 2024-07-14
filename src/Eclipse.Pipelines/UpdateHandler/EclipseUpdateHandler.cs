@@ -35,8 +35,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
-    //private readonly IEclipseLocalizer _localizer;
-
     private readonly ILocalizer _localizer;
 
 
