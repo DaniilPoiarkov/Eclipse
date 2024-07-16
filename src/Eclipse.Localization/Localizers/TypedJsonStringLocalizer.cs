@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Eclipse.Localization.Culture;
+using Eclipse.Localization.Extensions;
+
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 
@@ -18,5 +21,10 @@ internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
         return _localizer.GetAllStrings(includeParentCultures);
+    }
+
+    public void UseCurrentCulture(ICurrentCulture currentCulture)
+    {
+        _localizer.UseCurrentCulture(currentCulture);
     }
 }
