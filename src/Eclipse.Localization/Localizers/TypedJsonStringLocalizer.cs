@@ -27,4 +27,9 @@ internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer
     {
         _localizer.UseCurrentCulture(currentCulture);
     }
+
+    public string ToLocalizableString(string value)
+    {
+        return _localizer.ToLocalizableString(value);
+    }
 }
