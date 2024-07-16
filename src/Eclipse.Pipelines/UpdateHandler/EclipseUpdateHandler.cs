@@ -1,14 +1,15 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Localization;
 using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Users;
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
@@ -35,8 +36,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
-    private readonly ILocalizer _localizer;
-
+    private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
     private static readonly UpdateType[] _allowedUpdateTypes =
     [
@@ -51,7 +51,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
-        ILocalizer localizer)
+        IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;

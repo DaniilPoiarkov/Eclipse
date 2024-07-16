@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 
-internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
+internal sealed class JsonStringLocalizer : IStringLocalizer
 {
     private readonly IResourceProvider _resourceProvider;
 
@@ -29,15 +29,6 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizer
         : this(resourceProvider, currentCulture)
     {
         _location = location;
-    }
-
-    public LocalizedString this[string key, string? culture = null]
-    {
-        get
-        {
-            using var _ = CurrentCulture.UsingCulture(culture ?? CurrentCulture.Culture);
-            return this[key];
-        }
     }
 
     public LocalizedString this[string name]

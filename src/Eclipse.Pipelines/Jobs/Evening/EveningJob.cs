@@ -1,6 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
-using Eclipse.Localization;
+using Eclipse.Localization.Culture;
+using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Users;
+
+using Microsoft.Extensions.Localization;
 
 using Quartz;
 
@@ -10,17 +13,20 @@ internal sealed class EveningJob : EclipseJobBase
 {
     private static readonly TimeOnly Evening = new(18, 0);
 
-    private readonly ILocalizer _localizer;
+    private readonly IStringLocalizer<EveningJob> _localizer;
 
     private readonly IUserStore _userStore;
 
     private readonly ITelegramService _telegramService;
 
-    public EveningJob(ILocalizer localizer, IUserStore userStore, ITelegramService telegramService)
+    private readonly ICurrentCulture _currentCulture;
+
+    public EveningJob(IStringLocalizer<EveningJob> localizer, IUserStore userStore, ITelegramService telegramService, ICurrentCulture currentCulture)
     {
         _localizer = localizer;
         _userStore = userStore;
         _telegramService = telegramService;
+        _currentCulture = currentCulture;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -41,7 +47,10 @@ internal sealed class EveningJob : EclipseJobBase
 
         foreach (var user in users)
         {
-            var template = _localizer[$"Jobs:Evening:{(user.TodoItems.IsNullOrEmpty() ? "Empty" : "RemindMarkAsFinished")}", user.Culture];
+            using var _ = _currentCulture.UsingCulture(user.Culture);
+            _localizer.UseCurrentCulture(_currentCulture);
+
+            var template = _localizer[$"Jobs:Evening:{(user.TodoItems.IsNullOrEmpty() ? "Empty" : "RemindMarkAsFinished")}"];
 
             var message = user.TodoItems.IsNullOrEmpty()
                 ? string.Format(template, user.Name)

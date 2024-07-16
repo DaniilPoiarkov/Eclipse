@@ -5,9 +5,9 @@ namespace Microsoft.AspNetCore.Mvc;
 
 public static class ResultHttpExtensions
 {
-    public static IActionResult ToProblemActionResult(this Result result)
+    public static IActionResult ToProblems(this Result result)
     {
-        var parser = result.ThrowOrGetErrorParser();
+        var parser = GetErrorParserOrThrow(result);
 
         var problemDetails = new ProblemDetails
         {
@@ -26,14 +26,14 @@ public static class ResultHttpExtensions
         };
     }
 
-    private static IErrorParser ThrowOrGetErrorParser(this Result result)
+    private static IErrorParser GetErrorParserOrThrow(Result result)
     {
         if (result.IsSuccess)
         {
             throw new InvalidOperationException($"Success Results cannot be converted to probled details.");
         }
 
-        return GetErrorParser(result.Error!);
+        return GetErrorParser(result.Error);
     }
 
     private static IErrorParser GetErrorParser(Error error)
@@ -45,10 +45,5 @@ public static class ResultHttpExtensions
             ErrorType.Conflict => new ConflictErrorParser(),
             _ => new ServerErrorErrorParser(),
         };
-    }
-
-    public static IActionResult ToActionResult(this Result result, Func<IActionResult> okResult)
-    {
-        return result.Match(okResult, result.ToProblemActionResult);
     }
 }
