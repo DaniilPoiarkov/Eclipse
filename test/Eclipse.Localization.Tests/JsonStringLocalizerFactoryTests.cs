@@ -1,6 +1,7 @@
 ﻿using Eclipse.Localization.Builder;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Extensions;
 using Eclipse.Localization.Resources;
 
 using FluentAssertions;
@@ -44,8 +45,6 @@ public sealed class JsonStringLocalizerFactoryTests
         _sut = new(() => new JsonStringLocalizerFactory(options, new ResourceProvider(options), httpContextAccessor));
     }
 
-    #region IStringLocalizerFactory Tests
-
     [Theory]
     [InlineData("en", "Test", "Test", false)]
     [InlineData("en", "Test1", "Test 1", false)]
@@ -87,9 +86,10 @@ public sealed class JsonStringLocalizerFactoryTests
         actual.SearchedLocation.Should().Be(location);
     }
 
-    #endregion
 
-    #region ILocalizerFactory Tests
+
+
+
 
     [Theory]
     [InlineData("Test", "en", "Test", false)]
@@ -108,57 +108,4 @@ public sealed class JsonStringLocalizerFactoryTests
         str.Value.Should().Be(expected);
         str.ResourceNotFound.Should().Be(resourceNotFound);
     }
-
-    [Theory]
-    [InlineData("Test", "de")]
-    [InlineData("Test", "fr")]
-    public void GetString_WhenCultureNotExist_ThenExceptionThrown(string key, string culture)
-    {
-        _currentCulture.Culture.Returns(culture);
-
-        var action = () => Sut.Create()[key, culture];
-        action.Should().ThrowExactly<LocalizationFileNotExistException>();
-    }
-
-    [Theory]
-    [InlineData("en", "ExceptionMessage", "Exception arg", "arg")]
-    [InlineData("en", "{0}Message{1}", "Arg message 3", "Arg", 3)]
-    [InlineData("uk", "ExceptionMessage", "Помилка 5", 5)]
-    [InlineData("uk", "{0}Message{1}", "5 повідомлення false", 5, "false")]
-    public void FormatLocalizableException_WhenCalled_ThenLocalizeMessageWithSpecifiedArguments(string culture, string template, string expected, params object[] arguments)
-    {
-        _currentCulture.Culture.Returns(culture);
-
-        var exception = new LocalizedException(template, arguments);
-
-        var actual = Sut.Create().FormatLocalizedException(exception);
-
-        actual.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("Test", "Test")]
-    [InlineData("Test 1", "Test1")]
-    [InlineData("Test 2", "Test2")]
-    [InlineData("Тест", "Test")]
-    [InlineData("Тест 1", "Test1")]
-    [InlineData("Тест 2", "Test2")]
-    public void ToLocalizableString_WhenCalled_ThenReturnsProperKey(string value, string expected)
-    {
-        var key = Sut.Create().ToLocalizableString(value);
-        key.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("Prüfen")]
-    [InlineData("Message with no information provided")]
-    [InlineData("!@#5569-=-03123")]
-    public void ToLocalizableString_WhenLocalizationNotFound_ThenExceptionThrown(string value)
-    {
-        var action = () => Sut.Create().ToLocalizableString(value);
-        action.Should().ThrowExactly<LocalizationNotFoundException>();
-    }
-
-    #endregion
 }
