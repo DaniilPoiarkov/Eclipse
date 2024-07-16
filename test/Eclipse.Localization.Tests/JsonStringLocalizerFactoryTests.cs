@@ -1,7 +1,5 @@
 ﻿using Eclipse.Localization.Builder;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Extensions;
 using Eclipse.Localization.Resources;
 
 using FluentAssertions;
@@ -84,28 +82,5 @@ public sealed class JsonStringLocalizerFactoryTests
         actual.Name.Should().Be(key);
         actual.ResourceNotFound.Should().Be(resourceNotFound);
         actual.SearchedLocation.Should().Be(location);
-    }
-
-
-
-
-
-
-    [Theory]
-    [InlineData("Test", "en", "Test", false)]
-    [InlineData("Test1", "en", "Test 1", false)]
-    [InlineData("Test2", "en", "Test 2", false)]
-    [InlineData("Test", "uk", "Тест", false)]
-    [InlineData("Test1", "uk", "Тест 1", false)]
-    [InlineData("Test2", "uk", "Тест 2", false)]
-    public void GetString_WhenCultureSpecified_ThenReturnsStringWithSpecifiedCulture(string key, string culture, string expected, bool resourceNotFound)
-    {
-        _currentCulture.Culture.Returns(culture);
-
-        var str = Sut.Create()[key, culture];
-
-        str.Name.Should().Be(key);
-        str.Value.Should().Be(expected);
-        str.ResourceNotFound.Should().Be(resourceNotFound);
     }
 }

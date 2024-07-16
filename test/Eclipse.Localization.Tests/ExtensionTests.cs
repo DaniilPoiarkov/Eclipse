@@ -52,10 +52,10 @@ public sealed class ExtensionTests
     [InlineData("Test 2", "Тест 2")]
     public void ToLocalizableString_WhenDifferentValuesWithSameKey_ThenSameKeyReturned(string left, string right)
     {
-        var keyFromLeft = _sut.ToLocalizableString(left);
-        var keyFromRight = _sut.ToLocalizableString(right);
+        var leftKey = _sut.ToLocalizableString(left);
+        var rightKey = _sut.ToLocalizableString(right);
 
-        keyFromLeft.Should().Be(keyFromRight);
+        leftKey.Should().Be(rightKey);
     }
 
     [Theory]
@@ -72,10 +72,10 @@ public sealed class ExtensionTests
 
     [Theory]
     [InlineData("en", "Message{0}", "Message {0}", false)]
-    [InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
     [InlineData("en", "Test", "Test", false)]
     [InlineData("en", "Test1", "Test 1", false)]
     [InlineData("en", "Test2", "Test 2", false)]
+    [InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
     [InlineData("uk", "Test", "Тест", false)]
     [InlineData("uk", "Test1", "Тест 1", false)]
     [InlineData("uk", "Test2", "Тест 2", false)]
