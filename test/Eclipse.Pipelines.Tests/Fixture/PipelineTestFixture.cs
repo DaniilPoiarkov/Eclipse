@@ -1,5 +1,4 @@
 ﻿using Eclipse.Core.Core;
-using Eclipse.Localization;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Tests.Generators;
 

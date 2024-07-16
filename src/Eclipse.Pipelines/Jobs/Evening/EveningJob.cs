@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Localization.Culture;
-using Eclipse.Pipelines.Users;
 using Eclipse.Localization.Extensions;
+using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 
