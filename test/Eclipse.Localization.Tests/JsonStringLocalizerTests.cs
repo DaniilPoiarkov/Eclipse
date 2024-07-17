@@ -60,7 +60,7 @@ public sealed class JsonStringLocalizerTests
     [InlineData("Message{0}{1}", "Message info with 5", false, "info", 5, "true", "!@#", 09)]
     [InlineData("{0}Message", "{0}Message", true, "info")]
     [InlineData("{0}Message{1}{2}", "{0}Message{1}{2}", true, "info", "4", 5, 42)]
-    public void GetString_WhenCalledWithArguments_ThenFormatterStringReturned(string key, string expected, bool resourceNotFound, params object[] arguments)
+    public void GetString_WhenCalledWithArguments_ThenFormattedStringReturned(string key, string expected, bool resourceNotFound, params object[] arguments)
     {
         var actual = _sut[key, arguments];
 
@@ -70,7 +70,7 @@ public sealed class JsonStringLocalizerTests
     }
 
     [Fact]
-    public void Localize_WhenCultureNotExist_ThenExceptionThrown()
+    public void GetString_WhenCultureNotExist_ThenExceptionThrown()
     {
         var currentCulture = Substitute.For<ICurrentCulture>();
         currentCulture.Culture.Returns("fr");

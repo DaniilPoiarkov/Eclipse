@@ -13,7 +13,7 @@ namespace Eclipse.Localization;
 public static class LocalizationModule
 {
     /// <summary>
-    /// Registers <a cref="IStringLocalizer{T}"></a>, <a cref="ILocalizer"></a>, and <a cref="ICurrentCulture"></a> to use localization
+    /// Registers <a cref="IStringLocalizer{T}"></a> and <a cref="ICurrentCulture"></a> to use localization.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
