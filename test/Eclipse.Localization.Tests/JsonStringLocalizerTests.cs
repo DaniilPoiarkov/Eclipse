@@ -1,4 +1,7 @@
 ﻿using Eclipse.Localization.Builder;
+using Eclipse.Localization.Culture;
+using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Extensions;
 using Eclipse.Localization.Resources;
 
 using FluentAssertions;
@@ -7,13 +10,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
+using NSubstitute;
+
 using Xunit;
 
 namespace Eclipse.Localization.Tests;
 
 public sealed class JsonStringLocalizerTests
 {
-    private readonly IStringLocalizer<JsonStringLocalizerTests> _localizer;
+    private readonly IStringLocalizer<JsonStringLocalizerTests> _sut;
 
     private static readonly string _file = "Resources/Valid/en.json";
 
@@ -29,7 +34,7 @@ public sealed class JsonStringLocalizerTests
             })
             .BuildServiceProvider();
 
-        _localizer = serviceProvider.GetRequiredService<IStringLocalizer<JsonStringLocalizerTests>>();
+        _sut = serviceProvider.GetRequiredService<IStringLocalizer<JsonStringLocalizerTests>>();
     }
 
     [Theory]
@@ -41,7 +46,7 @@ public sealed class JsonStringLocalizerTests
     [InlineData("OneMoreNotFound", "OneMoreNotFound", true)]
     public void GetString_WhenCalledWithBrackets_ThenProperValueReturned(string key, string expected, bool resourceNotFound)
     {
-        var actual = _localizer[key];
+        var actual = _sut[key];
 
         actual.Value.Should().Be(expected);
         actual.Name.Should().Be(key);
@@ -55,13 +60,24 @@ public sealed class JsonStringLocalizerTests
     [InlineData("Message{0}{1}", "Message info with 5", false, "info", 5, "true", "!@#", 09)]
     [InlineData("{0}Message", "{0}Message", true, "info")]
     [InlineData("{0}Message{1}{2}", "{0}Message{1}{2}", true, "info", "4", 5, 42)]
-    public void GetString_WhenCalledWithArguments_ThenFormatterStringReturned(string key, string expected, bool resourceNotFound, params object[] arguments)
+    public void GetString_WhenCalledWithArguments_ThenFormattedStringReturned(string key, string expected, bool resourceNotFound, params object[] arguments)
     {
-        var actual = _localizer[key, arguments];
+        var actual = _sut[key, arguments];
 
         actual.Value.Should().Be(expected);
         actual.Name.Should().Be(key);
         actual.ResourceNotFound.Should().Be(resourceNotFound);
+    }
+
+    [Fact]
+    public void GetString_WhenCultureNotExist_ThenExceptionThrown()
+    {
+        var currentCulture = Substitute.For<ICurrentCulture>();
+        currentCulture.Culture.Returns("fr");
+        _sut.UseCurrentCulture(currentCulture);
+
+        var action = () => _sut["Test"];
+        action.Should().ThrowExactly<LocalizationFileNotExistException>();
     }
 
     [Fact]
@@ -73,7 +89,7 @@ public sealed class JsonStringLocalizerTests
 
         var resource = resourceProvider.Get(_culture, _file);
 
-        var actual = _localizer.GetAllStrings().ToArray();
+        var actual = _sut.GetAllStrings().ToArray();
 
         actual.All(s => s.ResourceNotFound).Should().BeFalse();
 

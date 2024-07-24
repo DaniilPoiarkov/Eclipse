@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.Localization;
 
-internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILocalizerFactory
+internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory
 {
     private readonly IOptions<LocalizationBuilder> _options;
 
@@ -25,7 +25,7 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, ILoc
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public ILocalizer Create()
+    public IStringLocalizer Create()
     {
         return CreateJsonLocalizer();
     }

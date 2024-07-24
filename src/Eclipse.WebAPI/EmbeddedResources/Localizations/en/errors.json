@@ -1,0 +1,7 @@
+{
+  "culture": "en",
+  "texts": {
+    "InternalError_Title": "Internal error.",
+    "InternalError_Details": "Internal error occured."
+  }
+}
