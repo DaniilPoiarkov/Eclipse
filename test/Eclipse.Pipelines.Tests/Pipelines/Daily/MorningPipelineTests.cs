@@ -6,6 +6,7 @@ using Eclipse.Pipelines.Tests.Fixture;
 using FluentAssertions;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -20,10 +21,10 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
 {
     public MorningPipelineTests()
     {
-        Localizer["Pipelines:Morning:AskMood"].Returns("AskMood");
-        Localizer["Pipelines:Morning:GoodMood"].Returns("Good");
-        Localizer["Pipelines:Morning:BadMood"].Returns("Bad");
-        Localizer["Pipelines:Morning:NotDefined"].Returns("NotDefined");
+        Localizer["Pipelines:Morning:AskMood"].Returns(new LocalizedString("Pipelines:Morning:AskMood", "AskMood"));
+        Localizer["Pipelines:Morning:GoodMood"].Returns(new LocalizedString("Pipelines:Morning:GoodMood", "Good"));
+        Localizer["Pipelines:Morning:BadMood"].Returns(new LocalizedString("Pipelines:Morning:BadMood", "Bad"));
+        Localizer["Pipelines:Morning:NotDefined"].Returns(new LocalizedString("Pipelines:Morning:NotDefined", "NotDefined"));
     }
 
     protected override void ConfigureServices(IServiceCollection services)

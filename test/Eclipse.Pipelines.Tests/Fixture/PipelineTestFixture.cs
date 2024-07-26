@@ -1,9 +1,9 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Core;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Tests.Generators;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -18,7 +18,7 @@ public abstract class PipelineTestFixture<TPipeline>
 
     protected readonly ICurrentTelegramUser CurrentTelegramUser;
 
-    protected readonly IEclipseLocalizer Localizer;
+    protected readonly IStringLocalizer Localizer;
 
     protected readonly IServiceProvider ServiceProvider;
 
@@ -28,7 +28,7 @@ public abstract class PipelineTestFixture<TPipeline>
     {
         BotClient = Substitute.For<ITelegramBotClient>();
         CurrentTelegramUser = Substitute.For<ICurrentTelegramUser>();
-        Localizer = Substitute.For<IEclipseLocalizer>();
+        Localizer = Substitute.For<IStringLocalizer>();
 
         var services = new ServiceCollection()
             .AddSingleton<TPipeline>()

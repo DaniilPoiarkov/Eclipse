@@ -30,7 +30,7 @@ public sealed class TelegramController : ControllerBase
     public async Task<IActionResult> Send([FromBody] SendMessageModel message, CancellationToken cancellationToken)
     {
         var result = await _service.Send(message, cancellationToken);
-        return result.ToActionResult(NoContent);
+        return result.Match(NoContent, result.ToProblems);
     }
 
     [HttpPost("switch-handler")]
@@ -40,6 +40,6 @@ public sealed class TelegramController : ControllerBase
 
         var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl}/{endpoint}", cancellationToken);
 
-        return result.ToActionResult(Ok);
+        return result.Match(Ok, result.ToProblems);
     }
 }

@@ -14,6 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Polly;
+using Polly.Contrib.WaitAndRetry;
+
 using Quartz;
 using Quartz.Logging;
 
@@ -28,6 +31,10 @@ namespace Eclipse.Infrastructure;
 /// </summary>
 public static class EclipseInfrastructureModule
 {
+    private static readonly int _retriesCount = 5;
+
+    private static readonly int _baseRetryDelay = 1;
+
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services)
     {
         services
@@ -51,6 +58,14 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddGoogleIntegration(this IServiceCollection services)
     {
+        var configuration = services.GetConfiguration();
+
+        if (!configuration.GetValue<bool>("Settings:IsGoogleEnabled"))
+        {
+            return services
+                .AddSingleton<ISheetsService, NullSheetsService>();
+        }
+
         services.AddOptions<GoogleOptions>()
             .BindConfiguration("Google")
             .ValidateOnStart();
@@ -67,15 +82,15 @@ public static class EclipseInfrastructureModule
     {
         LogProvider.IsDisabled = true;
 
-        services.AddQuartz(cfg =>
+        services.AddQuartz(configurator =>
         {
-            cfg.InterruptJobsOnShutdown = true;
-            cfg.SchedulerName = $"eclipse";
+            configurator.InterruptJobsOnShutdown = true;
+            configurator.SchedulerName = $"eclipse";
         });
 
-        services.AddQuartzHostedService(cfg =>
+        services.AddQuartzHostedService(options =>
         {
-            cfg.WaitForJobsToComplete = false;
+            options.WaitForJobsToComplete = true;
         });
 
         return services;
@@ -87,11 +102,13 @@ public static class EclipseInfrastructureModule
             .BindConfiguration("Telegram")
             .ValidateOnStart();
 
-        services.AddSingleton<ITelegramBotClient>(sp =>
+        services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((client, sp) =>
         {
             var options = sp.GetRequiredService<IOptions<TelegramOptions>>().Value;
-            return new TelegramBotClient(options.Token);
-        });
+            return new TelegramBotClient(options.Token, client);
+        }).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(
+                Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseRetryDelay), _retriesCount)
+            ));
 
         return services;
     }
@@ -100,7 +117,7 @@ public static class EclipseInfrastructureModule
     {
         var configuration = services.GetConfiguration();
 
-        if (configuration.GetValue<bool>("IsRedisEnabled"))
+        if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
         {
             services.AddStackExchangeRedisCache(options =>
             {

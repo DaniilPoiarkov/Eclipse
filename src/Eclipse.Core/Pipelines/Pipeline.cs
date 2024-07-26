@@ -38,17 +38,15 @@ public abstract class Pipeline
 
     protected static IResult Menu(IEnumerable<IEnumerable<KeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
     {
-        var button = buttons.FirstOrDefault()?
-            .FirstOrDefault();
+        var hasButtons = buttons.SelectMany(x => x)
+            .Any();
 
-        if (button is null)
+        if (!hasButtons)
         {
             return Text(message);
         }
 
-        var keyboardButtons = buttons.Cast<IEnumerable<KeyboardButton>>();
-
-        var menu = new ReplyKeyboardMarkup(keyboardButtons)
+        var menu = new ReplyKeyboardMarkup(buttons)
         {
             InputFieldPlaceholder = inputPlaceholder,
             ResizeKeyboard = resize
@@ -61,10 +59,10 @@ public abstract class Pipeline
         IEnumerable<IEnumerable<InlineKeyboardButton>> buttons,
         string message)
     {
-        var button = buttons.FirstOrDefault()?
-            .FirstOrDefault();
+        var hasButtons = buttons.SelectMany(x => x)
+            .Any();
 
-        if (button is null)
+        if (!hasButtons)
         {
             return Text(message);
         }

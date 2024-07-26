@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-See current and only supported version in Releases section.
+See current and only supported version in Releases section with tag latest.
 
 ## Reporting a Vulnerability
 

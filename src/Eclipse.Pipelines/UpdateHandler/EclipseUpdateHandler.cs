@@ -1,18 +1,16 @@
-﻿using Eclipse.Application.Contracts.Localizations;
-using Eclipse.Common.Telegram;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
+using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Users;
 
-using Microsoft.Extensions.Options;
-
-using Serilog;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -24,7 +22,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 {
     public HandlerType Type => HandlerType.Active;
 
-    private readonly ILogger _logger;
+    private readonly ILogger<EclipseUpdateHandler> _logger;
 
     private readonly IUserStore _userStore;
 
@@ -38,10 +36,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
-    private readonly IEclipseLocalizer _localizer;
-
-    private readonly IOptions<TelegramOptions> _options;
-
+    private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
     private static readonly UpdateType[] _allowedUpdateTypes =
     [
@@ -49,15 +44,14 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
     ];
 
     public EclipseUpdateHandler(
-        ILogger logger,
+        ILogger<EclipseUpdateHandler> logger,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserStore userStore,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
-        IEclipseLocalizer localizer,
-        IOptions<TelegramOptions> options)
+        IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
@@ -67,21 +61,13 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         _updateParser = updateParser;
         _messageStore = messageStore;
         _localizer = localizer;
-        _options = options;
-    }
-
-    public async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-    {
-        _logger.Error("Telegram error: {ex}", exception.Message);
-
-        await botClient.SendTextMessageAsync(_options.Value.Chat, exception.Message, cancellationToken: cancellationToken);
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
         if (!_allowedUpdateTypes.Contains(update.Type))
         {
-            _logger.Information("Update of type {updateType} is not supported", update.Type);
+            _logger.LogInformation("Update of type {updateType} is not supported", update.Type);
             return;
         }
 
@@ -89,7 +75,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (context is null)
         {
-            _logger.Error("Context is null after parsing update of type {updateType}", update.Type);
+            _logger.LogError("Context is null after parsing update of type {updateType}", update.Type);
             return;
         }
 
@@ -102,7 +88,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
-        await _localizer.ResetCultureForUserWithChatIdAsync(context.ChatId, cancellationToken);
         pipeline.SetLocalizer(_localizer);
 
         var result = await pipeline.RunNext(context, cancellationToken);

@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    container_name: eclipse-cosmosdb
+    hostname: cosmos.domain
+    restart: always
+    mem_limit: 4GB
+    ports:
+      - 8081:8081
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=5
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+    networks:
+      eclipse:
+    volumes:
+      - eclipse:/data
+    
+  cache:
+    image: redis/redis-stack-server:latest
+    container_name: eclipse-cache
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - eclipse:/cache
+    networks:
+      - eclipse
+
+  backend:
+    image: ${DOCKER_REGISTRY-}eclipse
+    container_name: eclipse-webapi
+    build:
+      context: ../
+      dockerfile: web-api.local.dockerfile
+    environment:
+      - ConnectionStrings__Emulator=AccountEndpoint=https://cosmos.domain:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+      - ConnectionStrings__Redis=cache:6379
+      - Telegram__SecretToken=my_Sup3r_S3cr3t_T0k3n
+      - Sheets__SuggestionsRange=Suggestions!B:E
+      - Settings__IsDocker=true
+    ports:
+      - 8080:8080
+    networks:
+      - eclipse
+    depends_on:
+      - cosmosdb
+      - cache
+
+networks:
+  eclipse:
+    driver: bridge
+
+volumes:
+  eclipse:
