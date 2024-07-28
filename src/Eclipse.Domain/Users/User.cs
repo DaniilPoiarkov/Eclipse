@@ -206,6 +206,6 @@ public sealed class User : AggregateRoot
 
     public bool IsValidSignInCode(string signInCode)
     {
-        return SignInCode == signInCode;
+        return !SignInCode.IsNullOrEmpty() && SignInCode == signInCode;
     }
 }
