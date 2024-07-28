@@ -44,6 +44,8 @@ internal sealed class AccountService : IAccountService
 
         user.InvalidateSignInCode();
 
+        await _userManager.UpdateAsync(user, cancellationToken);
+
         return Result.Success();
     }
 
@@ -63,17 +65,10 @@ internal sealed class AccountService : IAccountService
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        var result = await _telegramService.Send(new SendMessageModel
+        return await _telegramService.Send(new SendMessageModel
         {
             ChatId = user.ChatId,
             Message = _stringLocalizer["Account:{0}AuthenticationCode", user.SignInCode ?? string.Empty]
         }, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result;
-        }
-
-        return Result.Success();
     }
 }
