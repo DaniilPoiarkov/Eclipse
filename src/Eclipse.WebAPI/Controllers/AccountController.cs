@@ -1,12 +1,8 @@
-﻿using Eclipse.Domain.Users;
+﻿using Eclipse.Application.Contracts.Account;
+using Eclipse.Common.Results;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Eclipse.WebAPI.Controllers;
 
@@ -14,55 +10,18 @@ namespace Eclipse.WebAPI.Controllers;
 [Route("api/account")]
 public class AccountController : ControllerBase
 {
-    private readonly UserManager _userManager;
+    private readonly IAccountService _accountService;
 
-    private readonly IConfiguration _configuration;
-
-    public AccountController(UserManager userManager, IConfiguration configuration)
+    public AccountController(IAccountService accountService)
     {
-        _userManager = userManager;
-        _configuration = configuration;
+        _accountService = accountService;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> LoginAsync(string userName, CancellationToken cancellationToken)
+    [HttpPost("send-sign-in-code")]
+    public async Task<IActionResult> SendSignInCodeAsync([FromQuery] string userName, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByUserNameAsync(userName, cancellationToken);
-
-        if (user is null)
-        {
-            return BadRequest();
-        }
-
-        var configuration = _configuration.GetSection("Authorization:JwtBearer");
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.UserName),
-            new(ClaimTypes.Role, user.ChatId == _configuration.GetValue<long>("Telegram:Chat") ? "admin" : "user")
-        };
-
-        var key = Encoding.ASCII.GetBytes(configuration["Key"]!);
-        var descriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(5),
-            IssuedAt = DateTime.UtcNow,
-            Issuer = configuration["Issuer"],
-            Audience = configuration["Audience"],
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature
-            )
-        };
-
-        var handler = new JwtSecurityTokenHandler();
-
-        var token = handler.CreateToken(descriptor);
-
-        var result = handler.WriteToken(token);
-
-        return Ok(new { Token = result });
+        var result = await _accountService.SendSignInCodeAsync(userName, cancellationToken);
+        return result.Match(Ok, result.ToProblems);
     }
 
     [HttpGet]

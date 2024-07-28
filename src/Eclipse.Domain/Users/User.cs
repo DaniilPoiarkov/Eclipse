@@ -26,16 +26,19 @@ public sealed class User : AggregateRoot
     private readonly List<TodoItem> _todoItems = [];
 
     public string Name { get; set; } = string.Empty;
-
+    
     public string Surname { get; set; } = string.Empty;
-
+    
     public string UserName { get; set; } = string.Empty;
 
     public long ChatId { get; init; }
 
     public string Culture { get; set; } = string.Empty;
+    
+    public string SignInCode { get; private set; }
 
     public bool NotificationsEnabled { get; set; }
+
 
     public TimeSpan Gmt { get; private set; }
 
@@ -177,8 +180,32 @@ public sealed class User : AggregateRoot
         return item;
     }
 
+    /// <summary>
+    /// Sets new sign in code
+    /// </summary>
+    public void SetSignInCode()
+    {
+        const string _codeChars = "0123456789";
+
+        var chars = Enumerable.Range(0, 6)
+            .Select(_ => _codeChars[Random.Shared.Next(0, _codeChars.Length)])
+            .ToArray();
+
+        SignInCode = new string(chars);
+    }
+
+    public void InvalidateSignInCode()
+    {
+        SignInCode = string.Empty;
+    }
+
     public override string ToString()
     {
         return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";
+    }
+
+    public bool IsValidSignInCode(string signInCode)
+    {
+        return SignInCode == signInCode;
     }
 }
