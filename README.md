@@ -2,6 +2,7 @@
 
 - [Getting started](#getting-started)
 - [Architecture diagram](#architecture-diagram)
+- [Authorization flow](#authorization-flow)
 - [Modules](#modules)
 - [Tests](#tests)
 - [Integrations](#integrations)
@@ -24,6 +25,10 @@
 
 ## Architecture diagram
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
+
+## Authorization flow
+![Eclipse-Authorization flow drawio](https://github.com/user-attachments/assets/9d6e3adc-6c26-4e68-a277-821c9f838ea7)
+
 
 ## Modules
 
