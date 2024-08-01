@@ -6,11 +6,14 @@ public static class Clock
 
     public static ITimeProvider Provider { get; set; } = new UtcNowTimeProvider();
 
-    public static DateTime Now { get
+    public static DateTime Now
+    {
+        get
         {
             lock (_lock)
             {
                 return Provider.Now;
             }
-        } }
+        }
+    }
 }

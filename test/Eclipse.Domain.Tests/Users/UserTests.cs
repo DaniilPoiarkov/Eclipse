@@ -187,7 +187,7 @@ public class UserTests
     public void SetSignInCode_WhenPreviousCodeIsExpired_ThenSetsNewCode()
     {
         var timeProvider = Substitute.For<ITimeProvider>();
-        
+
         Clock.Provider = timeProvider;
 
         var firstDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
