@@ -1,10 +1,14 @@
-﻿using Eclipse.Common.Results;
+﻿using Eclipse.Common.Clock;
+using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
+
+using NSubstitute;
 
 using Xunit;
 
@@ -144,5 +148,108 @@ public class UserTests
         result.Error.Code.Should().Be(expectedError.Code);
         result.Error.Description.Should().Be(expectedError.Description);
         result.Error.Args.Should().BeEquivalentTo(expectedError.Args);
+    }
+
+    [Fact]
+    public void SetSignInCode_WhenCalled_ThenNewCodeSet()
+    {
+        var returnedDateTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        var expectedExpirationTime = returnedDateTime.Add(UserConsts.SignInCodeExpiration);
+
+        var timeProvider = Substitute.For<ITimeProvider>();
+
+        timeProvider.Now.Returns(returnedDateTime);
+
+        Clock.Provider = timeProvider;
+
+        _sut.SetSignInCode();
+        _sut.SignInCode.Should().NotBeNull();
+        _sut.SignInCodeExpiresAt.Should().Be(expectedExpirationTime);
+    }
+
+    [Fact]
+    public void SetSignInCode_WhenCalledMultipleTImes_ThenNotSetNewCodeUntilPreviousExpires()
+    {
+        _sut.SetSignInCode();
+
+        var signInCode = _sut.SignInCode;
+        var expiresAt = _sut.SignInCodeExpiresAt;
+
+        _sut.SetSignInCode();
+        _sut.SetSignInCode();
+        _sut.SetSignInCode();
+
+        _sut.SignInCode.Should().Be(signInCode);
+        _sut.SignInCodeExpiresAt.Should().Be(expiresAt);
+    }
+
+    [Fact]
+    public void SetSignInCode_WhenPreviousCodeIsExpired_ThenSetsNewCode()
+    {
+        var timeProvider = Substitute.For<ITimeProvider>();
+        
+        Clock.Provider = timeProvider;
+
+        var firstDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        timeProvider.Now.Returns(firstDate);
+
+        _sut.SetSignInCode();
+
+        var signInCode = _sut.SignInCode;
+
+        var secondDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 10));
+        timeProvider.Now.Returns(secondDate);
+
+        _sut.SetSignInCode();
+
+        _sut.SignInCode.Should().NotBe(signInCode);
+        _sut.SignInCodeExpiresAt.Should().Be(secondDate.Add(UserConsts.SignInCodeExpiration));
+    }
+
+    [Fact]
+    public void IsValidSignInCode_WhenCodeIsValid_ThenReturnsTrue()
+    {
+        _sut.SetSignInCode();
+        _sut.IsValidSignInCode(_sut.SignInCode).Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData("qwerty")]
+    [InlineData("1234567")]
+    public void IsValidSignInCode_WhenValuesAreInvalid_ThenReturnsFalse(string? code)
+    {
+        _sut.SetSignInCode();
+        _sut.IsValidSignInCode(code!).Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData("qwerty")]
+    [InlineData("1234567")]
+    public void IsValidSignInCode_WhenCodeWasNotSet_THenReturnsFalse(string? code)
+    {
+        _sut.IsValidSignInCode(code!).Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsValidSignInCode_WhenCodeIsExpired_ThenReturnsFalse()
+    {
+        var timeProvider = Substitute.For<ITimeProvider>();
+
+        var creationDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        var submissionDate = creationDate.Add(UserConsts.SignInCodeExpiration).AddSeconds(1);
+
+        timeProvider.Now.Returns(creationDate);
+
+        Clock.Provider = timeProvider;
+
+        _sut.SetSignInCode();
+
+        timeProvider.Now.Returns(submissionDate);
+
+        _sut.IsValidSignInCode(_sut.SignInCode).Should().BeFalse();
     }
 }

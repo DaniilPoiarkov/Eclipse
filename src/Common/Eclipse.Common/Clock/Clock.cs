@@ -2,7 +2,15 @@
 
 public static class Clock
 {
-    public static readonly ITimeProvider Provider = new UtcNowTimeProvider();
+    private static readonly object _lock = new();
 
-    public static DateTime Now => Provider.Now;
+    public static ITimeProvider Provider { get; set; } = new UtcNowTimeProvider();
+
+    public static DateTime Now { get
+        {
+            lock (_lock)
+            {
+                return Provider.Now;
+            }
+        } }
 }
