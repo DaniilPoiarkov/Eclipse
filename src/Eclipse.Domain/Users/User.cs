@@ -28,7 +28,7 @@ public sealed class User : AggregateRoot
     private readonly List<TodoItem> _todoItems = [];
 
     public string Name { get; set; } = string.Empty;
-    
+
     public string Surname { get; set; } = string.Empty;
 
     public string UserName { get; set; } = string.Empty;
@@ -192,7 +192,7 @@ public sealed class User : AggregateRoot
         {
             return;
         }
-        
+
         SignInCode = UserConsts.GenerateSignInCode();
         SignInCodeExpiresAt = Clock.Now.Add(UserConsts.SignInCodeExpiration);
     }

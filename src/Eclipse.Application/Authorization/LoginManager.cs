@@ -71,7 +71,7 @@ internal sealed class LoginManager : ILoginManager
                 SecurityAlgorithms.HmacSha256Signature
             )
         };
-        
+
         var handler = new JwtSecurityTokenHandler();
 
         var token = handler.CreateToken(descriptor);
