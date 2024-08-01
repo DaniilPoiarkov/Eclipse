@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Account;
 using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
@@ -20,12 +21,15 @@ internal sealed class AccountService : IAccountService
 
     private readonly ICurrentCulture _currentCulture;
 
-    public AccountService(UserManager userManager, ITelegramService telegramService, IStringLocalizer<AccountService> stringLocalizer, ICurrentCulture currentCulture)
+    private readonly ITimeProvider _timeProvider;
+
+    public AccountService(UserManager userManager, ITelegramService telegramService, IStringLocalizer<AccountService> stringLocalizer, ICurrentCulture currentCulture, ITimeProvider timeProvider)
     {
         _userManager = userManager;
         _telegramService = telegramService;
         _stringLocalizer = stringLocalizer;
         _currentCulture = currentCulture;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Result> SendSignInCodeAsync(string userName, CancellationToken cancellationToken = default)
@@ -40,7 +44,7 @@ internal sealed class AccountService : IAccountService
         using var _ = _currentCulture.UsingCulture(user.Culture);
         _stringLocalizer.UseCurrentCulture(_currentCulture);
 
-        user.SetSignInCode();
+        user.SetSignInCode(_timeProvider.Now);
 
         await _userManager.UpdateAsync(user, cancellationToken);
 

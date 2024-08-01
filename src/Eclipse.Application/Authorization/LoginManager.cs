@@ -23,14 +23,18 @@ internal sealed class LoginManager : ILoginManager
 
     private readonly IUserClaimsPrincipalFactory<User> _userClaimsPrincipalFactory;
 
+    private readonly ITimeProvider _timeProvider;
+
     public LoginManager(
         UserManager userManager,
         IConfiguration configuration,
-        IUserClaimsPrincipalFactory<User> userClaimsPrincipalFactory)
+        IUserClaimsPrincipalFactory<User> userClaimsPrincipalFactory,
+        ITimeProvider timeProvider)
     {
         _userManager = userManager;
         _configuration = configuration;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Result<LoginResult>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
@@ -42,7 +46,7 @@ internal sealed class LoginManager : ILoginManager
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        if (!user.IsValidSignInCode(request.SignInCode))
+        if (!user.IsValidSignInCode(_timeProvider.Now, request.SignInCode))
         {
             return Error.Validation("Account.Login", "Account:InvalidCode");
         }
@@ -57,13 +61,13 @@ internal sealed class LoginManager : ILoginManager
         var configuration = _configuration.GetSection("Authorization:JwtBearer");
 
         var key = Encoding.ASCII.GetBytes(configuration["Key"]!);
-        var expires = Clock.Now.AddMinutes(IdentityConsts.TokenExpirationInMinutes);
+        var expires = _timeProvider.Now.AddMinutes(IdentityConsts.TokenExpirationInMinutes);
 
         var descriptor = new SecurityTokenDescriptor
         {
             Subject = claimsPrincipal.Identity as ClaimsIdentity,
             Expires = expires,
-            IssuedAt = Clock.Now,
+            IssuedAt = _timeProvider.Now,
             Issuer = configuration["Issuer"],
             Audience = configuration["Audience"],
             SigningCredentials = new SigningCredentials(

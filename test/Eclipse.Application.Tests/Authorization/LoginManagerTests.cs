@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Authorization;
 using Eclipse.Application.Contracts.Authorization;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 
 using NSubstitute;
 
+using System;
 using System.Security.Claims;
 
 using Xunit;
@@ -26,6 +28,8 @@ public sealed class LoginManagerTests
 
     private readonly IUserClaimsPrincipalFactory<User> _userClaimsPrincipalFactory;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly LoginManager _sut;
 
     public LoginManagerTests()
@@ -33,14 +37,17 @@ public sealed class LoginManagerTests
         _userRepository = Substitute.For<IUserRepository>();
         _configuration = Substitute.For<IConfiguration>();
         _userClaimsPrincipalFactory = Substitute.For<IUserClaimsPrincipalFactory<User>>();
-        _sut = new LoginManager(new UserManager(_userRepository), _configuration, _userClaimsPrincipalFactory);
+        _timeProvider = Substitute.For<ITimeProvider>();
+        _sut = new LoginManager(new UserManager(_userRepository), _configuration, _userClaimsPrincipalFactory, _timeProvider);
     }
 
     [Fact]
     public async Task LoginAsync_WhenUserAuthenticatesSuccessfully_ThenAccessTokenReturned()
     {
         var user = UserGenerator.Generate(1).First();
-        user.SetSignInCode();
+        user.SetSignInCode(DateTime.UtcNow);
+
+        _timeProvider.Now.Returns(DateTime.UtcNow);
 
         _userRepository.GetByExpressionAsync(_ => true)
             .ReturnsForAnyArgs(

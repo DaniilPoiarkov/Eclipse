@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.Common.Cache;
+using Eclipse.Common.Clock;
 using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Sheets;
@@ -52,6 +53,8 @@ public static class EclipseInfrastructureModule
         services
             .AddSingleton<IExcelManager, ExcelManager>()
             .AddSingleton<IBackgroundJobManager, BackgroundJobManager>();
+
+        services.AddSingleton<ITimeProvider, UtcNowTimeProvider>();
 
         return services;
     }

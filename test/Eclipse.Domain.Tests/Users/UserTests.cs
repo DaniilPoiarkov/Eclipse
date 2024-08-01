@@ -153,16 +153,10 @@ public class UserTests
     [Fact]
     public void SetSignInCode_WhenCalled_ThenNewCodeSet()
     {
-        var returnedDateTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
-        var expectedExpirationTime = returnedDateTime.Add(UserConsts.SignInCodeExpiration);
+        var setTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        var expectedExpirationTime = setTime.Add(UserConsts.SignInCodeExpiration);
 
-        var timeProvider = Substitute.For<ITimeProvider>();
-
-        timeProvider.Now.Returns(returnedDateTime);
-
-        Clock.Provider = timeProvider;
-
-        _sut.SetSignInCode();
+        _sut.SetSignInCode(setTime);
         _sut.SignInCode.Should().NotBeNull();
         _sut.SignInCodeExpiresAt.Should().Be(expectedExpirationTime);
     }
@@ -170,14 +164,16 @@ public class UserTests
     [Fact]
     public void SetSignInCode_WhenCalledMultipleTImes_ThenNotSetNewCodeUntilPreviousExpires()
     {
-        _sut.SetSignInCode();
+        var setTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+
+        _sut.SetSignInCode(setTime);
 
         var signInCode = _sut.SignInCode;
         var expiresAt = _sut.SignInCodeExpiresAt;
 
-        _sut.SetSignInCode();
-        _sut.SetSignInCode();
-        _sut.SetSignInCode();
+        _sut.SetSignInCode(setTime.AddMinutes(1));
+        _sut.SetSignInCode(setTime.AddMinutes(2));
+        _sut.SetSignInCode(setTime.AddMinutes(3));
 
         _sut.SignInCode.Should().Be(signInCode);
         _sut.SignInCodeExpiresAt.Should().Be(expiresAt);
@@ -186,21 +182,14 @@ public class UserTests
     [Fact]
     public void SetSignInCode_WhenPreviousCodeIsExpired_ThenSetsNewCode()
     {
-        var timeProvider = Substitute.For<ITimeProvider>();
-
-        Clock.Provider = timeProvider;
-
         var firstDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
-        timeProvider.Now.Returns(firstDate);
-
-        _sut.SetSignInCode();
+        _sut.SetSignInCode(firstDate);
 
         var signInCode = _sut.SignInCode;
 
         var secondDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 10));
-        timeProvider.Now.Returns(secondDate);
-
-        _sut.SetSignInCode();
+        
+        _sut.SetSignInCode(secondDate);
 
         _sut.SignInCode.Should().NotBe(signInCode);
         _sut.SignInCodeExpiresAt.Should().Be(secondDate.Add(UserConsts.SignInCodeExpiration));
@@ -209,8 +198,8 @@ public class UserTests
     [Fact]
     public void IsValidSignInCode_WhenCodeIsValid_ThenReturnsTrue()
     {
-        _sut.SetSignInCode();
-        _sut.IsValidSignInCode(_sut.SignInCode).Should().BeTrue();
+        _sut.SetSignInCode(DateTime.UtcNow);
+        _sut.IsValidSignInCode(DateTime.UtcNow, _sut.SignInCode).Should().BeTrue();
     }
 
     [Theory]
@@ -220,8 +209,8 @@ public class UserTests
     [InlineData("1234567")]
     public void IsValidSignInCode_WhenValuesAreInvalid_ThenReturnsFalse(string? code)
     {
-        _sut.SetSignInCode();
-        _sut.IsValidSignInCode(code!).Should().BeFalse();
+        _sut.SetSignInCode(DateTime.UtcNow);
+        _sut.IsValidSignInCode(DateTime.UtcNow, code!).Should().BeFalse();
     }
 
     [Theory]
@@ -231,25 +220,17 @@ public class UserTests
     [InlineData("1234567")]
     public void IsValidSignInCode_WhenCodeWasNotSet_THenReturnsFalse(string? code)
     {
-        _sut.IsValidSignInCode(code!).Should().BeFalse();
+        _sut.IsValidSignInCode(DateTime.UtcNow, code!).Should().BeFalse();
     }
 
     [Fact]
     public void IsValidSignInCode_WhenCodeIsExpired_ThenReturnsFalse()
     {
-        var timeProvider = Substitute.For<ITimeProvider>();
-
         var creationDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
         var submissionDate = creationDate.Add(UserConsts.SignInCodeExpiration).AddSeconds(1);
 
-        timeProvider.Now.Returns(creationDate);
+        _sut.SetSignInCode(creationDate);
 
-        Clock.Provider = timeProvider;
-
-        _sut.SetSignInCode();
-
-        timeProvider.Now.Returns(submissionDate);
-
-        _sut.IsValidSignInCode(_sut.SignInCode).Should().BeFalse();
+        _sut.IsValidSignInCode(submissionDate, _sut.SignInCode).Should().BeFalse();
     }
 }

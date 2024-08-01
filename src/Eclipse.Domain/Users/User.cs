@@ -186,22 +186,22 @@ public sealed class User : AggregateRoot
     /// <summary>
     /// Sets new sign in code
     /// </summary>
-    public void SetSignInCode()
+    public void SetSignInCode(DateTime utcNow)
     {
-        if (SignInCodeExpiresAt > Clock.Now)
+        if (SignInCodeExpiresAt > utcNow)
         {
             return;
         }
 
         SignInCode = UserConsts.GenerateSignInCode();
-        SignInCodeExpiresAt = Clock.Now.Add(UserConsts.SignInCodeExpiration);
+        SignInCodeExpiresAt = utcNow.Add(UserConsts.SignInCodeExpiration);
     }
 
-    public bool IsValidSignInCode(string signInCode)
+    public bool IsValidSignInCode(DateTime utcNow, string signInCode)
     {
         return !SignInCode.IsNullOrEmpty()
             && SignInCode == signInCode
-            && Clock.Now < SignInCodeExpiresAt;
+            && utcNow < SignInCodeExpiresAt;
     }
 
     public override string ToString()

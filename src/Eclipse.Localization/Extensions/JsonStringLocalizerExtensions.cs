@@ -11,7 +11,8 @@ public static class JsonStringLocalizerExtensions
     {
         if (stringLocalizer is not TypedJsonStringLocalizer<T> jsonStringLocalizer)
         {
-            throw new InvalidOperationException($"{nameof(ICurrentCulture)} usage is available only for {nameof(TypedJsonStringLocalizer<T>)} implementation.");
+            return;
+            //throw new InvalidOperationException($"{nameof(ICurrentCulture)} usage is available only for {nameof(TypedJsonStringLocalizer<T>)} implementation.");
         }
 
         jsonStringLocalizer.UseCurrentCulture(currentCulture);
@@ -21,7 +22,8 @@ public static class JsonStringLocalizerExtensions
     {
         if (stringLocalizer is not JsonStringLocalizer jsonStringLocalizer)
         {
-            throw new InvalidOperationException($"{nameof(ICurrentCulture)} usage is available only for {nameof(JsonStringLocalizer)} implementation.");
+            return;
+            //throw new InvalidOperationException($"{nameof(ICurrentCulture)} usage is available only for {nameof(JsonStringLocalizer)} implementation.");
         }
 
         jsonStringLocalizer.UseCurrentCulture(currentCulture);
