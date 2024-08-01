@@ -3,7 +3,6 @@ using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Common.Results;
 using Eclipse.WebAPI.Constants;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -36,13 +35,5 @@ public class AccountController : ControllerBase
     {
         var result = await _loginManager.LoginAsync(request, cancellationToken);
         return result.Match(() => Ok(result.Value), result.ToProblems);
-    }
-
-    [HttpGet]
-    [Authorize]
-    public IActionResult Test()
-    {
-        _ = User;
-        return Ok();
     }
 }

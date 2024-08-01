@@ -27,6 +27,8 @@ public static class EclipseWebApiModule
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(new JwtBearerOptionsConfiguration(configuration).Configure);
 
+        services.AddAuthorization();
+
         services
             .AddControllers()
             .AddNewtonsoftJson();
@@ -55,7 +57,8 @@ public static class EclipseWebApiModule
             .ConfigureOptions<ApiVersioningConfiguration>()
             .ConfigureOptions<SwaggerUIConfiguration>()
             .ConfigureOptions<SwaggerGenConfiguration>()
-            .ConfigureOptions<ApplicationInsightsConfiguration>();
+            .ConfigureOptions<ApplicationInsightsConfiguration>()
+            .ConfigureOptions<AuthorizationConfiguration>();
 
         services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
             .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
