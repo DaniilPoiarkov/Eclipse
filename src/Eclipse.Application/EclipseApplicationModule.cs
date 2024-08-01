@@ -1,5 +1,7 @@
 ﻿using Eclipse.Application.Account;
+using Eclipse.Application.Authentication;
 using Eclipse.Application.Contracts.Account;
+using Eclipse.Application.Contracts.Authentication;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.Reminders;
@@ -44,7 +46,8 @@ public static class EclipseApplicationModule
                 .AddTransient<IReminderService, ReminderService>()
                 .AddTransient<IExportService, ExportService>()
                 .AddTransient<IImportService, ImportService>()
-                .AddTransient<IAccountService, AccountService>();
+                .AddTransient<IAccountService, AccountService>()
+                .AddTransient<ILoginManager, LoginManager>();
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()

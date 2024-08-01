@@ -1,8 +1,10 @@
-﻿using Eclipse.Common.Results;
+﻿using Eclipse.Common.Clock;
+using Eclipse.Common.Results;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
 
@@ -28,14 +30,15 @@ public sealed class User : AggregateRoot
     public string Name { get; set; } = string.Empty;
     
     public string Surname { get; set; } = string.Empty;
-    
+
     public string UserName { get; set; } = string.Empty;
 
     public long ChatId { get; init; }
 
     public string Culture { get; set; } = string.Empty;
-    
-    public string SignInCode { get; private set; }
+
+    public string SignInCode { get; private set; } = string.Empty;
+    public DateTime? SignInCodeExpiresAt { get; private set; }
 
     public bool NotificationsEnabled { get; set; }
 
@@ -185,27 +188,24 @@ public sealed class User : AggregateRoot
     /// </summary>
     public void SetSignInCode()
     {
-        const string _codeChars = "0123456789";
-
-        var chars = Enumerable.Range(0, 6)
-            .Select(_ => _codeChars[Random.Shared.Next(0, _codeChars.Length)])
-            .ToArray();
-
-        SignInCode = new string(chars);
+        if (SignInCodeExpiresAt > Clock.Now)
+        {
+            return;
+        }
+        
+        SignInCode = UserConsts.GenerateSignInCode();
+        SignInCodeExpiresAt = Clock.Now.Add(UserConsts.SignInCodeExpiration);
     }
 
-    public void InvalidateSignInCode()
+    public bool IsValidSignInCode(string signInCode)
     {
-        SignInCode = string.Empty;
+        return !SignInCode.IsNullOrEmpty()
+            && SignInCode == signInCode
+            && Clock.Now < SignInCodeExpiresAt;
     }
 
     public override string ToString()
     {
         return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";
-    }
-
-    public bool IsValidSignInCode(string signInCode)
-    {
-        return !SignInCode.IsNullOrEmpty() && SignInCode == signInCode;
     }
 }

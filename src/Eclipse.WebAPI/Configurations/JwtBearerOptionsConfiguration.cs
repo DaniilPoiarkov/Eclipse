@@ -30,7 +30,9 @@ public sealed class JwtBearerOptionsConfiguration : IConfigureOptions<JwtBearerO
             ValidAudience = configuration["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.ASCII.GetBytes(configuration["Key"]!)
-            )
+            ),
+
+            ClockSkew = TimeSpan.Zero
         };
 
         options.Validate();

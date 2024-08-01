@@ -66,7 +66,9 @@ public static class EclipseWebApiModule
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            options.AddIpAddressSlidingWindow(_window, _segmentsPerWindow, _permitLimit);
+            options
+                .AddIpAddressSlidingWindow(_window, _segmentsPerWindow, _permitLimit)
+                .AddIpAddressFiveMinutesWindow();
         });
 
         return services;

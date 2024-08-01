@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Eclipse.Application.Contracts.Account;
+namespace Eclipse.Application.Contracts.Authentication;
 
 public sealed class LoginRequest
 {
@@ -9,4 +9,6 @@ public sealed class LoginRequest
 
     [Required]
     public string SignInCode { get; set; } = null!;
+
+    public bool RememberMe { get; set; }
 }

@@ -28,27 +28,6 @@ internal sealed class AccountService : IAccountService
         _currentCulture = currentCulture;
     }
 
-    public async Task<Result> ValidateLoginRequestAsync(LoginRequest request, CancellationToken cancellationToken = default)
-    {
-        var user = await _userManager.FindByUserNameAsync(request.UserName, cancellationToken);
-
-        if (user is null)
-        {
-            return DefaultErrors.EntityNotFound(typeof(User));
-        }
-
-        if (!user.IsValidSignInCode(request.SignInCode))
-        {
-            return Error.Failure("Account.Login", "Account:InvalidCode");
-        }
-
-        user.InvalidateSignInCode();
-
-        await _userManager.UpdateAsync(user, cancellationToken);
-
-        return Result.Success();
-    }
-
     public async Task<Result> SendSignInCodeAsync(string userName, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByUserNameAsync(userName, cancellationToken);
