@@ -1,5 +1,4 @@
-﻿using Eclipse.Common.Clock;
-using Eclipse.Common.Results;
+﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
@@ -7,8 +6,6 @@ using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
-
-using NSubstitute;
 
 using Xunit;
 
@@ -188,7 +185,7 @@ public class UserTests
         var signInCode = _sut.SignInCode;
 
         var secondDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 10));
-        
+
         _sut.SetSignInCode(secondDate);
 
         _sut.SignInCode.Should().NotBe(signInCode);

@@ -13,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 
 using NSubstitute;
 
-using System;
 using System.Security.Claims;
 
 using Xunit;
