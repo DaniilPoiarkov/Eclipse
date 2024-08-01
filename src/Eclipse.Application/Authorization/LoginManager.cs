@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Authentication;
+﻿using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
@@ -13,7 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Eclipse.Application.Authentication;
+namespace Eclipse.Application.Authorization;
 
 internal sealed class LoginManager : ILoginManager
 {

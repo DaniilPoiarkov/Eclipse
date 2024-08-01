@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Authentication;
+﻿namespace Eclipse.Application.Contracts.Authorization;
 
 public sealed class LoginResult
 {

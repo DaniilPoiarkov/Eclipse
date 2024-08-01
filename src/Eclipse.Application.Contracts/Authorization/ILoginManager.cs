@@ -1,6 +1,6 @@
 ﻿using Eclipse.Common.Results;
 
-namespace Eclipse.Application.Contracts.Authentication;
+namespace Eclipse.Application.Contracts.Authorization;
 
 public interface ILoginManager
 {

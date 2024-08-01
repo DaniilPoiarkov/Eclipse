@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Account;
-using Eclipse.Application.Authentication;
+using Eclipse.Application.Authorization;
 using Eclipse.Application.Contracts.Account;
-using Eclipse.Application.Contracts.Authentication;
+using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.Reminders;

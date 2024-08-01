@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Account;
-using Eclipse.Application.Contracts.Authentication;
+using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Common.Results;
 using Eclipse.WebAPI.Constants;
 
