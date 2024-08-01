@@ -2,6 +2,7 @@
 
 namespace Eclipse.Application.Contracts.Authorization;
 
+[Serializable]
 public sealed class LoginRequest
 {
     [Required]
@@ -9,6 +10,4 @@ public sealed class LoginRequest
 
     [Required]
     public string SignInCode { get; set; } = null!;
-
-    public bool RememberMe { get; set; }
 }
