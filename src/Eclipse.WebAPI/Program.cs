@@ -11,6 +11,7 @@ using Eclipse.Pipelines.Decorations;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Health;
+using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Options;
 
 using Serilog;
@@ -75,6 +76,8 @@ app.UseAuthentication()
     .UseAuthorization();
 
 app.UseLocalization();
+
+app.UseMiddleware<CurrentSessionResolverMiddleware>();
 
 app.MapControllers();
 
