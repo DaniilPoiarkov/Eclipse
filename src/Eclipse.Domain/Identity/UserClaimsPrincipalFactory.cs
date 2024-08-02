@@ -26,7 +26,8 @@ internal sealed class UserClaimsPrincipalFactory : IUserClaimsPrincipalFactory<U
         Claim[] claims = [
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.UserName),
-            new(ClaimTypes.Role, role)
+            new(ClaimTypes.Role, role),
+            new(CustomClaimTypes.ChatId, user.ChatId.ToString())
         ];
 
         var identity = new ClaimsIdentity(claims);

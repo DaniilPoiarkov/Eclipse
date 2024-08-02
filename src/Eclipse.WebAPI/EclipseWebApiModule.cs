@@ -1,9 +1,11 @@
 ﻿using Eclipse.Common.Background;
+using Eclipse.Common.Session;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
+using Eclipse.WebAPI.Session;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -38,7 +40,10 @@ public static class EclipseWebApiModule
 
         services
             .AddScoped<ApiKeyAuthorizeAttribute>()
-            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>();
+            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
+            .AddScoped<CurrentSessionResolverMiddleware>()
+            .AddScoped<CurrentSession>()
+            .AddScoped<ICurrentSession>(sp => sp.GetRequiredService<CurrentSession>());
 
         services.AddSwaggerGen();
 
