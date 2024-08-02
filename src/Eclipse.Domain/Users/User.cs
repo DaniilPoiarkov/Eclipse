@@ -3,6 +3,7 @@ using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
 
@@ -35,7 +36,11 @@ public sealed class User : AggregateRoot
 
     public string Culture { get; set; } = string.Empty;
 
+    public string SignInCode { get; private set; } = string.Empty;
+    public DateTime? SignInCodeExpiresAt { get; private set; }
+
     public bool NotificationsEnabled { get; set; }
+
 
     public TimeSpan Gmt { get; private set; }
 
@@ -177,8 +182,29 @@ public sealed class User : AggregateRoot
         return item;
     }
 
+    /// <summary>
+    /// Sets new sign in code
+    /// </summary>
+    public void SetSignInCode(DateTime utcNow)
+    {
+        if (SignInCodeExpiresAt > utcNow)
+        {
+            return;
+        }
+
+        SignInCode = UserConsts.GenerateSignInCode();
+        SignInCodeExpiresAt = utcNow.Add(UserConsts.SignInCodeExpiration);
+    }
+
+    public bool IsValidSignInCode(DateTime utcNow, string signInCode)
+    {
+        return !SignInCode.IsNullOrEmpty()
+            && SignInCode == signInCode
+            && utcNow < SignInCodeExpiresAt;
+    }
+
     public override string ToString()
     {
-        return $"{nameof(Name)}: {Name}, {nameof(UserName)}:{UserName} {base.ToString()}";
+        return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";
     }
 }

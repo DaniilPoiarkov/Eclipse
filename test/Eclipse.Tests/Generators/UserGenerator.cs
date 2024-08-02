@@ -21,9 +21,16 @@ public static class UserGenerator
                 faker.Person.UserName,
                 chatId: i);
 
+            user.Culture = i % 2 == 0 ? "en" : "uk";
+
             result.Add(user);
         }
 
         return result;
+    }
+
+    public static User Get()
+    {
+        return Generate(1).First();
     }
 }

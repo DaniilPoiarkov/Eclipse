@@ -1,4 +1,8 @@
-﻿using Eclipse.Application.Contracts.Exporting;
+﻿using Eclipse.Application.Account;
+using Eclipse.Application.Authorization;
+using Eclipse.Application.Contracts.Account;
+using Eclipse.Application.Contracts.Authorization;
+using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
@@ -41,7 +45,9 @@ public static class EclipseApplicationModule
                 .AddTransient<ITelegramService, TelegramService>()
                 .AddTransient<IReminderService, ReminderService>()
                 .AddTransient<IExportService, ExportService>()
-                .AddTransient<IImportService, ImportService>();
+                .AddTransient<IImportService, ImportService>()
+                .AddTransient<IAccountService, AccountService>()
+                .AddTransient<ILoginManager, LoginManager>();
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()

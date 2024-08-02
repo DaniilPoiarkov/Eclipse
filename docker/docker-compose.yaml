@@ -40,6 +40,9 @@ services:
       - Telegram__SecretToken=my_Sup3r_S3cr3t_T0k3n
       - Sheets__SuggestionsRange=Suggestions!B:E
       - Settings__IsDocker=true
+      - Authorization__JwtBearer__Issuer=local-authority
+      - Authorization__JwtBearer__Audience=local-audience
+      - Authorization__JwtBearer__Key=this.is.(very.strong)!.key.for.authorization.123456789==
     ports:
       - 8080:8080
     networks:

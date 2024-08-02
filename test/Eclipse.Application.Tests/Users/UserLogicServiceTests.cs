@@ -40,10 +40,7 @@ public sealed class UserLogicServiceTests
             .Returns(Task.FromResult<User?>(user));
 
         var utc = DateTime.UtcNow;
-
-        var hour = utc.Hour + time > 23
-            ? utc.Hour - (24 - time)
-            : utc.Hour + time;
+        var hour = (utc.Hour + time + 24) % 24;
 
         var currentUserTime = new TimeOnly(hour, utc.Minute);
         var expected = new TimeSpan(time, 0, 0);

@@ -5,6 +5,8 @@ using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Middlewares;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 namespace Eclipse.WebAPI;
 
 /// <summary>
@@ -21,6 +23,11 @@ public static class EclipseWebApiModule
     public static IServiceCollection AddWebApiModule(this IServiceCollection services)
     {
         var configuration = services.GetConfiguration();
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(new JwtBearerOptionsConfiguration(configuration).Configure);
+
+        services.AddAuthorization();
 
         services
             .AddControllers()
@@ -50,7 +57,8 @@ public static class EclipseWebApiModule
             .ConfigureOptions<ApiVersioningConfiguration>()
             .ConfigureOptions<SwaggerUIConfiguration>()
             .ConfigureOptions<SwaggerGenConfiguration>()
-            .ConfigureOptions<ApplicationInsightsConfiguration>();
+            .ConfigureOptions<ApplicationInsightsConfiguration>()
+            .ConfigureOptions<AuthorizationConfiguration>();
 
         services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
             .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
@@ -61,7 +69,9 @@ public static class EclipseWebApiModule
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            options.AddIpAddressSlidingWindow(_window, _segmentsPerWindow, _permitLimit);
+            options
+                .AddIpAddressSlidingWindow(_window, _segmentsPerWindow, _permitLimit)
+                .AddIpAddressFiveMinutesWindow();
         });
 
         return services;
