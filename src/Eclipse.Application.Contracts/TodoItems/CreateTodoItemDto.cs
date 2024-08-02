@@ -1,8 +1,7 @@
 ﻿namespace Eclipse.Application.Contracts.TodoItems;
 
-public class CreateTodoItemDto
+[Serializable]
+public sealed class CreateTodoItemDto
 {
-    public long UserId { get; set; }
-
     public string? Text { get; set; }
 }

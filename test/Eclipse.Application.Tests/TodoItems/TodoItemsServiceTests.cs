@@ -44,10 +44,9 @@ public sealed class TodoItemsServiceTests
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
-            UserId = user.ChatId,
         };
 
-        var result = await Sut.CreateAsync(createModel);
+        var result = await Sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -80,10 +79,9 @@ public sealed class TodoItemsServiceTests
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
-            UserId = user.ChatId,
         };
 
-        var result = await Sut.CreateAsync(createModel);
+        var result = await Sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
 
@@ -105,10 +103,9 @@ public sealed class TodoItemsServiceTests
         var createModel = new CreateTodoItemDto
         {
             Text = string.Empty,
-            UserId = user.ChatId,
         };
 
-        var result = await Sut.CreateAsync(createModel);
+        var result = await Sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
         var error = result.Error;
@@ -126,10 +123,9 @@ public sealed class TodoItemsServiceTests
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
-            UserId = 2,
         };
 
-        var result = await Sut.CreateAsync(createModel);
+        var result = await Sut.CreateAsync(2, createModel);
 
         result.IsSuccess.Should().BeFalse();
         var error = result.Error;
