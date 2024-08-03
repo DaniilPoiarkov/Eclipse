@@ -47,6 +47,11 @@ internal sealed class TodoItemService : ITodoItemService
 
         var result = await CreateAsync(user, model, cancellationToken);
 
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
+
         return result.Value.ToDto();
     }
 
