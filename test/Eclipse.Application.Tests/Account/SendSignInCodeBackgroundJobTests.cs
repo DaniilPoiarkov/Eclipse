@@ -56,7 +56,7 @@ public sealed class SendSignInCodeBackgroundJobTests
 
         using var _ = _currentCulture.Received(1).UsingCulture(args.Culture);
         _stringLocalizer.Received(1).UseCurrentCulture(_currentCulture);
-        
+
         var message = _stringLocalizer.Received(1)["Account:{0}AuthenticationCode", args.SignInCode];
 
         await _telegramService.Received(1)
