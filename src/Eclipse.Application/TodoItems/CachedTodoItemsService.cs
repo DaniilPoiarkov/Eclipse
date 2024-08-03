@@ -13,13 +13,28 @@ internal sealed class CachedTodoItemsService : UserCachingFixture, ITodoItemServ
         _todoItemService = todoItemService;
     }
 
-    public Task<Result<UserDto>> CreateAsync(CreateTodoItemDto input, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto input, CancellationToken cancellationToken = default)
     {
-        return WithCachingAsync(() => _todoItemService.CreateAsync(input, cancellationToken), cancellationToken);
+        return WithCachingAsync(() => _todoItemService.CreateAsync(chatId, input, cancellationToken), cancellationToken);
     }
 
     public Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
         return WithCachingAsync(() => _todoItemService.FinishItemAsync(chatId, itemId, cancellationToken), cancellationToken);
+    }
+
+    public Task<Result<List<TodoItemDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return _todoItemService.GetListAsync(userId, cancellationToken);
+    }
+
+    public Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
+    {
+        return _todoItemService.CreateAsync(userId, model, cancellationToken);
+    }
+
+    public Task<Result<TodoItemDto>> GetAsync(Guid userId, Guid todoItemId, CancellationToken cancellationToken = default)
+    {
+        return _todoItemService.GetAsync(userId, todoItemId, cancellationToken);
     }
 }

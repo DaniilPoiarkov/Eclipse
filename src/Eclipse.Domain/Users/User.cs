@@ -203,6 +203,11 @@ public sealed class User : AggregateRoot
             && utcNow < SignInCodeExpiresAt;
     }
 
+    public TodoItem? GetTodoItem(Guid todoItemId)
+    {
+        return _todoItems.FirstOrDefault(item => item.Id == todoItemId);
+    }
+
     public override string ToString()
     {
         return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";

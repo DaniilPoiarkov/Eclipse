@@ -22,6 +22,7 @@ using Eclipse.Application.Url;
 using Eclipse.Application.Users;
 using Eclipse.Application.Users.EventHandlers;
 using Eclipse.Application.Users.Services;
+using Eclipse.Common.Background;
 
 using MediatR.NotificationPublishers;
 
@@ -58,6 +59,11 @@ public static class EclipseApplicationModule
         services.Scan(tss => tss.FromAssemblyOf<SuggestionsSheetsService>()
             .AddClasses(c => c.AssignableTo(typeof(IEclipseSheetsService<>)))
             .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AsSelf()
             .WithTransientLifetime());
 
         services.AddMediatR(cfg =>

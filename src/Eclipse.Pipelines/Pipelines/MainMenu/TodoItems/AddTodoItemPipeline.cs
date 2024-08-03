@@ -38,10 +38,9 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
         var createNewItemModel = new CreateTodoItemDto
         {
             Text = context.Value,
-            UserId = context.User.Id,
         };
 
-        var result = await _todoItemService.CreateAsync(createNewItemModel, cancellationToken);
+        var result = await _todoItemService.CreateAsync(context.User.Id, createNewItemModel, cancellationToken);
 
         var message = result.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:NewItemAdded"]
