@@ -1,8 +1,7 @@
-﻿using Eclipse.Application.Caching;
-using Eclipse.Application.Contracts.Telegram;
+﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
-using Eclipse.Common.Cache;
+using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 

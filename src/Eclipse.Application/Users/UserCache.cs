@@ -1,6 +1,5 @@
-﻿using Eclipse.Application.Caching;
-using Eclipse.Application.Contracts.Users;
-using Eclipse.Common.Cache;
+﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Caching;
 
 namespace Eclipse.Application.Users;
 

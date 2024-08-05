@@ -1,4 +1,4 @@
-﻿using Eclipse.Common.Cache;
+﻿using Eclipse.Common.Caching;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
 

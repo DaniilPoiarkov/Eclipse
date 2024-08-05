@@ -1,5 +1,5 @@
 ﻿using Eclipse.Common.Background;
-using Eclipse.Common.Cache;
+using Eclipse.Common.Caching;
 using Eclipse.Common.Clock;
 using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;

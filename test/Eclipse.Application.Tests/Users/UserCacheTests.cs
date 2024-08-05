@@ -1,7 +1,6 @@
-﻿using Eclipse.Application.Caching;
-using Eclipse.Application.Contracts.Users;
+﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
-using Eclipse.Common.Cache;
+using Eclipse.Common.Caching;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;

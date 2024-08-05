@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Caching;
-using Eclipse.Common.Cache;
+﻿using Eclipse.Common.Caching;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
