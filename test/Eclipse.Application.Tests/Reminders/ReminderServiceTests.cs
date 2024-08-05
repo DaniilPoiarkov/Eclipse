@@ -44,7 +44,7 @@ public sealed class ReminderServiceTests
 
         _repository.FindAsync(user.Id)!.Returns(Task.FromResult(user));
 
-        var result = await Sut.CreateReminderAsync(user.Id, reminderCreateDto);
+        var result = await Sut.CreateAsync(user.Id, reminderCreateDto);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -71,7 +71,7 @@ public sealed class ReminderServiceTests
             Text = "Test"
         };
 
-        var result = await Sut.CreateReminderAsync(Guid.NewGuid(), reminderCreateDto);
+        var result = await Sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
 
         result.IsSuccess.Should().BeFalse();
 
@@ -107,7 +107,7 @@ public sealed class ReminderServiceTests
             .Returns(Task.FromResult<User?>(user));
 
         // Act
-        var result = await Sut.RemoveRemindersForTime(user.Id, time);
+        var result = await Sut.RemoveForTimeAsync(user.Id, time);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

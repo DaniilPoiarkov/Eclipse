@@ -208,6 +208,11 @@ public sealed class User : AggregateRoot
         return _todoItems.FirstOrDefault(item => item.Id == todoItemId);
     }
 
+    public Reminder? GetReminder(Guid reminderId)
+    {
+        return _reminders.FirstOrDefault(reminder => reminder.Id == reminderId);
+    }
+
     public override string ToString()
     {
         return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";

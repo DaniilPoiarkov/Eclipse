@@ -72,11 +72,6 @@ public static class EclipseApplicationModule
             cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
         });
 
-        services
-            .Decorate<IReminderService, CachedReminderService>()
-            .Decorate<IUserService, CachedUserService>()
-            .Decorate<ITodoItemService, CachedTodoItemsService>();
-
         return services;
     }
 }
