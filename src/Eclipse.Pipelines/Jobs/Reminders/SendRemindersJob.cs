@@ -66,7 +66,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
             operations.AddRange(messageSendings);
 
-            await _reminderService.RemoveRemindersForTime(user.Id, time, context.CancellationToken);
+            await _reminderService.RemoveForTimeAsync(user.Id, time, context.CancellationToken);
         }
 
         await Task.WhenAll(operations);

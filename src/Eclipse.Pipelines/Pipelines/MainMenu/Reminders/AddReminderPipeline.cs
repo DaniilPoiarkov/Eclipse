@@ -76,7 +76,7 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
             NotifyAt = time.Add(userResult.Value.Gmt * -1)
         };
 
-        var result = await _reminderService.CreateReminderAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
+        var result = await _reminderService.CreateAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
 
         var message = result.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:Created"]
