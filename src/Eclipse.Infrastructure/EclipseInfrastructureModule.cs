@@ -1,12 +1,12 @@
 ﻿using Eclipse.Common.Background;
-using Eclipse.Common.Cache;
+using Eclipse.Common.Caching;
 using Eclipse.Common.Clock;
 using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Infrastructure.Caching;
 using Eclipse.Infrastructure.EventBus;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;

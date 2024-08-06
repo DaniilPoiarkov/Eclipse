@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Caching;
+﻿namespace Eclipse.Common.Caching;
 
 public static class CacheConsts
 {

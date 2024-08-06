@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Common.Cache;
+﻿namespace Eclipse.Common.Caching;
 
 public class CacheKey
 {

@@ -1,11 +1,11 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 
@@ -26,8 +26,6 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IUserStore _userStore;
-
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IStringLocalizer<MorningJob> _localizer;
@@ -36,31 +34,33 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly ICurrentCulture _currentCulture;
 
+    private readonly IUserService _userService;
+
     public MorningJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
-        IUserStore userStore,
         IServiceProvider serviceProvider,
         IStringLocalizer<MorningJob> localizer,
         IMessageStore messageStore,
-        ICurrentCulture currentCulture)
+        ICurrentCulture currentCulture,
+        IUserService userService)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _botClient = botClient;
-        _userStore = userStore;
         _serviceProvider = serviceProvider;
         _localizer = localizer;
         _messageStore = messageStore;
         _currentCulture = currentCulture;
+        _userService = userService;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
         var time = DateTime.UtcNow.GetTime();
 
-        var users = (await _userStore.GetCachedUsersAsync(context.CancellationToken))
+        var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
                 && time.Add(u.Gmt) == Morning)
             .ToList();
@@ -106,7 +106,7 @@ internal sealed class MorningJob : EclipseJobBase
             {
                 continue;
             }
-
+            // TODO: Fix which message Id sets here if the todo-items list is open
             await _messageStore.SetAsync(new MessageKey(message.Chat.Id), message, context.CancellationToken);
         }
     }

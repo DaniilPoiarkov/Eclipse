@@ -1,4 +1,7 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Results;
+using Eclipse.Core.Core;
+using Eclipse.Core.Models;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
@@ -7,7 +10,6 @@ using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -24,7 +26,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly ILogger<EclipseUpdateHandler> _logger;
 
-    private readonly IUserStore _userStore;
+    private readonly IUserService _userService;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -47,7 +49,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         ILogger<EclipseUpdateHandler> logger,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
-        IUserStore userStore,
+        IUserService userService,
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
@@ -56,7 +58,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         _logger = logger;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
-        _userStore = userStore;
+        _userService = userService;
         _currentUser = currentUser;
         _updateParser = updateParser;
         _messageStore = messageStore;
@@ -104,7 +106,51 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        await _userStore.AddOrUpdateAsync(context.User, cancellationToken);
+        await AddOrUpdateAsync(context.User, cancellationToken);
+    }
+
+    private async Task<Result<UserDto>> AddOrUpdateAsync(TelegramUser user, CancellationToken cancellationToken)
+    {
+        var result = await _userService.GetByChatIdAsync(user.Id, cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            return await CheckAndUpdate(result.Value, user, cancellationToken);
+        }
+
+        var create = new UserCreateDto
+        {
+            Name = user.Name,
+            UserName = user.UserName ?? string.Empty,
+            Surname = user.Surname,
+            ChatId = user.Id
+        };
+
+        return await _userService.CreateAsync(create, cancellationToken);
+    }
+
+    private async Task<Result<UserDto>> CheckAndUpdate(UserDto user, TelegramUser telegramUser, CancellationToken cancellationToken)
+    {
+        if (HaveSameValues(user, telegramUser))
+        {
+            return user;
+        }
+
+        var update = new UserUpdateDto
+        {
+            Name = telegramUser.Name,
+            UserName = telegramUser.UserName,
+            Surname = telegramUser.Surname
+        };
+
+        return await _userService.UpdateAsync(user.Id, update, cancellationToken);
+
+        static bool HaveSameValues(UserDto user, TelegramUser telegramUser)
+        {
+            return user.Name == telegramUser.Name
+                && user.UserName == telegramUser.UserName
+                && user.Surname == telegramUser.Surname;
+        }
     }
 
     private async Task<PipelineBase> GetPipelineAsync(MessageContext context, PipelineKey key)

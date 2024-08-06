@@ -34,7 +34,7 @@ public class TodoItemsController : ControllerBase
         return result.Match(() => Ok(result.Value), result.ToProblems);
     }
 
-    [HttpGet("{todoItemId:guid}", Name = "GetById")]
+    [HttpGet("{todoItemId:guid}", Name = "get-todo-item-by-id")]
     public async Task<IActionResult> GetAsync(Guid todoItemId, CancellationToken cancellationToken)
     {
         if (!_currentSession.UserId.HasValue)
@@ -58,7 +58,7 @@ public class TodoItemsController : ControllerBase
         var result = await _todoItemService.CreateAsync(_currentSession.UserId.Value, model, cancellationToken);
 
         var createdUrl = result.IsSuccess
-            ? Url.Link("GetById", new { todoItemId = result.Value.Id })
+            ? Url.Link("get-todo-item-by-id", new { todoItemId = result.Value.Id })
             : string.Empty;
 
         return result.Match(() => Created(createdUrl, result.Value), result.ToProblems);

@@ -22,7 +22,7 @@ public static class UserDtoGenerator
             .RuleFor(u => u.Id, _ => Guid.NewGuid())
             .RuleFor(u => u.ChatId, _ => baseId++)
             .RuleFor(u => u.Name, f => f.Person.FullName)
-            .RuleFor(u => u.Username, f => f.Person.UserName)
+            .RuleFor(u => u.UserName, f => f.Person.UserName)
             .Generate(count);
     }
 }

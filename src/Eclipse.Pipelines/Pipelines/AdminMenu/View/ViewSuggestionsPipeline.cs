@@ -37,7 +37,7 @@ internal sealed class ViewSuggestionsPipeline : AdminPipelineBase
 
             if (suggestion.User is not null)
             {
-                sb.AppendLine($"{suggestion.User.ChatId} | {suggestion.User.Name} {suggestion.User.Username.FormattedOrEmpty(s => $"| @{s}")}");
+                sb.AppendLine($"{suggestion.User.ChatId} | {suggestion.User.Name} {suggestion.User.UserName.FormattedOrEmpty(s => $"| @{s}")}");
             }
 
             sb.AppendLine($"{Localizer["CreatedAt"]}: {suggestion.CreatedAt.ToString("dd.MM - HH:mm")}");

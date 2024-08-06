@@ -19,12 +19,12 @@ internal sealed class UserService : IUserService
         _readService = readService;
     }
 
-    public Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default)
     {
-        return _createUpdateService.CreateAsync(createDto, cancellationToken);
+        return _createUpdateService.CreateAsync(model, cancellationToken);
     }
 
-    public Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return _readService.GetAllAsync(cancellationToken);
     }
@@ -49,8 +49,8 @@ internal sealed class UserService : IUserService
         return _logicService.SetUserGmtTimeAsync(id, currentUserTime, cancellationToken);
     }
 
-    public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return _createUpdateService.UpdateAsync(id, updateDto, cancellationToken);
+        return _createUpdateService.UpdateAsync(id, model, cancellationToken);
     }
 }

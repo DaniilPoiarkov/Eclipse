@@ -36,6 +36,9 @@ public static class EclipseDataAccessModule
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
 
+        services
+            .Decorate<IUserRepository, CachedUserRepository>();
+
         return services;
     }
 

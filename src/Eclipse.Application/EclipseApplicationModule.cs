@@ -38,7 +38,6 @@ public static class EclipseApplicationModule
     public static IServiceCollection AddApplicationModule(this IServiceCollection services)
     {
         services
-            .AddSingleton<IUserCache, UserCache>()
             .AddSingleton<IAppUrlProvider, AppUrlProvider>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
@@ -71,11 +70,6 @@ public static class EclipseApplicationModule
             cfg.NotificationPublisher = new TaskWhenAllPublisher();
             cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
         });
-
-        services
-            .Decorate<IReminderService, CachedReminderService>()
-            .Decorate<IUserService, CachedUserService>()
-            .Decorate<ITodoItemService, CachedTodoItemsService>();
 
         return services;
     }
