@@ -69,13 +69,13 @@ public sealed class AddReminderPipeline : RemindersPipelineBase
 
         var text = await _cacheService.GetAsync<string>(new CacheKey($"reminder-text-{chatId}"), cancellationToken);
 
-        var reminderCreateDto = new ReminderCreateDto
+        var createModel = new ReminderCreateDto
         {
             Text = text!,
             NotifyAt = time.Add(userResult.Value.Gmt * -1)
         };
 
-        var result = await _reminderService.CreateAsync(userResult.Value.Id, reminderCreateDto, cancellationToken);
+        var result = await _reminderService.CreateAsync(userResult.Value.ChatId, createModel, cancellationToken);
 
         var message = result.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:Created"]

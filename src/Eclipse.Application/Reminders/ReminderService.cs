@@ -17,7 +17,7 @@ internal sealed class ReminderService : IReminderService
         _userManager = userManager;
     }
 
-    public async Task<Result<UserDto>> CreateAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default)
+    public async Task<Result<ReminderDto>> CreateAsync(Guid userId, ReminderCreateDto model, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId, cancellationToken);
 
@@ -26,11 +26,32 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        user.AddReminder(createReminderDto.Text, createReminderDto.NotifyAt);
+        var result = await CreateAsync(user, model, cancellationToken);
+
+        return result.Value.ToDto();
+    }
+
+    public async Task<Result<UserDto>> CreateAsync(long chatId, ReminderCreateDto model, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(User));
+        }
+
+        await CreateAsync(user, model, cancellationToken);
+
+        return user.ToDto();
+    }
+
+    private async Task<Result<Reminder>> CreateAsync(User user, ReminderCreateDto model, CancellationToken cancellationToken)
+    {
+        var reminder = user.AddReminder(model.Text, model.NotifyAt);
 
         await _userManager.UpdateAsync(user, cancellationToken);
 
-        return user.ToDto();
+        return reminder;
     }
 
     public async Task<Result<ReminderDto>> GetAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)

@@ -37,7 +37,6 @@ public static class EclipseDataAccessModule
             .AddDataAccessHealthChecks();
 
         services
-            //.Decorate(typeof(IRepository<>), typeof(CachedRepositoryBase<>))
             .Decorate<IUserRepository, CachedUserRepository>();
 
         return services;
