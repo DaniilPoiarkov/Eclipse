@@ -106,7 +106,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        // TODO: Add logging if faulted
         await AddOrUpdateAsync(context.User, cancellationToken);
     }
 
@@ -119,7 +118,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return await CheckAndUpdate(result.Value, user, cancellationToken);
         }
 
-        var createUserDto = new UserCreateDto
+        var create = new UserCreateDto
         {
             Name = user.Name,
             UserName = user.UserName ?? string.Empty,
@@ -127,7 +126,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             ChatId = user.Id
         };
 
-        return await _userService.CreateAsync(createUserDto, cancellationToken);
+        return await _userService.CreateAsync(create, cancellationToken);
     }
 
     private async Task<Result<UserDto>> CheckAndUpdate(UserDto user, TelegramUser telegramUser, CancellationToken cancellationToken)
@@ -137,14 +136,14 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return user;
         }
 
-        var updateDto = new UserUpdateDto
+        var update = new UserUpdateDto
         {
             Name = telegramUser.Name,
             UserName = telegramUser.UserName,
             Surname = telegramUser.Surname
         };
 
-        return await _userService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        return await _userService.UpdateAsync(user.Id, update, cancellationToken);
 
         static bool HaveSameValues(UserDto user, TelegramUser telegramUser)
         {

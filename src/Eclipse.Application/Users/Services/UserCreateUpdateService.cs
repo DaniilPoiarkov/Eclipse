@@ -14,9 +14,9 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
         _userManager = userManager;
     }
 
-    public async Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default)
     {
-        var result = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.UserName, createDto.ChatId, cancellationToken);
+        var result = await _userManager.CreateAsync(model.Name, model.Surname, model.UserName, model.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -26,7 +26,7 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
         return result.Value.ToDto();
     }
 
-    public async Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto update, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(id, cancellationToken);
 
@@ -35,29 +35,29 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        if (!update.Name.IsNullOrEmpty())
+        if (!model.Name.IsNullOrEmpty())
         {
-            user.Name = update.Name;
+            user.Name = model.Name;
         }
 
-        if (!update.Surname.IsNullOrEmpty())
+        if (!model.Surname.IsNullOrEmpty())
         {
-            user.Surname = update.Surname;
+            user.Surname = model.Surname;
         }
 
-        if (!update.UserName.IsNullOrEmpty())
+        if (!model.UserName.IsNullOrEmpty())
         {
-            user.UserName = update.UserName;
+            user.UserName = model.UserName;
         }
 
-        if (!update.Culture.IsNullOrEmpty())
+        if (!model.Culture.IsNullOrEmpty())
         {
-            user.Culture = update.Culture;
+            user.Culture = model.Culture;
         }
 
-        if (update.NotificationsEnabled.HasValue)
+        if (model.NotificationsEnabled.HasValue)
         {
-            user.NotificationsEnabled = update.NotificationsEnabled.Value;
+            user.NotificationsEnabled = model.NotificationsEnabled.Value;
         }
 
         return (await _userManager.UpdateAsync(user, cancellationToken)).ToDto();
