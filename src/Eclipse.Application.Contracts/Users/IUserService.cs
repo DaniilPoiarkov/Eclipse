@@ -10,7 +10,7 @@ public interface IUserService : IUserReadService, IUserCreateUpdateService, IUse
 
 public interface IUserReadService
 {
-    Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default);
 

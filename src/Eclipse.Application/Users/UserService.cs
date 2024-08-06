@@ -24,7 +24,7 @@ internal sealed class UserService : IUserService
         return _createUpdateService.CreateAsync(createDto, cancellationToken);
     }
 
-    public Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return _readService.GetAllAsync(cancellationToken);
     }

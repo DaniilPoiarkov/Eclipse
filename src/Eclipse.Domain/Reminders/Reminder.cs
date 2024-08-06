@@ -17,6 +17,8 @@ public sealed class Reminder : Entity
         NotifyAt = notifyAt;
     }
 
+    private Reminder() { }
+
     internal static Reminder Import(Guid id, Guid userId, string text, TimeOnly notifyAt)
     {
         return new Reminder(id, userId, text, notifyAt);

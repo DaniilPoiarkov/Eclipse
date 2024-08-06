@@ -7,6 +7,8 @@ using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
 
+using Newtonsoft.Json;
+
 namespace Eclipse.Domain.Users;
 
 public sealed class User : AggregateRoot
@@ -22,8 +24,10 @@ public sealed class User : AggregateRoot
 
     private User() { }
 
+    [JsonProperty(nameof(Reminders))]
     private readonly List<Reminder> _reminders = [];
 
+    [JsonProperty(nameof(TodoItems))]
     private readonly List<TodoItem> _todoItems = [];
 
     public string Name { get; set; } = string.Empty;
@@ -44,8 +48,10 @@ public sealed class User : AggregateRoot
 
     public TimeSpan Gmt { get; private set; }
 
+    [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
 
+    [JsonIgnore]
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>

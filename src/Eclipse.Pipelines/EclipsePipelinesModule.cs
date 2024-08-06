@@ -11,7 +11,6 @@ using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +34,6 @@ public static class EclipsePipelinesModule
             .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
                 .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
                 .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
-                .AddTransient<IUserStore, UserStore>()
                 .AddTransient<IMessageStore, MessageStore>()
                 .AddTransient<IPipelineStore, PipelineStore>();
 

@@ -58,7 +58,7 @@ public sealed class RemindersController : ControllerBase
         }
 
         var result = await _reminderService.CreateAsync(_currentSession.UserId.Value, model, cancellationToken);
-
+        // TODO: Created instead of Ok(); Check api/todo-items/add endpoint
         return result.Match(() => Ok(result.Value), result.ToProblems);
     }
 }

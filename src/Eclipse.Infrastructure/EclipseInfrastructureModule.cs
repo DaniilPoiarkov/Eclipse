@@ -6,7 +6,7 @@ using Eclipse.Common.Excel;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
-using Eclipse.Infrastructure.Cache;
+using Eclipse.Infrastructure.Caching;
 using Eclipse.Infrastructure.EventBus;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;

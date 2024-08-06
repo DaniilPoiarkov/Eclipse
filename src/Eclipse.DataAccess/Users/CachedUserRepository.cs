@@ -4,7 +4,7 @@ using Eclipse.Domain.Users;
 
 namespace Eclipse.DataAccess.Users;
 
-internal sealed class CachedUserRepository : CachedRepositoryBase<User>, IUserRepository
+internal sealed class CachedUserRepository : CachedRepositoryBase<User, IUserRepository>, IUserRepository
 {
     public CachedUserRepository(IUserRepository repository, ICacheService cacheService)
         : base(repository, cacheService) { }

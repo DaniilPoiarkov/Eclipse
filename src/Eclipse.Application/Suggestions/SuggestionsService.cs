@@ -1,8 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Users;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Suggestions;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Suggestions;
 
@@ -10,12 +12,12 @@ internal sealed class SuggestionsService : ISuggestionsService
 {
     private readonly IEclipseSheetsService<Suggestion> _sheetsService;
 
-    private readonly IUserService _userService;
+    private readonly IUserRepository _userRepository;
 
-    public SuggestionsService(IEclipseSheetsService<Suggestion> sheetsService, IUserService userService)
+    public SuggestionsService(IEclipseSheetsService<Suggestion> sheetsService, IUserRepository userRepository)
     {
         _sheetsService = sheetsService;
-        _userService = userService;
+        _userRepository = userRepository;
     }
 
     public async Task<Result> CreateAsync(CreateSuggestionRequest request, CancellationToken cancellationToken = default)
@@ -30,7 +32,7 @@ internal sealed class SuggestionsService : ISuggestionsService
     public async Task<IReadOnlyList<SuggestionAndUserDto>> GetWithUserInfo(CancellationToken cancellationToken = default)
     {
         var suggestionsRequest = _sheetsService.GetAllAsync(cancellationToken);
-        var usersRequest = _userService.GetAllAsync(cancellationToken);
+        var usersRequest = _userRepository.GetAllAsync(cancellationToken);
 
         await Task.WhenAll(suggestionsRequest, usersRequest);
 
@@ -42,7 +44,7 @@ internal sealed class SuggestionsService : ISuggestionsService
             Id = suggestion.Id,
             Text = suggestion.Text,
             CreatedAt = suggestion.CreatedAt,
-            User = user
+            User = user.ToSlimDto()
         }).ToList();
     }
 }

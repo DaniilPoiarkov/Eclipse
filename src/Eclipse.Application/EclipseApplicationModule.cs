@@ -38,7 +38,6 @@ public static class EclipseApplicationModule
     public static IServiceCollection AddApplicationModule(this IServiceCollection services)
     {
         services
-            .AddSingleton<IUserCache, UserCache>()
             .AddSingleton<IAppUrlProvider, AppUrlProvider>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()

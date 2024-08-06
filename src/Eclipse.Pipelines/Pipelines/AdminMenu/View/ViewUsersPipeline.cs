@@ -22,7 +22,7 @@ internal sealed class ViewUsersPipeline : AdminPipelineBase
     private async Task<IResult> GetUserInfo(MessageContext context, CancellationToken cancellationToken = default)
     {
         var usersInfo = (await _userService.GetAllAsync(cancellationToken))
-            .Select((user, index) => $"{++index} | {user.ChatId} | {user.Name} {user.Username.FormattedOrEmpty(s => $"| @{s}")}");
+            .Select((user, index) => $"{++index} | {user.ChatId} | {user.Name} {user.UserName.FormattedOrEmpty(s => $"| @{s}")}");
 
         return Text(string.Join(Environment.NewLine, usersInfo));
     }

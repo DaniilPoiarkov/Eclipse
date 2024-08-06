@@ -6,76 +6,157 @@ using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.Repositories;
 
-internal class CachedRepositoryBase<T> : IRepository<T>
+internal class CachedRepositoryBase<T, TRepository> : IRepository<T>
     where T : Entity
+    where TRepository : IRepository<T>
 {
-    private readonly IRepository<T> _repository;
+    protected readonly TRepository Repository;
 
-    private readonly ICacheService _cacheService;
+    protected readonly ICacheService CacheService;
 
-    public CachedRepositoryBase(IRepository<T> repository, ICacheService cacheService)
+    public CachedRepositoryBase(TRepository repository, ICacheService cacheService)
     {
-        _repository = repository;
-        _cacheService = cacheService;
+        Repository = repository;
+        CacheService = cacheService;
     }
 
     public Task<int> CountAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
     {
-        return _repository.CountAsync(expression, cancellationToken);
+        return Repository.CountAsync(expression, cancellationToken);
     }
 
-    public Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        return _repository.CreateAsync(entity, cancellationToken);
+        await RemoveByPrefixAsync(cancellationToken);
+        return await Repository.CreateAsync(entity, cancellationToken);
     }
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return _repository.DeleteAsync(id, cancellationToken);
+        await Repository.DeleteAsync(id, cancellationToken);
+        await RemoveByPrefixAsync(cancellationToken);
     }
 
     public async Task<T?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{typeof(T).AssemblyQualifiedName}-{id}");
-        var entity = await _cacheService.GetAsync<T>(key, cancellationToken);
+        var key = new CacheKey($"{GetPrefix()}-{id}");
+        var entity = await CacheService.GetAsync<T>(key, cancellationToken);
 
         if (entity is not null)
         {
             return entity;
         }
 
-        entity = await _repository.FindAsync(id, cancellationToken);
+        entity = await Repository.FindAsync(id, cancellationToken);
 
-        await _cacheService.SetAsync(key, entity, TimeSpan.FromMinutes(5), cancellationToken);
+        await CacheService.SetAsync(key, entity, CacheConsts.FiveMinutes, cancellationToken);
+
+        await AddKeyAsync(key, cancellationToken);
 
         return entity;
     }
 
-    public Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return _repository.GetAllAsync(cancellationToken);
+        var key = new CacheKey($"{GetPrefix()}-all");
+
+        var cached = await CacheService.GetAsync<List<T>>(key, cancellationToken);
+
+        if (cached is not null)
+        {
+            return cached;
+        }
+
+        var items = await Repository.GetAllAsync(cancellationToken);
+
+        await CacheService.SetAsync(key, items, CacheConsts.ThreeDays, cancellationToken);
+        await AddKeyAsync(key, cancellationToken);
+
+        return items;
     }
 
-    public Task<IReadOnlyList<T>> GetByExpressionAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<T>> GetByExpressionAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
     {
-        return _repository.GetByExpressionAsync(expression, cancellationToken);
+        var key = new CacheKey($"{GetPrefix()};{expression.Body}");
+
+        var cached = await CacheService.GetAsync<List<T>>(key, cancellationToken);
+
+        if (cached is not null)
+        {
+            return cached;
+        }
+
+        var items = await Repository.GetByExpressionAsync(expression, cancellationToken);
+
+        await CacheService.SetAsync(key, items, CacheConsts.FiveMinutes, cancellationToken);
+
+        await AddKeyAsync(key, cancellationToken);
+
+        return items;
     }
 
-    public Task<IReadOnlyList<T>> GetByExpressionAsync(Expression<Func<T, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<T>> GetByExpressionAsync(Expression<Func<T, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
     {
-        return _repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken);
+        var key = new CacheKey($"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}");
+
+        var cached = await CacheService.GetAsync<List<T>>(key, cancellationToken);
+
+        if (cached is not null)
+        {
+            return cached;
+        }
+
+        var items = await Repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken);
+
+        await CacheService.SetAsync(key, items, CacheConsts.FiveMinutes, cancellationToken);
+
+        await AddKeyAsync(key, cancellationToken);
+
+        return items;
     }
 
     public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{typeof(T).AssemblyQualifiedName}-{entity.Id}");
+        var key = new CacheKey($"{GetPrefix()}-{entity.Id}");
 
-        await _cacheService.DeleteAsync(key, cancellationToken);
+        await CacheService.DeleteAsync(key, cancellationToken);
 
-        entity = await _repository.UpdateAsync(entity, cancellationToken);
+        entity = await Repository.UpdateAsync(entity, cancellationToken);
 
-        await _cacheService.SetAsync(key, entity, TimeSpan.FromMinutes(5), cancellationToken);
+        await CacheService.SetAsync(key, entity, CacheConsts.FiveMinutes, cancellationToken);
+
+        await AddKeyAsync(key, cancellationToken);
+        await RemoveByPrefixAsync(cancellationToken);
 
         return entity;
     }
+
+    protected async Task AddKeyAsync(CacheKey cacheKey, CancellationToken cancellationToken)
+    {
+        var key = new CacheKey("cache-keys");
+        var keys = await CacheService.GetAsync<List<string>>(key , cancellationToken) ?? [];
+
+        if (keys.Contains(cacheKey.Key))
+        {
+            return;
+        }
+
+        keys.Add(cacheKey.Key);
+
+        await CacheService.SetAsync(key, keys, CacheConsts.ThreeDays, cancellationToken);
+    }
+
+    protected async Task RemoveByPrefixAsync(CancellationToken cancellationToken)
+    {
+        var key = new CacheKey("cache-keys");
+        var keys = await CacheService.GetAsync<List<string>>(key, cancellationToken) ?? [];
+
+        var removings = keys
+            .Where(k => k.StartsWith(GetPrefix()))
+            .Select(k => CacheService.DeleteAsync(k, cancellationToken));
+
+        await Task.WhenAll(removings);
+    }
+
+    protected static string GetPrefix() => typeof(T).AssemblyQualifiedName ?? string.Empty;
 }

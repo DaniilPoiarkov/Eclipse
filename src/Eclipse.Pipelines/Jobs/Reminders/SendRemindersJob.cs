@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 
@@ -17,24 +17,24 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
     private readonly IStringLocalizer<SendRemindersJob> _localizer;
 
-    private readonly IUserStore _userStore;
-
     private readonly IReminderService _reminderService;
 
     private readonly ICurrentCulture _currentCulture;
 
+    private readonly IUserService _userService;
+
     public SendRemindersJob(
         ITelegramBotClient botClient,
         IStringLocalizer<SendRemindersJob> localizer,
-        IUserStore userStore,
         IReminderService reminderService,
-        ICurrentCulture currentCulture)
+        ICurrentCulture currentCulture,
+        IUserService userService)
     {
         _botClient = botClient;
         _localizer = localizer;
-        _userStore = userStore;
         _reminderService = reminderService;
         _currentCulture = currentCulture;
+        _userService = userService;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -43,8 +43,8 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
         var specification = new ReminderDtoNotifyAtSpecification(time);
 
-        var users = (await _userStore.GetCachedUsersAsync(context.CancellationToken))
-            .Where(u => u.Reminders.Any(specification))
+        var users = (await _userService.GetAllAsync(context.CancellationToken))
+            .Where(user => user.Reminders.Any(specification))
             .ToList();
 
         if (users.IsNullOrEmpty())

@@ -9,11 +9,13 @@ public sealed class UserSlimDto : AggregateRootDto
 
     public string Surname { get; set; } = string.Empty;
 
-    public string Username { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
 
     public long ChatId { get; set; }
 
     public string Culture { get; set; } = string.Empty;
 
     public bool NotificationsEnabled { get; set; }
+
+    public TimeSpan Gmt { get; set; }
 }

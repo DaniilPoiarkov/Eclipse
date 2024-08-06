@@ -39,7 +39,7 @@ public sealed class UsersGetAllIntegrationTest : IntegrationTestBase
 
         user.Name.Should().Be(name);
         user.Surname.Should().Be(surname);
-        user.Username.Should().Be(userName);
+        user.UserName.Should().Be(userName);
         user.ChatId.Should().Be(chatId);
         user.Id.Should().NotBeEmpty();
     }

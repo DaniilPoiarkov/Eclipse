@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 using Newtonsoft.Json;
 
-namespace Eclipse.Infrastructure.Cache;
+namespace Eclipse.Infrastructure.Caching;
 
 internal sealed class CacheService : ICacheService
 {
@@ -35,6 +35,7 @@ internal sealed class CacheService : ICacheService
 
         return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
         {
+            ContractResolver = PrivateMembersContractResolver.Instance,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
         });
     }

@@ -37,10 +37,11 @@ internal static class UserExtensions
             Id = value.Id,
             Name = value.Name,
             Surname = value.Surname,
-            Username = value.UserName,
+            UserName = value.UserName,
             ChatId = value.ChatId,
             Culture = value.Culture,
-            NotificationsEnabled = value.NotificationsEnabled
+            NotificationsEnabled = value.NotificationsEnabled,
+            Gmt = value.Gmt,
         };
     }
 }
