@@ -97,7 +97,7 @@ internal sealed class MorningJob : EclipseJobBase
 
             await _pipelineStore.SetAsync(key, pipeline, context.CancellationToken);
         }
-        
+
         var messages = await Task.WhenAll(notifications);
 
         foreach (var message in messages)

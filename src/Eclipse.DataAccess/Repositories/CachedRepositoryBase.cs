@@ -134,7 +134,7 @@ internal class CachedRepositoryBase<T, TRepository> : IRepository<T>
     protected async Task AddKeyAsync(CacheKey cacheKey, CancellationToken cancellationToken)
     {
         var key = new CacheKey("cache-keys");
-        var keys = await CacheService.GetAsync<List<string>>(key , cancellationToken) ?? [];
+        var keys = await CacheService.GetAsync<List<string>>(key, cancellationToken) ?? [];
 
         if (keys.Contains(cacheKey.Key))
         {

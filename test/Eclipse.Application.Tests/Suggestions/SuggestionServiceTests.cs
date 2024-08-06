@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Suggestions;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.Users;
