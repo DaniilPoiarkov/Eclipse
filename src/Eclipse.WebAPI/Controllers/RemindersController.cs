@@ -36,7 +36,7 @@ public sealed class RemindersController : ControllerBase
         return result.Match(() => Ok(result.Value), result.ToProblems);
     }
 
-    [HttpGet("{reminderId:guid}")]
+    [HttpGet("{reminderId:guid}", Name = "get-reminder-by-id")]
     public async Task<IActionResult> GetAsync(Guid reminderId, CancellationToken cancellationToken)
     {
         if (!_currentSession.UserId.HasValue)
@@ -58,7 +58,11 @@ public sealed class RemindersController : ControllerBase
         }
 
         var result = await _reminderService.CreateAsync(_currentSession.UserId.Value, model, cancellationToken);
-        // TODO: Created instead of Ok(); Check api/todo-items/add endpoint
-        return result.Match(() => Ok(result.Value), result.ToProblems);
+
+        var createdUrl = result.IsSuccess
+            ? Url.Link("get-reminder-by-id", new { reminderId = result.Value.Id })
+            : string.Empty;
+
+        return result.Match(() => Created(createdUrl, result.Value), result.ToProblems);
     }
 }
