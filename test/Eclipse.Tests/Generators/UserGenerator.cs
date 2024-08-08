@@ -29,8 +29,22 @@ public static class UserGenerator
         return result;
     }
 
-    public static User Get()
+    public static User Get(long chatId = default)
     {
-        return Generate(1).First();
+        var faker = new Faker();
+
+        var user = User.Create(
+            Guid.NewGuid(),
+            faker.Person.FirstName,
+            faker.Person.LastName,
+            faker.Person.UserName,
+            chatId
+        );
+
+        user.Culture = Random.Shared.Next(0, 10) % 2 == 0
+            ? "en"
+            : "uk";
+
+        return user;
     }
 }

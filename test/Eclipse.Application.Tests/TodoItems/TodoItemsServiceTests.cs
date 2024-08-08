@@ -165,8 +165,7 @@ public sealed class TodoItemsServiceTests
         var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem));
         var user = CreateUser(0);
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
+        _repository.FindAsync(user.Id).Returns(user);
 
         var result = await Sut.GetAsync(user.Id, Guid.NewGuid());
 
