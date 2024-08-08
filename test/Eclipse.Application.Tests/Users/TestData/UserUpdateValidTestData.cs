@@ -29,7 +29,7 @@ internal sealed class UserUpdateValidTestData : IEnumerable<object[]>
                 NotificationsEnabled = true
             }
         ];
-        
+
         yield return [
             new UserUpdateDto
             {

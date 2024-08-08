@@ -26,7 +26,7 @@ internal sealed class UserPartialUpdateWithoutChangedFlagTestData : IEnumerable<
                 UserName = "Test"
             }
         ];
-        
+
         yield return [
             new UserPartialUpdateDto
             {
