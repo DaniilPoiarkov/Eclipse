@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Tests.Users.TestData;
 using Eclipse.Application.Users.Services;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
@@ -77,24 +78,13 @@ public sealed class UserCreateUpdateServiceTests
     }
 
     [Theory]
-    [InlineData("new_name", "new_surname", "new_user_name", "en", true)]
-    [InlineData("John", "Doe", "JohnDoe", "en", true)]
-    [InlineData("Billy", "Jean", "Is_Not_My_Lover", "uk", false)]
-    public async Task UpdateAsync_WhenModelIsValid_ThenUpdatedSuccessfully(string name, string surname, string userName, string culture, bool notificationsEnabled)
+    [ClassData(typeof(UserUpdateValidTestData))]
+    public async Task UpdateAsync_WhenModelIsValid_ThenUpdatedSuccessfully(UserUpdateDto model)
     {
         var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
         _repository.UpdateAsync(user).Returns(user);
-
-        var model = new UserUpdateDto
-        {
-            Name = name,
-            Surname = surname,
-            UserName = userName,
-            Culture = culture,
-            NotificationsEnabled = notificationsEnabled,
-        };
 
         var result = await Sut.UpdateAsync(user.Id, model);
 
@@ -103,18 +93,18 @@ public sealed class UserCreateUpdateServiceTests
         var value = result.Value;
 
         value.Id.Should().Be(user.Id);
-        value.Name.Should().Be(name);
-        value.Surname.Should().Be(surname);
-        value.UserName.Should().Be(userName);
-        value.Culture.Should().Be(culture);
-        value.NotificationsEnabled.Should().Be(notificationsEnabled);
+        value.Name.Should().Be(model.Name);
+        value.Surname.Should().Be(model.Surname);
+        value.UserName.Should().Be(model.UserName);
+        value.Culture.Should().Be(model.Culture);
+        value.NotificationsEnabled.Should().Be(model.NotificationsEnabled);
         value.Gmt.Should().Be(user.Gmt);
 
-        user.Name.Should().Be(name);
-        user.Surname.Should().Be(surname);
-        user.UserName.Should().Be(userName);
-        user.Culture.Should().Be(culture);
-        user.NotificationsEnabled.Should().Be(notificationsEnabled);
+        user.Name.Should().Be(model.Name);
+        user.Surname.Should().Be(model.Surname);
+        user.UserName.Should().Be(model.UserName);
+        user.Culture.Should().Be(model.Culture);
+        user.NotificationsEnabled.Should().Be(model.NotificationsEnabled);
 
         await _repository.Received().UpdateAsync(user);
     }
@@ -176,44 +166,13 @@ public sealed class UserCreateUpdateServiceTests
     }
 
     [Theory]
-    [InlineData(true, "Name", false, null, false, null, true, "en", false, false)]
-    [InlineData(true, "Name", true, "Surname", true, "MegaBrain", true, "en", true, false)]
-    [InlineData(true, "Name", true, "Surname", false, "NotSoMegaBrain", false, "en", true, true)]
-    [InlineData(false, "Name", false, "Surname", false, "NotSoMegaBrain", false, "en", false, true)]
-    public async Task UpdatePartialAsync_WhenModelValid_ThenUpdatedSuccessfully(
-        bool nameChanged,
-        string? name,
-        bool surnameChanged,
-        string? surname,
-        bool userNameChanged,
-        string? userName,
-        bool cultureChanged,
-        string? culture,
-        bool notificationsEnabledChanged,
-        bool notificationsEnabled)
+    [ClassData(typeof(UserPartialUpdateValidTestData))]
+    public async Task UpdatePartialAsync_WhenModelValid_ThenUpdatedSuccessfully(UserPartialUpdateDto model)
     {
         var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
         _repository.UpdateAsync(user).Returns(user);
-
-        var model = new UserPartialUpdateDto
-        {
-            NameChanged = nameChanged,
-            Name = name,
-
-            SurnameChanged = surnameChanged,
-            Surname = surname,
-            
-            UserNameChanged = userNameChanged,
-            UserName = userName,
-
-            CultureChanged = cultureChanged,
-            Culture = culture,
-
-            NotificationsEnabledChanged = notificationsEnabledChanged,
-            NotificationsEnabled = notificationsEnabled
-        };
 
         var result = await Sut.UpdatePartialAsync(user.Id, model);
 
@@ -222,69 +181,61 @@ public sealed class UserCreateUpdateServiceTests
         var value = result.Value;
 
         value.Id.Should().Be(user.Id);
-
-        value.Name.Should().Be(user.Name).And
-            .Subject.Should().Be(nameChanged ? name : user.Name);
-
-        value.Surname.Should().Be(user.Surname).And
-            .Subject.Should().Be(surnameChanged ? surname : user.Surname);
-
-        value.UserName.Should().Be(user.UserName).And
-            .Subject.Should().Be(userNameChanged ? userName : user.UserName);
-
-        value.Culture.Should().Be(user.Culture).And
-            .Subject.Should().Be(cultureChanged ? culture : user.Culture);
-
-        value.NotificationsEnabled.Should().Be(user.NotificationsEnabled).And
-            .Subject.Should().Be(notificationsEnabledChanged ? notificationsEnabled : user.NotificationsEnabled);
+        value.Name.Should().Be(user.Name);
+        value.Surname.Should().Be(user.Surname);
+        value.UserName.Should().Be(user.UserName);
+        value.Culture.Should().Be(user.Culture);
+        value.NotificationsEnabled.Should().Be(user.NotificationsEnabled);
 
         await _repository.Received().UpdateAsync(user);
     }
 
     [Theory]
-    [InlineData(true, null, false, null, false, null, true, "en", false, false, "Name")]
-    [InlineData(true, "Name", true, null, true, null, true, "uk", true, false, "UserName")]
-    public async Task UpdatePartialAsync_WhenModelInvalid_TheErrorReturned(
-        bool nameChanged,
-        string? name,
-        bool surnameChanged,
-        string? surname,
-        bool userNameChanged,
-        string? userName,
-        bool cultureChanged,
-        string? culture,
-        bool notificationsEnabledChanged,
-        bool notificationsEnabled,
-        object arg)
+    [ClassData(typeof(UserPartialUpdateInvalidTestData))]
+    public async Task UpdatePartialAsync_WhenInvalid_ThenErrorReturned(UserPartialUpdateDto model, object arg)
     {
         var expected = Error.Validation("Users.Update", "{0}IsRequired", arg);
         var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var model = new UserPartialUpdateDto
-        {
-            NameChanged = nameChanged,
-            Name = name,
-
-            SurnameChanged = surnameChanged,
-            Surname = surname,
-
-            UserNameChanged = userNameChanged,
-            UserName = userName,
-
-            CultureChanged = cultureChanged,
-            Culture = culture,
-
-            NotificationsEnabledChanged = notificationsEnabledChanged,
-            NotificationsEnabled = notificationsEnabled
-        };
-
         var result = await Sut.UpdatePartialAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
-
         ErrorComparer.AreEqual(result.Error, expected);
         await _repository.DidNotReceive().UpdateAsync(user);
+    }
+
+    [Theory]
+    [ClassData(typeof(UserPartialUpdateWithoutChangedFlagTestData))]
+    public async Task UpdatePartialAsync_WhenDataSpecifiedButChangedSetFalse_ThenPropertyNotUpdated(UserPartialUpdateDto model)
+    {
+        var user = UserGenerator.Get();
+
+        var name = user.Name;
+        var surname = user.Surname;
+        var userName = user.UserName;
+        var culture = user.Culture;
+        var notifications = user.NotificationsEnabled;
+
+        _repository.FindAsync(user.Id).Returns(user);
+        _repository.UpdateAsync(user).Returns(user);
+
+        var result = await Sut.UpdatePartialAsync(user.Id, model);
+
+        result.IsSuccess.Should().BeTrue();
+
+        user.Name.Should().Be(name);
+        user.Name.Should().NotBe(model.Name);
+
+        user.Surname.Should().Be(surname);
+        user.Surname.Should().NotBe(model.Surname);
+
+        user.UserName.Should().Be(userName);
+        user.UserName.Should().NotBe(model.UserName);
+
+        user.Culture.Should().Be(culture);
+
+        user.NotificationsEnabled.Should().Be(notifications);
     }
 }
