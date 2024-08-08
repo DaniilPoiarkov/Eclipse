@@ -23,7 +23,7 @@ public sealed class TodoItem : Entity
     /// <returns></returns>
     internal static Result<TodoItem> Create(Guid id, Guid userId, string? text, DateTime createdAt)
     {
-        if (string.IsNullOrEmpty(text) || text.Length < TodoItemConstants.MinLength)
+        if (text.IsNullOrWhiteSpace() || text.Length < TodoItemConstants.MinLength)
         {
             return TodoItemDomainErrors.TodoItemIsEmpty();
         }

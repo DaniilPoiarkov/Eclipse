@@ -34,8 +34,13 @@ public sealed class TodoItemsServiceTests
             ));
     }
 
-    [Fact]
-    public async Task CreateAsync_WhenInputValid_ThenCreatedSuccessfully()
+    [Theory]
+    [InlineData("test")]
+    [InlineData("12340nnkjcasclk")]
+    [InlineData("Something in the way")]
+    [InlineData("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest")]
+    [InlineData("Some regular text! With __dif3r3nt &^% characters!)(_++_*@")]
+    public async Task CreateAsync_WhenInputValid_ThenCreatedSuccessfully(string text)
     {
         var user = UserGenerator.Get();
 
@@ -44,7 +49,7 @@ public sealed class TodoItemsServiceTests
 
         var createModel = new CreateTodoItemDto
         {
-            Text = "text",
+            Text = text,
         };
 
         var result = await Sut.CreateAsync(user.ChatId, createModel);
@@ -84,18 +89,20 @@ public sealed class TodoItemsServiceTests
         error.Args.Should().BeEquivalentTo(expectedError.Args);
     }
 
-    [Fact]
-    public async Task CreateAsync_WhenTextIsEmpty_ThenFailureResultReturned()
+    [Theory]
+    [InlineData("")]
+    [InlineData("        ")]
+    public async Task CreateAsync_WhenTextIsInvalid_ThenErrorReturned(string text)
     {
         var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
         _repository.GetByExpressionAsync(_ => true)
             .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
         var createModel = new CreateTodoItemDto
         {
-            Text = string.Empty,
+            Text = text,
         };
 
         var result = await Sut.CreateAsync(user.ChatId, createModel);

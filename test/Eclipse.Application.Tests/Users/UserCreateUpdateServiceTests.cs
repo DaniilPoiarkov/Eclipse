@@ -226,16 +226,9 @@ public sealed class UserCreateUpdateServiceTests
         result.IsSuccess.Should().BeTrue();
 
         user.Name.Should().Be(name);
-        user.Name.Should().NotBe(model.Name);
-
         user.Surname.Should().Be(surname);
-        user.Surname.Should().NotBe(model.Surname);
-
         user.UserName.Should().Be(userName);
-        user.UserName.Should().NotBe(model.UserName);
-
         user.Culture.Should().Be(culture);
-
         user.NotificationsEnabled.Should().Be(notifications);
     }
 }
