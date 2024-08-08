@@ -7,6 +7,7 @@
     "CreatedAt": "Created at",
     "Enable": "Enable",
     "Disable": "Disable",
-    "Okay": "Okay"
+    "Okay": "Okay",
+    "{0}IsRequired": "{0} is required."
   }
 }

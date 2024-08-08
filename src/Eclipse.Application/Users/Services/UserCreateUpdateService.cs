@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Users.UpdateStrategies;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
@@ -26,7 +27,17 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
         return result.Value.ToDto();
     }
 
-    public async Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
+    {
+        return UpdateInternal(id, new FullUpdateStrategy(model, _userManager), cancellationToken);
+    }
+
+    public Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default)
+    {
+        return UpdateInternal(id, new PartialUpdateStrategy(model, _userManager), cancellationToken);
+    }
+
+    private async Task<Result<UserDto>> UpdateInternal(Guid id, IUserUpdateStrategy strategy, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(id, cancellationToken);
 
@@ -35,29 +46,11 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        if (!model.Name.IsNullOrEmpty())
-        {
-            user.Name = model.Name;
-        }
+        var result = await strategy.UpdateAsync(user, cancellationToken);
 
-        if (!model.Surname.IsNullOrEmpty())
+        if (!result.IsSuccess)
         {
-            user.Surname = model.Surname;
-        }
-
-        if (!model.UserName.IsNullOrEmpty())
-        {
-            user.UserName = model.UserName;
-        }
-
-        if (!model.Culture.IsNullOrEmpty())
-        {
-            user.Culture = model.Culture;
-        }
-
-        if (model.NotificationsEnabled.HasValue)
-        {
-            user.NotificationsEnabled = model.NotificationsEnabled.Value;
+            return result.Error;
         }
 
         return (await _userManager.UpdateAsync(user, cancellationToken)).ToDto();

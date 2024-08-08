@@ -53,4 +53,9 @@ internal sealed class UserService : IUserService
     {
         return _createUpdateService.UpdateAsync(id, model, cancellationToken);
     }
+
+    public Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default)
+    {
+        return _createUpdateService.UpdatePartialAsync(id, model, cancellationToken);
+    }
 }
