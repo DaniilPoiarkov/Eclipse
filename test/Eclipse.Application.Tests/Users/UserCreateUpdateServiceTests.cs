@@ -231,4 +231,28 @@ public sealed class UserCreateUpdateServiceTests
         user.Culture.Should().Be(culture);
         user.NotificationsEnabled.Should().Be(notifications);
     }
+
+    [Fact]
+    public async Task CreateAsync_WhenUserHasNoUserName_ThenCreatedSuccessfully()
+    {
+        var model = new UserCreateDto
+        {
+            ChatId = 1,
+            Name = "John",
+            Surname = "Doe",
+            UserName = string.Empty
+        };
+
+        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId);
+
+        _repository.CreateAsync(user).ReturnsForAnyArgs(user);
+
+        var result = await Sut.CreateAsync(model);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.ChatId.Should().Be(model.ChatId);
+        result.Value.Name.Should().Be(model.Name);
+        result.Value.Surname.Should().Be(model.Surname);
+        result.Value.UserName.Should().Be(string.Empty);
+    }
 }
