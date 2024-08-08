@@ -26,7 +26,7 @@ public sealed class UserManager
     public async Task<Result<User>> CreateAsync(string name, string surname, string userName, long chatId, CancellationToken cancellationToken = default)
     {
         var alreadyExist = await _userRepository.ContainsAsync(
-            expression: u => u.ChatId == chatId || u.UserName == userName,
+            expression: u => u.ChatId == chatId || (!userName.IsNullOrEmpty() && u.UserName == userName),
             cancellationToken: cancellationToken);
 
         if (alreadyExist)
@@ -95,6 +95,11 @@ public sealed class UserManager
 
     public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
     {
+        if (userName.IsNullOrEmpty())
+        {
+            return null;
+        }
+
         return (await _userRepository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
             .SingleOrDefault();
     }

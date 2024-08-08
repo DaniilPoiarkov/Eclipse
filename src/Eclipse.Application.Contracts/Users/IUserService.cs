@@ -24,6 +24,8 @@ public interface IUserCreateUpdateService
     Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default);
 
     Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default);
+
+    Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default);
 }
 
 public interface IUserLogicService

@@ -106,6 +106,7 @@ public class UserTests
     [Theory]
     [InlineData(null, "Empty")]
     [InlineData("", "Empty")]
+    [InlineData("     ", "Empty")]
     [InlineData("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest", "MaxLength")]
     public void AddTodoItem_WhenDataInvalid_ThenFailureResultReturned(string? text, string errorCode)
     {
