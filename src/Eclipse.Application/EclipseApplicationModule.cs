@@ -65,6 +65,11 @@ public static class EclipseApplicationModule
             .AsSelf()
             .WithTransientLifetime());
 
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo<IImportStrategy>())
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
         services.AddMediatR(cfg =>
         {
             cfg.NotificationPublisher = new TaskWhenAllPublisher();

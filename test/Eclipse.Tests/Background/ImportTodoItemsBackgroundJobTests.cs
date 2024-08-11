@@ -41,7 +41,7 @@ public sealed class ImportTodoItemsBackgroundJobTests
     [Fact]
     public async Task WhenImportedSuccessfully_ThenSuccessNotificationSend()
     {
-        var result = new ImportResult<ImportTodoItemDto>();
+        var result = new ImportResult<ImportEntityBase>();
 
         _importService.AddTodoItemsAsync(default!)
             .ReturnsForAnyArgs(
@@ -61,7 +61,7 @@ public sealed class ImportTodoItemsBackgroundJobTests
     [Fact]
     public async Task WhenFailedResultReturned_ThenErrorNotificationSend()
     {
-        var result = new ImportResult<ImportTodoItemDto>()
+        var result = new ImportResult<ImportEntityBase>()
         {
             FailedRows = [
                 new ImportTodoItemDto() { Exception = "test" },
