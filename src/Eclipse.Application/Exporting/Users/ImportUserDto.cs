@@ -1,6 +1,8 @@
-﻿namespace Eclipse.Domain.Shared.Importing;
+﻿using Eclipse.Domain.Shared.Importing;
 
-public class ImportUserDto : ImportEntityBase
+namespace Eclipse.Application.Exporting.Users;
+
+internal sealed class ImportUserDto : ImportEntityBase
 {
     public string Name { get; set; } = string.Empty;
 
