@@ -3,6 +3,8 @@ using Eclipse.Common.Excel;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
 
+using Telegram.Bot.Types;
+
 namespace Eclipse.Application.Exporting.Users;
 
 internal sealed class ImportUsersStrategy : IImportStrategy
@@ -36,7 +38,19 @@ internal sealed class ImportUsersStrategy : IImportStrategy
 
             try
             {
-                await _userManager.ImportAsync(entity, cancellationToken);
+                var request = new CreateUserRequest
+                {
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Surname = entity.Surname,
+                    UserName = entity.UserName,
+                    ChatId = entity.ChatId,
+                    NotificationsEnabled = entity.NotificationsEnabled,
+                    Gmt = TimeOnly.Parse(entity.Gmt),
+                    NewRegistered = false
+                };
+
+                await _userManager.CreateAsync(request, cancellationToken);
             }
             catch (Exception ex)
             {

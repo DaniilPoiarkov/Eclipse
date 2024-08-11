@@ -1,4 +1,5 @@
 ﻿using Eclipse.Common.Results;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.Repositories;
 
@@ -23,18 +24,46 @@ public sealed class UserManager
     /// or
     /// username
     /// already exists</exception>
-    public async Task<Result<User>> CreateAsync(string name, string surname, string userName, long chatId, CancellationToken cancellationToken = default)
+    public Task<Result<User>> CreateAsync(string name, string surname, string userName, long chatId, CancellationToken cancellationToken = default)
     {
+        var request = new CreateUserRequest
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Surname = surname,
+            UserName = userName,
+            ChatId = chatId,
+            NewRegistered = true,
+        };
+
+        return CreateAsync(request, cancellationToken);
+    }
+
+    public async Task<Result<User>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
+    {
+        if (request.Name.IsNullOrEmpty())
+        {
+            return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Name));
+        }
+
+        if (request.Id == Guid.Empty)
+        {
+            return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Id));
+        }
+
         var alreadyExist = await _userRepository.ContainsAsync(
-            expression: u => u.ChatId == chatId || (!userName.IsNullOrEmpty() && u.UserName == userName),
+            expression: u => u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty() && u.UserName == request.UserName),
             cancellationToken: cancellationToken);
 
         if (alreadyExist)
         {
-            return UserDomainErrors.DuplicateData(nameof(chatId), chatId);
+            return UserDomainErrors.DuplicateData(nameof(request.ChatId), request.ChatId);
         }
 
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, true);
+        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, request.NewRegistered);
+        user.NotificationsEnabled = request.NotificationsEnabled;
+
+        user.SetGmt(request.Gmt);
 
         return await _userRepository.CreateAsync(user, cancellationToken);
     }
@@ -57,7 +86,7 @@ public sealed class UserManager
 
         if (user is null)
         {
-            return Error.NotFound("Users.Import.TodoItems", "User not found");
+            return DefaultErrors.EntityNotFound(typeof(User));
         }
 
         user.ImportTodoItems(todoItems);
@@ -73,7 +102,7 @@ public sealed class UserManager
 
         if (user is null)
         {
-            return Error.NotFound("Users.Import.Reminders", "User not found");
+            return DefaultErrors.EntityNotFound(typeof(User));
         }
 
         user.ImportReminders(reminders);

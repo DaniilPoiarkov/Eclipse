@@ -44,7 +44,7 @@ public class UserManagerTests
     public async Task CreateAsync_WhenUserWithSameChatIdExists_ThenFailureResultReturned()
     {
         var chatId = 1;
-        var expectedError = UserDomainErrors.DuplicateData(nameof(chatId), chatId);
+        var expectedError = UserDomainErrors.DuplicateData(nameof(CreateUserRequest.ChatId), chatId);
 
         _repository.CountAsync(u => true)
             .ReturnsForAnyArgs(Task.FromResult(1));
