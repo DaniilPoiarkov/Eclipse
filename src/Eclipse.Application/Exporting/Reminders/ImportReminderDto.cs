@@ -1,6 +1,8 @@
-﻿namespace Eclipse.Domain.Shared.Importing;
+﻿using Eclipse.Domain.Shared.Importing;
 
-public class ImportReminderDto : ImportEntityBase
+namespace Eclipse.Application.Exporting.Reminders;
+
+internal sealed class ImportReminderDto : ImportEntityBase
 {
     public Guid UserId { get; set; }
 
