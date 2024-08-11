@@ -25,7 +25,7 @@ public class UserManagerTests
     [InlineData("Jane", "Doe", "", 2)]
     public async Task CreateAsync_WhenModelValid_ThenCreatedUserReturned(string name, string surname, string userName, long chatId)
     {
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId);
+        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 

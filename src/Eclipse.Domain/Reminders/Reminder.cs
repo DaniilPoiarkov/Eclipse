@@ -6,7 +6,7 @@ public sealed class Reminder : Entity
 {
     public Guid UserId { get; private set; }
 
-    public string Text { get; private set; }
+    public string Text { get; private set; } = string.Empty;
 
     public TimeOnly NotifyAt { get; private set; }
 
@@ -18,9 +18,4 @@ public sealed class Reminder : Entity
     }
 
     private Reminder() { }
-
-    internal static Reminder Import(Guid id, Guid userId, string text, TimeOnly notifyAt)
-    {
-        return new Reminder(id, userId, text, notifyAt);
-    }
 }

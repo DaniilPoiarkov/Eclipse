@@ -243,7 +243,7 @@ public sealed class UserCreateUpdateServiceTests
             UserName = string.Empty
         };
 
-        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId);
+        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 

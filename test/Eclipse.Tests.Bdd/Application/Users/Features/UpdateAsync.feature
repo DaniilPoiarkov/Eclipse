@@ -5,8 +5,8 @@ User should be able to update personal info and persist in database
 @User
 Scenario: As a user I want to be able to update my own info
 	Given An existing user with followind data:
-		| Id                                   | Name | Surname | Username | ChatId |
-		| 77134e03-551f-4cc2-aefd-7841fe864af4 | Name | Surname | Username | 1      |
+		| Id                                   | Name | Surname | Username | ChatId | NewRegistered |
+		| 77134e03-551f-4cc2-aefd-7841fe864af4 | Name | Surname | Username | 1      | true          |
 	When I update the user with the following details:
 		| Name             | Surname      | Username   | Culture  | NotificationsEnabled |
 		| NewName          | NewSurname   | NewUsername| en-US	  | true                 |

@@ -34,14 +34,19 @@ public sealed class UserManager
             return UserDomainErrors.DuplicateData(nameof(chatId), chatId);
         }
 
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId);
+        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, true);
 
         return await _userRepository.CreateAsync(user, cancellationToken);
     }
 
     public Task ImportAsync(ImportUserDto model, CancellationToken cancellationToken = default)
     {
-        var user = User.Import(model);
+        var user = User.Create(model.Id, model.Name, model.Surname, model.UserName, model.ChatId, false);
+
+        user.NotificationsEnabled = model.NotificationsEnabled;
+        user.Culture = model.Culture;
+
+        user.SetGmt(TimeSpan.Parse(model.Gmt));
 
         return _userRepository.CreateAsync(user, cancellationToken);
     }

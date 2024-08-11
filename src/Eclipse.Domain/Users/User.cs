@@ -58,23 +58,16 @@ public sealed class User : AggregateRoot
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static User Create(Guid id, string name, string surname, string userName, long chatId)
+    internal static User Create(Guid id, string name, string surname, string userName, long chatId, bool newRegistered)
     {
         var user = new User(id, name, surname, userName, chatId);
 
-        user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
+        if (newRegistered)
+        {
+            user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
+        }
 
         return user;
-    }
-
-    internal static User Import(ImportUserDto model)
-    {
-        return new User(model.Id, model.Name, model.Surname, model.UserName, model.ChatId)
-        {
-            NotificationsEnabled = model.NotificationsEnabled,
-            Gmt = TimeSpan.Parse(model.Gmt),
-            Culture = model.Culture
-        };
     }
 
     internal void ImportTodoItems(IEnumerable<ImportTodoItemDto> models)
@@ -86,7 +79,7 @@ public sealed class User : AggregateRoot
 
     internal void ImportReminders(IEnumerable<ImportReminderDto> models)
     {
-        var reminders = models.Select(m => Reminder.Import(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
+        var reminders = models.Select(m => new Reminder(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
 
         _reminders.AddRange(reminders);
     }
@@ -140,6 +133,11 @@ public sealed class User : AggregateRoot
         }
 
         Gmt = offset;
+    }
+
+    public void SetGmt(TimeSpan gmt)
+    {
+        Gmt = gmt;
     }
 
     /// <summary>Adds the todo item.</summary>
@@ -221,6 +219,6 @@ public sealed class User : AggregateRoot
 
     public override string ToString()
     {
-        return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";
+        return $"{Name}, {UserName} {base.ToString()}";
     }
 }
