@@ -42,6 +42,7 @@ public static class EclipseWebApiModule
             .AddScoped<ApiKeyAuthorizeAttribute>()
             .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
             .AddScoped<CurrentSessionResolverMiddleware>()
+            .AddScoped<ErrorLocalizerMiddleware>()
             .AddScoped<CurrentSession>()
             .AddScoped<ICurrentSession>(sp => sp.GetRequiredService<CurrentSession>());
 

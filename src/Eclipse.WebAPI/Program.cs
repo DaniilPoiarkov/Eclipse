@@ -77,7 +77,8 @@ app.UseAuthentication()
 
 app.UseLocalization();
 
-app.UseMiddleware<CurrentSessionResolverMiddleware>();
+app.UseMiddleware<CurrentSessionResolverMiddleware>()
+    .UseMiddleware<ErrorLocalizerMiddleware>();
 
 app.MapControllers();
 
