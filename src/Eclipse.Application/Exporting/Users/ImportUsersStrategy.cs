@@ -46,7 +46,7 @@ internal sealed class ImportUsersStrategy : IImportStrategy
                     UserName = entity.UserName,
                     ChatId = entity.ChatId,
                     NotificationsEnabled = entity.NotificationsEnabled,
-                    Gmt = TimeOnly.Parse(entity.Gmt),
+                    Gmt = TimeSpan.Parse(entity.Gmt),
                     NewRegistered = false
                 };
 

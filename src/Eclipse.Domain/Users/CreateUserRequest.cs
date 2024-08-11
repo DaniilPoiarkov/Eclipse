@@ -10,7 +10,7 @@ public sealed class CreateUserRequest
 
     public long ChatId { get; set; }
 
-    public TimeOnly Gmt { get; set; }
+    public TimeSpan Gmt { get; set; }
 
     public bool NotificationsEnabled { get; set; }
     public bool NewRegistered { get; set; }
