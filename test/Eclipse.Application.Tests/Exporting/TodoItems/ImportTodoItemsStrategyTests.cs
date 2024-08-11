@@ -1,13 +1,14 @@
 ﻿using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
-using Eclipse.Tests.Generators;
 using Eclipse.Tests;
+using Eclipse.Tests.Generators;
+
+using FluentAssertions;
 
 using NSubstitute;
 
 using Xunit;
-using FluentAssertions;
 
 namespace Eclipse.Application.Tests.Exporting.TodoItems;
 

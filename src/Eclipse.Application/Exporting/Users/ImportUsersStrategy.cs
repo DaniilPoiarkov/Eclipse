@@ -3,8 +3,6 @@ using Eclipse.Common.Excel;
 using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
 
-using Telegram.Bot.Types;
-
 namespace Eclipse.Application.Exporting.Users;
 
 internal sealed class ImportUsersStrategy : IImportStrategy

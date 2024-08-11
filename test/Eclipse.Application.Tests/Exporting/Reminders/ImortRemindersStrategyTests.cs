@@ -1,16 +1,17 @@
-﻿using Eclipse.Application.Exporting.Reminders;
+﻿using Bogus;
+
+using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
-using Eclipse.Tests.Generators;
 using Eclipse.Tests;
+
+using FluentAssertions;
+
+using MiniExcelLibs;
 
 using NSubstitute;
 
 using Xunit;
-using FluentAssertions;
-using MiniExcelLibs;
-using Eclipse.Domain.Shared.Importing;
-using Bogus;
 
 namespace Eclipse.Application.Tests.Exporting.Reminders;
 
