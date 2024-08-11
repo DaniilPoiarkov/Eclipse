@@ -46,7 +46,7 @@ public sealed class UserManager
             return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Name));
         }
 
-        if (request.Id == Guid.Empty)
+        if (request.Id.IsEmpty())
         {
             return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Id));
         }
