@@ -8,6 +8,9 @@ using NSubstitute;
 
 using Xunit;
 using FluentAssertions;
+using MiniExcelLibs;
+using Eclipse.Domain.Shared.Importing;
+using Bogus;
 
 namespace Eclipse.Application.Tests.Exporting.Reminders;
 
@@ -20,7 +23,7 @@ public sealed class ImortRemindersStrategyTests
     public ImortRemindersStrategyTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _sut = new ImportRemindersStrategy(new UserManager(_userRepository), new ExcelManager());
+        _sut = new ImportRemindersStrategy(_userRepository, new ExcelManager());
     }
 
     [Fact]
@@ -28,15 +31,26 @@ public sealed class ImortRemindersStrategyTests
     {
         using var ms = TestsAssembly.GetValidRemindersExcelFile();
 
-        var user = UserGenerator.Generate(1).First();
+        var reminders = ms.Query<ImportReminderDto>();
 
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(user);
+        var faker = new Faker();
+
+        var users = reminders.Select(r => r.UserId)
+            .Distinct()
+            .Select(id => User.Create(id, faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, faker.Random.Long(min: 0), false))
+            .ToList();
+
+        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs(users);
 
         await _sut.ImportAsync(ms);
 
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
-        await _userRepository.Received().UpdateAsync(user);
-        user.Reminders.IsNullOrEmpty().Should().BeFalse();
+        await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
+
+        foreach (var user in users)
+        {
+            await _userRepository.Received().UpdateAsync(user);
+            user.Reminders.IsNullOrEmpty().Should().BeFalse();
+        }
     }
 
     [Fact]
@@ -44,11 +58,11 @@ public sealed class ImortRemindersStrategyTests
     {
         using var ms = TestsAssembly.GetValidRemindersExcelFile();
 
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(Task.FromResult<User?>(null));
+        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
 
         await _sut.ImportAsync(ms);
 
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
+        await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
     }
 }

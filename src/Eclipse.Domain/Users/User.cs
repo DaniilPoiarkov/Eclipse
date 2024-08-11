@@ -77,12 +77,12 @@ public sealed class User : AggregateRoot
         _todoItems.AddRange(todoItems);
     }
 
-    internal void ImportReminders(IEnumerable<ImportReminderDto> models)
-    {
-        var reminders = models.Select(m => new Reminder(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
+    //internal void ImportReminders(IEnumerable<ImportReminderDto> models)
+    //{
+    //    var reminders = models.Select(m => new Reminder(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
 
-        _reminders.AddRange(reminders);
-    }
+    //    _reminders.AddRange(reminders);
+    //}
 
     /// <summary>Adds the reminder.</summary>
     /// <param name="text">The text.</param>
@@ -90,7 +90,12 @@ public sealed class User : AggregateRoot
     /// <returns>Created Reminder</returns>
     public Reminder AddReminder(string text, TimeOnly notifyAt)
     {
-        var reminder = new Reminder(Guid.NewGuid(), Id, text, notifyAt);
+        return AddReminder(Guid.NewGuid(), text, notifyAt);
+    }
+
+    public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
+    {
+        var reminder = new Reminder(id, Id, text, notifyAt);
         _reminders.Add(reminder);
 
         return reminder;

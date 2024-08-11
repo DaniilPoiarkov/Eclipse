@@ -9,14 +9,15 @@ internal sealed class ImportRemindersStrategy : IImportStrategy
 {
     public ImportType Type => ImportType.Reminders;
 
-    private readonly UserManager _userManager;
+
+    private readonly IUserRepository _userRepository;
 
     private readonly IExcelManager _excelManager;
 
-    public ImportRemindersStrategy(UserManager userManager, IExcelManager excelManager)
+    public ImportRemindersStrategy(IUserRepository userRepository, IExcelManager excelManager)
     {
-        _userManager = userManager;
         _excelManager = excelManager;
+        _userRepository = userRepository;
     }
 
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
@@ -27,18 +28,41 @@ internal sealed class ImportRemindersStrategy : IImportStrategy
 
         var failed = new List<ImportEntityBase>();
 
+        var userIds = reminders.Select(r => r.Key).Distinct();
+
+        var users = await _userRepository.GetByExpressionAsync(u => userIds.Contains(u.Id), cancellationToken);
+
         foreach (var grouping in reminders)
         {
-            var result = await _userManager.ImportRemindersAsync(grouping.Key, grouping, cancellationToken);
+            var user = users.FirstOrDefault(u => u.Id == grouping.Key);
 
-            if (result.IsSuccess)
+            if (user is null)
             {
+                SetErrors(grouping, "User not found"); // TODO: Localize
+                failed.AddRange(grouping);
                 continue;
             }
 
-            SetErrors(grouping, result.Error.Description);
+            foreach (var item in grouping)
+            {
+                try
+                {
+                    user.AddReminder(item.Id, item.Text, TimeOnly.Parse(item.NotifyAt));
+                }
+                catch (Exception ex)
+                {
+                    SetErrors([item], ex.Message);
+                }
+            }
 
-            failed.AddRange(grouping);
+            try
+            {
+                await _userRepository.UpdateAsync(user, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                SetErrors(grouping, ex.Message);
+            }
         }
 
         return new ImportResult<ImportEntityBase>

@@ -84,21 +84,21 @@ public sealed class UserManager
         return Result.Success();
     }
 
-    public async Task<Result> ImportRemindersAsync(Guid userId, IEnumerable<ImportReminderDto> reminders, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.FindAsync(userId, cancellationToken);
+    //public async Task<Result> ImportRemindersAsync(Guid userId, IEnumerable<ImportReminderDto> reminders, CancellationToken cancellationToken = default)
+    //{
+    //    var user = await _userRepository.FindAsync(userId, cancellationToken);
 
-        if (user is null)
-        {
-            return DefaultErrors.EntityNotFound(typeof(User));
-        }
+    //    if (user is null)
+    //    {
+    //        return DefaultErrors.EntityNotFound(typeof(User));
+    //    }
 
-        user.ImportReminders(reminders);
+    //    user.ImportReminders(reminders);
 
-        await _userRepository.UpdateAsync(user, cancellationToken);
+    //    await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return Result.Success();
-    }
+    //    return Result.Success();
+    //}
 
     public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
