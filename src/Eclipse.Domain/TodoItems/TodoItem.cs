@@ -40,15 +40,6 @@ public sealed class TodoItem : Entity
         };
     }
 
-    internal static TodoItem Import(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
-    {
-        return new TodoItem(id, userId, text, createdAt)
-        {
-            IsFinished = isFinished,
-            FinishedAt = finishedAt
-        };
-    }
-
     private TodoItem() { }
 
     public Guid UserId { get; private set; }
