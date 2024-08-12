@@ -2,7 +2,7 @@
 
 namespace Eclipse.Application.Exporting.Users;
 
-internal sealed class ImportUserDto : ImportEntityBase
+public sealed class ImportUserDto : ImportEntityBase
 {
     public string Name { get; set; } = string.Empty;
 

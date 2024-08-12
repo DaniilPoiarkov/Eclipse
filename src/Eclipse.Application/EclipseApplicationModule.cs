@@ -12,7 +12,6 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
-using Eclipse.Application.Google.Sheets;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
@@ -55,7 +54,7 @@ public static class EclipseApplicationModule
             .AddTransient<IUserReadService, UserReadService>()
             .AddTransient<IUserService, UserService>();
 
-        services.Scan(tss => tss.FromAssemblyOf<SuggestionsSheetsService>()
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEclipseSheetsService<>)))
             .AsImplementedInterfaces()
             .WithTransientLifetime());
@@ -67,6 +66,11 @@ public static class EclipseApplicationModule
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo<IImportStrategy>())
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IImportValidator<,>)))
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 

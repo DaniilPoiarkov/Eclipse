@@ -1,6 +1,8 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Repositories;
 
+using System.Linq.Expressions;
+
 namespace Eclipse.Domain.Users;
 
 public sealed class UserManager
@@ -79,6 +81,11 @@ public sealed class UserManager
     public Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _userRepository.FindAsync(id, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<User>> GetByExpressionAsync(Expression<Func<User, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        return _userRepository.GetByExpressionAsync(expression, cancellationToken);
     }
 
     public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)

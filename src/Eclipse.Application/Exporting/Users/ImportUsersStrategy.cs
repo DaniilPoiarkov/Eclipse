@@ -12,20 +12,42 @@ internal sealed class ImportUsersStrategy : IImportStrategy
 
     private readonly IExcelManager _excelManager;
 
-    public ImportUsersStrategy(UserManager userManager, IExcelManager excelManager)
+    private readonly IImportValidator<ImportUserDto, ImportUsersValidationOptions> _validator;
+
+    public ImportUsersStrategy(
+        UserManager userManager,
+        IExcelManager excelManager,
+        IImportValidator<ImportUserDto, ImportUsersValidationOptions> validator)
     {
         _userManager = userManager;
         _excelManager = excelManager;
+        _validator = validator;
     }
 
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
-        var entities = _excelManager.Read<ImportUserDto>(stream)
+        var rows = _excelManager.Read<ImportUserDto>(stream)
             .Where(u => u.ChatId != default && u.Id != Guid.Empty);
 
-        var failed = new List<ImportEntityBase>();
+        var userIds = rows.Select(r => new { r.Id, r.ChatId, r.UserName }).Distinct();
 
-        foreach (var entity in entities)
+        var users = await _userManager.GetByExpressionAsync(
+            u => userIds.Any(i => i.Id == u.Id
+                || i.ChatId == u.ChatId
+                || (!i.UserName.IsNullOrEmpty() && i.UserName == u.UserName)),
+            cancellationToken
+        );
+
+        var failed = new List<ImportEntityBase>();
+        
+        var options = new ImportUsersValidationOptions
+        {
+            Users = [.. users]
+        };
+
+        _validator.Set(options);
+
+        foreach (var entity in _validator.ValidateAndSetErrors(rows))
         {
             if (!entity.CanBeImported())
             {

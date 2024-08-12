@@ -1,7 +1,12 @@
-﻿using Eclipse.Application.Exporting.Users;
+﻿using Eclipse.Application.Exporting;
+using Eclipse.Application.Exporting.Users;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Tests;
+
+using Microsoft.Extensions.Localization;
+
+using MiniExcelLibs;
 
 using NSubstitute;
 
@@ -13,18 +18,27 @@ public sealed class ImportUsersStrategyTests
 {
     private readonly IUserRepository _userRepository;
 
+    private readonly IImportValidator<ImportUserDto, ImportUsersValidationOptions> _validator;
+
     private readonly ImportUsersStrategy _sut;
 
     public ImportUsersStrategyTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _sut = new ImportUsersStrategy(new UserManager(_userRepository), new ExcelManager());
+        _validator = Substitute.For<IImportValidator<ImportUserDto, ImportUsersValidationOptions>>();
+
+        _sut = new ImportUsersStrategy(new UserManager(_userRepository), new ExcelManager(), _validator);
     }
 
     [Fact]
     public async Task AddUsers_WhenFileIsValid_ThenProcessedSuccessfully()
     {
         using var stream = TestsAssembly.GetValidUsersExcelFile();
+
+        var rows = stream.Query<ImportUserDto>();
+
+        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
+        _validator.ValidateAndSetErrors(rows).Returns(rows);
 
         await _sut.ImportAsync(stream);
 
