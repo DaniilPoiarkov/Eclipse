@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Excel;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Exporting.Users;

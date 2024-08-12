@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Excel;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Exporting.TodoItems;
@@ -9,14 +8,14 @@ internal sealed class ImportTodoItemsStrategy : IImportStrategy
 {
     public ImportType Type => ImportType.TodoItems;
 
-    private readonly UserManager _userManager;
-
     private readonly IExcelManager _excelManager;
 
-    public ImportTodoItemsStrategy(UserManager userManager, IExcelManager excelManager)
+    private readonly IUserRepository _userRepository;
+
+    public ImportTodoItemsStrategy(IUserRepository userRepository, IExcelManager excelManager)
     {
-        _userManager = userManager;
         _excelManager = excelManager;
+        _userRepository = userRepository;
     }
 
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
@@ -27,18 +26,42 @@ internal sealed class ImportTodoItemsStrategy : IImportStrategy
 
         var failed = new List<ImportEntityBase>();
 
+        var userIds = todoItems.Select(i => i.Key)
+            .Distinct();
+
+        var users = await _userRepository.GetByExpressionAsync(u => userIds.Contains(u.Id), cancellationToken);
+
         foreach (var grouping in todoItems)
         {
-            var result = await _userManager.ImportTodoItemsAsync(grouping.Key, grouping, cancellationToken);
+            var user = users.FirstOrDefault(u => u.Id == grouping.Key);
 
-            if (result.IsSuccess)
+            if (user is null)
             {
+                SetErrors(grouping, "User not found"); // TODO: localize
+                failed.AddRange(grouping);
                 continue;
             }
 
-            SetErrors(grouping, result.Error.Description);
+            foreach (var record in grouping)
+            {
+                var result = user.AddTodoItem(record.Id, record.Text, record.CreatedAt, record.IsFinished, record.FinishedAt);
 
-            failed.AddRange(grouping);
+                if (!result.IsSuccess)
+                {
+                    record.Exception = result.Error.Description;
+                    failed.Add(record);
+                }
+            }
+
+            try
+            {
+                await _userRepository.UpdateAsync(user, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                SetErrors(grouping, ex.Message);
+                failed.AddRange(grouping);
+            }
         }
 
         return new ImportResult<ImportEntityBase>

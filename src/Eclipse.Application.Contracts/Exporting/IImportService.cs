@@ -1,6 +1,4 @@
-﻿using Eclipse.Domain.Shared.Importing;
-
-namespace Eclipse.Application.Contracts.Exporting;
+﻿namespace Eclipse.Application.Contracts.Exporting;
 
 public interface IImportService
 {

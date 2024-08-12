@@ -1,4 +1,4 @@
-﻿using Eclipse.Domain.Shared.Importing;
+﻿using Eclipse.Application.Contracts.Exporting;
 
 namespace Eclipse.Application.Exporting.Users;
 

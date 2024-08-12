@@ -1,10 +1,13 @@
-﻿using Eclipse.Application.Exporting.TodoItems;
+﻿using Bogus;
+
+using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Tests;
-using Eclipse.Tests.Generators;
 
 using FluentAssertions;
+
+using MiniExcelLibs;
 
 using NSubstitute;
 
@@ -21,7 +24,7 @@ public sealed class ImportTodoItemsStrategyTests
     public ImportTodoItemsStrategyTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _sut = new ImportTodoItemsStrategy(new UserManager(_userRepository), new ExcelManager());
+        _sut = new ImportTodoItemsStrategy(_userRepository, new ExcelManager());
     }
 
     [Fact]
@@ -29,27 +32,39 @@ public sealed class ImportTodoItemsStrategyTests
     {
         using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
 
-        var user = UserGenerator.Generate(1).First();
+        var reminders = stream.Query<ImportTodoItemDto>()
+            .Where(item => !item.UserId.IsEmpty());
 
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(user);
+        var faker = new Faker();
 
+        var users = reminders.Select(r => r.UserId)
+            .Distinct()
+            .Select(id => User.Create(id, faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, faker.Random.Long(min: 0), false))
+            .ToList();
+
+        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs(users);
+        
         await _sut.ImportAsync(stream);
 
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
-        await _userRepository.Received().UpdateAsync(user);
-        user.TodoItems.IsNullOrEmpty().Should().BeFalse();
+        await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
+
+        foreach (var user in users)
+        {
+            await _userRepository.Received().UpdateAsync(user);
+            user.TodoItems.IsNullOrEmpty().Should().BeFalse();
+        }
     }
 
     [Fact]
-    public async Task AddTodoItems_WhenUserNotExist_ThenReportSend()
+    public async Task AddTodoItems_WhenUserNotExist_ThenNoUpdatePerformed()
     {
         using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
 
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(Task.FromResult<User?>(null));
+        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
 
         await _sut.ImportAsync(stream);
 
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
+        await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
     }
 }

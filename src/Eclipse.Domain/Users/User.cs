@@ -1,7 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
@@ -70,13 +69,6 @@ public sealed class User : AggregateRoot
         return user;
     }
 
-    internal void ImportTodoItems(IEnumerable<ImportTodoItemDto> models)
-    {
-        var todoItems = models.Select(m => TodoItem.Import(m.Id, m.UserId, m.Text, m.CreatedAt, m.IsFinished, m.FinishedAt));
-
-        _todoItems.AddRange(todoItems);
-    }
-
     /// <summary>Adds the reminder.</summary>
     /// <param name="text">The text.</param>
     /// <param name="notifyAt">The notify at.</param>
@@ -143,12 +135,22 @@ public sealed class User : AggregateRoot
     /// <returns>Created TodoItem item</returns>
     public Result<TodoItem> AddTodoItem(string? text)
     {
+        return AddTodoItem(Guid.NewGuid(), text, DateTime.UtcNow.Add(Gmt), false, default);
+    }
+
+    public Result<TodoItem> AddTodoItem(Guid id, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
+    {
         if (_todoItems.Count == TodoItemConstants.Limit)
         {
             return UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         }
 
-        var result = TodoItem.Create(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        if (_todoItems.Exists(item => item.Id == id))
+        {
+            return UserDomainErrors.DuplicateTodoItem(id);
+        }
+
+        var result = TodoItem.Create(id, Id, text, createdAt, isFinished, finishedAt);
 
         if (!result.IsSuccess)
         {

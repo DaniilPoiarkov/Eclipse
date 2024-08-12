@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Exporting;
-using Eclipse.Domain.Shared.Importing;
 
 using NSubstitute;
 

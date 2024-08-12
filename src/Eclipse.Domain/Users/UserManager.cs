@@ -1,6 +1,4 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Shared.Errors;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.Repositories;
 
 namespace Eclipse.Domain.Users;
@@ -68,21 +66,21 @@ public sealed class UserManager
         return await _userRepository.CreateAsync(user, cancellationToken);
     }
 
-    public async Task<Result> ImportTodoItemsAsync(Guid userId, IEnumerable<ImportTodoItemDto> todoItems, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.FindAsync(userId, cancellationToken);
+    //public async Task<Result> ImportTodoItemsAsync(Guid userId, IEnumerable<ImportTodoItemDto> todoItems, CancellationToken cancellationToken = default)
+    //{
+    //    var user = await _userRepository.FindAsync(userId, cancellationToken);
 
-        if (user is null)
-        {
-            return DefaultErrors.EntityNotFound(typeof(User));
-        }
+    //    if (user is null)
+    //    {
+    //        return DefaultErrors.EntityNotFound(typeof(User));
+    //    }
 
-        user.ImportTodoItems(todoItems);
+    //    user.ImportTodoItems(todoItems);
 
-        await _userRepository.UpdateAsync(user, cancellationToken);
+    //    await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return Result.Success();
-    }
+    //    return Result.Success();
+    //}
 
     public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
