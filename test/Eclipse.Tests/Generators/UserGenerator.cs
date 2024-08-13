@@ -19,7 +19,8 @@ public static class UserGenerator
                 faker.Person.FirstName,
                 faker.Person.LastName,
                 faker.Person.UserName,
-                chatId: i);
+                chatId: i,
+                newRegistered: i % 2 == 0);
 
             user.Culture = i % 2 == 0 ? "en" : "uk";
 
@@ -38,7 +39,8 @@ public static class UserGenerator
             faker.Person.FirstName,
             faker.Person.LastName,
             faker.Person.UserName,
-            chatId
+            chatId,
+            true
         );
 
         user.Culture = Random.Shared.Next(0, 10) % 2 == 0
@@ -46,5 +48,19 @@ public static class UserGenerator
             : "uk";
 
         return user;
+    }
+
+    public static IEnumerable<User> GetWithIds(IEnumerable<Guid> userIds)
+    {
+        var faker = new Faker();
+
+        return userIds.Select(id =>
+            User.Create(id,
+                faker.Person.FirstName,
+                faker.Person.LastName,
+                faker.Person.UserName,
+                faker.Random.Long(min: 1),
+                false)
+        );
     }
 }

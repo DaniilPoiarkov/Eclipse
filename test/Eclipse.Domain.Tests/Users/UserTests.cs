@@ -3,6 +3,7 @@ using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
+using Eclipse.Domain.Users.Events;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -230,5 +231,34 @@ public class UserTests
         _sut.SetSignInCode(creationDate);
 
         _sut.IsValidSignInCode(submissionDate, _sut.SignInCode).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Create_WhenNewRegisteredSetAsTrue_ThenNewUserJoinedDomainEventRaised()
+    {
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, true);
+
+        var events = user.GetEvents();
+
+        events.Should().HaveCount(1);
+
+        var domainEvent = events.Cast<NewUserJoinedDomainEvent>().First();
+
+        domainEvent.Should().NotBeNull();
+
+        domainEvent.UserId.Should().Be(user.Id);
+        domainEvent.Name.Should().Be(user.Name);
+        domainEvent.Surname.Should().Be(user.Surname);
+        domainEvent.UserName.Should().Be(user.UserName);
+    }
+
+    [Fact]
+    public void Create_WhenNewRegisteredSetAsFalse_ThenNoDomainEventRaised()
+    {
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, false);
+
+        var events = user.GetEvents();
+
+        events.Should().BeEmpty();
     }
 }

@@ -105,13 +105,15 @@ this.ScenarioInitialize(scenarioInfo);
                             "Name",
                             "Surname",
                             "Username",
-                            "ChatId"});
+                            "ChatId",
+                            "NewRegistered"});
                 table1.AddRow(new string[] {
                             "77134e03-551f-4cc2-aefd-7841fe864af4",
                             "Name",
                             "Surname",
                             "Username",
-                            "1"});
+                            "1",
+                            "true"});
 #line 7
  testRunner.Given("An existing user with followind data:", ((string)(null)), table1, "Given ");
 #line hidden

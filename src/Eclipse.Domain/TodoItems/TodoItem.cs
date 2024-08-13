@@ -21,7 +21,7 @@ public sealed class TodoItem : Entity
     /// <param name="text"></param>
     /// <param name="createdAt"></param>
     /// <returns></returns>
-    internal static Result<TodoItem> Create(Guid id, Guid userId, string? text, DateTime createdAt)
+    internal static Result<TodoItem> Create(Guid id, Guid userId, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
     {
         if (text.IsNullOrWhiteSpace() || text.Length < TodoItemConstants.MinLength)
         {
@@ -33,11 +33,6 @@ public sealed class TodoItem : Entity
             return TodoItemDomainErrors.TodoItemTooLong(TodoItemConstants.MaxLength);
         }
 
-        return new TodoItem(id, userId, text, createdAt);
-    }
-
-    internal static TodoItem Import(Guid id, Guid userId, string text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
-    {
         return new TodoItem(id, userId, text, createdAt)
         {
             IsFinished = isFinished,

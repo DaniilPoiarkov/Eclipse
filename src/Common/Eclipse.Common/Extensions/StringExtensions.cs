@@ -114,4 +114,15 @@ public static class StringExtensions
 
         static bool TryParse(string value, out int num) => int.TryParse(value, out num);
     }
+
+    /// <summary>
+    /// Joins the strings using specified separator.
+    /// </summary>
+    /// <param name="strings">The strings.</param>
+    /// <param name="separator">The separator.</param>
+    /// <returns></returns>
+    public static string Join(this IEnumerable<string> strings, string separator)
+    {
+        return string.Join(separator, strings);
+    }
 }

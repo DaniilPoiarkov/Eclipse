@@ -1,6 +1,6 @@
-﻿namespace Eclipse.Domain.Shared.Importing;
+﻿namespace Eclipse.Application.Contracts.Exporting;
 
-public abstract class ImportEntityBase
+public class ImportEntityBase
 {
     public Guid Id { get; set; }
 

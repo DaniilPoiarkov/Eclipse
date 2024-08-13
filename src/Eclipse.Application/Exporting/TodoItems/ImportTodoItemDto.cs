@@ -1,6 +1,8 @@
-﻿namespace Eclipse.Domain.Shared.Importing;
+﻿using Eclipse.Application.Contracts.Exporting;
 
-public class ImportTodoItemDto : ImportEntityBase
+namespace Eclipse.Application.Exporting.TodoItems;
+
+public sealed class ImportTodoItemDto : ImportEntityBase
 {
     public Guid UserId { get; set; }
 

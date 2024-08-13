@@ -37,25 +37,30 @@ internal sealed class UpdateAsyncStepDefinitions
     [Given("An existing user with followind data:")]
     public void GivenAUserWithId(Table table)
     {
-        _user = User.Create(
-            Guid.Parse(table.Rows[0]["Id"]),
-            table.Rows[0]["Name"],
-            table.Rows[0]["Surname"],
-            table.Rows[0]["Username"],
-            long.Parse(table.Rows[0]["ChatId"]));
+        var row = table.Rows[0];
 
-        _repository.FindAsync(_user.Id)!.ReturnsForAnyArgs(Task.FromResult(_user));
-        _repository.UpdateAsync(_user)!.ReturnsForAnyArgs(Task.FromResult(_user));
+        _user = User.Create(
+            Guid.Parse(row["Id"]),
+            row["Name"],
+            row["Surname"],
+            row["Username"],
+            long.Parse(row["ChatId"]),
+            bool.Parse(row["NewRegistered"]));
+
+        _repository.FindAsync(_user.Id).ReturnsForAnyArgs(Task.FromResult<User?>(_user));
+        _repository.UpdateAsync(_user).ReturnsForAnyArgs(Task.FromResult(_user));
     }
 
     [When("I update the user with the following details:")]
     public async Task WhenIUpdateTheUserWithTheFollowingDetails(Table table)
     {
-        _updateDto.Name = table.Rows[0]["Name"];
-        _updateDto.Surname = table.Rows[0]["Surname"];
-        _updateDto.UserName = table.Rows[0]["Username"];
-        _updateDto.Culture = table.Rows[0]["Culture"];
-        _updateDto.NotificationsEnabled = bool.Parse(table.Rows[0]["NotificationsEnabled"]);
+        var row = table.Rows[0];
+
+        _updateDto.Name = row["Name"];
+        _updateDto.Surname = row["Surname"];
+        _updateDto.UserName = row["Username"];
+        _updateDto.Culture = row["Culture"];
+        _updateDto.NotificationsEnabled = bool.Parse(row["NotificationsEnabled"]);
 
         _result = await Sut.UpdateAsync(_user.Id, _updateDto);
     }
