@@ -29,12 +29,14 @@ internal sealed class ImportUsersStrategy : IImportStrategy
         var rows = _excelManager.Read<ImportUserDto>(stream)
             .Where(u => u.ChatId != default && !u.Id.IsEmpty());
 
-        var userIds = rows.Select(r => new { r.Id, r.ChatId, r.UserName }).Distinct();
+        var userIds = rows.Select(r => r.Id).Distinct();
+        var userNames = rows.Select(r => r.UserName).Distinct();
+        var chatIds = rows.Select(r => r.ChatId).Distinct();
 
         var users = await _userManager.GetByExpressionAsync(
-            u => userIds.Any(i => i.Id == u.Id
-                || i.ChatId == u.ChatId
-                || (!i.UserName.IsNullOrEmpty() && i.UserName == u.UserName)),
+            u => userIds.Contains(u.Id)
+            || userNames.Contains(u.UserName)
+            || chatIds.Contains(u.ChatId),
             cancellationToken
         );
 

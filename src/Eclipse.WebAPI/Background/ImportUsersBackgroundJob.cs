@@ -17,7 +17,7 @@ public sealed class ImportUsersBackgroundJob : ImportBackgroundJobBase
         IOptions<TelegramOptions> options)
         : base(importService, excelManager, botClient, options) { }
 
-    public async override Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    protected async override Task ImportAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         if (args.BytesAsBase64.IsNullOrEmpty())
         {
@@ -32,11 +32,11 @@ public sealed class ImportUsersBackgroundJob : ImportBackgroundJobBase
 
         if (result.IsSuccess)
         {
-            await SendSuccessResult("All users imported successfully.", cancellationToken);
+            await SendMessageAsync("All users imported successfully.", cancellationToken);
             return;
         }
 
-        await SendFailedResult(
+        await SendFailedResultAsync(
             "Failed to import following users",
             "failed-to-import-users.xlsx",
             result.FailedRows,
