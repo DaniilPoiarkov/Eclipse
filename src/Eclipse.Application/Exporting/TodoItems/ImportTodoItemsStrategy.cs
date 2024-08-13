@@ -27,7 +27,7 @@ internal sealed class ImportTodoItemsStrategy : IImportStrategy
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var todoItems = _excelManager.Read<ImportTodoItemDto>(stream)
-            .Where(u => u.UserId != Guid.Empty);
+            .Where(u => !u.UserId.IsEmpty());
 
         var failed = new List<ImportEntityBase>();
 

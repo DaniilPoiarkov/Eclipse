@@ -36,16 +36,18 @@ public sealed class ImortRemindersStrategyTests
     {
         using var ms = TestsAssembly.GetValidRemindersExcelFile();
 
-        var reminders = ms.Query<ImportReminderDto>();
+        var rows = ms.Query<ImportReminderDto>()
+            .Where(r => !r.UserId.IsEmpty());
 
         var faker = new Faker();
 
-        var users = reminders.Select(r => r.UserId)
+        var users = rows.Select(r => r.UserId)
             .Distinct()
             .Select(id => User.Create(id, faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, faker.Random.Long(min: 0), false))
             .ToList();
 
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs(users);
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
 
         await _sut.ImportAsync(ms);
 

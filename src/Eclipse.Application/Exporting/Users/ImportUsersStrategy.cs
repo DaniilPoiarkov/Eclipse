@@ -27,7 +27,7 @@ internal sealed class ImportUsersStrategy : IImportStrategy
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var rows = _excelManager.Read<ImportUserDto>(stream)
-            .Where(u => u.ChatId != default && u.Id != Guid.Empty);
+            .Where(u => u.ChatId != default && !u.Id.IsEmpty());
 
         var userIds = rows.Select(r => new { r.Id, r.ChatId, r.UserName }).Distinct();
 

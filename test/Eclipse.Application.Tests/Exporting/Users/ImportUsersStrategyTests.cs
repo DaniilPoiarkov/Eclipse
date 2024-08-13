@@ -35,7 +35,8 @@ public sealed class ImportUsersStrategyTests
     {
         using var stream = TestsAssembly.GetValidUsersExcelFile();
 
-        var rows = stream.Query<ImportUserDto>();
+        var rows = stream.Query<ImportUserDto>()
+            .Where(u => !u.Id.IsEmpty() && u.ChatId != default);
 
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
         _validator.ValidateAndSetErrors(rows).Returns(rows);

@@ -28,7 +28,7 @@ internal sealed class ImportRemindersStrategy : IImportStrategy
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var reminders = _excelManager.Read<ImportReminderDto>(stream)
-            .Where(u => u.UserId != Guid.Empty);
+            .Where(u => !u.UserId.IsEmpty());
 
         var failed = new List<ImportEntityBase>();
 

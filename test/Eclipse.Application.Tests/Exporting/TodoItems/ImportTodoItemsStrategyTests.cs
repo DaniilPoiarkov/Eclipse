@@ -36,17 +36,18 @@ public sealed class ImportTodoItemsStrategyTests
     {
         using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
 
-        var reminders = stream.Query<ImportTodoItemDto>()
+        var rows = stream.Query<ImportTodoItemDto>()
             .Where(item => !item.UserId.IsEmpty());
 
         var faker = new Faker();
 
-        var users = reminders.Select(r => r.UserId)
+        var users = rows.Select(r => r.UserId)
             .Distinct()
             .Select(id => User.Create(id, faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, faker.Random.Long(min: 0), false))
             .ToList();
 
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs(users);
+        _validator.ValidateAndSetErrors(rows).Returns(rows);
         
         await _sut.ImportAsync(stream);
 
