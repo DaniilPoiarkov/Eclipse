@@ -55,7 +55,6 @@ internal sealed class ImportTodoItemsStrategy : IImportStrategy
 
             if (!map.TryGetValue(row.UserId, out var user))
             {
-                row.Exception = "User not found"; // TODO: localize
                 failed.Add(row);
                 continue;
             }

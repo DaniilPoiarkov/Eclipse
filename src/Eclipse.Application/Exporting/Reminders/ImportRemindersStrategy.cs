@@ -56,7 +56,6 @@ internal sealed class ImportRemindersStrategy : IImportStrategy
 
             if (!map.TryGetValue(row.UserId, out var user))
             {
-                row.Exception = "User not found"; // TODO: Localize
                 failed.Add(row);
                 continue;
             }
