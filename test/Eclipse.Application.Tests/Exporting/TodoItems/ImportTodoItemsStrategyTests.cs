@@ -2,13 +2,11 @@
 
 using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.TodoItems;
+using Eclipse.Common.Excel;
 using Eclipse.Domain.Users;
-using Eclipse.Infrastructure.Excel;
-using Eclipse.Tests;
+using Eclipse.Tests.Generators;
 
 using FluentAssertions;
-
-using MiniExcelLibs;
 
 using NSubstitute;
 
@@ -18,6 +16,8 @@ namespace Eclipse.Application.Tests.Exporting.TodoItems;
 
 public sealed class ImportTodoItemsStrategyTests
 {
+    private readonly IExcelManager _excelManager;
+
     private readonly IUserRepository _userRepository;
 
     private readonly IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> _validator;
@@ -26,50 +26,70 @@ public sealed class ImportTodoItemsStrategyTests
 
     public ImportTodoItemsStrategyTests()
     {
+        _excelManager = Substitute.For<IExcelManager>();
         _userRepository = Substitute.For<IUserRepository>();
         _validator = Substitute.For<IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions>>();
-        _sut = new ImportTodoItemsStrategy(_userRepository, new ExcelManager(), _validator);
+        _sut = new ImportTodoItemsStrategy(_userRepository, _excelManager, _validator);
     }
 
     [Fact]
-    public async Task AddTodoItems_WhenFileIsValid_ThenProcessedSeccessfully()
+    public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSeccessfully()
     {
-        using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
+        using var stream = new MemoryStream();
 
-        var rows = stream.Query<ImportTodoItemDto>()
-            .Where(item => !item.UserId.IsEmpty());
+        IEnumerable<ImportTodoItemDto> rows = [
+            GetRow(),
+            GetRow(),
+        ];
 
-        var faker = new Faker();
+        var users = UserGenerator.GetWithIds(rows.Select(r => r.UserId)).ToList();
 
-        var users = rows.Select(r => r.UserId)
-            .Distinct()
-            .Select(id => User.Create(id, faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, faker.Random.Long(min: 0), false))
-            .ToList();
-
+        _excelManager.Read<ImportTodoItemDto>(stream).Returns(rows);
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs(users);
-        _validator.ValidateAndSetErrors(rows).Returns(rows);
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
         
-        await _sut.ImportAsync(stream);
+        var result = await _sut.ImportAsync(stream);
+
+        result.IsSuccess.Should().BeTrue();
+        result.FailedRows.Should().BeEmpty();
 
         await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
 
         foreach (var user in users)
         {
             await _userRepository.Received().UpdateAsync(user);
-            user.TodoItems.IsNullOrEmpty().Should().BeFalse();
+            user.TodoItems.Should().HaveCount(1);
         }
     }
 
     [Fact]
-    public async Task AddTodoItems_WhenUserNotExist_ThenNoUpdatePerformed()
+    public async Task ImportAsyncs_WhenUserNotExist_ThenFailureResultReturned()
     {
-        using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
+        using var stream = new MemoryStream();
+
+        var row = GetRow();
 
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
+        _excelManager.Read<ImportTodoItemDto>(stream).Returns([row]);
+        _validator.ValidateAndSetErrors([row]).ReturnsForAnyArgs([row]);
 
         await _sut.ImportAsync(stream);
 
         await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
+    }
+
+    private static ImportTodoItemDto GetRow()
+    {
+        var faker = new Faker();
+
+        return new ImportTodoItemDto
+        {
+            Id = Guid.NewGuid(),
+            UserId = Guid.NewGuid(),
+
+            Text = faker.Lorem.Word(),
+            CreatedAt = DateTime.UtcNow,
+        };
     }
 }

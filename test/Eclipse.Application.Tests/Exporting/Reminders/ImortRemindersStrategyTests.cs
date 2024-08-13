@@ -63,7 +63,7 @@ public sealed class ImortRemindersStrategyTests
     }
 
     [Fact]
-    public async Task ImportAsync_WhenUserNotExist_ThenFailureResultReturned()
+    public async Task ImportAsync_WhenUserNotExist_ThenExceptionThrown()
     {
         using var ms = new MemoryStream();
 
