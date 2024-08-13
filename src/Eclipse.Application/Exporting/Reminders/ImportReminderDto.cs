@@ -2,7 +2,7 @@
 
 namespace Eclipse.Application.Exporting.Reminders;
 
-internal sealed class ImportReminderDto : ImportEntityBase
+public sealed class ImportReminderDto : ImportEntityBase
 {
     public Guid UserId { get; set; }
 

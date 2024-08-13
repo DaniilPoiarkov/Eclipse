@@ -34,17 +34,10 @@ internal sealed class ImportUsersValidator : IImportValidator<ImportUserDto, Imp
 
     private string ValidateAndGetError(ImportUserDto row, ImportUsersValidationOptions options)
     {
-        var errors = new List<string>();
-
-        errors.AddRange(
-            ValidateUserUniqueness(row, options.Users)
-        );
-
-        errors.AddRange(
-            ValidateFieldCorrectness(row)
-        );
-
-        return errors.Join(", ");
+        return ValidateUserUniqueness(row, options.Users)
+            .Concat(
+                ValidateFieldCorrectness(row))
+            .Join(", ");
     }
 
     private IEnumerable<string> ValidateUserUniqueness(ImportUserDto row, List<User> users)

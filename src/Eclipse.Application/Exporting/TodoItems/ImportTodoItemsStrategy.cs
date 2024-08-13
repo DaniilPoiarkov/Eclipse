@@ -14,7 +14,10 @@ internal sealed class ImportTodoItemsStrategy : IImportStrategy
 
     private readonly IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> _validator;
 
-    public ImportTodoItemsStrategy(IUserRepository userRepository, IExcelManager excelManager, IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> validator)
+    public ImportTodoItemsStrategy(
+        IUserRepository userRepository,
+        IExcelManager excelManager,
+        IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> validator)
     {
         _excelManager = excelManager;
         _userRepository = userRepository;

@@ -35,16 +35,10 @@ internal sealed class ImportTodoItemsValidator : IImportValidator<ImportTodoItem
 
     private string? ValidateAndGetError(ImportTodoItemDto row, ImportTodoItemsValidationOptions options)
     {
-        var errors = new List<string>();
-
-        errors.AddRange(
-            ValidateReferences(row, options.Users)
-        );
-        errors.AddRange(
-            ValidateFields(row)
-        );
-
-        return errors.Join(", ");
+        return ValidateReferences(row, options.Users)
+            .Concat(
+                ValidateFields(row))
+            .Join(", ");
     }
 
     private IEnumerable<string> ValidateReferences(ImportTodoItemDto row, List<User> users)

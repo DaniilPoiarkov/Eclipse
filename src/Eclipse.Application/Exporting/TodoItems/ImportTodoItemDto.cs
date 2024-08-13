@@ -2,7 +2,7 @@
 
 namespace Eclipse.Application.Exporting.TodoItems;
 
-internal sealed class ImportTodoItemDto : ImportEntityBase
+public sealed class ImportTodoItemDto : ImportEntityBase
 {
     public Guid UserId { get; set; }
 

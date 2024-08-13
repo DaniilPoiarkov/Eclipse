@@ -13,68 +13,65 @@ internal sealed class ImportRemindersStrategy : IImportStrategy
 
     private readonly IExcelManager _excelManager;
 
-    public ImportRemindersStrategy(IUserRepository userRepository, IExcelManager excelManager)
+    private readonly IImportValidator<ImportReminderDto, ImportRemindersValidationOptions> _validator;
+
+    public ImportRemindersStrategy(
+        IUserRepository userRepository,
+        IExcelManager excelManager,
+        IImportValidator<ImportReminderDto, ImportRemindersValidationOptions> validator)
     {
         _excelManager = excelManager;
         _userRepository = userRepository;
+        _validator = validator;
     }
 
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var reminders = _excelManager.Read<ImportReminderDto>(stream)
-            .Where(u => u.UserId != Guid.Empty)
-            .GroupBy(item => item.UserId);
+            .Where(u => u.UserId != Guid.Empty);
 
         var failed = new List<ImportEntityBase>();
 
-        var userIds = reminders.Select(r => r.Key).Distinct();
+        var userIds = reminders.Select(r => r.UserId)
+            .Distinct();
 
         var users = await _userRepository.GetByExpressionAsync(u => userIds.Contains(u.Id), cancellationToken);
 
-        foreach (var grouping in reminders)
+        var options = new ImportRemindersValidationOptions
         {
-            var user = users.FirstOrDefault(u => u.Id == grouping.Key);
+            Users = [.. users]
+        };
 
-            if (user is null)
+        _validator.Set(options);
+
+        var map = users.ToDictionary(u => u.Id);
+
+        foreach (var row in _validator.ValidateAndSetErrors(reminders))
+        {
+            if (!row.CanBeImported())
             {
-                SetErrors(grouping, "User not found"); // TODO: Localize
-                failed.AddRange(grouping);
+                failed.Add(row);
                 continue;
             }
 
-            foreach (var item in grouping)
+            if (!map.TryGetValue(row.UserId, out var user))
             {
-                try
-                {
-                    user.AddReminder(item.Id, item.Text, TimeOnly.Parse(item.NotifyAt));
-                }
-                catch (Exception ex)
-                {
-                    SetErrors([item], ex.Message);
-                }
+                row.Exception = "User not found"; // TODO: Localize
+                failed.Add(row);
+                continue;
             }
 
-            try
-            {
-                await _userRepository.UpdateAsync(user, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                SetErrors(grouping, ex.Message);
-            }
+            user.AddReminder(row.Id, row.Text, TimeOnly.Parse(row.NotifyAt));
+        }
+
+        foreach (var user in map.Values)
+        {
+            await _userRepository.UpdateAsync(user, cancellationToken);
         }
 
         return new ImportResult<ImportEntityBase>
         {
             FailedRows = failed,
         };
-    }
-
-    private static void SetErrors(IEnumerable<ImportEntityBase> models, string error)
-    {
-        foreach (var entity in models)
-        {
-            entity.Exception = error;
-        }
     }
 }

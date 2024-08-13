@@ -1,5 +1,6 @@
 ﻿using Bogus;
 
+using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
@@ -19,12 +20,15 @@ public sealed class ImortRemindersStrategyTests
 {
     private readonly IUserRepository _userRepository;
 
+    private readonly IImportValidator<ImportReminderDto, ImportRemindersValidationOptions> _validator;
+
     private readonly ImportRemindersStrategy _sut;
 
     public ImortRemindersStrategyTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _sut = new ImportRemindersStrategy(_userRepository, new ExcelManager());
+        _validator = Substitute.For<IImportValidator<ImportReminderDto, ImportRemindersValidationOptions>>();
+        _sut = new ImportRemindersStrategy(_userRepository, new ExcelManager(), _validator);
     }
 
     [Fact]
