@@ -1,7 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
@@ -58,37 +57,16 @@ public sealed class User : AggregateRoot
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static User Create(Guid id, string name, string surname, string userName, long chatId)
+    internal static User Create(Guid id, string name, string surname, string userName, long chatId, bool newRegistered)
     {
         var user = new User(id, name, surname, userName, chatId);
 
-        user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
+        if (newRegistered)
+        {
+            user.AddEvent(new NewUserJoinedDomainEvent(id, userName, name, surname));
+        }
 
         return user;
-    }
-
-    internal static User Import(ImportUserDto model)
-    {
-        return new User(model.Id, model.Name, model.Surname, model.UserName, model.ChatId)
-        {
-            NotificationsEnabled = model.NotificationsEnabled,
-            Gmt = TimeSpan.Parse(model.Gmt),
-            Culture = model.Culture
-        };
-    }
-
-    internal void ImportTodoItems(IEnumerable<ImportTodoItemDto> models)
-    {
-        var todoItems = models.Select(m => TodoItem.Import(m.Id, m.UserId, m.Text, m.CreatedAt, m.IsFinished, m.FinishedAt));
-
-        _todoItems.AddRange(todoItems);
-    }
-
-    internal void ImportReminders(IEnumerable<ImportReminderDto> models)
-    {
-        var reminders = models.Select(m => Reminder.Import(m.Id, m.UserId, m.Text, TimeOnly.Parse(m.NotifyAt)));
-
-        _reminders.AddRange(reminders);
     }
 
     /// <summary>Adds the reminder.</summary>
@@ -97,7 +75,12 @@ public sealed class User : AggregateRoot
     /// <returns>Created Reminder</returns>
     public Reminder AddReminder(string text, TimeOnly notifyAt)
     {
-        var reminder = new Reminder(Guid.NewGuid(), Id, text, notifyAt);
+        return AddReminder(Guid.NewGuid(), text, notifyAt);
+    }
+
+    public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
+    {
+        var reminder = new Reminder(id, Id, text, notifyAt);
         _reminders.Add(reminder);
 
         return reminder;
@@ -142,17 +125,32 @@ public sealed class User : AggregateRoot
         Gmt = offset;
     }
 
+    public void SetGmt(TimeSpan gmt)
+    {
+        Gmt = gmt;
+    }
+
     /// <summary>Adds the todo item.</summary>
     /// <param name="text">The text.</param>
     /// <returns>Created TodoItem item</returns>
     public Result<TodoItem> AddTodoItem(string? text)
+    {
+        return AddTodoItem(Guid.NewGuid(), text, DateTime.UtcNow.Add(Gmt), false, default);
+    }
+
+    public Result<TodoItem> AddTodoItem(Guid id, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
     {
         if (_todoItems.Count == TodoItemConstants.Limit)
         {
             return UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         }
 
-        var result = TodoItem.Create(Guid.NewGuid(), Id, text, DateTime.UtcNow.Add(Gmt));
+        if (_todoItems.Exists(item => item.Id == id))
+        {
+            return UserDomainErrors.DuplicateTodoItem(id);
+        }
+
+        var result = TodoItem.Create(id, Id, text, createdAt, isFinished, finishedAt);
 
         if (!result.IsSuccess)
         {
@@ -221,6 +219,6 @@ public sealed class User : AggregateRoot
 
     public override string ToString()
     {
-        return $"{nameof(Name)}: {Name}, {nameof(UserName)}: {UserName} {base.ToString()}";
+        return $"{Name}, {UserName} {base.ToString()}";
     }
 }

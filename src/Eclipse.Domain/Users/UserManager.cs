@@ -1,6 +1,7 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Domain.Shared.Repositories;
+
+using System.Linq.Expressions;
 
 namespace Eclipse.Domain.Users;
 
@@ -23,59 +24,48 @@ public sealed class UserManager
     /// or
     /// username
     /// already exists</exception>
-    public async Task<Result<User>> CreateAsync(string name, string surname, string userName, long chatId, CancellationToken cancellationToken = default)
+    public Task<Result<User>> CreateAsync(string name, string surname, string userName, long chatId, CancellationToken cancellationToken = default)
     {
+        var request = new CreateUserRequest
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Surname = surname,
+            UserName = userName,
+            ChatId = chatId,
+            NewRegistered = true,
+        };
+
+        return CreateAsync(request, cancellationToken);
+    }
+
+    public async Task<Result<User>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
+    {
+        if (request.Name.IsNullOrEmpty())
+        {
+            return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Name));
+        }
+
+        if (request.Id.IsEmpty())
+        {
+            return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Id));
+        }
+
         var alreadyExist = await _userRepository.ContainsAsync(
-            expression: u => u.ChatId == chatId || (!userName.IsNullOrEmpty() && u.UserName == userName),
+            expression: u => u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty() && u.UserName == request.UserName),
             cancellationToken: cancellationToken);
 
         if (alreadyExist)
         {
-            return UserDomainErrors.DuplicateData(nameof(chatId), chatId);
+            return UserDomainErrors.DuplicateData(nameof(request.ChatId), request.ChatId);
         }
 
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId);
+        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, request.NewRegistered);
+        user.NotificationsEnabled = request.NotificationsEnabled;
+
+        user.SetGmt(request.Gmt);
 
         return await _userRepository.CreateAsync(user, cancellationToken);
-    }
-
-    public Task ImportAsync(ImportUserDto model, CancellationToken cancellationToken = default)
-    {
-        var user = User.Import(model);
-
-        return _userRepository.CreateAsync(user, cancellationToken);
-    }
-
-    public async Task<Result> ImportTodoItemsAsync(Guid userId, IEnumerable<ImportTodoItemDto> todoItems, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.FindAsync(userId, cancellationToken);
-
-        if (user is null)
-        {
-            return Error.NotFound("Users.Import.TodoItems", "User not found");
-        }
-
-        user.ImportTodoItems(todoItems);
-
-        await _userRepository.UpdateAsync(user, cancellationToken);
-
-        return Result.Success();
-    }
-
-    public async Task<Result> ImportRemindersAsync(Guid userId, IEnumerable<ImportReminderDto> reminders, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.FindAsync(userId, cancellationToken);
-
-        if (user is null)
-        {
-            return Error.NotFound("Users.Import.Reminders", "User not found");
-        }
-
-        user.ImportReminders(reminders);
-
-        await _userRepository.UpdateAsync(user, cancellationToken);
-
-        return Result.Success();
     }
 
     public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
@@ -91,6 +81,11 @@ public sealed class UserManager
     public Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _userRepository.FindAsync(id, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<User>> GetByExpressionAsync(Expression<Func<User, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        return _userRepository.GetByExpressionAsync(expression, cancellationToken);
     }
 
     public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)

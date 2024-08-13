@@ -1,12 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Exporting;
-using Eclipse.Common.Excel;
-using Eclipse.Domain.Users;
-using Eclipse.Infrastructure.Excel;
-using Eclipse.Tests;
-using Eclipse.Tests.Generators;
-
-using FluentAssertions;
 
 using NSubstitute;
 
@@ -16,99 +9,61 @@ namespace Eclipse.Application.Tests.Exporting;
 
 public sealed class ImportServiceTests
 {
-    private readonly IUserRepository _userRepository;
+    private readonly ImportService _sut;
 
-    private readonly IExcelManager _excelManager = new ExcelManager();
+    private readonly IImportStrategy _usersStrategy;
 
-    private readonly Lazy<IImportService> _sut;
+    private readonly IImportStrategy _todoItemsStrategy;
 
-    private IImportService Sut => _sut.Value;
+    private readonly IImportStrategy _remindersStrategy;
 
     public ImportServiceTests()
     {
-        _userRepository = Substitute.For<IUserRepository>();
+        _usersStrategy = Substitute.For<IImportStrategy>();
+        _usersStrategy.Type.Returns(ImportType.Users);
 
-        _sut = new(() => new ImportService(
-            new UserManager(_userRepository),
-            _excelManager)
-        );
+        _todoItemsStrategy = Substitute.For<IImportStrategy>();
+        _todoItemsStrategy.Type.Returns(ImportType.TodoItems);
+
+        _remindersStrategy = Substitute.For<IImportStrategy>();
+        _remindersStrategy.Type.Returns(ImportType.Reminders);
+
+        _sut = new ImportService([_usersStrategy, _todoItemsStrategy, _remindersStrategy]);
     }
 
     [Fact]
-    public async Task AddUsers_WhenFileIsValid_ThenProcessedSuccessfully()
+    public async Task AddUsersAsync_WhenCalled_ThenDelegatedToProperStrategy()
     {
-        using var stream = TestsAssembly.GetValidUsersExcelFile();
+        _usersStrategy.ImportAsync(default!).ReturnsForAnyArgs(new ImportResult<ImportEntityBase>());
 
-        await Sut.AddUsersAsync(stream);
+        await _sut.AddUsersAsync(default!);
 
-        await _userRepository.ReceivedWithAnyArgs().CreateAsync(default!);
+        await _usersStrategy.ReceivedWithAnyArgs().ImportAsync(default!);
+        await _todoItemsStrategy.DidNotReceiveWithAnyArgs().ImportAsync(default!);
+        await _remindersStrategy.DidNotReceiveWithAnyArgs().ImportAsync(default!);
     }
 
     [Fact]
-    public async Task AddUsers_WhenRecordsInvalid_ThenReportSend()
+    public async Task AddTodoItemsAsync_WhenCalled_ThenDelegatedToProperStrategy()
     {
-        using var stream = TestsAssembly.GetInvalidUsersExcelFile();
+        _usersStrategy.ImportAsync(default!).ReturnsForAnyArgs(new ImportResult<ImportEntityBase>());
 
-        await Sut.AddUsersAsync(stream);
+        await _sut.AddTodoItemsAsync(default!);
 
-        await _userRepository.DidNotReceiveWithAnyArgs().CreateAsync(default!);
+        await _todoItemsStrategy.ReceivedWithAnyArgs().ImportAsync(default!);
+        await _usersStrategy.DidNotReceiveWithAnyArgs().ImportAsync(default!);
+        await _remindersStrategy.DidNotReceiveWithAnyArgs().ImportAsync(default!);
     }
 
     [Fact]
-    public async Task AddTodoItems_WhenFileIsValid_ThenProcessedSeccessfully()
+    public async Task AddRemindersAsync_WhenCalled_ThenDelegatedToProperStrategy()
     {
-        using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
+        _usersStrategy.ImportAsync(default!).ReturnsForAnyArgs(new ImportResult<ImportEntityBase>());
 
-        var user = UserGenerator.Generate(1).First();
+        await _sut.AddRemindersAsync(default!);
 
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(user);
-
-        await Sut.AddTodoItemsAsync(stream);
-
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
-        await _userRepository.Received().UpdateAsync(user);
-        user.TodoItems.IsNullOrEmpty().Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task AddTodoItems_WhenUserNotExist_ThenReportSend()
-    {
-        using var stream = TestsAssembly.GetValidTodoItemsExcelFile();
-
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(Task.FromResult<User?>(null));
-
-        await Sut.AddTodoItemsAsync(stream);
-
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
-        await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
-    }
-
-    [Fact]
-    public async Task AddReminders_WhenFileIsValid_ThenProcessedSeccessfully()
-    {
-        using var ms = TestsAssembly.GetValidRemindersExcelFile();
-
-        var user = UserGenerator.Generate(1).First();
-
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(user);
-
-        await Sut.AddRemindersAsync(ms);
-
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
-        await _userRepository.Received().UpdateAsync(user);
-        user.Reminders.IsNullOrEmpty().Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task AddReminders_WhenUserNotExist_ThenReportSend()
-    {
-        using var ms = TestsAssembly.GetValidRemindersExcelFile();
-
-        _userRepository.FindAsync(default).ReturnsForAnyArgs(Task.FromResult<User?>(null));
-
-        await Sut.AddRemindersAsync(ms);
-
-        await _userRepository.ReceivedWithAnyArgs().FindAsync(default);
-        await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
+        await _remindersStrategy.ReceivedWithAnyArgs().ImportAsync(default!);
+        await _usersStrategy.DidNotReceiveWithAnyArgs().ImportAsync(default!);
+        await _todoItemsStrategy.DidNotReceiveWithAnyArgs().ImportAsync(default!);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
+using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Telegram;
-using Eclipse.Domain.Shared.Importing;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.WebAPI.Background;
 
@@ -41,7 +41,7 @@ public sealed class ImportRemindersBackgoundJobTests
     [Fact]
     public async Task WhenImportedSuccessfully_ThenSuccessNotificationSend()
     {
-        var result = new ImportResult<ImportReminderDto>();
+        var result = new ImportResult<ImportEntityBase>();
 
         _importService.AddRemindersAsync(default!)
             .ReturnsForAnyArgs(
@@ -61,7 +61,7 @@ public sealed class ImportRemindersBackgoundJobTests
     [Fact]
     public async Task WhenFailedResultReturned_ThenErrorNotificationSend()
     {
-        var result = new ImportResult<ImportReminderDto>()
+        var result = new ImportResult<ImportEntityBase>()
         {
             FailedRows = [
                 new ImportReminderDto() { Exception = "test" },

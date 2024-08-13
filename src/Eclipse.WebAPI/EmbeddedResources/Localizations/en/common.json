@@ -8,6 +8,7 @@
     "Enable": "Enable",
     "Disable": "Disable",
     "Okay": "Okay",
-    "{0}IsRequired": "{0} is required."
+    "{0}IsRequired": "{0} is required.",
+    "{0}NotFound": "{0} not found."
   }
 }
