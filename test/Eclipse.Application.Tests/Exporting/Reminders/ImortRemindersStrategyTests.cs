@@ -4,6 +4,7 @@ using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Common.Excel;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
@@ -41,11 +42,7 @@ public sealed class ImortRemindersStrategyTests
             GetRow(),
         ];
 
-        var faker = new Faker();
-
-        var users = rows.Select(r => r.UserId)
-            .Select(id => User.Create(id, faker.Person.FirstName, faker.Person.LastName, faker.Person.UserName, faker.Random.Long(min: 0), false))
-            .ToList();
+        var users = UserGenerator.GetWithIds(rows.Select(r => r.UserId)).ToList();
 
         _excelManager.Read<ImportReminderDto>(ms).Returns(rows);
         _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
@@ -54,6 +51,9 @@ public sealed class ImortRemindersStrategyTests
         var result = await _sut.ImportAsync(ms);
 
         result.IsSuccess.Should().BeTrue();
+        result.FailedRows.Should().BeEmpty();
+
+        _validator.ReceivedWithAnyArgs().Set(new());
         
         foreach (var user in users)
         {

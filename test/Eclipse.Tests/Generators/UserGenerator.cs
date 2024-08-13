@@ -49,4 +49,18 @@ public static class UserGenerator
 
         return user;
     }
+
+    public static IEnumerable<User> GetWithIds(IEnumerable<Guid> userIds)
+    {
+        var faker = new Faker();
+
+        return userIds.Select(id =>
+            User.Create(id,
+                faker.Person.FirstName,
+                faker.Person.LastName,
+                faker.Person.UserName,
+                faker.Random.Long(min: 1),
+                false)
+        );
+    }
 }
