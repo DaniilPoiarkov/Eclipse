@@ -38,8 +38,8 @@ public sealed class ImortRemindersStrategyTests
         using var ms = new MemoryStream();
 
         IEnumerable<ImportReminderDto> rows = [
-            GetRow(),
-            GetRow(),
+            ImportEntityRowGenerator.Reminder(),
+            ImportEntityRowGenerator.Reminder(),
         ];
 
         var users = UserGenerator.GetWithIds(rows.Select(r => r.UserId)).ToList();
@@ -67,7 +67,7 @@ public sealed class ImortRemindersStrategyTests
     {
         using var ms = new MemoryStream();
 
-        var row = GetRow();
+        var row = ImportEntityRowGenerator.Reminder();
 
         _excelManager.Read<ImportReminderDto>(ms).Returns([row]);
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
@@ -79,18 +79,5 @@ public sealed class ImortRemindersStrategyTests
         row.Exception.Should().NotBeEmpty();
 
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
-    }
-
-    private static ImportReminderDto GetRow()
-    {
-        var faker = new Faker();
-
-        return new ImportReminderDto
-        {
-            Id = Guid.NewGuid(),
-            NotifyAt = "12:00:00",
-            Text = faker.Lorem.Word(),
-            UserId = Guid.NewGuid()
-        };
     }
 }

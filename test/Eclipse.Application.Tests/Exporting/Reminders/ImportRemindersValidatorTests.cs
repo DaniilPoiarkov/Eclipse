@@ -1,6 +1,4 @@
-﻿using Bogus;
-
-using Eclipse.Application.Exporting.Reminders;
+﻿using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 using Eclipse.Tests.Utils;
@@ -19,16 +17,9 @@ public sealed class ImportRemindersValidatorTests
 
     private readonly ImportRemindersValidator _sut;
 
-    private static readonly Dictionary<string, string> _localizations = new()
-    {
-        ["{0}NotFound"] = "{0} not found",
-        ["{0}AlreadyExists{1}{2}"] = "{0} with {1} \'{2}\' already exists",
-        ["InvalidField{0}{1}"] = "Invalid field {0} \'{1}\'"
-    };
-
     public ImportRemindersValidatorTests()
     {
-        _localizer = new EmptyStringLocalizer<ImportRemindersValidator>(_localizations);
+        _localizer = new EmptyStringLocalizer<ImportRemindersValidator>();
         _sut = new(_localizer);
     }
 
@@ -36,8 +27,8 @@ public sealed class ImportRemindersValidatorTests
     public void ValidateAndSetErrors_WhenValidRecordsPassed_ThenNoErrorSet()
     {
         IEnumerable<ImportReminderDto> rows = [
-            GetRow(),
-            GetRow()
+            ImportEntityRowGenerator.Reminder(),
+            ImportEntityRowGenerator.Reminder()
         ];
 
         var users = UserGenerator.GetWithIds(rows.Select(r => r.UserId)).ToList();
@@ -61,8 +52,8 @@ public sealed class ImportRemindersValidatorTests
     public void ValidateAndSetErrors_WhenOptionsNotPassed_ThenNoExceptionsThrowed()
     {
         IEnumerable<ImportReminderDto> rows = [
-            GetRow(),
-            GetRow()
+            ImportEntityRowGenerator.Reminder(),
+            ImportEntityRowGenerator.Reminder()
         ];
 
         var action = () => _sut.ValidateAndSetErrors(rows);
@@ -75,7 +66,7 @@ public sealed class ImportRemindersValidatorTests
     {
         var expectedError = _localizer["{0}NotFound", nameof(User)];
 
-        var result = _sut.ValidateAndSetErrors([GetRow()]);
+        var result = _sut.ValidateAndSetErrors([ImportEntityRowGenerator.Reminder()]);
 
         foreach (var row in result)
         {
@@ -86,7 +77,7 @@ public sealed class ImportRemindersValidatorTests
     [Fact]
     public void ValidateAndSetErrors_WhenMultipleErrorsPresent_ThenCombinedAndErrorSet()
     {
-        var invalidRow = GetRow("qwerty");
+        var invalidRow = ImportEntityRowGenerator.Reminder("qwerty");
 
         string[] expectedErrors = [
             _localizer["InvalidField{0}{1}", nameof(invalidRow.NotifyAt), invalidRow.NotifyAt],
@@ -99,18 +90,5 @@ public sealed class ImportRemindersValidatorTests
         {
             row.Exception?.Split(", ").Should().BeEquivalentTo(expectedErrors);
         }
-    }
-
-    private static ImportReminderDto GetRow(string notifyAt = "12:00:00")
-    {
-        var faker = new Faker();
-
-        return new ImportReminderDto
-        {
-            Id = Guid.NewGuid(),
-            UserId = Guid.NewGuid(),
-            NotifyAt = notifyAt,
-            Text = faker.Lorem.Word()
-        };
     }
 }

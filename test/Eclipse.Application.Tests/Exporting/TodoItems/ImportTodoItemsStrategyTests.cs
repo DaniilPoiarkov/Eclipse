@@ -1,6 +1,4 @@
-﻿using Bogus;
-
-using Eclipse.Application.Exporting;
+﻿using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Common.Excel;
 using Eclipse.Domain.Users;
@@ -38,8 +36,8 @@ public sealed class ImportTodoItemsStrategyTests
         using var stream = new MemoryStream();
 
         IEnumerable<ImportTodoItemDto> rows = [
-            GetRow(),
-            GetRow(),
+            ImportEntityRowGenerator.TodoItem(),
+            ImportEntityRowGenerator.TodoItem(),
         ];
 
         var users = UserGenerator.GetWithIds(rows.Select(r => r.UserId)).ToList();
@@ -67,7 +65,7 @@ public sealed class ImportTodoItemsStrategyTests
     {
         using var stream = new MemoryStream();
 
-        var row = GetRow();
+        var row = ImportEntityRowGenerator.TodoItem();
 
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
         _excelManager.Read<ImportTodoItemDto>(stream).Returns([row]);
@@ -77,19 +75,5 @@ public sealed class ImportTodoItemsStrategyTests
 
         await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
-    }
-
-    private static ImportTodoItemDto GetRow()
-    {
-        var faker = new Faker();
-
-        return new ImportTodoItemDto
-        {
-            Id = Guid.NewGuid(),
-            UserId = Guid.NewGuid(),
-
-            Text = faker.Lorem.Word(),
-            CreatedAt = DateTime.UtcNow,
-        };
     }
 }

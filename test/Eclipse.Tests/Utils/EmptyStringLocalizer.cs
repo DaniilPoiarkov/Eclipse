@@ -11,6 +11,9 @@ public sealed class EmptyStringLocalizer<T> : IStringLocalizer<T>
         _values = values;
     }
 
+    public EmptyStringLocalizer()
+        : this(DefaultLocalizations.Default) { }
+
     public LocalizedString this[string name] => new(name, _values[name]);
 
     public LocalizedString this[string name, params object[] arguments] => new(name, string.Join(this[name], arguments));
