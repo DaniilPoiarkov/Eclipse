@@ -125,4 +125,24 @@ public static class StringExtensions
     {
         return string.Join(separator, strings);
     }
+
+    public static string EnsureEndsWith(this string str, string expected)
+    {
+        if (str.EndsWith(expected))
+        {
+            return str;
+        }
+
+        return $"{str}{expected}";
+    }
+
+    public static string EnsureEndsWith(this string str, char expected)
+    {
+        if (str.EndsWith(expected))
+        {
+            return str;
+        }
+
+        return $"{str}{expected}";
+    }
 }
