@@ -53,21 +53,21 @@ internal sealed class ImportUsersValidator : IImportValidator<ImportUserDto, Imp
 
         if (user is not null)
         {
-            yield return _localizer["UserAlreadyExists{0}{1}", nameof(row.Id), row.Id];
+            yield return _localizer["{0}AlreadyExists{1}{2}", nameof(User), nameof(row.Id), row.Id];
         }
 
         user = users.FirstOrDefault(u => u.UserName == row.UserName);
 
         if (!row.UserName.IsNullOrEmpty() && user is not null)
         {
-            yield return _localizer["UserAlreadyExists{0}{1}", nameof(row.UserName), row.UserName];
+            yield return _localizer["{0}AlreadyExists{1}{2}", nameof(User), nameof(row.UserName), row.UserName];
         }
 
         user = users.FirstOrDefault(u => u.ChatId == row.ChatId);
 
         if (user is not null)
         {
-            yield return _localizer["UserAlreadyExists{0}{1}", nameof(row.ChatId), row.ChatId];
+            yield return _localizer["{0}AlreadyExists{1}{2}", nameof(User), nameof(row.ChatId), row.ChatId];
         }
     }
 

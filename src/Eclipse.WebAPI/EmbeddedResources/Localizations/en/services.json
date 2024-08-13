@@ -28,7 +28,7 @@
 
     "User:AddTodoItem:{0}DuplicateTodoItem": "Todo item with id {0} already exists",
 
-    "UserAlreadyExists{0}{1}": "User with {0} '{1}' already exists.",
+    "{0}AlreadyExists{1}{2}": "{0} with {1} '{2}' already exists.",
     "InvalidField{0}{1}": "Invalid field {0} {1}"
   }
 }

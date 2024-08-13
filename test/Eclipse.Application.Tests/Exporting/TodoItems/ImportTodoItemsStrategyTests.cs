@@ -1,5 +1,6 @@
 ﻿using Bogus;
 
+using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
@@ -19,12 +20,15 @@ public sealed class ImportTodoItemsStrategyTests
 {
     private readonly IUserRepository _userRepository;
 
+    private readonly IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> _validator;
+
     private readonly ImportTodoItemsStrategy _sut;
 
     public ImportTodoItemsStrategyTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _sut = new ImportTodoItemsStrategy(_userRepository, new ExcelManager());
+        _validator = Substitute.For<IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions>>();
+        _sut = new ImportTodoItemsStrategy(_userRepository, new ExcelManager(), _validator);
     }
 
     [Fact]

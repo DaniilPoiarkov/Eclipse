@@ -12,69 +12,68 @@ internal sealed class ImportTodoItemsStrategy : IImportStrategy
 
     private readonly IUserRepository _userRepository;
 
-    public ImportTodoItemsStrategy(IUserRepository userRepository, IExcelManager excelManager)
+    private readonly IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> _validator;
+
+    public ImportTodoItemsStrategy(IUserRepository userRepository, IExcelManager excelManager, IImportValidator<ImportTodoItemDto, ImportTodoItemsValidationOptions> validator)
     {
         _excelManager = excelManager;
         _userRepository = userRepository;
+        _validator = validator;
     }
 
     public async Task<ImportResult<ImportEntityBase>> ImportAsync(MemoryStream stream, CancellationToken cancellationToken = default)
     {
         var todoItems = _excelManager.Read<ImportTodoItemDto>(stream)
-            .Where(u => u.UserId != Guid.Empty)
-            .GroupBy(item => item.UserId);
+            .Where(u => u.UserId != Guid.Empty);
 
         var failed = new List<ImportEntityBase>();
 
-        var userIds = todoItems.Select(i => i.Key)
+        var userIds = todoItems.Select(i => i.UserId)
             .Distinct();
 
         var users = await _userRepository.GetByExpressionAsync(u => userIds.Contains(u.Id), cancellationToken);
 
-        foreach (var grouping in todoItems)
-        {
-            var user = users.FirstOrDefault(u => u.Id == grouping.Key);
+        var map = users.ToDictionary(u => u.Id);
 
-            if (user is null)
+        var options = new ImportTodoItemsValidationOptions
+        {
+            Users = [.. users]
+        };
+
+        _validator.Set(options);
+
+        foreach (var row in _validator.ValidateAndSetErrors(todoItems))
+        {
+            if (!row.CanBeImported())
             {
-                SetErrors(grouping, "User not found"); // TODO: localize
-                failed.AddRange(grouping);
+                failed.Add(row);
                 continue;
             }
 
-            foreach (var record in grouping)
+            if (!map.TryGetValue(row.UserId, out var user))
             {
-                var result = user.AddTodoItem(record.Id, record.Text, record.CreatedAt, record.IsFinished, record.FinishedAt);
-
-                if (!result.IsSuccess)
-                {
-                    record.Exception = result.Error.Description;
-                    failed.Add(record);
-                }
+                row.Exception = "User not found"; // TODO: localize
+                failed.Add(row);
+                continue;
             }
 
-            try
+            var result = user.AddTodoItem(row.Id, row.Text, row.CreatedAt, row.IsFinished, row.FinishedAt);
+
+            if (!result.IsSuccess)
             {
-                await _userRepository.UpdateAsync(user, cancellationToken);
+                row.Exception = result.Error.Description;
+                failed.Add(row);
             }
-            catch (Exception ex)
-            {
-                SetErrors(grouping, ex.Message);
-                failed.AddRange(grouping);
-            }
+        }
+
+        foreach (var user in map.Values)
+        {
+            await _userRepository.UpdateAsync(user, cancellationToken);
         }
 
         return new ImportResult<ImportEntityBase>
         {
             FailedRows = failed,
         };
-    }
-
-    private static void SetErrors(IEnumerable<ImportEntityBase> models, string error)
-    {
-        foreach (var entity in models)
-        {
-            entity.Exception = error;
-        }
     }
 }
