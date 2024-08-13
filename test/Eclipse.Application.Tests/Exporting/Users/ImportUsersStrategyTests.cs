@@ -46,7 +46,7 @@ public sealed class ImportUsersStrategyTests
         _excelManager.Read<ImportUserDto>(stream).Returns(rows);
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
         _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
-        
+
         foreach (var user in users)
         {
             _userRepository.CreateAsync(user).ReturnsForAnyArgs(user);

@@ -39,7 +39,7 @@ internal sealed class ImportUsersStrategy : IImportStrategy
         );
 
         var failed = new List<ImportEntityBase>();
-        
+
         var options = new ImportUsersValidationOptions
         {
             Users = [.. users]

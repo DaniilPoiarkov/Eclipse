@@ -1,6 +1,4 @@
-﻿using Bogus;
-
-using Eclipse.Application.Exporting;
+﻿using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Common.Excel;
 using Eclipse.Domain.Users;
@@ -54,7 +52,7 @@ public sealed class ImortRemindersStrategyTests
         result.FailedRows.Should().BeEmpty();
 
         _validator.ReceivedWithAnyArgs().Set(new());
-        
+
         foreach (var user in users)
         {
             user.Reminders.Should().HaveCount(1);

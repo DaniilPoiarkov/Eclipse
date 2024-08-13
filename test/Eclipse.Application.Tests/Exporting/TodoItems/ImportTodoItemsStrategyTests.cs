@@ -45,7 +45,7 @@ public sealed class ImportTodoItemsStrategyTests
         _excelManager.Read<ImportTodoItemDto>(stream).Returns(rows);
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs(users);
         _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
-        
+
         var result = await _sut.ImportAsync(stream);
 
         result.IsSuccess.Should().BeTrue();
