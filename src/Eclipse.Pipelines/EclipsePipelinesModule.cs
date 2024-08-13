@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Url;
 using Eclipse.Common.Background;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
@@ -29,13 +30,13 @@ public static class EclipsePipelinesModule
 {
     public static IServiceCollection AddPipelinesModule(this IServiceCollection services)
     {
+        services.RemoveAll<PipelineBase>();
+
         services
-            .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>())
-            .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
-                .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
-                .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
-                .AddTransient<IMessageStore, MessageStore>()
-                .AddTransient<IPipelineStore, PipelineStore>();
+            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+            .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
+            .AddTransient<IMessageStore, MessageStore>()
+            .AddTransient<IPipelineStore, PipelineStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())
