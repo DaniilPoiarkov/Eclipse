@@ -1,4 +1,6 @@
 ﻿using Eclipse.Application.Exporting.TodoItems;
+using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 using Eclipse.Tests.Utils;
 
@@ -44,6 +46,30 @@ public sealed class ImportTodoItemsValidatorTests
         foreach (var row in result)
         {
             row.Exception.Should().BeEmpty();
+        }
+    }
+
+    [Fact]
+    public void ValidateAndSetErrors_WhenMultipleErrorsPresent_ThenCombinedErrorSet()
+    {
+        var invalidRow = new ImportTodoItemDto
+        {
+            Id = Guid.NewGuid(),
+            UserId = Guid.NewGuid(),
+            CreatedAt = DateTime.UtcNow,
+            Text = new string('x', TodoItemConstants.MaxLength + 1)
+        };
+
+        string[] expectedErrors = [
+            _localizer["{0}NotFound", nameof(User)],
+            _localizer["TodoItem:MaxLength", TodoItemConstants.MaxLength]
+        ];
+
+        var result = _sut.ValidateAndSetErrors([invalidRow]);
+
+        foreach (var row in result)
+        {
+            row.Exception?.Split(", ").Should().BeEquivalentTo(expectedErrors);
         }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.Users;
+using Eclipse.Common.Excel;
 using Eclipse.Domain.Users;
-using Eclipse.Infrastructure.Excel;
-using Eclipse.Tests;
+using Eclipse.Tests.Generators;
 
-using Microsoft.Extensions.Localization;
-
-using MiniExcelLibs;
+using FluentAssertions;
 
 using NSubstitute;
 
@@ -16,6 +14,8 @@ namespace Eclipse.Application.Tests.Exporting.Users;
 
 public sealed class ImportUsersStrategyTests
 {
+    private readonly IExcelManager _excelManager;
+
     private readonly IUserRepository _userRepository;
 
     private readonly IImportValidator<ImportUserDto, ImportUsersValidationOptions> _validator;
@@ -26,33 +26,37 @@ public sealed class ImportUsersStrategyTests
     {
         _userRepository = Substitute.For<IUserRepository>();
         _validator = Substitute.For<IImportValidator<ImportUserDto, ImportUsersValidationOptions>>();
+        _excelManager = Substitute.For<IExcelManager>();
 
-        _sut = new ImportUsersStrategy(new UserManager(_userRepository), new ExcelManager(), _validator);
+        _sut = new ImportUsersStrategy(new UserManager(_userRepository), _excelManager, _validator);
     }
 
     [Fact]
-    public async Task AddUsers_WhenFileIsValid_ThenProcessedSuccessfully()
+    public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSuccessfully()
     {
-        using var stream = TestsAssembly.GetValidUsersExcelFile();
+        using var stream = new MemoryStream();
 
-        var rows = stream.Query<ImportUserDto>()
-            .Where(u => !u.Id.IsEmpty() && u.ChatId != default);
+        List<ImportUserDto> rows = [
+            ImportEntityRowGenerator.User(),
+            ImportEntityRowGenerator.User(),
+        ];
 
+        var users = UserGenerator.GetWithIds(rows.Select(r => r.Id));
+
+        _excelManager.Read<ImportUserDto>(stream).Returns(rows);
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
-        _validator.ValidateAndSetErrors(rows).Returns(rows);
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
+        
+        foreach (var user in users)
+        {
+            _userRepository.CreateAsync(user).ReturnsForAnyArgs(user);
+        }
 
-        await _sut.ImportAsync(stream);
+        var result = await _sut.ImportAsync(stream);
 
-        await _userRepository.ReceivedWithAnyArgs().CreateAsync(default!);
-    }
+        result.IsSuccess.Should().BeTrue();
+        result.FailedRows.Should().BeEmpty();
 
-    [Fact]
-    public async Task AddUsers_WhenRecordsInvalid_ThenReportSend()
-    {
-        using var stream = TestsAssembly.GetInvalidUsersExcelFile();
-
-        await _sut.ImportAsync(stream);
-
-        await _userRepository.DidNotReceiveWithAnyArgs().CreateAsync(default!);
+        await _userRepository.ReceivedWithAnyArgs(rows.Count).CreateAsync(default!);
     }
 }

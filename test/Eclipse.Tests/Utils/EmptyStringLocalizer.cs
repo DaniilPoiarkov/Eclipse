@@ -12,7 +12,7 @@ public sealed class EmptyStringLocalizer<T> : IStringLocalizer<T>
     }
 
     public EmptyStringLocalizer()
-        : this(DefaultLocalizations.Default) { }
+        : this(Localizations.Default) { }
 
     public LocalizedString this[string name] => new(name, _values[name]);
 

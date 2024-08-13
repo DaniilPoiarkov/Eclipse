@@ -6,6 +6,7 @@ internal class Localizations
     {
         ["{0}NotFound"] = "{0} not found",
         ["{0}AlreadyExists{1}{2}"] = "{0} with {1} \'{2}\' already exists",
-        ["InvalidField{0}{1}"] = "Invalid field {0} \'{1}\'"
+        ["InvalidField{0}{1}"] = "Invalid field {0} \'{1}\'",
+        ["TodoItem:MaxLength"] = "Max length exceeded {0}",
     };
 }
