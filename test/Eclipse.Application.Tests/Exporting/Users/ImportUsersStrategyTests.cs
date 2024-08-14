@@ -74,7 +74,7 @@ public sealed class ImportUsersStrategyTests
 
         var error = "error";
 
-        _validator.ValidateAndSetErrors(rows).Returns(rows.Select(r =>
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows.Select(r =>
         {
             r.Exception = error;
             return r;
@@ -99,6 +99,7 @@ public sealed class ImportUsersStrategyTests
         var error = "create user failed";
 
         _excelManager.Read<ImportUserDto>(stream).Returns(rows);
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
         _userRepository
             .CreateAsync(Arg.Any<User>(), Arg.Any<CancellationToken>())
             .Throws(new Exception(error));
