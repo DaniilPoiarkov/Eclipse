@@ -5,6 +5,7 @@ using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
+using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -35,6 +36,15 @@ public sealed class LoginManagerTests
     {
         _userRepository = Substitute.For<IUserRepository>();
         _configuration = Substitute.For<IConfiguration>();
+
+        var jwtBearer = Substitute.For<IConfigurationSection>();
+
+        jwtBearer["Key"].Returns(new string('x', 50));
+        jwtBearer["Issuer"].Returns("issuer");
+        jwtBearer["Audience"].Returns("audience");
+
+        _configuration.GetSection("Authorization:JwtBearer").Returns(jwtBearer);
+
         _userClaimsPrincipalFactory = Substitute.For<IUserClaimsPrincipalFactory<User>>();
         _timeProvider = Substitute.For<ITimeProvider>();
         _sut = new LoginManager(new UserManager(_userRepository), _configuration, _userClaimsPrincipalFactory, _timeProvider);
@@ -43,8 +53,8 @@ public sealed class LoginManagerTests
     [Fact]
     public async Task LoginAsync_WhenUserAuthenticatesSuccessfully_ThenAccessTokenReturned()
     {
-        var user = UserGenerator.Generate(1).First();
-        user.SetSignInCode(DateTime.UtcNow);
+        var user = UserGenerator.Get();
+        user.SetSignInCode(DateTime.UtcNow.AddMinutes(1));
 
         _timeProvider.Now.Returns(DateTime.UtcNow);
 
@@ -53,13 +63,6 @@ public sealed class LoginManagerTests
                 Task.FromResult<IReadOnlyList<User>>([user])
             );
 
-        var jwtBearerConfiguration = Substitute.For<IConfigurationSection>();
-        _configuration.GetSection("Authorization:JwtBearer").Returns(jwtBearerConfiguration);
-
-        jwtBearerConfiguration["Key"].Returns(new string('x', 50));
-        jwtBearerConfiguration["Issuer"].Returns("issuer");
-        jwtBearerConfiguration["Audience"].Returns("audience");
-
         Claim[] claims = [
                 new(ClaimTypes.NameIdentifier, user.Id.ToString())
             ];
@@ -67,12 +70,10 @@ public sealed class LoginManagerTests
 
         _userClaimsPrincipalFactory.CreateAsync(user).Returns(principal);
 
-
         var result = await _sut.LoginAsync(new LoginRequest { SignInCode = user.SignInCode, UserName = user.UserName });
 
-
         result.IsSuccess.Should().BeTrue();
-        result.Value.AccessToken.Should().NotBeEmpty();
+        result.Value.AccessToken.Should().NotBeNullOrEmpty();
         result.Value.AccessToken!.Split('.').Length.Should().Be(3);
         result.Value.Expiration.Should().BePositive();
 
@@ -88,16 +89,18 @@ public sealed class LoginManagerTests
 
         var result = await _sut.LoginAsync(new LoginRequest { SignInCode = "123456", UserName = "JohnDoe" });
 
+        await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
+
         result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be(expectedError.Code);
-        result.Error.Description.Should().Be(expectedError.Description);
+        ErrorComparer.AreEqual(expectedError, result.Error);
     }
 
     [Fact]
     public async Task LoginAsync_WhenCodeInvalid_ThenErrorReturned()
     {
         var expectedError = Error.Validation("Account.Login", "Account:InvalidCode");
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
+        user.SetSignInCode(DateTime.UtcNow);
 
         _userRepository.GetByExpressionAsync(_ => true)
             .ReturnsForAnyArgs(
@@ -107,7 +110,6 @@ public sealed class LoginManagerTests
         var result = await _sut.LoginAsync(new LoginRequest { UserName = user.UserName, SignInCode = new string(user.SignInCode.Reverse().ToArray()) });
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be(expectedError.Code);
-        result.Error.Description.Should().Be(expectedError.Description);
+        ErrorComparer.AreEqual(expectedError, result.Error);
     }
 }
