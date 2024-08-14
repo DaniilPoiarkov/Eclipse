@@ -1,12 +1,15 @@
 ﻿using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Builders;
+using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.Localization;
+
+using NSubstitute;
 
 using Xunit;
 
@@ -20,7 +23,7 @@ public sealed class ImportTodoItemsValidatorTests
 
     public ImportTodoItemsValidatorTests()
     {
-        _localizer = new EmptyStringLocalizer<ImportTodoItemsValidator>();
+        _localizer = Substitute.For<IStringLocalizer<ImportTodoItemsValidator>>();
         _sut = new(_localizer);
     }
 
@@ -60,9 +63,21 @@ public sealed class ImportTodoItemsValidatorTests
             Text = new string('x', TodoItemConstants.MaxLength + 1)
         };
 
+        var notFoundError = $"{nameof(User)} not found";
+        var maxLengthError = $"Max length exceded: {TodoItemConstants.MaxLength}";
+
+        var localizer = LocalizerBuilder<ImportTodoItemsValidator>.Create()
+            .For("{0}NotFound", nameof(User))
+                .Return(notFoundError)
+            .For("TodoItem:MaxLength", TodoItemConstants.MaxLength)
+                .Return(maxLengthError)
+            .Build();
+
+        _localizer.DelegateCalls(localizer);
+
         string[] expectedErrors = [
-            _localizer["{0}NotFound", nameof(User)],
-            _localizer["TodoItem:MaxLength", TodoItemConstants.MaxLength]
+            notFoundError,
+            maxLengthError
         ];
 
         var result = _sut.ValidateAndSetErrors([invalidRow]);

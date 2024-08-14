@@ -11,6 +11,6 @@ public static class SubstituteExtensions
         where TInstance : TSubstitute
     {
         SubstitutionContext.Current.GetCallRouterFor(substitute)
-            .RegisterCustomCallHandlerFactory(state => new RedirectAllCallsHandler<TInstance>(instance));
+            .RegisterCustomCallHandlerFactory(state => new RedirectAllCallHandler<TInstance>(instance));
     }
 }

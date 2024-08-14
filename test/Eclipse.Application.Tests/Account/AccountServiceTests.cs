@@ -116,7 +116,7 @@ public sealed class AccountServiceTests
     {
         var utcNow = DateTime.UtcNow;
         var user = UserGenerator.Get();
-        
+
         user.SetSignInCode(utcNow.Add(UserConsts.SignInCodeExpiration));
 
         var code = user.SignInCode;

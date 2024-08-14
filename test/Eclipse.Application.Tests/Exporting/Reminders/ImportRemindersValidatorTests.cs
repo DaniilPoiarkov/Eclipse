@@ -1,11 +1,14 @@
 ﻿using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Builders;
+using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.Localization;
+
+using NSubstitute;
 
 using Xunit;
 
@@ -19,7 +22,7 @@ public sealed class ImportRemindersValidatorTests
 
     public ImportRemindersValidatorTests()
     {
-        _localizer = new EmptyStringLocalizer<ImportRemindersValidator>();
+        _localizer = Substitute.For<IStringLocalizer<ImportRemindersValidator>>();
         _sut = new(_localizer);
     }
 
@@ -64,13 +67,20 @@ public sealed class ImportRemindersValidatorTests
     [Fact]
     public void ValidateAndSetErrors_WhenUserNotFound_ThenErrorSet()
     {
-        var expectedError = _localizer["{0}NotFound", nameof(User)];
+        var error = $"{nameof(User)} not found";
+
+        var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
+            .For("{0}NotFound", nameof(User))
+            .Return(error)
+            .Build();
+
+        _localizer.DelegateCalls(localizer);
 
         var result = _sut.ValidateAndSetErrors([ImportEntityRowGenerator.Reminder()]);
 
         foreach (var row in result)
         {
-            row.Exception.Should().Be(expectedError);
+            row.Exception.Should().Be(error);
         }
     }
 
@@ -79,9 +89,21 @@ public sealed class ImportRemindersValidatorTests
     {
         var invalidRow = ImportEntityRowGenerator.Reminder("qwerty");
 
+        var notFoundError = $"{nameof(User)} not found";
+        var fieldError = $"Invalid field {nameof(invalidRow.NotifyAt)} \'{invalidRow.NotifyAt}\'";
+
+        var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
+            .For("{0}NotFound", nameof(User))
+                .Return(notFoundError)
+            .For("InvalidField{0}{1}", nameof(invalidRow.NotifyAt), invalidRow.NotifyAt)
+                .Return(fieldError)
+            .Build();
+
+        _localizer.DelegateCalls(localizer);
+
         string[] expectedErrors = [
-            _localizer["InvalidField{0}{1}", nameof(invalidRow.NotifyAt), invalidRow.NotifyAt],
-            _localizer["{0}NotFound", nameof(User)]
+            fieldError,
+            notFoundError
         ];
 
         var result = _sut.ValidateAndSetErrors([invalidRow]);
