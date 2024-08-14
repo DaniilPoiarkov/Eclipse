@@ -31,17 +31,17 @@ public sealed class ImportUsersValidatorTests
     {
         var row = ImportEntityRowGenerator.User(gmt: "qwerty");
 
+        var error = $"Invalid field {nameof(row.Gmt)}\'{row.Gmt}\'";
+
         var localizer = LocalizerBuilder<ImportUsersValidator>.Create()
             .For("InvalidField{0}{1}", nameof(row.Gmt), row.Gmt)
-                .Return($"Invalid field {nameof(row.Gmt)}\'{row.Gmt}\'")
+                .Return(error)
             .Build();
 
         _localizer.DelegateCalls(localizer);
 
-        foreach (var result in _sut.ValidateAndSetErrors([row]))
-        {
-            result.Exception.Should().Be(_localizer["InvalidField{0}{1}", nameof(row.Gmt), row.Gmt]);
-        }
+        var result = _sut.ValidateAndSetErrors([row]).Single();
+        result.Exception.Should().Be(error);
     }
 
     [Fact]
