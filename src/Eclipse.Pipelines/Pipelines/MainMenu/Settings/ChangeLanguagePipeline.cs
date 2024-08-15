@@ -84,12 +84,13 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
                 message?.MessageId);
         }
 
-        var updateDto = new UserUpdateDto
+        var updateDto = new UserPartialUpdateDto
         {
+            CultureChanged = true,
             Culture = context.Value,
         };
 
-        var updateResult = await _userService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _userService.UpdatePartialAsync(user.Id, updateDto, cancellationToken);
 
         if (!updateResult.IsSuccess)
         {
