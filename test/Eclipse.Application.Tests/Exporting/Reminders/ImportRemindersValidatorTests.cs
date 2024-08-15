@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Exporting.Reminders;
+using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Builders;
 using Eclipse.Tests.Extensions;
@@ -112,5 +113,67 @@ public sealed class ImportRemindersValidatorTests
         {
             row.Exception?.Split(", ").Should().BeEquivalentTo(expectedErrors);
         }
+    }
+
+    [Fact]
+    public void ValidateAndSetErrors_WhenReminderAlreadyExists_ShouldReturnError()
+    {
+        var user = UserGenerator.Get();
+        var reminder = user.AddReminder("test", TimeOnly.FromDateTime(DateTime.UtcNow));
+
+        var reminders = new List<ImportReminderDto>
+        {
+            new() { UserId = user.Id, Id = reminder.Id, NotifyAt = "08:00" }
+        };
+
+        var options = new ImportRemindersValidationOptions
+        {
+            Users = [user]
+        };
+
+        var expectedError = $"{nameof(Reminder)} with {nameof(reminder.Id)} \'{reminders[0].Id}\' already exists";
+
+        var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
+            .For("{0}AlreadyExists{1}{2}", nameof(Reminder), nameof(reminder.Id), reminders[0].Id)
+            .Return(expectedError)
+            .Build();
+
+        _localizer.DelegateCalls(localizer);
+
+        _sut.Set(options);
+
+        var result = _sut.ValidateAndSetErrors(reminders).ToList();
+
+        result.Should().HaveCount(1);
+        result[0].Exception.Should().Contain(expectedError);
+    }
+
+    [Fact]
+    public void ValidateAndSetErrors_WhenInvalidNotifyAt_ShouldReturnError()
+    {
+        var user = UserGenerator.Get();
+
+        var row = new ImportReminderDto { UserId = user.Id, Id = Guid.NewGuid(), NotifyAt = "invalid_time" };
+
+        var options = new ImportRemindersValidationOptions
+        {
+            Users = [user]
+        };
+
+        var expectedError = $"Invalid field {nameof(row.NotifyAt)} \'{row.NotifyAt}\'";
+
+        var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
+            .For("InvalidField{0}{1}", nameof(row.NotifyAt), row.NotifyAt)
+            .Return(expectedError)
+            .Build();
+
+        _localizer.DelegateCalls(localizer);
+
+        _sut.Set(options);
+
+        var result = _sut.ValidateAndSetErrors([row]).ToList();
+
+        result.Should().HaveCount(1);
+        result[0].Exception.Should().Contain(expectedError);
     }
 }
