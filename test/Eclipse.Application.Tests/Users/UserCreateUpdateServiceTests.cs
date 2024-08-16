@@ -255,4 +255,35 @@ public sealed class UserCreateUpdateServiceTests
         result.Value.Surname.Should().Be(model.Surname);
         result.Value.UserName.Should().Be(string.Empty);
     }
+
+    [Theory]
+    [InlineData(-4)]
+    [InlineData(4)]
+    [InlineData(11)]
+    public async Task UpdatePartialAsync_WhenTimeIsValid_ThenUpdatedSuccessfully(int time)
+    {
+        var user = UserGenerator.Generate(1).First();
+
+        _repository.FindAsync(user.Id).Returns(user);
+        _repository.UpdateAsync(user).Returns(user);
+
+        var utc = DateTime.UtcNow;
+        var hour = (utc.Hour + time + 24) % 24;
+
+        var currentUserTime = new TimeOnly(hour, utc.Minute);
+        var expected = new TimeSpan(time, 0, 0);
+
+        var model = new UserPartialUpdateDto
+        {
+            Gmt = currentUserTime,
+            GmtChanged = true,
+        };
+
+        var result = await Sut.UpdatePartialAsync(user.Id, model);
+
+        await _repository.Received().FindAsync(user.Id);
+        await _repository.Received().UpdateAsync(user);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Gmt.Should().Be(expected);
+    }
 }

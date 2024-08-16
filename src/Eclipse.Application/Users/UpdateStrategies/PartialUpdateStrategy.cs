@@ -47,6 +47,11 @@ internal sealed class PartialUpdateStrategy : IUserUpdateStrategy
             user.NotificationsEnabled = _model.NotificationsEnabled;
         }
 
+        if (_model.GmtChanged)
+        {
+            user.SetGmt(_model.Gmt);
+        }
+
         return user;
     }
 
