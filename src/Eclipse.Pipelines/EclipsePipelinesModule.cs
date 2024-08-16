@@ -1,14 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Url;
 using Eclipse.Common.Background;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;

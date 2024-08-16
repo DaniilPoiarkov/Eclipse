@@ -52,7 +52,7 @@ builder.Services.Configure<ApiKeyAuthorizationOptions>(
 
 builder.Host.UseSerilog((_, config) =>
 {
-    config.WriteTo.Console();
+    config.WriteTo.Async(sink => sink.Console());
 });
 
 var app = builder.Build();

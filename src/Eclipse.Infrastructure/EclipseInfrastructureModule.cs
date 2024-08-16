@@ -141,7 +141,8 @@ public static class EclipseInfrastructureModule
     {
         services.AddSerilog((_, configuration) =>
         {
-            configuration.WriteTo.Console();
+            configuration.WriteTo.Async(sink => sink.Console())
+                .Enrich.FromLogContext();
         });
 
         return services;
