@@ -3,7 +3,7 @@ using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Contracts.Users;
 
-public interface IUserService : IUserReadService, IUserCreateUpdateService, IUserLogicService
+public interface IUserService : IUserReadService, IUserCreateUpdateService
 {
 
 }
@@ -26,9 +26,4 @@ public interface IUserCreateUpdateService
     Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default);
 
     Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default);
-}
-
-public interface IUserLogicService
-{
-    Task<Result<UserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default);
 }

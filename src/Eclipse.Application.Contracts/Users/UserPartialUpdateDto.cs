@@ -17,4 +17,7 @@ public sealed class UserPartialUpdateDto
 
     public bool NotificationsEnabledChanged { get; set; }
     public bool NotificationsEnabled { get; set; }
+
+    public bool GmtChanged { get; set; }
+    public TimeOnly Gmt { get; set; }
 }
