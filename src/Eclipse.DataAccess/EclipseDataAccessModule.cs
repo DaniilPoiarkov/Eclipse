@@ -2,7 +2,6 @@
 
 using Eclipse.DataAccess.Constants;
 using Eclipse.DataAccess.CosmosDb;
-using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Repositories;
