@@ -1,13 +1,11 @@
-﻿using Eclipse.Common.Caching;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
+using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Tests.Generators;
-
-using Microsoft.Extensions.DependencyInjection;
 
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -20,7 +18,7 @@ public sealed class LocalizationDecoratorTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly ICacheService _cacheService;
+    private readonly ICultureTracker _cultureTracker;
 
     private readonly ICurrentCulture _currentCulture;
 
@@ -33,7 +31,7 @@ public sealed class LocalizationDecoratorTests
     public LocalizationDecoratorTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _cacheService = Substitute.For<ICacheService>();
+        _cultureTracker = Substitute.For<ICultureTracker>();
         _currentCulture = Substitute.For<ICurrentCulture>();
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
@@ -41,19 +39,19 @@ public sealed class LocalizationDecoratorTests
         _lazySut = new Lazy<LocalizationDecorator>(
             () => new LocalizationDecorator(
                 new UserManager(_repository),
-                _cacheService,
+                _cultureTracker,
                 _currentCulture));
     }
 
     [Fact]
     public async Task Decorate_WhenLocalizationNotSpecified_ThenFetchingUserCulture()
     {
-        var user = UserGenerator.Generate(1).First();
-        var services = new ServiceCollection().BuildServiceProvider();
+        var user = UserGenerator.Get();
+        var services = Substitute.For<IServiceProvider>();
 
         var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
 
-        _cacheService.GetAsync<string>(default!).ReturnsNullForAnyArgs();
+        _cultureTracker.GetAsync(user.ChatId).ReturnsNull();
 
         _repository.GetByExpressionAsync(_ => true)
             .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
@@ -61,8 +59,9 @@ public sealed class LocalizationDecoratorTests
         await Sut.Decorate(_execution, context);
 
         _currentCulture.Received().UsingCulture(user.Culture);
-        await _cacheService.ReceivedWithAnyArgs().GetAsync<string>(default!);
         await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
-        await _cacheService.ReceivedWithAnyArgs().SetAsync(default!, user.Culture, CacheConsts.ThreeDays);
+
+        await _cultureTracker.ReceivedWithAnyArgs().GetAsync(user.ChatId);
+        await _cultureTracker.ReceivedWithAnyArgs().ResetAsync(user.ChatId, user.Culture);
     }
 }

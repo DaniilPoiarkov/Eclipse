@@ -1,9 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
-using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Localization.Culture;
+using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Stores.Messages;
 
@@ -16,7 +16,7 @@ namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 [Route("Menu:Settings:Language", "/settings_language")]
 internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 {
-    private readonly ICacheService _cacheService;
+    private readonly ICultureTracker _cultureTracker;
 
     private readonly IUserService _userService;
 
@@ -30,9 +30,9 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private static readonly int _languagesChunk = 2;
 
-    public ChangeLanguagePipeline(ICacheService cacheService, IUserService userService, IMessageStore messageStore, IOptions<LanguageList> languages, ICurrentCulture currentCulture)
+    public ChangeLanguagePipeline(ICultureTracker cultureTracker, IUserService userService, IMessageStore messageStore, IOptions<LanguageList> languages, ICurrentCulture currentCulture)
     {
-        _cacheService = cacheService;
+        _cultureTracker = cultureTracker;
         _userService = userService;
         _messageStore = messageStore;
         _languages = languages;
@@ -98,10 +98,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
                 message?.MessageId);
         }
 
-        var key = new CacheKey($"lang-{context.ChatId}");
-
-        await _cacheService.DeleteAsync(key, cancellationToken);
-        await _cacheService.SetAsync(key, context.Value, CacheConsts.ThreeDays, cancellationToken);
+        await _cultureTracker.ResetAsync(context.ChatId, context.Value, cancellationToken);
 
         using var _ = _currentCulture.UsingCulture(context.Value);
 
