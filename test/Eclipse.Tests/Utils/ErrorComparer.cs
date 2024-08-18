@@ -8,10 +8,9 @@ public static class ErrorComparer
 {
     public static void AreEqual(Error left, Error right)
     {
-        var result = left.Code == right.Code
-            && left.Description == right.Description;
-
-        result.Should().BeTrue();
+        left.Code.Should().Be(right.Code);
+        left.Description.Should().Be(right.Description);
         left.Args.Should().BeEquivalentTo(right.Args);
+        left.Type.Should().Be(right.Type);
     }
 }

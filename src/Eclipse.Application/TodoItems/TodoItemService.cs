@@ -76,7 +76,12 @@ internal sealed class TodoItemService : ITodoItemService
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        user.FinishItem(itemId);
+        var result = user.FinishItem(itemId);
+
+        if (!result.IsSuccess)
+        {
+            return result.Error;
+        }
 
         await _userManager.UpdateAsync(user, cancellationToken);
 

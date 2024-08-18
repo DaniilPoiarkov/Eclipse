@@ -257,7 +257,7 @@ public sealed class UserCreateUpdateServiceTests
     [InlineData(11)]
     public async Task UpdatePartialAsync_WhenTimeIsValid_ThenUpdatedSuccessfully(int time)
     {
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
         _repository.UpdateAsync(user).Returns(user);

@@ -1,4 +1,4 @@
-﻿using Eclipse.DataAccess.EclipseCosmosDb;
+﻿using Eclipse.DataAccess.CosmosDb;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
 
