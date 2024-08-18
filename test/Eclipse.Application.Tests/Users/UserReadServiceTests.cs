@@ -3,6 +3,7 @@ using Eclipse.Application.Users.Services;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
+using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -53,10 +54,6 @@ public sealed class UserReadServiceTests
 
         result.IsSuccess.Should().BeFalse();
 
-        var error = result.Error;
-        error.Code.Should().Be(expectedError.Code);
-        error.Description.Should().Be(expectedError.Description);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
-        error.Type.Should().Be(expectedError.Type);
+        ErrorComparer.AreEqual(result.Error, expectedError);
     }
 }
