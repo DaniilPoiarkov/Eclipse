@@ -1,5 +1,4 @@
-﻿using Eclipse.Common.Caching;
-using Eclipse.Core.Builder;
+﻿using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
