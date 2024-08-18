@@ -2,6 +2,7 @@
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
+using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Options.Languages;
@@ -33,7 +34,8 @@ public static class EclipsePipelinesModule
             .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
             .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<IMessageStore, MessageStore>()
-            .AddTransient<IPipelineStore, PipelineStore>();
+            .AddTransient<IPipelineStore, PipelineStore>()
+            .AddTransient<ICultureTracker, CultureTracker>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())

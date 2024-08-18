@@ -3,6 +3,7 @@ using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
+using Eclipse.Pipelines.Culture;
 
 namespace Eclipse.Pipelines.Decorations;
 
@@ -10,22 +11,20 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
     private readonly UserManager _userManager;
 
-    private readonly ICacheService _cacheService;
+    private readonly ICultureTracker _cultureTracker;
 
     private readonly ICurrentCulture _currentCulture;
 
-    public LocalizationDecorator(UserManager userManager, ICacheService cacheService, ICurrentCulture currentCulture)
+    public LocalizationDecorator(UserManager userManager, ICultureTracker cultureTracker, ICurrentCulture currentCulture)
     {
         _userManager = userManager;
-        _cacheService = cacheService;
+        _cultureTracker = cultureTracker;
         _currentCulture = currentCulture;
     }
 
     public async Task<IResult> Decorate(Func<MessageContext, CancellationToken, Task<IResult>> execution, MessageContext context, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"lang-{context.ChatId}");
-
-        var culture = await _cacheService.GetAsync<string>(key, cancellationToken);
+        var culture = await _cultureTracker.GetAsync(context.ChatId, cancellationToken);
 
         if (culture is null)
         {
@@ -33,7 +32,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
             if (user is not null)
             {
-                await _cacheService.SetAsync(key, user.Culture, CacheConsts.ThreeDays, cancellationToken);
+                await _cultureTracker.ResetAsync(context.ChatId, user.Culture, cancellationToken);
                 culture = user.Culture;
             }
         }
