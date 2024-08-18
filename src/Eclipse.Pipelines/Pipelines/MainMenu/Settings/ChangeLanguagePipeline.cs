@@ -5,14 +5,13 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Options.Languages;
-using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Microsoft.Extensions.Options;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Language;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 [Route("Menu:Settings:Language", "/settings_language")]
 internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
