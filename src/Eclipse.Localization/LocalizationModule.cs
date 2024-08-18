@@ -22,7 +22,7 @@ public static class LocalizationModule
     {
         ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
 
-        services.Configure<LocalizationBuilder>(configuration.Invoke);
+        services.Configure<LocalizationBuilder>(configuration);
 
         services.AddHttpContextAccessor();
 
