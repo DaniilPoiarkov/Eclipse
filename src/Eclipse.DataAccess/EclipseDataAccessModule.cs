@@ -6,7 +6,6 @@ using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Repositories;
 using Eclipse.DataAccess.Users;
-using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.Repositories;
 using Eclipse.Domain.Users;
 

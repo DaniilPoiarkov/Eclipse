@@ -55,6 +55,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
 
         var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
+        // TODO: ...
         await _service.CreateAsync(user.Value.Id, true, cancellationToken);
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
