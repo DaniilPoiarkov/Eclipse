@@ -106,7 +106,7 @@ internal sealed class MorningJob : EclipseJobBase
             {
                 continue;
             }
-            // TODO: Fix which message Id sets here if the todo-items list is open
+
             await _messageStore.SetAsync(new MessageKey(message.Chat.Id), message, context.CancellationToken);
         }
     }

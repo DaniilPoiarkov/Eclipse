@@ -55,8 +55,8 @@ public sealed class MorningPipeline : EclipsePipelineBase
         return message is null || message.ReplyMarkup is null
             ? @default
             : Multiple(
-                @default,
-                Edit(message.MessageId, InlineKeyboardMarkup.Empty())
+                Edit(message.MessageId, InlineKeyboardMarkup.Empty()),
+                @default
             );
     }
 }

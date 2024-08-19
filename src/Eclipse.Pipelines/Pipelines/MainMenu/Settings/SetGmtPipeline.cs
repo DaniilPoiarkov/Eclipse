@@ -40,9 +40,7 @@ internal sealed class SetGmtPipeline : SettingsPipelineBase
             ? time
             : time.Add(user.Gmt);
 
-        return Text(
-            string.Format(Localizer[$"{_pipelinePrefix}:Info"], $"{time:HH:mm}")
-        );
+        return Text(Localizer[$"{_pipelinePrefix}:Info", $"{time:HH:mm}"]);
     }
 
     private async Task<IResult> UpdateUserGmt(MessageContext context, CancellationToken cancellationToken)
@@ -64,7 +62,13 @@ internal sealed class SetGmtPipeline : SettingsPipelineBase
             return Menu(SettingsMenuButtons, Localizer.LocalizeError(userResult.Error));
         }
 
-        var result = await _userService.SetUserGmtTimeAsync(userResult.Value.Id, time, cancellationToken);
+        var update = new UserPartialUpdateDto
+        {
+            Gmt = time,
+            GmtChanged = true,
+        };
+
+        var result = await _userService.UpdatePartialAsync(userResult.Value.Id, update, cancellationToken);
 
         var text = result.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:Success"]

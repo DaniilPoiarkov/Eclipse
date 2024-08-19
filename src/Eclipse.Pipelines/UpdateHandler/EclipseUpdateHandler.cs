@@ -123,7 +123,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             Name = user.Name,
             UserName = user.UserName ?? string.Empty,
             Surname = user.Surname,
-            ChatId = user.Id
+            ChatId = user.Id,
+            NotificationsEnabled = true,
         };
 
         return await _userService.CreateAsync(create, cancellationToken);
@@ -141,7 +142,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             NameChanged = true,
             Name = telegramUser.Name,
 
-            UserNameChanged = !telegramUser.UserName.IsNullOrEmpty(),
+            UserNameChanged = true,
             UserName = telegramUser.UserName,
 
             SurnameChanged = true,

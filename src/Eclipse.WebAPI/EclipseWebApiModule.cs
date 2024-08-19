@@ -1,9 +1,11 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.Common.Session;
+using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Session;
 
@@ -80,6 +82,40 @@ public static class EclipseWebApiModule
                 .AddIpAddressFiveMinutesWindow();
         });
 
+        services.Configure<ApiKeyAuthorizationOptions>(
+            configuration.GetSection("Authorization")
+        );
+
         return services;
+    }
+
+    public static WebApplication InitializeWebApiModule(this WebApplication app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+
+        if (app.Environment.IsDevelopment())
+        {
+            ///
+        }
+
+        app.UseExceptionHandler()
+            .UseHttpsRedirection();
+
+        app.UseEclipseHealthChecks();
+
+        app.UseRateLimiter();
+
+        app.UseAuthentication()
+            .UseAuthorization();
+
+        app.UseLocalization();
+
+        app.UseMiddleware<CurrentSessionResolverMiddleware>();
+
+        app.MapControllers();
+
+        return app;
     }
 }

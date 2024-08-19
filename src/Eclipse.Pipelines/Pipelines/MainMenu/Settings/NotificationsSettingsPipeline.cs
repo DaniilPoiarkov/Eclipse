@@ -64,12 +64,13 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
                 message?.MessageId);
         }
 
-        var updateDto = new UserUpdateDto
+        var updateDto = new UserPartialUpdateDto
         {
             NotificationsEnabled = enable,
+            NotificationsEnabledChanged = true,
         };
 
-        var updateResult = await _userService.UpdateAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _userService.UpdatePartialAsync(user.Id, updateDto, cancellationToken);
 
         var text = updateResult.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"]

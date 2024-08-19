@@ -61,7 +61,7 @@ public sealed class ImortRemindersStrategyTests
     }
 
     [Fact]
-    public async Task ImportAsync_WhenUserNotExist_ThenExceptionThrown()
+    public async Task ImportAsync_WhenUserNotExist_ThenFailedResultReturned()
     {
         using var ms = new MemoryStream();
 
@@ -74,7 +74,7 @@ public sealed class ImortRemindersStrategyTests
         var result = await _sut.ImportAsync(ms);
 
         result.IsSuccess.Should().BeFalse();
-        row.Exception.Should().NotBeEmpty();
+        result.FailedRows.Should().HaveCount(1);
 
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(default!);
     }

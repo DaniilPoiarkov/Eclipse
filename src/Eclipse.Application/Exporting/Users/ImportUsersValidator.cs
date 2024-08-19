@@ -66,7 +66,7 @@ internal sealed class ImportUsersValidator : IImportValidator<ImportUserDto, Imp
 
     private IEnumerable<string> ValidateFieldCorrectness(ImportUserDto row)
     {
-        if (!TimeSpan.TryParse(row.Gmt, out _))
+        if (!row.Gmt.IsNullOrEmpty() && !TimeSpan.TryParse(row.Gmt, out _))
         {
             yield return _localizer["InvalidField{0}{1}", nameof(row.Gmt), row.Gmt];
         }

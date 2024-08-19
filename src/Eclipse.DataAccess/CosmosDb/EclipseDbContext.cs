@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Eclipse.DataAccess.EclipseCosmosDb;
+namespace Eclipse.DataAccess.CosmosDb;
 
 public sealed class EclipseDbContext : DbContext
 {

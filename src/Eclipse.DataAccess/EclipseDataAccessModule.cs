@@ -2,7 +2,6 @@
 
 using Eclipse.DataAccess.Constants;
 using Eclipse.DataAccess.CosmosDb;
-using Eclipse.DataAccess.EclipseCosmosDb;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Repositories;
@@ -29,14 +28,19 @@ public static class EclipseDataAccessModule
     public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
         services
-            .AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>))
             .AddScoped<IUserRepository, UserRepository>()
-                .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
+            .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
 
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
 
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IRepository<>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
         services
+            .Decorate(typeof(IRepository<>), typeof(CachedRepositoryBase<>))
             .Decorate<IUserRepository, CachedUserRepository>();
 
         return services;
@@ -90,7 +94,7 @@ public static class EclipseDataAccessModule
         return services;
     }
 
-    public static async Task InitializaDataAccessModule(this WebApplication app)
+    public static async Task InitializaDataAccessModuleAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 

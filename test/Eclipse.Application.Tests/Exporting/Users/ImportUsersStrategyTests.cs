@@ -7,6 +7,7 @@ using Eclipse.Tests.Generators;
 using FluentAssertions;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using Xunit;
 
@@ -58,5 +59,54 @@ public sealed class ImportUsersStrategyTests
         result.FailedRows.Should().BeEmpty();
 
         await _userRepository.ReceivedWithAnyArgs(rows.Count).CreateAsync(default!);
+    }
+
+    [Fact]
+    public async Task ImportAsync_WhenRowsAreInvalid_ThenReturnsFailedResult()
+    {
+        using var stream = new MemoryStream();
+
+        List<ImportUserDto> rows = [
+            ImportEntityRowGenerator.User(),
+        ];
+
+        _excelManager.Read<ImportUserDto>(stream).Returns(rows);
+
+        var error = "error";
+
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows.Select(r =>
+        {
+            r.Exception = error;
+            return r;
+        }));
+
+        var result = await _sut.ImportAsync(stream);
+
+        result.IsSuccess.Should().BeFalse();
+        result.FailedRows.Should().HaveSameCount(rows);
+        result.FailedRows.All(r => r.Exception == error).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ImportAsync_WhenCreationFails_ThenErrorShouldBeSet()
+    {
+        using var stream = new MemoryStream();
+
+        List<ImportUserDto> rows = [
+            ImportEntityRowGenerator.User(),
+        ];
+
+        var error = "create user failed";
+
+        _excelManager.Read<ImportUserDto>(stream).Returns(rows);
+        _validator.ValidateAndSetErrors(rows).ReturnsForAnyArgs(rows);
+        _userRepository
+            .CreateAsync(Arg.Any<User>(), Arg.Any<CancellationToken>())
+            .Throws(new Exception(error));
+
+        var result = await _sut.ImportAsync(stream);
+
+        result.FailedRows.Should().HaveSameCount(rows);
+        result.FailedRows.All(r => r.Exception == error).Should().BeTrue();
     }
 }

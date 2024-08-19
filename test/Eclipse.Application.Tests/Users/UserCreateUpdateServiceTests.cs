@@ -19,25 +19,20 @@ public sealed class UserCreateUpdateServiceTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly Lazy<IUserCreateUpdateService> _lazySut;
-
-    private IUserCreateUpdateService Sut => _lazySut.Value;
+    private readonly UserCreateUpdateService _sut;
 
     public UserCreateUpdateServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
 
-        _lazySut = new Lazy<IUserCreateUpdateService>(
-            () => new UserCreateUpdateService(
-                new UserManager(_repository)
-            ));
+        _sut = new UserCreateUpdateService(new UserManager(_repository));
     }
 
     [Fact]
     public async Task UpdateAsync_WhenUserWithSpecifiedIdNotExist_ThenExceptionThrown()
     {
         var expected = DefaultErrors.EntityNotFound(typeof(User));
-        var result = await Sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto());
+        var result = await _sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto());
 
         result.IsSuccess.Should().BeFalse();
 
@@ -64,7 +59,7 @@ public sealed class UserCreateUpdateServiceTests
             Surname = "new_surname"
         };
 
-        var result = await Sut.UpdateAsync(user.Id, updateDto);
+        var result = await _sut.UpdateAsync(user.Id, updateDto);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -86,7 +81,7 @@ public sealed class UserCreateUpdateServiceTests
         _repository.FindAsync(user.Id).Returns(user);
         _repository.UpdateAsync(user).Returns(user);
 
-        var result = await Sut.UpdateAsync(user.Id, model);
+        var result = await _sut.UpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -129,7 +124,7 @@ public sealed class UserCreateUpdateServiceTests
             NotificationsEnabled = user.NotificationsEnabled,
         };
 
-        var result = await Sut.UpdateAsync(user.Id, model);
+        var result = await _sut.UpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
         ErrorComparer.AreEqual(result.Error, expected);
@@ -158,7 +153,7 @@ public sealed class UserCreateUpdateServiceTests
             NotificationsEnabled = user.NotificationsEnabled,
         };
 
-        var result = await Sut.UpdateAsync(user.Id, model);
+        var result = await _sut.UpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
         ErrorComparer.AreEqual(result.Error, expected);
@@ -174,7 +169,7 @@ public sealed class UserCreateUpdateServiceTests
         _repository.FindAsync(user.Id).Returns(user);
         _repository.UpdateAsync(user).Returns(user);
 
-        var result = await Sut.UpdatePartialAsync(user.Id, model);
+        var result = await _sut.UpdatePartialAsync(user.Id, model);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -199,7 +194,7 @@ public sealed class UserCreateUpdateServiceTests
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var result = await Sut.UpdatePartialAsync(user.Id, model);
+        var result = await _sut.UpdatePartialAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
         ErrorComparer.AreEqual(result.Error, expected);
@@ -221,7 +216,7 @@ public sealed class UserCreateUpdateServiceTests
         _repository.FindAsync(user.Id).Returns(user);
         _repository.UpdateAsync(user).Returns(user);
 
-        var result = await Sut.UpdatePartialAsync(user.Id, model);
+        var result = await _sut.UpdatePartialAsync(user.Id, model);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -247,12 +242,43 @@ public sealed class UserCreateUpdateServiceTests
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 
-        var result = await Sut.CreateAsync(model);
+        var result = await _sut.CreateAsync(model);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.ChatId.Should().Be(model.ChatId);
         result.Value.Name.Should().Be(model.Name);
         result.Value.Surname.Should().Be(model.Surname);
         result.Value.UserName.Should().Be(string.Empty);
+    }
+
+    [Theory]
+    [InlineData(-4)]
+    [InlineData(4)]
+    [InlineData(11)]
+    public async Task UpdatePartialAsync_WhenTimeIsValid_ThenUpdatedSuccessfully(int time)
+    {
+        var user = UserGenerator.Get();
+
+        _repository.FindAsync(user.Id).Returns(user);
+        _repository.UpdateAsync(user).Returns(user);
+
+        var utc = DateTime.UtcNow;
+        var hour = (utc.Hour + time + 24) % 24;
+
+        var currentUserTime = new TimeOnly(hour, utc.Minute);
+        var expected = new TimeSpan(time, 0, 0);
+
+        var model = new UserPartialUpdateDto
+        {
+            Gmt = currentUserTime,
+            GmtChanged = true,
+        };
+
+        var result = await _sut.UpdatePartialAsync(user.Id, model);
+
+        await _repository.Received().FindAsync(user.Id);
+        await _repository.Received().UpdateAsync(user);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Gmt.Should().Be(expected);
     }
 }

@@ -8,14 +8,11 @@ internal sealed class UserService : IUserService
 {
     private readonly IUserCreateUpdateService _createUpdateService;
 
-    private readonly IUserLogicService _logicService;
-
     private readonly IUserReadService _readService;
 
-    public UserService(IUserCreateUpdateService createUpdateService, IUserLogicService logicService, IUserReadService readService)
+    public UserService(IUserCreateUpdateService createUpdateService, IUserReadService readService)
     {
         _createUpdateService = createUpdateService;
-        _logicService = logicService;
         _readService = readService;
     }
 
@@ -42,11 +39,6 @@ internal sealed class UserService : IUserService
     public Task<Result<UserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _readService.GetByIdAsync(id, cancellationToken);
-    }
-
-    public Task<Result<UserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
-    {
-        return _logicService.SetUserGmtTimeAsync(id, currentUserTime, cancellationToken);
     }
 
     public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)

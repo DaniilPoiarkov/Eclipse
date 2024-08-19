@@ -9,9 +9,6 @@ using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.WebAPI;
-using Eclipse.WebAPI.Filters.Authorization;
-using Eclipse.WebAPI.Health;
-using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Options;
 
 using Serilog;
@@ -46,43 +43,15 @@ builder.Services.AddLocalization(localization =>
     localization.DefaultCulture = options.DefaultCulture;
 });
 
-builder.Services.Configure<ApiKeyAuthorizationOptions>(
-    configuration.GetSection("Authorization")
-);
-
 builder.Host.UseSerilog((_, config) =>
 {
-    config.WriteTo.Console();
+    config.WriteTo.Async(sink => sink.Console());
 });
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
-if (app.Environment.IsDevelopment())
-{
-    ///
-}
-
-app.UseExceptionHandler()
-    .UseHttpsRedirection();
-
-app.UseEclipseHealthChecks();
-
-app.UseRateLimiter();
-
-app.UseAuthentication()
-    .UseAuthorization();
-
-app.UseLocalization();
-
-app.UseMiddleware<CurrentSessionResolverMiddleware>()
-    .UseMiddleware<ErrorLocalizerMiddleware>();
-
-app.MapControllers();
-
-await app.InitializaDataAccessModule();
+app.InitializeWebApiModule();
+await app.InitializaDataAccessModuleAsync();
 await app.InitializePipelineModuleAsync();
 
 app.Run();

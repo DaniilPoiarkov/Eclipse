@@ -1,4 +1,4 @@
-﻿using Eclipse.DataAccess.EclipseCosmosDb;
+﻿using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.Repositories;
 using Eclipse.Domain.Users;
 

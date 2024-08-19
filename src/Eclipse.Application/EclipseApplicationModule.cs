@@ -50,7 +50,6 @@ public static class EclipseApplicationModule
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()
-            .AddTransient<IUserLogicService, UserLogicService>()
             .AddTransient<IUserReadService, UserReadService>()
             .AddTransient<IUserService, UserService>();
 
