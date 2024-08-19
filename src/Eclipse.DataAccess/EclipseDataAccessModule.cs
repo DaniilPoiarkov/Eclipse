@@ -30,6 +30,7 @@ public static class EclipseDataAccessModule
     {
         services
             .AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>))
+            .AddScoped<IRepository<MoodRecord>, RepositoryBase<MoodRecord>>()
             .AddScoped<IUserRepository, UserRepository>()
                 .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
 

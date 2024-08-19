@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Users;
+﻿using Eclipse.Domain.MoodRecords;
+using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,8 @@ namespace Eclipse.DataAccess.CosmosDb;
 public sealed class EclipseDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+
+    public DbSet<MoodRecord> MoodRecords { get; set; }
 
     public EclipseDbContext(DbContextOptions<EclipseDbContext> options)
         : base(options) { }

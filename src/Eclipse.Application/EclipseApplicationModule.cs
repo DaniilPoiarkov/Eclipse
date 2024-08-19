@@ -4,6 +4,7 @@ using Eclipse.Application.Contracts.Account;
 using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
@@ -12,6 +13,7 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
+using Eclipse.Application.MoodRecords;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
@@ -46,7 +48,8 @@ public static class EclipseApplicationModule
                 .AddTransient<IExportService, ExportService>()
                 .AddTransient<IImportService, ImportService>()
                 .AddTransient<IAccountService, AccountService>()
-                .AddTransient<ILoginManager, LoginManager>();
+                .AddTransient<ILoginManager, LoginManager>()
+                .AddTransient<IMoodRecordsService, MoodRecordsService>();
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()

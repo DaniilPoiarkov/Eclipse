@@ -1,4 +1,6 @@
-﻿using Eclipse.Core.Attributes;
+﻿using Eclipse.Application.Contracts.MoodRecords;
+using Eclipse.Application.Contracts.Users;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Pipelines.Stores.Messages;
 
@@ -12,9 +14,15 @@ public sealed class MorningPipeline : EclipsePipelineBase
 {
     private readonly IMessageStore _messageStore;
 
-    public MorningPipeline(IMessageStore messageStore)
+    private readonly IMoodRecordsService _service;
+
+    private readonly IUserService _userService;
+
+    public MorningPipeline(IMessageStore messageStore, IMoodRecordsService service, IUserService userService)
     {
         _messageStore = messageStore;
+        _service = service;
+        _userService = userService;
     }
 
     protected override void Initialize()
@@ -44,6 +52,10 @@ public sealed class MorningPipeline : EclipsePipelineBase
             "👎" => "Pipelines:Morning:BadMood",
             _ => "Pipelines:Morning:NotDefined"
         };
+
+        var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        await _service.CreateAsync(user.Value.Id, true, cancellationToken);
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
