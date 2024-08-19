@@ -37,10 +37,12 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Text(Localizer.LocalizeError(result.Error));
         }
 
-        if (result.Value.TodoItems.Count >= TodoItemConstants.Limit)
+        var user = result.Value;
+
+        if (user.TodoItems.Count >= TodoItemConstants.Limit)
         {
             FinishPipeline();
-            return Text(Localizer[$"{_pipelinePrefix}:{{0}}Limit", result.Value.TodoItems.Count]);
+            return Text(Localizer[$"{_pipelinePrefix}:{{0}}Limit", user.TodoItems.Count]);
         }
 
         return Text(Localizer[$"{_pipelinePrefix}:DiscribeWhatToAdd"]);
