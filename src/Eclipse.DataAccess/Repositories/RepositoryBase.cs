@@ -14,7 +14,7 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     protected readonly EclipseDbContext Context;
     protected DbSet<TEntity> DbSet => Context.Set<TEntity>();
 
-    protected RepositoryBase(EclipseDbContext context)
+    public RepositoryBase(EclipseDbContext context)
     {
         Context = context;
     }

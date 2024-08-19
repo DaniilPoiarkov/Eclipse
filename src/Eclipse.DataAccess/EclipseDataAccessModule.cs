@@ -6,6 +6,7 @@ using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Repositories;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.Repositories;
 using Eclipse.Domain.Users;
 
@@ -36,8 +37,9 @@ public static class EclipseDataAccessModule
             .AddDataAccessHealthChecks();
 
         services
+            .Decorate(typeof(IRepository<>), typeof(CachedRepositoryBase<>))
             .Decorate<IUserRepository, CachedUserRepository>();
-
+            
         return services;
     }
 
@@ -89,7 +91,7 @@ public static class EclipseDataAccessModule
         return services;
     }
 
-    public static async Task InitializaDataAccessModule(this WebApplication app)
+    public static async Task InitializaDataAccessModuleAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 
