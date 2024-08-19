@@ -6,15 +6,14 @@ using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.Repositories;
 
-internal class CachedRepositoryBase<T, TRepository> : IRepository<T>
+internal class CachedRepositoryBase<T> : IRepository<T>
     where T : Entity
-    where TRepository : IRepository<T>
 {
-    protected readonly TRepository Repository;
+    protected readonly IRepository<T> Repository;
 
     protected readonly ICacheService CacheService;
 
-    public CachedRepositoryBase(TRepository repository, ICacheService cacheService)
+    public CachedRepositoryBase(IRepository<T> repository, ICacheService cacheService)
     {
         Repository = repository;
         CacheService = cacheService;
