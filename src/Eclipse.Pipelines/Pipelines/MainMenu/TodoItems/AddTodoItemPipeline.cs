@@ -1,7 +1,9 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Domain.Shared.TodoItems;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
@@ -10,11 +12,14 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
+    private readonly IUserService _userService;
+
     private static readonly string _pipelinePrefix = $"{PipelinePrefix}:AddItem";
 
-    public AddTodoItemPipeline(ITodoItemService todoItemService)
+    public AddTodoItemPipeline(ITodoItemService todoItemService, IUserService userService)
     {
         _todoItemService = todoItemService;
+        _userService = userService;
     }
 
     protected override void Initialize()
@@ -23,8 +28,21 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
         RegisterStage(SaveNewTodoItem);
     }
 
-    private IResult SendInfo(MessageContext context)
+    private async Task<IResult> SendInfo(MessageContext context, CancellationToken cancellationToken)
     {
+        var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return Text(Localizer.LocalizeError(result.Error));
+        }
+
+        if (result.Value.TodoItems.Count >= TodoItemConstants.Limit)
+        {
+            FinishPipeline();
+            return Text(Localizer[$"{_pipelinePrefix}:{{0}}Limit", result.Value.TodoItems.Count]);
+        }
+
         return Text(Localizer[$"{_pipelinePrefix}:DiscribeWhatToAdd"]);
     }
 
