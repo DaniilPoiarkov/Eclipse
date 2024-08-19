@@ -29,13 +29,16 @@ public static class EclipseDataAccessModule
     public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
         services
-            .AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>))
-            .AddScoped<IRepository<MoodRecord>, RepositoryBase<MoodRecord>>()
             .AddScoped<IUserRepository, UserRepository>()
-                .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
+            .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
 
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IRepository<>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
 
         services
             .Decorate(typeof(IRepository<>), typeof(CachedRepositoryBase<>))
