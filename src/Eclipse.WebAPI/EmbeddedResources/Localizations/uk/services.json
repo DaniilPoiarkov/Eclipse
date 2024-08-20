@@ -25,6 +25,7 @@
     "User:DuplicateData": "Користувач з {0} {1} вже існує.",
 
     "Account:{0}AuthenticationCode": "Використовуй цей код для входу: {0}\n\r\n\rНе поширюйте цей код адже він надає доступ до ваших даних.",
+    "Account:InvalidCode": "Неправильний код.",
 
     "User:AddTodoItem:{0}DuplicateTodoItem": "План з унікальним ідентифікатором {0} вже існує.",
 
