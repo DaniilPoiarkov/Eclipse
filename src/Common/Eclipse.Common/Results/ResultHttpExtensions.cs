@@ -18,7 +18,7 @@ public static class ResultHttpExtensions
             Type = parser.Type,
             Extensions = new Dictionary<string, object?>
             {
-                ["errors"] = new[] { result.Error }
+                ["error"] = result.Error
             }
         };
 
