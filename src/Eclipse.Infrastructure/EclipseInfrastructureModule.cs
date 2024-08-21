@@ -144,7 +144,7 @@ public static class EclipseInfrastructureModule
 
         services.AddSerilog((sp, logger) =>
         {
-            logger
+            logger.MinimumLevel.Warning()
                 .WriteTo.Async(sink => sink.Console())
                 .WriteTo.Async(sink => sink.ApplicationInsights(
                     sp.GetRequiredService<TelemetryConfiguration>(),

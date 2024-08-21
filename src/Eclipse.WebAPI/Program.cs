@@ -47,7 +47,7 @@ builder.Services.AddLocalization(localization =>
 
 builder.Host.UseSerilog((context, sp, config) =>
 {
-    config
+    config.ReadFrom.Configuration(builder.Configuration)
         .WriteTo.Async(sink => sink.Console())
         .WriteTo.Async(sink => sink.ApplicationInsights(
             sp.GetRequiredService<TelemetryConfiguration>(),
