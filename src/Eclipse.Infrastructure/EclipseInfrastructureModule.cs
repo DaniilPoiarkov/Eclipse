@@ -140,11 +140,9 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddSerilogIntegration(this IServiceCollection services)
     {
-        var configuration = services.GetConfiguration();
-
         services.AddSerilog((sp, logger) =>
         {
-            logger.MinimumLevel.Warning()
+            logger.ReadFrom.Configuration(sp.GetRequiredService<IConfiguration>())
                 .WriteTo.Async(sink => sink.Console())
                 .WriteTo.Async(sink => sink.ApplicationInsights(
                     sp.GetRequiredService<TelemetryConfiguration>(),
