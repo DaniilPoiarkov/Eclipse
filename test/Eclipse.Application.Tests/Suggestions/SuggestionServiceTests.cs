@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Suggestions;
 using Eclipse.Domain.Suggestions;
+using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -23,8 +23,8 @@ public class SuggestionServiceTests
 
         suggestionsSheetsService.GetAllAsync().Returns(suggestions);
 
-        var userRepository = Substitute.For<IUserService>();
-        var users = UserDtoGenerator.GenerateSlim(1, 5);
+        var userRepository = Substitute.For<IUserRepository>();
+        var users = UserGenerator.Generate(5);
 
         userRepository.GetAllAsync().Returns(users);
 

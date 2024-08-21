@@ -1,17 +1,15 @@
 ﻿using Eclipse.Application.Contracts.Url;
 using Eclipse.Common.Background;
-using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Configurations;
+using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -30,14 +28,14 @@ public static class EclipsePipelinesModule
 {
     public static IServiceCollection AddPipelinesModule(this IServiceCollection services)
     {
+        services.RemoveAll<PipelineBase>();
+
         services
-            .Replace(ServiceDescriptor.Transient<INotFoundPipeline, EclipseNotFoundPipeline>())
-            .Replace(ServiceDescriptor.Transient<IAccessDeniedPipeline, EclipseAccessDeniedPipeline>())
-                .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
-                .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
-                .AddTransient<IUserStore, UserStore>()
-                .AddTransient<IMessageStore, MessageStore>()
-                .AddTransient<IPipelineStore, PipelineStore>();
+            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+            .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
+            .AddTransient<IMessageStore, MessageStore>()
+            .AddTransient<IPipelineStore, PipelineStore>()
+            .AddTransient<ICultureTracker, CultureTracker>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>())

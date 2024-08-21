@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 
@@ -15,16 +15,16 @@ internal sealed class EveningJob : EclipseJobBase
 
     private readonly IStringLocalizer<EveningJob> _localizer;
 
-    private readonly IUserStore _userStore;
+    private readonly IUserService _userService;
 
     private readonly ITelegramService _telegramService;
 
     private readonly ICurrentCulture _currentCulture;
 
-    public EveningJob(IStringLocalizer<EveningJob> localizer, IUserStore userStore, ITelegramService telegramService, ICurrentCulture currentCulture)
+    public EveningJob(IStringLocalizer<EveningJob> localizer, IUserService userService, ITelegramService telegramService, ICurrentCulture currentCulture)
     {
         _localizer = localizer;
-        _userStore = userStore;
+        _userService = userService;
         _telegramService = telegramService;
         _currentCulture = currentCulture;
     }
@@ -33,7 +33,7 @@ internal sealed class EveningJob : EclipseJobBase
     {
         var time = DateTime.UtcNow.GetTime();
 
-        var users = (await _userStore.GetCachedUsersAsync(context.CancellationToken))
+        var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
                 && time.Add(u.Gmt) == Evening)
             .ToList();

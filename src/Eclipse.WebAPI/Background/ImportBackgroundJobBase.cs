@@ -32,14 +32,26 @@ public abstract class ImportBackgroundJobBase : IBackgroundJob<ImportEntitiesBac
         Options = options;
     }
 
-    public abstract Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default);
+    public async Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await ImportAsync(args, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            await SendMessageAsync($"Failed to import file: {ex.Message}", cancellationToken);
+        }
+    }
 
-    protected Task SendSuccessResult(string message, CancellationToken cancellationToken = default)
+    protected abstract Task ImportAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default);
+
+    protected Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
     {
         return BotClient.SendTextMessageAsync(Options.Value.Chat, message, cancellationToken: cancellationToken);
     }
 
-    protected async Task SendFailedResult<T>(string caption, string fileName, List<T> failedResult, CancellationToken cancellationToken = default)
+    protected async Task SendFailedResultAsync<T>(string caption, string fileName, List<T> failedResult, CancellationToken cancellationToken = default)
     {
         using var stream = ExcelManager.Write(failedResult);
 

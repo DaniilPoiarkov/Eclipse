@@ -3,14 +3,14 @@ using Eclipse.Common.Results;
 
 namespace Eclipse.Application.Contracts.Users;
 
-public interface IUserService : IUserReadService, IUserCreateUpdateService, IUserLogicService
+public interface IUserService : IUserReadService, IUserCreateUpdateService
 {
 
 }
 
 public interface IUserReadService
 {
-    Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default);
 
@@ -21,12 +21,9 @@ public interface IUserReadService
 
 public interface IUserCreateUpdateService
 {
-    Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default);
+    Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default);
 
-    Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto updateDto, CancellationToken cancellationToken = default);
-}
+    Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default);
 
-public interface IUserLogicService
-{
-    Task<Result<UserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default);
+    Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default);
 }

@@ -9,10 +9,12 @@ public interface IReminderService
     /// Creates reminder for specified user
     /// </summary>
     /// <param name="userId"></param>
-    /// <param name="createReminderDto"></param>
+    /// <param name="model"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Result<UserDto>> CreateReminderAsync(Guid userId, ReminderCreateDto createReminderDto, CancellationToken cancellationToken = default);
+    Task<Result<ReminderDto>> CreateAsync(Guid userId, ReminderCreateDto model, CancellationToken cancellationToken = default);
+
+    Task<Result<UserDto>> CreateAsync(long chatId, ReminderCreateDto model, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes all user reminders for specified time
@@ -21,5 +23,9 @@ public interface IReminderService
     /// <param name="time"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Result<UserDto>> RemoveRemindersForTime(Guid userId, TimeOnly time, CancellationToken cancellationToken = default);
+    Task<Result<UserDto>> RemoveForTimeAsync(Guid userId, TimeOnly time, CancellationToken cancellationToken = default);
+
+    Task<Result<List<ReminderDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task<Result<ReminderDto>> GetAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default);
 }

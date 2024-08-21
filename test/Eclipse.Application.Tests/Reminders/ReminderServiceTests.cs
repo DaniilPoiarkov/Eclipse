@@ -32,7 +32,7 @@ public sealed class ReminderServiceTests
     }
 
     [Fact]
-    public async Task CreateReminderAsync_WhenUserExists_ThenReturnesDtoWithCreatedReminder()
+    public async Task CreateAsync_WhenUserExists_ThenReturnesDtoWithCreatedReminder()
     {
         var user = UserGenerator.Generate(1).First();
 
@@ -42,9 +42,10 @@ public sealed class ReminderServiceTests
             Text = "Test"
         };
 
-        _repository.FindAsync(user.Id)!.Returns(Task.FromResult(user));
+        _repository.GetByExpressionAsync(_ => true)!
+            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
-        var result = await Sut.CreateReminderAsync(user.Id, reminderCreateDto);
+        var result = await Sut.CreateAsync(user.ChatId, reminderCreateDto);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -71,7 +72,7 @@ public sealed class ReminderServiceTests
             Text = "Test"
         };
 
-        var result = await Sut.CreateReminderAsync(Guid.NewGuid(), reminderCreateDto);
+        var result = await Sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
 
         result.IsSuccess.Should().BeFalse();
 
@@ -107,7 +108,7 @@ public sealed class ReminderServiceTests
             .Returns(Task.FromResult<User?>(user));
 
         // Act
-        var result = await Sut.RemoveRemindersForTime(user.Id, time);
+        var result = await Sut.RemoveForTimeAsync(user.Id, time);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

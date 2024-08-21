@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Users.UpdateStrategies;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
@@ -14,9 +15,9 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
         _userManager = userManager;
     }
 
-    public async Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default)
     {
-        var result = await _userManager.CreateAsync(createDto.Name, createDto.Surname, createDto.UserName, createDto.ChatId, cancellationToken);
+        var result = await _userManager.CreateAsync(model.Name, model.Surname, model.UserName, model.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -26,7 +27,17 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
         return result.Value.ToDto();
     }
 
-    public async Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto update, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
+    {
+        return UpdateInternal(id, new FullUpdateStrategy(model, _userManager), cancellationToken);
+    }
+
+    public Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default)
+    {
+        return UpdateInternal(id, new PartialUpdateStrategy(model, _userManager), cancellationToken);
+    }
+
+    private async Task<Result<UserDto>> UpdateInternal(Guid id, IUserUpdateStrategy strategy, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(id, cancellationToken);
 
@@ -35,29 +46,11 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        if (!update.Name.IsNullOrEmpty())
-        {
-            user.Name = update.Name;
-        }
+        var result = await strategy.UpdateAsync(user, cancellationToken);
 
-        if (!update.Surname.IsNullOrEmpty())
+        if (!result.IsSuccess)
         {
-            user.Surname = update.Surname;
-        }
-
-        if (!update.UserName.IsNullOrEmpty())
-        {
-            user.UserName = update.UserName;
-        }
-
-        if (!update.Culture.IsNullOrEmpty())
-        {
-            user.Culture = update.Culture;
-        }
-
-        if (update.NotificationsEnabled.HasValue)
-        {
-            user.NotificationsEnabled = update.NotificationsEnabled.Value;
+            return result.Error;
         }
 
         return (await _userManager.UpdateAsync(user, cancellationToken)).ToDto();

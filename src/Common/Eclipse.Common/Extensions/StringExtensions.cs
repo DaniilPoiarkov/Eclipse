@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+#pragma warning disable IDE0130
+
 namespace System;
 
 public static class StringExtensions
@@ -113,5 +115,36 @@ public static class StringExtensions
         }
 
         static bool TryParse(string value, out int num) => int.TryParse(value, out num);
+    }
+
+    /// <summary>
+    /// Joins the strings using specified separator.
+    /// </summary>
+    /// <param name="strings">The strings.</param>
+    /// <param name="separator">The separator.</param>
+    /// <returns></returns>
+    public static string Join(this IEnumerable<string> strings, string separator)
+    {
+        return string.Join(separator, strings);
+    }
+
+    public static string EnsureEndsWith(this string str, string expected)
+    {
+        if (str.EndsWith(expected))
+        {
+            return str;
+        }
+
+        return $"{str}{expected}";
+    }
+
+    public static string EnsureEndsWith(this string str, char expected)
+    {
+        if (str.EndsWith(expected))
+        {
+            return str;
+        }
+
+        return $"{str}{expected}";
     }
 }

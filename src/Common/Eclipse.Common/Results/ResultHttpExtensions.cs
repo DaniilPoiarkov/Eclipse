@@ -1,6 +1,8 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Common.Results.ErrorParsers;
 
+#pragma warning disable IDE0130
+
 namespace Microsoft.AspNetCore.Mvc;
 
 public static class ResultHttpExtensions
@@ -16,7 +18,7 @@ public static class ResultHttpExtensions
             Type = parser.Type,
             Extensions = new Dictionary<string, object?>
             {
-                ["errors"] = new[] { result.Error }
+                ["error"] = result.Error
             }
         };
 

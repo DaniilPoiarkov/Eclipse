@@ -77,7 +77,7 @@ internal sealed class PipelineProvider : IPipelineProvider
         return (accessDeniedPipeline as PipelineBase)!;
     }
 
-    private bool Validate(PipelineBase pipeline, out IEnumerable<ValidationResult> results)
+    private bool Validate(PipelineBase pipeline, out ValidationResult[] results)
     {
         var validationAttributes = pipeline.GetType()
             .GetCustomAttributes<ContextValidationAttribute>()
@@ -93,7 +93,7 @@ internal sealed class PipelineProvider : IPipelineProvider
 
         var context = new ValidationContext(scope.ServiceProvider, _currentUser.GetCurrentUser());
 
-        results = validationAttributes.Select(a => a.Validate(context));
+        results = validationAttributes.Select(a => a.Validate(context)).ToArray();
 
         return results.All(result => result.IsSucceded);
     }

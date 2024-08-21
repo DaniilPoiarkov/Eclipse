@@ -7,6 +7,10 @@
     "CreatedAt": "Created at",
     "Enable": "Enable",
     "Disable": "Disable",
-    "Okay": "Okay"
+    "Okay": "Okay",
+    "{0}IsRequired": "{0} is required.",
+    "{0}NotFound": "{0} not found.",
+    "ComingSoonFeature": "This feature is coming soon. Stay ahead!",
+    "OpenApi": "Open api"
   }
 }

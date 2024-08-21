@@ -19,12 +19,12 @@ internal sealed class UserReadService : IUserReadService
         _repository = repository;
     }
 
-    public async Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var users = await _userManager.GetAllAsync(cancellationToken);
 
         return users
-            .Select(u => u.ToSlimDto())
+            .Select(u => u.ToDto())
             .ToList();
     }
 

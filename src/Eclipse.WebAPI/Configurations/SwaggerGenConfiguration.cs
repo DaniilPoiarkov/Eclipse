@@ -31,6 +31,7 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
         }
 
         ConfigureApiKeySecurityDefinition(options);
+        ConfigureAuthorizationSecurityDefinition(options);
     }
 
     private static void ConfigureApiKeySecurityDefinition(SwaggerGenOptions options)
@@ -42,6 +43,38 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
             Description = "API-KEY based authorization. Enter your API-KEY to access not public API",
             Scheme = "ApiKeyScheme",
             Name = apiKeySecurity,
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+        });
+
+        var scheme = new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = apiKeySecurity
+            },
+
+            In = ParameterLocation.Header
+        };
+
+        var requirement = new OpenApiSecurityRequirement
+        {
+            { scheme, Array.Empty<string>() }
+        };
+
+        options.AddSecurityRequirement(requirement);
+    }
+
+    private static void ConfigureAuthorizationSecurityDefinition(SwaggerGenOptions options)
+    {
+        var apiKeySecurity = "Bearer";
+
+        options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
+        {
+            Description = "JWT Bearer token based authorization. Enter your token to access authorized API",
+            Scheme = apiKeySecurity,
+            Name = "Authorization",
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.ApiKey,
         });

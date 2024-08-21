@@ -1,7 +1,9 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
+using Eclipse.Domain.Users.Events;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
@@ -105,6 +107,7 @@ public class UserTests
     [Theory]
     [InlineData(null, "Empty")]
     [InlineData("", "Empty")]
+    [InlineData("     ", "Empty")]
     [InlineData("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest", "MaxLength")]
     public void AddTodoItem_WhenDataInvalid_ThenFailureResultReturned(string? text, string errorCode)
     {
@@ -144,5 +147,118 @@ public class UserTests
         result.Error.Code.Should().Be(expectedError.Code);
         result.Error.Description.Should().Be(expectedError.Description);
         result.Error.Args.Should().BeEquivalentTo(expectedError.Args);
+    }
+
+    [Fact]
+    public void SetSignInCode_WhenCalled_ThenNewCodeSet()
+    {
+        var setTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        var expectedExpirationTime = setTime.Add(UserConsts.SignInCodeExpiration);
+
+        _sut.SetSignInCode(setTime);
+        _sut.SignInCode.Should().NotBeNull();
+        _sut.SignInCodeExpiresAt.Should().Be(expectedExpirationTime);
+    }
+
+    [Fact]
+    public void SetSignInCode_WhenCalledMultipleTImes_ThenNotSetNewCodeUntilPreviousExpires()
+    {
+        var setTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+
+        _sut.SetSignInCode(setTime);
+
+        var signInCode = _sut.SignInCode;
+        var expiresAt = _sut.SignInCodeExpiresAt;
+
+        _sut.SetSignInCode(setTime.AddMinutes(1));
+        _sut.SetSignInCode(setTime.AddMinutes(2));
+        _sut.SetSignInCode(setTime.AddMinutes(3));
+
+        _sut.SignInCode.Should().Be(signInCode);
+        _sut.SignInCodeExpiresAt.Should().Be(expiresAt);
+    }
+
+    [Fact]
+    public void SetSignInCode_WhenPreviousCodeIsExpired_ThenSetsNewCode()
+    {
+        var firstDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        _sut.SetSignInCode(firstDate);
+
+        var signInCode = _sut.SignInCode;
+
+        var secondDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 10));
+
+        _sut.SetSignInCode(secondDate);
+
+        _sut.SignInCode.Should().NotBe(signInCode);
+        _sut.SignInCodeExpiresAt.Should().Be(secondDate.Add(UserConsts.SignInCodeExpiration));
+    }
+
+    [Fact]
+    public void IsValidSignInCode_WhenCodeIsValid_ThenReturnsTrue()
+    {
+        _sut.SetSignInCode(DateTime.UtcNow);
+        _sut.IsValidSignInCode(DateTime.UtcNow, _sut.SignInCode).Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData("qwerty")]
+    [InlineData("1234567")]
+    public void IsValidSignInCode_WhenValuesAreInvalid_ThenReturnsFalse(string? code)
+    {
+        _sut.SetSignInCode(DateTime.UtcNow);
+        _sut.IsValidSignInCode(DateTime.UtcNow, code!).Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    [InlineData("qwerty")]
+    [InlineData("1234567")]
+    public void IsValidSignInCode_WhenCodeWasNotSet_THenReturnsFalse(string? code)
+    {
+        _sut.IsValidSignInCode(DateTime.UtcNow, code!).Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsValidSignInCode_WhenCodeIsExpired_ThenReturnsFalse()
+    {
+        var creationDate = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
+        var submissionDate = creationDate.Add(UserConsts.SignInCodeExpiration).AddSeconds(1);
+
+        _sut.SetSignInCode(creationDate);
+
+        _sut.IsValidSignInCode(submissionDate, _sut.SignInCode).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Create_WhenNewRegisteredSetAsTrue_ThenNewUserJoinedDomainEventRaised()
+    {
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, true);
+
+        var events = user.GetEvents();
+
+        events.Should().HaveCount(1);
+
+        var domainEvent = events.Cast<NewUserJoinedDomainEvent>().First();
+
+        domainEvent.Should().NotBeNull();
+
+        domainEvent.UserId.Should().Be(user.Id);
+        domainEvent.Name.Should().Be(user.Name);
+        domainEvent.Surname.Should().Be(user.Surname);
+        domainEvent.UserName.Should().Be(user.UserName);
+    }
+
+    [Fact]
+    public void Create_WhenNewRegisteredSetAsFalse_ThenNoDomainEventRaised()
+    {
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, false);
+
+        var events = user.GetEvents();
+
+        events.Should().BeEmpty();
     }
 }

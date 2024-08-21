@@ -1,7 +1,9 @@
 ﻿using Eclipse.Common.Sheets;
+using Eclipse.Domain.Identity;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.Users;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Domain;
@@ -14,8 +16,9 @@ public static class EclipseDomainModule
     public static IServiceCollection AddDomainModule(this IServiceCollection services)
     {
         services
-            .AddTransient<UserManager>()
-            .AddSingleton<IObjectParser<Suggestion>, SuggestionParser>();
+            .AddScoped<UserManager>()
+            .AddScoped<IUserClaimsPrincipalFactory<User>, UserClaimsPrincipalFactory>()
+                .AddSingleton<IObjectParser<Suggestion>, SuggestionParser>();
 
         return services;
     }

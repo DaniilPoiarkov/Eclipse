@@ -8,23 +8,20 @@ internal sealed class UserService : IUserService
 {
     private readonly IUserCreateUpdateService _createUpdateService;
 
-    private readonly IUserLogicService _logicService;
-
     private readonly IUserReadService _readService;
 
-    public UserService(IUserCreateUpdateService createUpdateService, IUserLogicService logicService, IUserReadService readService)
+    public UserService(IUserCreateUpdateService createUpdateService, IUserReadService readService)
     {
         _createUpdateService = createUpdateService;
-        _logicService = logicService;
         _readService = readService;
     }
 
-    public Task<Result<UserDto>> CreateAsync(UserCreateDto createDto, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default)
     {
-        return _createUpdateService.CreateAsync(createDto, cancellationToken);
+        return _createUpdateService.CreateAsync(model, cancellationToken);
     }
 
-    public Task<IReadOnlyList<UserSlimDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return _readService.GetAllAsync(cancellationToken);
     }
@@ -44,13 +41,13 @@ internal sealed class UserService : IUserService
         return _readService.GetByIdAsync(id, cancellationToken);
     }
 
-    public Task<Result<UserDto>> SetUserGmtTimeAsync(Guid id, TimeOnly currentUserTime, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return _logicService.SetUserGmtTimeAsync(id, currentUserTime, cancellationToken);
+        return _createUpdateService.UpdateAsync(id, model, cancellationToken);
     }
 
-    public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto updateDto, CancellationToken cancellationToken = default)
+    public Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return _createUpdateService.UpdateAsync(id, updateDto, cancellationToken);
+        return _createUpdateService.UpdatePartialAsync(id, model, cancellationToken);
     }
 }

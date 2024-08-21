@@ -22,6 +22,14 @@
     "Entity:NotFound": "Entity of type {0} not found",
 
     "User:Events:NewUserJoined": "New user started to use bot!\n\rId: {0}\n\rUserName: {1}\n\rFull name: {2} {3}",
-    "User:DuplicateData": "User with {0} {1} already exists."
+    "User:DuplicateData": "User with {0} {1} already exists.",
+
+    "Account:{0}AuthenticationCode": "Use this code to sign in: {0}\n\r\n\rDo not share this code with anyone as it can lead to unauthorized access to your data.",
+    "Account:InvalidCode": "Invalid signin code.",
+
+    "User:AddTodoItem:{0}DuplicateTodoItem": "Todo item with id {0} already exists",
+
+    "{0}AlreadyExists{1}{2}": "{0} with {1} '{2}' already exists.",
+    "InvalidField{0}{1}": "Invalid field {0} {1}"
   }
 }

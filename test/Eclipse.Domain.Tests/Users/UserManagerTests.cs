@@ -25,7 +25,7 @@ public class UserManagerTests
     [InlineData("Jane", "Doe", "", 2)]
     public async Task CreateAsync_WhenModelValid_ThenCreatedUserReturned(string name, string surname, string userName, long chatId)
     {
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId);
+        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 
@@ -44,7 +44,7 @@ public class UserManagerTests
     public async Task CreateAsync_WhenUserWithSameChatIdExists_ThenFailureResultReturned()
     {
         var chatId = 1;
-        var expectedError = UserDomainErrors.DuplicateData(nameof(chatId), chatId);
+        var expectedError = UserDomainErrors.DuplicateData(nameof(CreateUserRequest.ChatId), chatId);
 
         _repository.CountAsync(u => true)
             .ReturnsForAnyArgs(Task.FromResult(1));

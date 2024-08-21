@@ -21,4 +21,17 @@ public static class RateLimiterOptionsExtensions
                 })
         );
     }
+
+    public static RateLimiterOptions AddIpAddressFiveMinutesWindow(this RateLimiterOptions options)
+    {
+        return options.AddPolicy(RateLimiterPolicies.IpAddressFiveMinutes, context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                context.Connection.RemoteIpAddress?.ToString(),
+                ipAddress => new FixedWindowRateLimiterOptions
+                {
+                    Window = TimeSpan.FromMinutes(5),
+                    PermitLimit = 1,
+                })
+        );
+    }
 }
