@@ -94,7 +94,6 @@ public static class EclipseWebApiModule
         app.UseSwagger();
         app.UseSwaggerUI();
 
-
         if (app.Environment.IsDevelopment())
         {
             ///
