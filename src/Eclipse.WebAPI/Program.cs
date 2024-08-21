@@ -11,6 +11,8 @@ using Eclipse.Pipelines.Decorations;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
 
+using Microsoft.ApplicationInsights.Extensibility;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,9 +45,14 @@ builder.Services.AddLocalization(localization =>
     localization.DefaultCulture = options.DefaultCulture;
 });
 
-builder.Host.UseSerilog((_, config) =>
+builder.Host.UseSerilog((context, sp, config) =>
 {
-    config.WriteTo.Async(sink => sink.Console());
+    config
+        .WriteTo.Async(sink => sink.Console())
+        .WriteTo.Async(sink => sink.ApplicationInsights(
+            sp.GetRequiredService<TelemetryConfiguration>(),
+            TelemetryConverter.Traces))
+        .Enrich.FromLogContext();
 });
 
 var app = builder.Build();
