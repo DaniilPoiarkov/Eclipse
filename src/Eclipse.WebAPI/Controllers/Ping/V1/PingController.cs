@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Eclipse.WebAPI.Controllers.Ping.V1;
 
 [ApiController]
-[Route("api/ping")]
+[Route("api/v{version:apiVersion}/ping")]
 [ApiVersion(ApiVersions.V1.Version, Deprecated = ApiVersions.V1.Deprecated)]
 public sealed class PingController : ControllerBase
 {
