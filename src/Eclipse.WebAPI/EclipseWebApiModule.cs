@@ -111,8 +111,8 @@ public static class EclipseWebApiModule
 
         app.UseLocalization();
 
-        app.UseMiddleware<CurrentSessionResolverMiddleware>()
-            .UseMiddleware<ErrorLocalizationMiddleware>();
+        app.UseMiddleware<CurrentSessionResolverMiddleware>();
+            //.UseMiddleware<ErrorLocalizationMiddleware>();
 
         app.MapControllers();
 
