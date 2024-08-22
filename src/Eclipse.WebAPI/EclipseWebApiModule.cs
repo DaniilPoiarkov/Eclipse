@@ -94,7 +94,6 @@ public static class EclipseWebApiModule
         app.UseSwagger();
         app.UseSwaggerUI();
 
-
         if (app.Environment.IsDevelopment())
         {
             ///
@@ -112,8 +111,8 @@ public static class EclipseWebApiModule
 
         app.UseLocalization();
 
-        app.UseMiddleware<CurrentSessionResolverMiddleware>()
-            .UseMiddleware<ErrorLocalizationMiddleware>();
+        app.UseMiddleware<CurrentSessionResolverMiddleware>();
+            //.UseMiddleware<ErrorLocalizationMiddleware>();
 
         app.MapControllers();
 

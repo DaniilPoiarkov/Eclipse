@@ -11,6 +11,7 @@ using Eclipse.Infrastructure.EventBus;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
 
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -139,9 +140,13 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddSerilogIntegration(this IServiceCollection services)
     {
-        services.AddSerilog((_, configuration) =>
+        services.AddSerilog((sp, logger) =>
         {
-            configuration.WriteTo.Async(sink => sink.Console())
+            logger.ReadFrom.Configuration(sp.GetRequiredService<IConfiguration>())
+                .WriteTo.Async(sink => sink.Console())
+                .WriteTo.Async(sink => sink.ApplicationInsights(
+                    sp.GetRequiredService<TelemetryConfiguration>(),
+                    TelemetryConverter.Traces))
                 .Enrich.FromLogContext();
         });
 
