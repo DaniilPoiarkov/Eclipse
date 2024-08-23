@@ -44,7 +44,6 @@ public static class EclipseWebApiModule
             .AddScoped<ApiKeyAuthorizeAttribute>()
             .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
             .AddScoped<CurrentSessionResolverMiddleware>()
-            .AddScoped<ErrorLocalizationMiddleware>()
             .AddScoped<CurrentSession>()
             .AddScoped<ICurrentSession>(sp => sp.GetRequiredService<CurrentSession>());
 
@@ -112,7 +111,6 @@ public static class EclipseWebApiModule
         app.UseLocalization();
 
         app.UseMiddleware<CurrentSessionResolverMiddleware>();
-            //.UseMiddleware<ErrorLocalizationMiddleware>();
 
         app.MapControllers();
 

@@ -3,6 +3,7 @@ using Eclipse.Common.Results;
 using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
@@ -13,9 +14,12 @@ public sealed class CommandsController : ControllerBase
 {
     private readonly ICommandService _commandService;
 
-    public CommandsController(ICommandService commandService)
+    private readonly IStringLocalizer<CommandsController> _stringLocalizer;
+
+    public CommandsController(ICommandService commandService, IStringLocalizer<CommandsController> stringLocalizer)
     {
         _commandService = commandService;
+        _stringLocalizer = stringLocalizer;
     }
 
     [HttpGet("list")]
@@ -28,7 +32,7 @@ public sealed class CommandsController : ControllerBase
     public async Task<IActionResult> Add([FromBody] AddCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await _commandService.Add(request, cancellationToken);
-        return result.Match(NoContent, result.ToProblems);
+        return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpDelete("remove/{command}")]
