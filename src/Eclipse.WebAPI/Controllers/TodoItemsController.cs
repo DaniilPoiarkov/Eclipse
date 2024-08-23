@@ -4,6 +4,7 @@ using Eclipse.Common.Session;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
@@ -16,10 +17,13 @@ public class TodoItemsController : ControllerBase
 
     private readonly ICurrentSession _currentSession;
 
-    public TodoItemsController(ITodoItemService todoItemService, ICurrentSession currentSession)
+    private readonly IStringLocalizer<TodoItemsController> _stringLocalizer;
+
+    public TodoItemsController(ITodoItemService todoItemService, ICurrentSession currentSession, IStringLocalizer<TodoItemsController> stringLocalizer)
     {
         _todoItemService = todoItemService;
         _currentSession = currentSession;
+        _stringLocalizer = stringLocalizer;
     }
 
     [HttpGet]
@@ -31,7 +35,7 @@ public class TodoItemsController : ControllerBase
         }
 
         var result = await _todoItemService.GetListAsync(_currentSession.UserId.Value, cancellationToken);
-        return result.Match(() => Ok(result.Value), result.ToProblems);
+        return result.Match(() => Ok(result.Value), () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpGet("{todoItemId:guid}", Name = "get-todo-item-by-id")]
@@ -44,7 +48,7 @@ public class TodoItemsController : ControllerBase
 
         var result = await _todoItemService.GetAsync(_currentSession.UserId.Value, todoItemId, cancellationToken);
 
-        return result.Match(() => Ok(result.Value), result.ToProblems);
+        return result.Match(() => Ok(result.Value), () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpPost("add")]
@@ -61,7 +65,7 @@ public class TodoItemsController : ControllerBase
             ? Url.Link("get-todo-item-by-id", new { todoItemId = result.Value.Id })
             : string.Empty;
 
-        return result.Match(() => Created(createdUrl, result.Value), result.ToProblems);
+        return result.Match(() => Created(createdUrl, result.Value), () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpPost("{todoItemId:guid}/finish")]
@@ -74,6 +78,6 @@ public class TodoItemsController : ControllerBase
 
         var result = await _todoItemService.FinishItemAsync(_currentSession.ChatId.Value, todoItemId, cancellationToken);
 
-        return result.Match(NoContent, result.ToProblems);
+        return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
     }
 }

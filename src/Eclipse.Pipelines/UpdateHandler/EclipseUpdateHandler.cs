@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Localizations;
 using Eclipse.Common.Results;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
@@ -77,7 +78,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (context is null)
         {
-            _logger.LogError("Context is null after parsing update of type {updateType}", update.Type);
+            _logger.LogWarning("Context is null after parsing update of type {updateType}", update.Type);
             return;
         }
 
@@ -106,7 +107,21 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        await AddOrUpdateAsync(context.User, cancellationToken);
+        await TrackUserAsync(context, cancellationToken);
+    }
+
+    private async Task TrackUserAsync(MessageContext context, CancellationToken cancellationToken)
+    {
+        var result = await AddOrUpdateAsync(context.User, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogError("User tracking during update handling failed with code: {code}; Message: {message}; Chat Id: {chatId}",
+                result.Error.Code,
+                _localizer.LocalizeError(result.Error),
+                context.ChatId
+            );
+        }
     }
 
     private async Task<Result<UserDto>> AddOrUpdateAsync(TelegramUser user, CancellationToken cancellationToken)

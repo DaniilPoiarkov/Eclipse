@@ -2,5 +2,5 @@
 
 internal static class ContainerNames
 {
-    internal static readonly string Aggregates = "Aggregates";
+    internal static readonly string Aggregates = "Aggregates_dev";
 }

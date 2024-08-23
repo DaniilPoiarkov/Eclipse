@@ -5,6 +5,7 @@ using Eclipse.Common.Session;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
@@ -17,10 +18,16 @@ public sealed class RemindersController : ControllerBase
 
     private readonly IReminderService _reminderService;
 
-    public RemindersController(ICurrentSession currentSession, IReminderService reminderService)
+    private readonly IStringLocalizer<RemindersController> _stringLocalizer;
+
+    public RemindersController(
+        ICurrentSession currentSession,
+        IReminderService reminderService,
+        IStringLocalizer<RemindersController> stringLocalizer)
     {
         _currentSession = currentSession;
         _reminderService = reminderService;
+        _stringLocalizer = stringLocalizer;
     }
 
     [HttpGet]
@@ -33,7 +40,7 @@ public sealed class RemindersController : ControllerBase
 
         var result = await _reminderService.GetListAsync(_currentSession.UserId.Value, cancellationToken);
 
-        return result.Match(() => Ok(result.Value), result.ToProblems);
+        return result.Match(() => Ok(result.Value), () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpGet("{reminderId:guid}", Name = "get-reminder-by-id")]
@@ -46,7 +53,7 @@ public sealed class RemindersController : ControllerBase
 
         var result = await _reminderService.GetAsync(_currentSession.UserId.Value, reminderId, cancellationToken);
 
-        return result.Match(() => Ok(result.Value), result.ToProblems);
+        return result.Match(() => Ok(result.Value), () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpPost]
@@ -63,6 +70,6 @@ public sealed class RemindersController : ControllerBase
             ? Url.Link("get-reminder-by-id", new { reminderId = result.Value.Id })
             : string.Empty;
 
-        return result.Match(() => Created(createdUrl, result.Value), result.ToProblems);
+        return result.Match(() => Created(createdUrl, result.Value), () => result.ToProblems(_stringLocalizer));
     }
 }
