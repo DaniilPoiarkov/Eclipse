@@ -91,14 +91,14 @@ public sealed class ExtensionTests
     }
 
     [Theory]
-    [InlineData("Test", "de")]
-    [InlineData("Test", "fr")]
-    public void UseCurrentCulture_WhenCultureNotExist_ThenExceptionThrown(string key, string culture)
+    [InlineData("Test", "de", "Test")]
+    [InlineData("Test", "fr", "Test")]
+    public void UseCurrentCulture_WhenCultureNotExist_ThenDefaultCultureUsed(string key, string culture, string expected)
     {
         _currentCulture.Culture.Returns(culture);
         _sut.UseCurrentCulture(_currentCulture);
 
-        var action = () => _sut[key];
-        action.Should().ThrowExactly<LocalizationFileNotExistException>();
+        var value = _sut[key];
+        value.Value.Should().Be(expected);
     }
 }
