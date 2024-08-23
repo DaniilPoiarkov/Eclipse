@@ -1,9 +1,8 @@
 ﻿using Eclipse.Pipelines.Options.Languages;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.WebAPI.Configurations;
+namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/configuration")]
