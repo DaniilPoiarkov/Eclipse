@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Contracts.Configuration;
+using Eclipse.Common.Background;
 using Eclipse.Common.Session;
 using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
@@ -83,6 +84,10 @@ public static class EclipseWebApiModule
 
         services.Configure<ApiKeyAuthorizationOptions>(
             configuration.GetSection("Authorization")
+        );
+
+        services.Configure<CultureList>(
+            configuration.GetSection(nameof(CultureList))
         );
 
         return services;

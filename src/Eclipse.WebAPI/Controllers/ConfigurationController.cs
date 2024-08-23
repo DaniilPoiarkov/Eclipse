@@ -1,8 +1,6 @@
-﻿using Eclipse.Pipelines.Options.Languages;
+﻿using Eclipse.Application.Contracts.Configuration;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 
 namespace Eclipse.WebAPI.Controllers;
 
@@ -10,24 +8,16 @@ namespace Eclipse.WebAPI.Controllers;
 [Route("api/configuration")]
 public class ConfigurationController : ControllerBase
 {
-    private readonly IOptions<LanguageList> _languageListOptions;
+    private readonly IConfigurationService _configurationService;
 
-    private readonly IStringLocalizer<ConfigurationController> _stringLocalizer;
-
-    public ConfigurationController(IOptions<LanguageList> languageListOptions, IStringLocalizer<ConfigurationController> stringLocalizer)
+    public ConfigurationController(IConfigurationService configurationService)
     {
-        _languageListOptions = languageListOptions;
-        _stringLocalizer = stringLocalizer;
+        _configurationService = configurationService;
     }
 
     [HttpGet("cultures")]
     public IActionResult GetCultures()
     {
-        return Ok(_languageListOptions.Value
-            .Select(i => new LanguageInfo
-            {
-                Code = i.Code,
-                Language = _stringLocalizer[i.Language]
-            }));
+        return Ok(_configurationService.GetCultures());
     }
 }

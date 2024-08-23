@@ -1,10 +1,10 @@
-﻿using Eclipse.Application.Contracts.Users;
+﻿using Eclipse.Application.Contracts.Configuration;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
-using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Microsoft.Extensions.Options;
@@ -22,7 +22,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private readonly IMessageStore _messageStore;
 
-    private readonly IOptions<LanguageList> _languages;
+    private readonly IOptions<CultureList> _cultures;
 
     private readonly ICurrentCulture _currentCulture;
 
@@ -30,12 +30,12 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private static readonly int _languagesChunk = 2;
 
-    public ChangeLanguagePipeline(ICultureTracker cultureTracker, IUserService userService, IMessageStore messageStore, IOptions<LanguageList> languages, ICurrentCulture currentCulture)
+    public ChangeLanguagePipeline(ICultureTracker cultureTracker, IUserService userService, IMessageStore messageStore, IOptions<CultureList> cultures, ICurrentCulture currentCulture)
     {
         _cultureTracker = cultureTracker;
         _userService = userService;
         _messageStore = messageStore;
-        _languages = languages;
+        _cultures = cultures;
         _currentCulture = currentCulture;
     }
 
@@ -47,9 +47,10 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private IResult SendAvailableLanguages(MessageContext context)
     {
-        var buttons = _languages.Value
-            .Select(l => InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:{l.Language}"], l.Code))
-            .Chunk(_languagesChunk);
+        var buttons = _cultures.Value
+            .Select(l => InlineKeyboardButton.WithCallbackData(Localizer[$"{_pipelinePrefix}:{l.Culture}"], l.Code))
+            .Chunk(_languagesChunk)
+            .ToArray();
 
         return Menu(buttons, Localizer[$"{_pipelinePrefix}:Choose"]);
     }
@@ -109,7 +110,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private bool SupportedLanguage(MessageContext context)
     {
-        return _languages.Value
+        return _cultures.Value
             .Exists(l => l.Code.Equals(context.Value));
     }
 }
