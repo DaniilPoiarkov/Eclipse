@@ -6,25 +6,26 @@ using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.Repositories;
 
-internal class CachedRepositoryBase<T> : IRepository<T>
-    where T : Entity
+internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
+    where TEntity : Entity
+    where TRepository : class, IRepository<TEntity>
 {
-    protected readonly IRepository<T> Repository;
+    protected readonly TRepository Repository;
 
     protected readonly ICacheService CacheService;
 
-    public CachedRepositoryBase(IRepository<T> repository, ICacheService cacheService)
+    public CachedRepositoryBase(TRepository repository, ICacheService cacheService)
     {
         Repository = repository;
         CacheService = cacheService;
     }
 
-    public Task<int> CountAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
     {
         return Repository.CountAsync(expression, cancellationToken);
     }
 
-    public async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await RemoveByPrefixAsync(cancellationToken);
         return await Repository.CreateAsync(entity, cancellationToken);
@@ -36,10 +37,10 @@ internal class CachedRepositoryBase<T> : IRepository<T>
         await RemoveByPrefixAsync(cancellationToken);
     }
 
-    public async Task<T?> FindAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var key = new CacheKey($"{GetPrefix()}-{id}");
-        var entity = await CacheService.GetAsync<T>(key, cancellationToken);
+        var entity = await CacheService.GetAsync<TEntity>(key, cancellationToken);
 
         if (entity is not null)
         {
@@ -55,11 +56,11 @@ internal class CachedRepositoryBase<T> : IRepository<T>
         return entity;
     }
 
-    public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var key = new CacheKey($"{GetPrefix()}-all");
 
-        var cached = await CacheService.GetAsync<List<T>>(key, cancellationToken);
+        var cached = await CacheService.GetAsync<List<TEntity>>(key, cancellationToken);
 
         if (cached is not null)
         {
@@ -74,11 +75,11 @@ internal class CachedRepositoryBase<T> : IRepository<T>
         return items;
     }
 
-    public async Task<IReadOnlyList<T>> GetByExpressionAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
     {
         var key = new CacheKey($"{GetPrefix()};{expression.Body}");
 
-        var cached = await CacheService.GetAsync<List<T>>(key, cancellationToken);
+        var cached = await CacheService.GetAsync<List<TEntity>>(key, cancellationToken);
 
         if (cached is not null)
         {
@@ -94,11 +95,11 @@ internal class CachedRepositoryBase<T> : IRepository<T>
         return items;
     }
 
-    public async Task<IReadOnlyList<T>> GetByExpressionAsync(Expression<Func<T, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
     {
         var key = new CacheKey($"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}");
 
-        var cached = await CacheService.GetAsync<List<T>>(key, cancellationToken);
+        var cached = await CacheService.GetAsync<List<TEntity>>(key, cancellationToken);
 
         if (cached is not null)
         {
@@ -114,7 +115,7 @@ internal class CachedRepositoryBase<T> : IRepository<T>
         return items;
     }
 
-    public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var key = new CacheKey($"{GetPrefix()}-{entity.Id}");
 
@@ -157,5 +158,5 @@ internal class CachedRepositoryBase<T> : IRepository<T>
         await Task.WhenAll(removings);
     }
 
-    protected static string GetPrefix() => typeof(T).AssemblyQualifiedName ?? string.Empty;
+    protected static string GetPrefix() => typeof(TEntity).AssemblyQualifiedName ?? string.Empty;
 }
