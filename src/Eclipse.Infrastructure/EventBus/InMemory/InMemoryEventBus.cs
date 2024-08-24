@@ -1,7 +1,7 @@
 ﻿using Eclipse.Common.EventBus;
 using Eclipse.Common.Events;
 
-namespace Eclipse.Infrastructure.EventBus;
+namespace Eclipse.Infrastructure.EventBus.InMemory;
 
 internal sealed class InMemoryEventBus : IEventBus
 {
@@ -12,9 +12,9 @@ internal sealed class InMemoryEventBus : IEventBus
         _queue = queue;
     }
 
-    public ValueTask Publish<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+    public async Task Publish<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
         where TEvent : class, IDomainEvent
     {
-        return _queue.WriteAsync(@event, cancellationToken);
+        await _queue.WriteAsync(@event, cancellationToken);
     }
 }
