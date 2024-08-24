@@ -7,7 +7,8 @@ using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Caching;
-using Eclipse.Infrastructure.EventBus;
+using Eclipse.Infrastructure.EventBus.InMemory;
+using Eclipse.Infrastructure.EventBus.Redis;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
 
@@ -23,6 +24,8 @@ using Quartz;
 using Quartz.Logging;
 
 using Serilog;
+
+using StackExchange.Redis;
 
 using Telegram.Bot;
 
@@ -42,14 +45,10 @@ public static class EclipseInfrastructureModule
         services
             .AddSerilogIntegration()
             .AddCache()
+            .AddEventBus()
             .AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
-
-        services
-            .AddSingleton(typeof(InMemoryQueue<>))
-            .AddTransient<IEventBus, InMemoryEventBus>()
-            .AddHostedService<InMemoryChannelReadService>();
 
         services
             .AddSingleton<IExcelManager, ExcelManager>()
@@ -123,17 +122,50 @@ public static class EclipseInfrastructureModule
 
         if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
         {
+            var connectionString = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string is not provided");
+
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = configuration.GetConnectionString("Redis");
+                options.Configuration = connectionString;
             });
         }
         else
         {
+            services
+                .AddSingleton(typeof(InMemoryQueue<>))
+                .AddTransient<IEventBus, InMemoryEventBus>()
+                .AddHostedService<InMemoryChannelReadService>();
+
             services.AddDistributedMemoryCache();
         }
 
         services.AddSingleton<ICacheService, CacheService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddEventBus(this IServiceCollection services)
+    {
+        var configuration = services.GetConfiguration();
+
+        if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
+        {
+            var connectionString = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string is not provided");
+
+            services
+                .AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connectionString))
+                .AddTransient<IEventBus, RedisEventBus>()
+                .AddHostedService<RedisChannelReadService>();
+
+            return services;
+        }
+
+        services
+            .AddSingleton(typeof(InMemoryQueue<>))
+            .AddTransient<IEventBus, InMemoryEventBus>()
+            .AddHostedService<InMemoryChannelReadService>();
 
         return services;
     }
