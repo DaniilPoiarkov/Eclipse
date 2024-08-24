@@ -32,7 +32,7 @@ public static class EclipseDataAccessModule
         services
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
-            .AddTransient<IInterceptor, TriggerDomainEventsInterceptor>();
+            .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
 
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
