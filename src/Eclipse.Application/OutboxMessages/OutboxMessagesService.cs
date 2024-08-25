@@ -69,6 +69,7 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
 
             if (message is null)
             {
+                outboxMessage.SetError("Cannot deserialize an event", _timeProvider.Now);
                 _logger.LogError("Error during publishing event:\n\r{error}", "event is null");
                 return;
             }
