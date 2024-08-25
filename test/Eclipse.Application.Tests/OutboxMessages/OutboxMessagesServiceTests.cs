@@ -37,4 +37,6 @@ public sealed class OutboxMessagesServiceTests
         await _sut.DeleteSuccessfullyProcessedAsync();
         await _repository.Received().DeleteSuccessfullyProcessedAsync();
     }
+
+
 }

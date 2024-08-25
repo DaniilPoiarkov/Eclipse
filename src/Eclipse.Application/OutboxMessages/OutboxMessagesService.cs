@@ -44,8 +44,9 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
         foreach (var outboxMessage in outboxMessages)
         {
             await ProcessMessageAsync(outboxMessage, cancellationToken);
-            await _repository.UpdateAsync(outboxMessage, cancellationToken);
         }
+
+        await _repository.UpdateRangeAsync(outboxMessages, cancellationToken);
 
         var failed = outboxMessages.Where(m => m.Error is not null);
 

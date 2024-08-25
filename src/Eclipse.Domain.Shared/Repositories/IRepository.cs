@@ -6,7 +6,7 @@ namespace Eclipse.Domain.Shared.Repositories;
 /// Provides Api for retrieving data and perform CRUD operations
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
-public interface IRepository<TEntity> : IReadRepository<TEntity>, ICreateUpdateDeleteRepository<TEntity>
+public interface IRepository<TEntity> : IReadRepository<TEntity>, ICreateUpdateDeleteRepository<TEntity>, IBulkUpdateRepository<TEntity>
     where TEntity : Entity
 {
 
