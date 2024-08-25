@@ -1,9 +1,9 @@
 ﻿using Azure.Identity;
 
-using Eclipse.DataAccess.Constants;
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
+using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.OutboxMessages;
 using Eclipse.DataAccess.Users;
 using Eclipse.Domain.OutboxMessages;
@@ -38,6 +38,13 @@ public static class EclipseDataAccessModule
         services
             .Decorate<IUserRepository, CachedUserRepository>()
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>();
+
+        services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
 
         return services;
     }
@@ -94,8 +101,10 @@ public static class EclipseDataAccessModule
     {
         using var scope = app.Services.CreateScope();
 
-        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<EclipseDbContext>>();
+        var serviceProvider = scope.ServiceProvider;
+
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var logger = serviceProvider.GetRequiredService<ILogger<EclipseDbContext>>();
 
         if (!configuration.GetValue<bool>("Settings:IsDocker"))
         {
@@ -103,17 +112,17 @@ public static class EclipseDataAccessModule
             return;
         }
 
-        var cosmosOptions = scope.ServiceProvider.GetRequiredService<IOptions<CosmosDbContextOptions>>();
+        var options = serviceProvider.GetRequiredService<IOptions<CosmosDbContextOptions>>();
 
         using var client = new CosmosClient(configuration.GetConnectionString("Emulator"));
 
         logger.LogInformation("Creating database if it not exists...");
-        var database = await client.CreateDatabaseIfNotExistsAsync(cosmosOptions.Value.DatabaseId, ThroughputProperties.CreateManualThroughput(1000));
+        var database = await client.CreateDatabaseIfNotExistsAsync(options.Value.DatabaseId, ThroughputProperties.CreateManualThroughput(1000));
 
         logger.LogInformation("Creating container if it not exists...");
         await database.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
         {
-            Id = ContainerNames.Aggregates,
+            Id = options.Value.Container,
             PartitionKeyPath = "/Id",
         });
 

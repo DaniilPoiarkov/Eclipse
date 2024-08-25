@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.OutboxMessages;
+﻿using Eclipse.DataAccess.Model;
+using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +12,19 @@ public sealed class EclipseDbContext : DbContext
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
-    public EclipseDbContext(DbContextOptions<EclipseDbContext> options)
-        : base(options) { }
+
+    private readonly IModelBuilderConfigurator _modelBuilderConfigurator;
+
+    public EclipseDbContext(DbContextOptions<EclipseDbContext> options, IModelBuilderConfigurator modelBuilderConfigurator)
+        : base(options)
+    {
+        _modelBuilderConfigurator = modelBuilderConfigurator;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(EclipseDbContext).Assembly);
+        _modelBuilderConfigurator.Configure(modelBuilder);
     }
 }
