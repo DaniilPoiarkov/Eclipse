@@ -44,8 +44,9 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
         foreach (var outboxMessage in outboxMessages)
         {
             await ProcessMessageAsync(outboxMessage, cancellationToken);
-            await _repository.UpdateAsync(outboxMessage, cancellationToken);
         }
+
+        await _repository.UpdateRangeAsync(outboxMessages, cancellationToken);
 
         var failed = outboxMessages.Where(m => m.Error is not null);
 
@@ -68,6 +69,7 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
 
             if (message is null)
             {
+                outboxMessage.SetError("Cannot deserialize an event", _timeProvider.Now);
                 _logger.LogError("Error during publishing event:\n\r{error}", "event is null");
                 return;
             }

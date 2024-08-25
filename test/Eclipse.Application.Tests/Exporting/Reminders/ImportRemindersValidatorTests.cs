@@ -71,7 +71,7 @@ public sealed class ImportRemindersValidatorTests
         var error = $"{nameof(User)} not found";
 
         var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
-            .For("{0}NotFound", nameof(User))
+            .ForWithArgs("{0}NotFound", nameof(User))
             .Return(error)
             .Build();
 
@@ -94,9 +94,9 @@ public sealed class ImportRemindersValidatorTests
         var fieldError = $"Invalid field {nameof(invalidRow.NotifyAt)} \'{invalidRow.NotifyAt}\'";
 
         var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
-            .For("{0}NotFound", nameof(User))
+            .ForWithArgs("{0}NotFound", nameof(User))
                 .Return(notFoundError)
-            .For("InvalidField{0}{1}", nameof(invalidRow.NotifyAt), invalidRow.NotifyAt)
+            .ForWithArgs("InvalidField{0}{1}", nameof(invalidRow.NotifyAt), invalidRow.NotifyAt)
                 .Return(fieldError)
             .Build();
 
@@ -134,7 +134,7 @@ public sealed class ImportRemindersValidatorTests
         var expectedError = $"{nameof(Reminder)} with {nameof(reminder.Id)} \'{reminders[0].Id}\' already exists";
 
         var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
-            .For("{0}AlreadyExists{1}{2}", nameof(Reminder), nameof(reminder.Id), reminders[0].Id)
+            .ForWithArgs("{0}AlreadyExists{1}{2}", nameof(Reminder), nameof(reminder.Id), reminders[0].Id)
             .Return(expectedError)
             .Build();
 
@@ -163,7 +163,7 @@ public sealed class ImportRemindersValidatorTests
         var expectedError = $"Invalid field {nameof(row.NotifyAt)} \'{row.NotifyAt}\'";
 
         var localizer = LocalizerBuilder<ImportRemindersValidator>.Create()
-            .For("InvalidField{0}{1}", nameof(row.NotifyAt), row.NotifyAt)
+            .ForWithArgs("InvalidField{0}{1}", nameof(row.NotifyAt), row.NotifyAt)
             .Return(expectedError)
             .Build();
 
