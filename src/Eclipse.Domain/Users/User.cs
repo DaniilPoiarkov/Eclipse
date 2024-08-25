@@ -221,10 +221,4 @@ public sealed class User : AggregateRoot
     {
         return $"{Name}, {UserName} {base.ToString()}";
     }
-
-    public void TriggerTestEvent()
-    {
-        AddEvent(new TestDomainEvent(ChatId));
-        AddEvent(new NewUserJoinedDomainEvent(Id, UserName, Name, Surname));
-    }
 }
