@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
-using Eclipse.Application.Exporting.Models;
+using Eclipse.Application.Exporting.Reminders;
 using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Application.Exporting.Users;
 using Eclipse.Common.Excel;
