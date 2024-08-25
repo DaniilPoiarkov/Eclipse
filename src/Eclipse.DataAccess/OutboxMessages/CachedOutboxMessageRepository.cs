@@ -9,10 +9,9 @@ internal sealed class CachedOutboxMessageRepository : CachedRepositoryBase<Outbo
     public CachedOutboxMessageRepository(IOutboxMessageRepository repository, ICacheService cacheService)
         : base(repository, cacheService) { }
 
-    public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
+    public Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {
-        await RemoveByPrefixAsync(cancellationToken);
-        await Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
+        return Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
     }
 
     public Task<List<OutboxMessage>> GetNotProcessedAsync(int count, CancellationToken cancellationToken = default)

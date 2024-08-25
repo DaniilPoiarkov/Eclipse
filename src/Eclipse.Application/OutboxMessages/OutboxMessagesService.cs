@@ -59,19 +59,19 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
 
     private async Task ProcessMessageAsync(OutboxMessage outboxMessage, CancellationToken cancellationToken)
     {
-        var message = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.JsonContent, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All,
-        });
-
-        if (message is null)
-        {
-            _logger.LogError("Error during publishing event:\n\r{error}", "event is null");
-            return;
-        }
-
         try
         {
+            var message = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.JsonContent, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+            });
+
+            if (message is null)
+            {
+                _logger.LogError("Error during publishing event:\n\r{error}", "event is null");
+                return;
+            }
+
             await _eventBus.Publish(message, cancellationToken);
             outboxMessage.SetProcessed(_timeProvider.Now);
         }

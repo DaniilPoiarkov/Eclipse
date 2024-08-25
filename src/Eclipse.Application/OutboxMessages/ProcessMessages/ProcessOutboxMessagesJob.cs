@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.OutboxMessages;
+
 using Microsoft.Extensions.Configuration;
 
 using Quartz;
@@ -22,6 +23,6 @@ internal sealed class ProcessOutboxMessagesJob : IJob
         var count = _configuration.GetSection("OutboxMessages")
             .GetValue<int>("ProcessCount");
 
-        var res = await _outboxMessagesService.ProcessAsync(count, context.CancellationToken);
+        await _outboxMessagesService.ProcessAsync(count, context.CancellationToken);
     }
 }

@@ -5,10 +5,8 @@ using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.OutboxMessages;
-using Eclipse.DataAccess.Repositories;
 using Eclipse.DataAccess.Users;
 using Eclipse.Domain.OutboxMessages;
-using Eclipse.Domain.Shared.Repositories;
 using Eclipse.Domain.Users;
 
 using Microsoft.AspNetCore.Builder;
@@ -37,13 +35,7 @@ public static class EclipseDataAccessModule
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
 
-        services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IRepository<>)))
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-
         services
-            .Decorate(typeof(IRepository<>), typeof(CachedRepositoryBase<,>))
             .Decorate<IUserRepository, CachedUserRepository>()
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>();
 
