@@ -9,4 +9,7 @@ public sealed class CosmosDbContextOptions
 
     [Required]
     public string Endpoint { get; set; } = null!;
+
+    [Required]
+    public string Container { get; set; } = null!;
 }
