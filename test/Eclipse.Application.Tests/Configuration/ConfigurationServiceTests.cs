@@ -31,29 +31,11 @@ public sealed class ConfigurationServiceTests
     [Fact]
     public void GetCultures_WhenRequested_ThenReturnsLocalizedResponse()
     {
-        var expected = new List<CultureInfo>()
-        {
-            new()
-            {
-                Code = "en",
-                Culture = "This is english"
-            },
-            new()
-            {
-                Code = "fr",
-                Culture = "This is franch"
-            },
-        };
-
         var english = "English";
         var franch = "Franch";
 
-        LocalizerBuilder<ConfigurationService>.Create(_localizer)
-            .For(english)
-                .Return("This is english")
-            .For(franch)
-                .Return("This is franch")
-            .Build();
+        var expectedEnglish = "This is english";
+        var expectedFranch = "This is franch";
 
         _options.Value.Returns(
         [
@@ -68,6 +50,26 @@ public sealed class ConfigurationServiceTests
                 Culture = franch
             }
         ]);
+
+        var expected = new List<CultureInfo>()
+        {
+            new()
+            {
+                Code = "en",
+                Culture = expectedEnglish
+            },
+            new()
+            {
+                Code = "fr",
+                Culture = expectedFranch
+            },
+        };
+
+        LocalizerBuilder<ConfigurationService>.Configure(_localizer)
+            .For(english)
+                .Return(expectedEnglish)
+            .For(franch)
+                .Return(expectedFranch);
 
         var result = _sut.GetCultures();
 
