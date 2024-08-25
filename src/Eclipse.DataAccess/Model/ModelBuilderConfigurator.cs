@@ -11,7 +11,7 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
 {
     private readonly IEntityTypeConfiguration<User> _userConfiguration;
 
-    private readonly IEntityTypeConfiguration<OutboxMessage> _outboundMessageConfiguration;
+    private readonly IEntityTypeConfiguration<OutboxMessage> _outboxMessageConfiguration;
 
     private readonly IOptions<CosmosDbContextOptions> _options;
 
@@ -21,14 +21,14 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
         IOptions<CosmosDbContextOptions> options)
     {
         _userConfiguration = userConfiguration;
-        _outboundMessageConfiguration = outboundMessageConfiguration;
+        _outboxMessageConfiguration = outboundMessageConfiguration;
         _options = options;
     }
 
     public void Configure(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(_userConfiguration);
-        modelBuilder.ApplyConfiguration(_outboundMessageConfiguration);
+        modelBuilder.ApplyConfiguration(_outboxMessageConfiguration);
 
         modelBuilder.HasDefaultContainer(_options.Value.Container);
     }
