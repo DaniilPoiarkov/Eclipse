@@ -132,11 +132,6 @@ public static class EclipseInfrastructureModule
         }
         else
         {
-            services
-                .AddSingleton(typeof(InMemoryQueue<>))
-                .AddTransient<IEventBus, InMemoryEventBus>()
-                .AddHostedService<InMemoryChannelReadService>();
-
             services.AddDistributedMemoryCache();
         }
 
