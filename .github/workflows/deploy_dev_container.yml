@@ -53,7 +53,7 @@ jobs:
         uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
         with:
           reports: ${{ github.workspace }}/test-results/**/*.xml
-          targetdir: ${{ github.workspace }}
+          targetdir: ${{ github.workspace }}/test-reports
           reporttypes: cobertura;Html_Dark
           tag: ${{ github.run_number }}_${{ github.run_id }}
       
@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CoverageReports
-          path: CoverageReports
+          path: ${{ github.workspace }}/test-reports
 
   build-image:
     runs-on: ubuntu-latest
