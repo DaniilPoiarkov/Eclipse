@@ -24,7 +24,7 @@
 <p>Run <i>.\stop.ps1</i> script to stop container. It will also remove image.</p>
 
 ## Architecture diagram
-![eclipse-high-level](https://github.com/user-attachments/assets/bfc996e7-844f-41b4-a5ed-4083115cd74f)
+![Eclipse](https://github.com/user-attachments/assets/06b1b2a7-41dc-4bec-92eb-6569a95d8283)
 
 ## References
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
