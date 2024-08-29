@@ -6,7 +6,7 @@ namespace Eclipse.Application.OutboxMessages.ProcessMessages;
 
 internal class ProcessOutboxMessagesJobConfiguration : IJobConfiguration
 {
-    private static readonly int _intervalInSeconds = 5;
+    private static readonly int _intervalInSeconds = 15;
 
     public void Configure(IServiceCollectionQuartzConfigurator configurator)
     {

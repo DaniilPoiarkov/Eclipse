@@ -48,13 +48,15 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
 
         await _repository.UpdateRangeAsync(outboxMessages, cancellationToken);
 
-        var failed = outboxMessages.Where(m => m.Error is not null);
+        var errors = outboxMessages.Where(m => !m.Error.IsNullOrEmpty())
+            .Select(m => m.Error!)
+            .ToList();
 
         return new ProcessOutboxMessagesResult(
             outboxMessages.Count,
             outboxMessages.Where(m => m.Error is null).Count(),
-            failed.Count(),
-            failed.Select(m => m.Error!)
+            errors.Count,
+            errors
         );
     }
 
