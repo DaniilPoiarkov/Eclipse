@@ -42,11 +42,11 @@ jobs:
         run: dotnet build ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
         
       - name: Run tests
-        run: dotnet test ./Eclipse.WebAPI.sln \
-          --configuration ${{ env.DOTNET_CONFIGURATION }} \
-          --no-build \
-          --logger trx \
-          --results-directory ${{ github.workspace }}/test-results \
+        run: dotnet test ./Eclipse.WebAPI.sln 
+          --configuration ${{ env.DOTNET_CONFIGURATION }}
+          --no-build
+          --logger trx
+          --results-directory ${{ github.workspace }}/test-results
           --collect "XPlat Code Coverage"
 
       - name: Generate test report
