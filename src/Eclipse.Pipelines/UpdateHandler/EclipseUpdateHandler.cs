@@ -77,7 +77,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (context is null)
         {
-            _logger.LogError("Context is null after parsing update of type {updateType}", update.Type);
+            _logger.LogWarning("Context is null after parsing update of type {updateType}", update.Type);
             return;
         }
 

@@ -67,9 +67,9 @@ public sealed class ImportTodoItemsValidatorTests
         var maxLengthError = $"Max length exceded: {TodoItemConstants.MaxLength}";
 
         var localizer = LocalizerBuilder<ImportTodoItemsValidator>.Create()
-            .For("{0}NotFound", nameof(User))
+            .ForWithArgs("{0}NotFound", nameof(User))
                 .Return(notFoundError)
-            .For("TodoItem:MaxLength", TodoItemConstants.MaxLength)
+            .ForWithArgs("TodoItem:MaxLength", TodoItemConstants.MaxLength)
                 .Return(maxLengthError)
             .Build();
 

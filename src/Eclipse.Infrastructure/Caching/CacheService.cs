@@ -40,7 +40,7 @@ internal sealed class CacheService : ICacheService
         });
     }
 
-    public Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, CancellationToken cancellationToken = default)
+    public async Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, CancellationToken cancellationToken = default)
     {
         var json = JsonConvert.SerializeObject(value);
 
@@ -49,11 +49,39 @@ internal sealed class CacheService : ICacheService
             AbsoluteExpirationRelativeToNow = expiration
         };
 
-        return _cache.SetStringAsync(key.Key, json, options, cancellationToken);
+        await _cache.SetStringAsync(key.Key, json, options, cancellationToken);
+        await AddKeyAsync(key, cancellationToken);
     }
 
     public Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
     {
         return _cache.RemoveAsync(key.Key, cancellationToken);
+    }
+
+    public async Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default)
+    {
+        var key = new CacheKey("cache-keys");
+        var keys = await GetAsync<List<string>>(key, cancellationToken) ?? [];
+
+        var removings = keys
+            .Where(k => k.StartsWith(prefix))
+            .Select(k => DeleteAsync(k, cancellationToken));
+
+        await Task.WhenAll(removings);
+    }
+
+    private async Task AddKeyAsync(CacheKey cacheKey, CancellationToken cancellationToken)
+    {
+        var key = new CacheKey("cache-keys");
+        var keys = await GetAsync<List<string>>(key, cancellationToken) ?? [];
+
+        if (keys.Contains(cacheKey.Key))
+        {
+            return;
+        }
+
+        keys.Add(cacheKey.Key);
+
+        await SetAsync(key, keys, CacheConsts.ThreeDays, cancellationToken);
     }
 }

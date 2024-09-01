@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Contracts.Configuration;
+using Eclipse.Common.Background;
 using Eclipse.Common.Session;
 using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
@@ -44,7 +45,6 @@ public static class EclipseWebApiModule
             .AddScoped<ApiKeyAuthorizeAttribute>()
             .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
             .AddScoped<CurrentSessionResolverMiddleware>()
-            .AddScoped<ErrorLocalizationMiddleware>()
             .AddScoped<CurrentSession>()
             .AddScoped<ICurrentSession>(sp => sp.GetRequiredService<CurrentSession>());
 
@@ -86,6 +86,10 @@ public static class EclipseWebApiModule
             configuration.GetSection("Authorization")
         );
 
+        services.Configure<CultureList>(
+            configuration.GetSection(nameof(CultureList))
+        );
+
         return services;
     }
 
@@ -112,7 +116,6 @@ public static class EclipseWebApiModule
         app.UseLocalization();
 
         app.UseMiddleware<CurrentSessionResolverMiddleware>();
-            //.UseMiddleware<ErrorLocalizationMiddleware>();
 
         app.MapControllers();
 

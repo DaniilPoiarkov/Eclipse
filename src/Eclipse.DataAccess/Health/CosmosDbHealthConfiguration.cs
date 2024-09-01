@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 
-using Eclipse.DataAccess.Constants;
 using Eclipse.DataAccess.CosmosDb;
 
 using HealthChecks.CosmosDb;
@@ -20,7 +19,7 @@ internal static class CosmosDbHealthConfiguration
             .AddAzureCosmosDB(GetCosmosClient, sp => new AzureCosmosDbHealthCheckOptions
             {
                 DatabaseId = GetOptions(sp).DatabaseId,
-                ContainerIds = [ContainerNames.Aggregates]
+                ContainerIds = [GetOptions(sp).Container]
             }, tags: ["database"]);
 
         return services;

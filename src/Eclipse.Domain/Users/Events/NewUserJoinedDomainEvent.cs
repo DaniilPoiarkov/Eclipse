@@ -1,5 +1,7 @@
 ﻿using Eclipse.Common.Events;
 
+using Newtonsoft.Json;
+
 namespace Eclipse.Domain.Users.Events;
 
 [Serializable]
@@ -13,6 +15,7 @@ public sealed record NewUserJoinedDomainEvent : IDomainEvent
 
     public string Surname { get; }
 
+    [JsonConstructor]
     internal NewUserJoinedDomainEvent(Guid userId, string userName, string name, string surname)
     {
         UserId = userId;

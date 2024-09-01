@@ -28,25 +28,29 @@ public sealed class EclipseController : ControllerBase
 
     [HttpPost("_handle")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<IActionResult> HandleUpdate([FromBody] Update update, CancellationToken cancellationToken)
+    public Task<IActionResult> HandleActiveAsync([FromBody] Update update, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _updateHandlers[HandlerType.Active].HandleUpdateAsync(_botClient, update, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to process update for {handler}", HandlerType.Active);
-        }
-
-        return NoContent();
+        return HandleAsync(HandlerType.Active, update, cancellationToken);
     }
 
     [HttpPost("_disabled")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<IActionResult> HandleDisabledUpdate([FromBody] Update update, CancellationToken cancellationToken)
+    public Task<IActionResult> HandleDisabledUpdate([FromBody] Update update, CancellationToken cancellationToken)
     {
-        await _updateHandlers[HandlerType.Disabled].HandleUpdateAsync(_botClient, update, cancellationToken);
+        return HandleAsync(HandlerType.Disabled, update, cancellationToken);
+    }
+
+    private async Task<IActionResult> HandleAsync(HandlerType type, Update update, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _updateHandlers[type].HandleUpdateAsync(_botClient, update, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to process update for {handler} handler.", type);
+        }
+
         return NoContent();
     }
 }

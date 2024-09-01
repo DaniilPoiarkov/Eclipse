@@ -42,7 +42,26 @@ jobs:
         run: dotnet build ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
         
       - name: Run tests
-        run: dotnet test ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-build
+        run: dotnet test ./Eclipse.WebAPI.sln 
+          --configuration ${{ env.DOTNET_CONFIGURATION }}
+          --no-build
+          --logger trx
+          --results-directory ${{ github.workspace }}/test-results
+          --collect "XPlat Code Coverage"
+
+      - name: Generate test report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
+        with:
+          reports: ${{ github.workspace }}/test-results/**/*.xml
+          targetdir: ${{ github.workspace }}/test-reports
+          reporttypes: cobertura;Html_Dark
+          tag: ${{ github.run_number }}_${{ github.run_id }}
+      
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoverageReports
+          path: ${{ github.workspace }}/test-reports
 
   build-image:
     runs-on: ubuntu-latest
