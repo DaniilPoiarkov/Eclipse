@@ -1,13 +1,15 @@
 ﻿using Bogus;
 
-using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Reminders;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Builders;
 using Eclipse.Tests.Generators;
 
 using FluentAssertions;
+
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -19,22 +21,21 @@ public sealed class ReminderServiceTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly Lazy<IReminderService> _lazySut;
-    private IReminderService Sut => _lazySut.Value;
+    private readonly IStringLocalizer<ReminderService> _localizer;
+
+    private readonly ReminderService _sut;
 
     public ReminderServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _lazySut = new Lazy<IReminderService>(
-            () => new ReminderService(
-                new UserManager(_repository)
-            ));
+        _localizer = Substitute.For<IStringLocalizer<ReminderService>>();
+        _sut = new ReminderService(new UserManager(_repository), _localizer);
     }
 
     [Fact]
     public async Task CreateAsync_WhenUserExists_ThenReturnesDtoWithCreatedReminder()
     {
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
         var reminderCreateDto = new ReminderCreateDto
         {
@@ -45,7 +46,7 @@ public sealed class ReminderServiceTests
         _repository.GetByExpressionAsync(_ => true)!
             .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
-        var result = await Sut.CreateAsync(user.ChatId, reminderCreateDto);
+        var result = await _sut.CreateAsync(user.ChatId, reminderCreateDto);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -64,7 +65,11 @@ public sealed class ReminderServiceTests
     [Fact]
     public async Task CreateReminderAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        LocalizerBuilder<ReminderService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User))
+            .Return("User not found");
+
+        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var reminderCreateDto = new ReminderCreateDto
         {
@@ -72,7 +77,7 @@ public sealed class ReminderServiceTests
             Text = "Test"
         };
 
-        var result = await Sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
+        var result = await _sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
 
         result.IsSuccess.Should().BeFalse();
 
@@ -88,7 +93,7 @@ public sealed class ReminderServiceTests
     public async Task RemoveRemindersForTime_WhenUserHaveRemindersForTime_ThenDtoWithoutSpecifiedRemindersReturned()
     {
         // Arrange
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
         var faker = new Faker();
 
@@ -108,7 +113,7 @@ public sealed class ReminderServiceTests
             .Returns(Task.FromResult<User?>(user));
 
         // Act
-        var result = await Sut.RemoveForTimeAsync(user.Id, time);
+        var result = await _sut.RemoveForTimeAsync(user.Id, time);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
