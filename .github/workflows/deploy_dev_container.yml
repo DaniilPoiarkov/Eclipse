@@ -51,7 +51,7 @@ jobs:
           --no-build
           --logger trx
           --results-directory ${{ github.workspace }}/test-results
-          --collect "XPlat Code Coverage"
+          --collect "XPlat Code Coverage;Format=Cobertura"
 
       - name: Generate code coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
