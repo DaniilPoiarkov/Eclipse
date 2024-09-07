@@ -39,7 +39,9 @@ jobs:
         run: dotnet restore ./Eclipse.WebAPI.sln
 
       - name: Build
-        run: dotnet build ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
+        run: dotnet build ./Eclipse.WebAPI.sln
+          --configuration ${{ env.DOTNET_CONFIGURATION }}
+          --no-restore
         
       - name: Run tests
         run: dotnet test ./Eclipse.WebAPI.sln 
@@ -53,7 +55,7 @@ jobs:
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
           reports: ${{ github.workspace }}/test-results/**/*.xml
-          targetdir: ${{ github.workspace }}
+          targetdir: ${{ github.workspace }}/test-reports
           reporttypes: cobertura;Html_Dark
           verbosity: Info
           title: Code Coverage
