@@ -6,6 +6,8 @@ using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 
+using Microsoft.Extensions.Localization;
+
 namespace Eclipse.Application.Account;
 
 internal sealed class AccountService : IAccountService
@@ -16,11 +18,18 @@ internal sealed class AccountService : IAccountService
 
     private readonly IBackgroundJobManager _backgroundJobManager;
 
-    public AccountService(UserManager userManager, ITimeProvider timeProvider, IBackgroundJobManager backgroundJobManager)
+    private readonly IStringLocalizer<AccountService> _localizer;
+
+    public AccountService(
+        UserManager userManager,
+        ITimeProvider timeProvider,
+        IBackgroundJobManager backgroundJobManager,
+        IStringLocalizer<AccountService> localizer)
     {
         _userManager = userManager;
         _timeProvider = timeProvider;
         _backgroundJobManager = backgroundJobManager;
+        _localizer = localizer;
     }
 
     public async Task<Result> SendSignInCodeAsync(string userName, CancellationToken cancellationToken = default)
@@ -29,7 +38,7 @@ internal sealed class AccountService : IAccountService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         user.SetSignInCode(_timeProvider.Now);

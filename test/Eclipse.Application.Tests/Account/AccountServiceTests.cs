@@ -5,10 +5,13 @@ using Eclipse.Common.Clock;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Builders;
 using Eclipse.Tests.Generators;
 using Eclipse.Tests.Utils;
 
 using FluentAssertions;
+
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -24,6 +27,8 @@ public sealed class AccountServiceTests
 
     private readonly IBackgroundJobManager _backgroundJobManager;
 
+    private readonly IStringLocalizer<AccountService> _localizer;
+
     private readonly AccountService _sut;
 
     public AccountServiceTests()
@@ -31,7 +36,8 @@ public sealed class AccountServiceTests
         _userRepository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
         _backgroundJobManager = Substitute.For<IBackgroundJobManager>();
-        _sut = new AccountService(new UserManager(_userRepository), _timeProvider, _backgroundJobManager);
+        _localizer = Substitute.For<IStringLocalizer<AccountService>>();
+        _sut = new AccountService(new UserManager(_userRepository), _timeProvider, _backgroundJobManager, _localizer);
     }
 
     [Fact]
@@ -73,7 +79,12 @@ public sealed class AccountServiceTests
     public async Task SendSignInCodeAsync_ShouldReturnEntityNotFound_WhenUserIsNull()
     {
         var userName = "nonexistentUser";
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+
+        LocalizerBuilder<AccountService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User))
+            .Return("Entity user not found");
+
+        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
 
         var result = await _sut.SendSignInCodeAsync(userName);

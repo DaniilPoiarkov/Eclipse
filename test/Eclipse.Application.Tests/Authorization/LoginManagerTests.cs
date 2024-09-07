@@ -90,7 +90,7 @@ public sealed class LoginManagerTests
     [Fact]
     public async Task LoginAsync_WhenUserNotFound_ThenErrorReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var result = await _sut.LoginAsync(new LoginRequest { SignInCode = "123456", UserName = "JohnDoe" });
 
