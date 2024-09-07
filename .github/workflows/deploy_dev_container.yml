@@ -49,7 +49,7 @@ jobs:
           --results-directory ${{ github.workspace }}/test-results
           --collect "XPlat Code Coverage"
 
-      - name: Combine report
+      - name: Generate code coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
           reports: ${{ github.workspace }}/test-results/**/*.xml
@@ -58,26 +58,18 @@ jobs:
           verbosity: Info
           title: Code Coverage
           tag: ${{ github.run_number }}_${{ github.run_id }}
-
-      # - name: Generate test report
-      #   uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
-      #   with:
-      #     reports: ${{ github.workspace }}/test-results/**/*.xml
-      #     targetdir: ${{ github.workspace }}/test-reports
-      #     reporttypes: cobertura;Html_Dark
-      #     tag: ${{ github.run_number }}_${{ github.run_id }}
       
       - name: Upload test report
         uses: actions/upload-artifact@v4
         with:
           name: CoverageReports
-          path: ${{ github.workspace }}/Cobertura.xml
+          path: ${{ github.workspace }}/test-reports/Cobertura.xml
           retention-days: 3
 
       - name: Publish test results
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: 'Coverage.xml'
+          filename: 'test-reports/Cobertura.xml'
           badge: true
           format: markdown
           hide_branch_rate: false
