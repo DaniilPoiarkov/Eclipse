@@ -200,6 +200,11 @@ public sealed class User : AggregateRoot
         SignInCodeExpiresAt = utcNow.Add(UserConsts.SignInCodeExpiration);
     }
 
+    public void TriggerTestEvent()
+    {
+        AddEvent(new TestDomainEvent(ChatId));
+    }
+
     public bool IsValidSignInCode(DateTime utcNow, string signInCode)
     {
         return !SignInCode.IsNullOrEmpty()
