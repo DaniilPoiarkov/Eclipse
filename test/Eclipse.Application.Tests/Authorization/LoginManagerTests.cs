@@ -4,6 +4,7 @@ using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Builders;
 using Eclipse.Tests.Generators;
 using Eclipse.Tests.Utils;
 
@@ -11,6 +12,7 @@ using FluentAssertions;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -30,6 +32,8 @@ public sealed class LoginManagerTests
 
     private readonly ITimeProvider _timeProvider;
 
+    private readonly IStringLocalizer<LoginManager> _localizer;
+
     private readonly LoginManager _sut;
 
     public LoginManagerTests()
@@ -47,7 +51,8 @@ public sealed class LoginManagerTests
 
         _userClaimsPrincipalFactory = Substitute.For<IUserClaimsPrincipalFactory<User>>();
         _timeProvider = Substitute.For<ITimeProvider>();
-        _sut = new LoginManager(new UserManager(_userRepository), _configuration, _userClaimsPrincipalFactory, _timeProvider);
+        _localizer = Substitute.For<IStringLocalizer<LoginManager>>();
+        _sut = new LoginManager(new UserManager(_userRepository), _configuration, _userClaimsPrincipalFactory, _timeProvider, _localizer);
     }
 
     [Fact]
@@ -98,7 +103,13 @@ public sealed class LoginManagerTests
     [Fact]
     public async Task LoginAsync_WhenCodeInvalid_ThenErrorReturned()
     {
-        var expectedError = Error.Validation("Account.Login", "Account:InvalidCode");
+        var invalidCode = "Invalid code";
+
+        LocalizerBuilder<LoginManager>.Configure(_localizer)
+            .For("Account:InvalidCode")
+            .Return(invalidCode);
+
+        var expectedError = Error.Validation("Account.Login", invalidCode);
         var user = UserGenerator.Get();
         user.SetSignInCode(DateTime.UtcNow);
 
@@ -107,7 +118,11 @@ public sealed class LoginManagerTests
                 Task.FromResult<IReadOnlyList<User>>([user])
             );
 
-        var result = await _sut.LoginAsync(new LoginRequest { UserName = user.UserName, SignInCode = new string(user.SignInCode.Reverse().ToArray()) });
+        var result = await _sut.LoginAsync(new LoginRequest
+        {
+            UserName = user.UserName,
+            SignInCode = new string(user.SignInCode.Reverse().ToArray())
+        });
 
         result.IsSuccess.Should().BeFalse();
         ErrorComparer.AreEqual(expectedError, result.Error);

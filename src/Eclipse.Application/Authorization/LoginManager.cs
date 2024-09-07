@@ -7,6 +7,7 @@ using Eclipse.Domain.Users;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 
 using System.IdentityModel.Tokens.Jwt;
@@ -25,16 +26,20 @@ internal sealed class LoginManager : ILoginManager
 
     private readonly ITimeProvider _timeProvider;
 
+    private readonly IStringLocalizer<LoginManager> _localizer;
+
     public LoginManager(
         UserManager userManager,
         IConfiguration configuration,
         IUserClaimsPrincipalFactory<User> userClaimsPrincipalFactory,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider,
+        IStringLocalizer<LoginManager> localizer)
     {
         _userManager = userManager;
         _configuration = configuration;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
         _timeProvider = timeProvider;
+        _localizer = localizer;
     }
 
     public async Task<Result<LoginResult>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
@@ -48,7 +53,7 @@ internal sealed class LoginManager : ILoginManager
 
         if (!user.IsValidSignInCode(_timeProvider.Now, request.SignInCode))
         {
-            return Error.Validation("Account.Login", "Account:InvalidCode");
+            return Error.Validation("Account.Login", _localizer["Account:InvalidCode"]);
         }
 
         var claimsPrincipal = await _userClaimsPrincipalFactory.CreateAsync(user);
