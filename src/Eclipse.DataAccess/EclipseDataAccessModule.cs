@@ -85,14 +85,23 @@ public static class EclipseDataAccessModule
                 .AddInterceptors(interceptors);
         });
 
+        services.AddSingleton(sp => new CosmosClient(
+            sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value.Endpoint,
+            new DefaultAzureCredential())
+        );
+
         return services;
     }
 
     private static IServiceCollection AddEmulator(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration["Azure:CosmosOptions:DatabaseId"]!;
+
         services.AddDbContext<EclipseDbContext>((sp, b) =>
-            b.UseCosmos(configuration.GetConnectionString("Emulator")!, configuration["Azure:CosmosOptions:DatabaseId"]!)
+            b.UseCosmos(configuration.GetConnectionString("Emulator")!, connectionString)
                 .AddInterceptors(sp.GetServices<IInterceptor>()));
+
+        services.AddSingleton(new CosmosClient(connectionString));
 
         return services;
     }
