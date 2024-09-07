@@ -8,7 +8,9 @@ env:
 
 on:
   push:
-    branches: [ "*" ]
+    branches: develop
+  pull_request:
+    branches: develop
   workflow_dispatch:
 
 permissions:
