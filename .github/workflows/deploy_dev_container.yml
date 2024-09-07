@@ -102,7 +102,7 @@ jobs:
         if: always()
         with:
           # trx_files: ${{ github.workspace }}/**/*.trx
-          files: ${{ github.workspace }}/test-reports/*.xml
+          files: ${{ github.workspace }}/test-results/**/*.xml
 
   build-image:
     if: github.ref_name == 'develop'
