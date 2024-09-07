@@ -1,10 +1,12 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Telegram;
 using Eclipse.Common.Results;
+using Eclipse.Tests.Builders;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -16,6 +18,8 @@ namespace Eclipse.Application.Tests.Telegram;
 
 public sealed class TelegramServiceTests
 {
+    private readonly IStringLocalizer<TelegramService> _localizer;
+
     private readonly TelegramService _sut;
 
     private static readonly string _errorSendCode = "Telegram.Send";
@@ -27,7 +31,8 @@ public sealed class TelegramServiceTests
         var botClient = Substitute.For<ITelegramBotClient>();
         var configuration = Substitute.For<IConfiguration>();
 
-        _sut = new TelegramService(botClient, configuration);
+        _localizer = Substitute.For<IStringLocalizer<TelegramService>>();
+        _sut = new TelegramService(botClient, configuration, _localizer);
     }
 
     [Fact]
@@ -49,7 +54,11 @@ public sealed class TelegramServiceTests
     [InlineData(0, "", "MessageCannotBeEmpty")]
     public async Task Send_WhenModelInvalid_ThenFailureResultReturned(long chatId, string message, string errorCode)
     {
-        var expectedError = Error.Validation(_errorSendCode, $"Telegram:{errorCode}");
+        LocalizerBuilder<TelegramService>.Configure(_localizer)
+            .For($"Telegram:{errorCode}")
+            .Return($"Error with {errorCode}");
+
+        var expectedError = Error.Validation(_errorSendCode, _localizer[$"Telegram:{errorCode}"]);
 
         var model = new SendMessageModel
         {
@@ -77,7 +86,11 @@ public sealed class TelegramServiceTests
     [InlineData("           ")]
     public async Task SetWebhook_WhenUrlNotValid_ThenFailureResultReturned(string url)
     {
-        var expectedError = Error.Validation(_errorWebhookCode, "Telegram:WebhookInvalid");
+        LocalizerBuilder<TelegramService>.Configure(_localizer)
+            .For("Telegram:WebhookInvalid")
+            .Return("Invalid webhook");
+
+        var expectedError = Error.Validation(_errorWebhookCode, _localizer["Telegram:WebhookInvalid"]);
 
         var result = await _sut.SetWebhookUrlAsync(url);
 

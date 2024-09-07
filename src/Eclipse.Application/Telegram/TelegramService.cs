@@ -2,6 +2,7 @@
 using Eclipse.Common.Results;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 
 using Telegram.Bot;
 
@@ -13,26 +14,29 @@ internal sealed class TelegramService : ITelegramService
 
     private readonly IConfiguration _configuration;
 
+    private readonly IStringLocalizer<TelegramService> _localizer;
+
     private static readonly string _errorSendCode = "Telegram.Send";
 
     private static readonly string _errorWebhookCode = "Telegram.Webhook";
 
-    public TelegramService(ITelegramBotClient botClient, IConfiguration configuration)
+    public TelegramService(ITelegramBotClient botClient, IConfiguration configuration, IStringLocalizer<TelegramService> localizer)
     {
         _botClient = botClient;
         _configuration = configuration;
+        _localizer = localizer;
     }
 
     public async Task<Result> Send(SendMessageModel message, CancellationToken cancellationToken = default)
     {
         if (message.Message.IsNullOrEmpty())
         {
-            return Error.Validation(_errorSendCode, "Telegram:MessageCannotBeEmpty");
+            return Error.Validation(_errorSendCode, _localizer["Telegram:MessageCannotBeEmpty"]);
         }
 
         if (message.ChatId == default)
         {
-            return Error.Validation(_errorSendCode, "Telegram:InvalidChatId");
+            return Error.Validation(_errorSendCode, _localizer["Telegram:InvalidChatId"]);
         }
 
         await _botClient.SendTextMessageAsync(
@@ -47,7 +51,7 @@ internal sealed class TelegramService : ITelegramService
     {
         if (webhookUrl.IsNullOrEmpty() || !webhookUrl.StartsWith("https"))
         {
-            return Error.Validation(_errorWebhookCode, "Telegram:WebhookInvalid");
+            return Error.Validation(_errorWebhookCode, _localizer["Telegram:WebhookInvalid"]);
         }
 
         try
