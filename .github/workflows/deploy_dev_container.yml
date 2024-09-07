@@ -83,10 +83,23 @@ jobs:
       
       - name: Add coverage comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request'
+        # if: github.event_name == 'pull_request'
         with:
           recreate: true
           path: code-coverage-results.md
+
+      # - name: Upload test results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: test-results
+      #     path: ${{ github.workspace }}/**/TestResults/**/*
+      #     retention-days: 3
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2.16.1
+        if: always()
+        with:
+          trx_files: ${{ github.workspace }}/**/*.trx
 
   build-image:
     if: github.ref_name == 'develop'
