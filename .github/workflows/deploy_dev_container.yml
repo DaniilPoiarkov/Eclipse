@@ -57,7 +57,7 @@ jobs:
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
           reports: ${{ github.workspace }}/test-results/**/*.xml
-          targetdir: ${{ github.workspace }}/test-reports
+          targetdir: ${{ github.workspace }}/coverage-reports
           reporttypes: cobertura;Html_Dark
           verbosity: Info
           title: Code Coverage
