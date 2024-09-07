@@ -41,6 +41,11 @@ internal sealed class OutboxMessagesService : IOutboxMessagesService
     {
         var outboxMessages = await _repository.GetNotProcessedAsync(count, cancellationToken);
 
+        if (outboxMessages.IsNullOrEmpty())
+        {
+            return ProcessOutboxMessagesResult.Empty;
+        }
+
         foreach (var outboxMessage in outboxMessages)
         {
             await ProcessMessageAsync(outboxMessage, cancellationToken);
