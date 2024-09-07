@@ -1,6 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Common.Results;
 
+using Microsoft.Extensions.Localization;
+
 using System.Text.RegularExpressions;
 
 using Telegram.Bot;
@@ -12,11 +14,14 @@ internal sealed partial class CommandService : ICommandService
 {
     private readonly ITelegramBotClient _botClient;
 
+    private readonly IStringLocalizer<CommandService> _localizer;
+
     private static readonly string _descriptionPrefix = "BotCommand";
 
-    public CommandService(ITelegramBotClient botClient)
+    public CommandService(ITelegramBotClient botClient, IStringLocalizer<CommandService> localizer)
     {
         _botClient = botClient;
+        _localizer = localizer;
     }
 
     public async Task<Result> Add(AddCommandRequest request, CancellationToken cancellationToken = default)
@@ -44,26 +49,26 @@ internal sealed partial class CommandService : ICommandService
         return Result.Success();
     }
 
-    private static Result ValidateCommandCreateModel(AddCommandRequest command)
+    private Result ValidateCommandCreateModel(AddCommandRequest command)
     {
         if (command.Command is not { Length: >= CommandConstants.CommandMinLength and <= CommandConstants.CommandMaxLength })
         {
-            return Error.Validation("Command.Add", $"{_descriptionPrefix}:Command{(command.Command.IsNullOrEmpty() ? "MinLength" : "MaxLength")}");
+            return Error.Validation("Command.Add", _localizer[$"{_descriptionPrefix}:Command{(command.Command.IsNullOrEmpty() ? "MinLength" : "MaxLength")}"]);
         }
 
         if (!CommandPattern().IsMatch(command.Command))
         {
-            return Error.Validation("Command.Add", $"{_descriptionPrefix}:CommandInvalidFormat");
+            return Error.Validation("Command.Add", _localizer[$"{_descriptionPrefix}:CommandInvalidFormat"]);
         }
 
         if (command.Description is not { Length: >= CommandConstants.DescriptionMinLength and <= CommandConstants.DescriptionMaxLength })
         {
-            return Error.Validation("Command.Add", $"{_descriptionPrefix}:Description{(command.Description?.Length < CommandConstants.DescriptionMinLength ? "MinLength" : "MaxLength")}");
+            return Error.Validation("Command.Add", _localizer[$"{_descriptionPrefix}:Description{(command.Description?.Length < CommandConstants.DescriptionMinLength ? "MinLength" : "MaxLength")}"]);
         }
 
         if (command.Description.IsNullOrWhiteSpace())
         {
-            return Error.Validation("Command.Add", $"{_descriptionPrefix}:DescriptionMinLength");
+            return Error.Validation("Command.Add", _localizer[$"{_descriptionPrefix}:DescriptionMinLength"]);
         }
 
         return Result.Success();
