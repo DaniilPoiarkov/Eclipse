@@ -1,10 +1,13 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Localizations;
 using Eclipse.Application.Users;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
+
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Application.TodoItems;
 
@@ -12,9 +15,12 @@ internal sealed class TodoItemService : ITodoItemService
 {
     private readonly UserManager _userManager;
 
-    public TodoItemService(UserManager userManager)
+    private readonly IStringLocalizer<TodoItemService> _localizer;
+
+    public TodoItemService(UserManager userManager, IStringLocalizer<TodoItemService> localizer)
     {
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     public async Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
@@ -23,14 +29,14 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         var result = await CreateAsync(user, model, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            return result.Error;
+            return result.Error.ToLocalized(_localizer);
         }
 
         return user.ToDto();
@@ -42,14 +48,14 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         var result = await CreateAsync(user, model, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            return result.Error;
+            return result.Error.ToLocalized(_localizer);
         }
 
         return result.Value.ToDto();
@@ -73,14 +79,14 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         var result = user.FinishItem(itemId);
 
         if (!result.IsSuccess)
         {
-            return result.Error;
+            return result.Error.ToLocalized(_localizer);
         }
 
         await _userManager.UpdateAsync(user, cancellationToken);
@@ -94,7 +100,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         return user.TodoItems.Select(item => item.ToDto()).ToList();
@@ -106,14 +112,14 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         var item = user.GetTodoItem(todoItemId);
 
         if (item is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(TodoItem));
+            return DefaultErrors.EntityNotFound(typeof(TodoItem), _localizer);
         }
 
         return item.ToDto();

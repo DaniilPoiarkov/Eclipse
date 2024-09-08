@@ -5,6 +5,7 @@ env:
   AZURE_WEBAPP_NAME: eclipse-app
   DOTNET_VERSION: '8.0.*'
   DOTNET_CONFIGURATION: 'Release'
+  REPO:
 
 on:
   push:

@@ -1,15 +1,19 @@
 ﻿using Bogus;
 
 using Eclipse.Application.Contracts.TodoItems;
+using Eclipse.Application.Localizations;
 using Eclipse.Application.TodoItems;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
+using Eclipse.Tests.Builders;
 using Eclipse.Tests.Generators;
 using Eclipse.Tests.Utils;
 
 using FluentAssertions;
+
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -21,17 +25,15 @@ public sealed class TodoItemsServiceTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly Lazy<ITodoItemService> _lazySut;
+    private readonly IStringLocalizer<TodoItemService> _localizer;
 
-    private ITodoItemService Sut => _lazySut.Value;
+    private readonly TodoItemService _sut;
 
     public TodoItemsServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _lazySut = new Lazy<ITodoItemService>(
-            () => new TodoItemService(
-                new UserManager(_repository)
-            ));
+        _localizer = Substitute.For<IStringLocalizer<TodoItemService>>();
+        _sut = new TodoItemService(new UserManager(_repository), _localizer);
     }
 
     [Theory]
@@ -52,7 +54,7 @@ public sealed class TodoItemsServiceTests
             Text = text,
         };
 
-        var result = await Sut.CreateAsync(user.ChatId, createModel);
+        var result = await _sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -69,24 +71,28 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItems_ThenFailureResultReturned()
     {
-        var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("TodoItem:Limit", TodoItemConstants.Limit)
+            .Return($"The limit of {TodoItemConstants.Limit} reached.");
+
+        var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit)
+            .ToLocalized(_localizer);
+
         var user = CreateUser(7);
 
         _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
+            .ReturnsForAnyArgs([user]);
 
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
         };
 
-        var result = await Sut.CreateAsync(user.ChatId, createModel);
+        var result = await _sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
 
-        var error = result.Error;
-        ErrorComparer.AreEqual(error, expectedError);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        ErrorComparer.AreEqual(result.Error, expectedError);
     }
 
     [Theory]
@@ -94,7 +100,13 @@ public sealed class TodoItemsServiceTests
     [InlineData("        ")]
     public async Task CreateAsync_WhenTextIsInvalid_ThenErrorReturned(string text)
     {
-        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .For("TodoItem:MaxLength")
+            .Return("Todo item is empty");
+
+        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty()
+            .ToLocalized(_localizer);
+
         var user = UserGenerator.Get();
 
         _repository.GetByExpressionAsync(_ => true)
@@ -105,32 +117,30 @@ public sealed class TodoItemsServiceTests
             Text = text,
         };
 
-        var result = await Sut.CreateAsync(user.ChatId, createModel);
+        var result = await _sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
-
-        ErrorComparer.AreEqual(expectedError, error);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        ErrorComparer.AreEqual(expectedError, result.Error);
     }
 
     [Fact]
     public async Task CreateAsync_WhenUserNotExists_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User).Name)
+            .Return("User not found");
+
+        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var createModel = new CreateTodoItemDto
         {
             Text = "text",
         };
 
-        var result = await Sut.CreateAsync(2, createModel);
+        var result = await _sut.CreateAsync(2, createModel);
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
-
-        ErrorComparer.AreEqual(expectedError, error);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        ErrorComparer.AreEqual(expectedError, result.Error);
     }
 
     [Theory]
@@ -142,9 +152,9 @@ public sealed class TodoItemsServiceTests
         var user = CreateUser(todoItemsCount);
 
         _repository.FindAsync(user.Id)
-            .ReturnsForAnyArgs(Task.FromResult<User?>(user));
+            .Returns(user);
 
-        var result = await Sut.GetListAsync(user.Id);
+        var result = await _sut.GetListAsync(user.Id);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Count.Should().Be(todoItemsCount);
@@ -158,9 +168,9 @@ public sealed class TodoItemsServiceTests
         var user = CreateUser(1);
 
         _repository.FindAsync(user.Id)
-            .ReturnsForAnyArgs(Task.FromResult<User?>(user));
+            .Returns(user);
 
-        var result = await Sut.GetAsync(user.Id, user.TodoItems.First().Id);
+        var result = await _sut.GetAsync(user.Id, user.TodoItems.First().Id);
 
         result.IsSuccess.Should().BeTrue();
         IsValidTodoItem(result.Value, user).Should().BeTrue();
@@ -169,12 +179,16 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetAsync_WhenTodoItemNotFound_ThenErrorReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem));
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(TodoItem).Name)
+            .Return("Todo item not found");
+
+        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem), _localizer);
         var user = CreateUser(0);
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var result = await Sut.GetAsync(user.Id, Guid.NewGuid());
+        var result = await _sut.GetAsync(user.Id, Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
         ErrorComparer.AreEqual(result.Error, expectedError);

@@ -33,4 +33,15 @@ public static class EclipseLocalizerExtensions
             return error.Description;
         }
     }
+
+    /// <summary>
+    /// Converts to localized error. Uses <a cref="Error.Description"></a> as a key and <a cref="Error.Args"></a> as args for localized string.
+    /// </summary>
+    /// <param name="error">The error.</param>
+    /// <param name="localizer">The localizer.</param>
+    /// <returns></returns>
+    public static Error ToLocalized(this Error error, IStringLocalizer localizer)
+    {
+        return new Error(error.Code, localizer[error.Description, error.Args], error.Type, []);
+    }
 }
