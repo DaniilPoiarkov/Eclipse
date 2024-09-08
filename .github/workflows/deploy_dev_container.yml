@@ -62,6 +62,7 @@ jobs:
           reports: ${{ github.workspace }}/test-results/**/*.xml
           targetdir: ${{ github.workspace }}/coverage-reports
           reporttypes: cobertura;Html_Dark
+          assemblyfilters: '-*Tests;*.Tests.Bdd'
           verbosity: Info
           title: Code Coverage
           tag: ${{ github.run_number }}_${{ github.run_id }}

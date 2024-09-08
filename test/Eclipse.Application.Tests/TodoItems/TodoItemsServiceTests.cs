@@ -78,7 +78,7 @@ public sealed class TodoItemsServiceTests
         var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit)
             .ToLocalized(_localizer);
 
-        var user = CreateUser(7);
+        var user = CreateUser(TodoItemConstants.Limit);
 
         _repository.GetByExpressionAsync(_ => true)
             .ReturnsForAnyArgs([user]);
