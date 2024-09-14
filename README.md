@@ -109,3 +109,4 @@ Data persistence with EF Core Cosmos Db provider.
 
 <p>Includes build, test, and creating coverage report using reportgenerator.</p>
 <p>Results are added as a comment by <i>github-actions bot</i> to PR.</p>
+<p>Uses <i>Service Principal</i> for deployment with RBAC access.</p>
