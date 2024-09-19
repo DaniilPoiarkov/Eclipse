@@ -5,6 +5,7 @@ using Eclipse.WebAPI.Filters.Authorization;
 using Eclipse.WebAPI.Models;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
@@ -19,18 +20,25 @@ public sealed class TelegramController : ControllerBase
 
     private readonly IAppUrlProvider _appUrlProvider;
 
-    public TelegramController(ITelegramService service, IConfiguration configuration, IAppUrlProvider appUrlProvider)
+    private readonly IStringLocalizer<TelegramController> _stringLocalizer;
+
+    public TelegramController(
+        ITelegramService service,
+        IConfiguration configuration,
+        IAppUrlProvider appUrlProvider,
+        IStringLocalizer<TelegramController> stringLocalizer)
     {
         _service = service;
         _configuration = configuration;
         _appUrlProvider = appUrlProvider;
+        _stringLocalizer = stringLocalizer;
     }
 
     [HttpPost("send")]
     public async Task<IActionResult> Send([FromBody] SendMessageModel message, CancellationToken cancellationToken)
     {
         var result = await _service.Send(message, cancellationToken);
-        return result.Match(NoContent, result.ToProblems);
+        return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
     }
 
     [HttpPost("switch-handler")]
@@ -40,6 +48,6 @@ public sealed class TelegramController : ControllerBase
 
         var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl}/{endpoint}", cancellationToken);
 
-        return result.Match(Ok, result.ToProblems);
+        return result.Match(Ok, () => result.ToProblems(_stringLocalizer));
     }
 }

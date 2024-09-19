@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Eclipse.Infrastructure.EventBus;
+namespace Eclipse.Infrastructure.EventBus.InMemory;
 
 internal sealed class InMemoryChannelReadService : BackgroundService
 {

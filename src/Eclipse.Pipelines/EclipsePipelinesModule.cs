@@ -5,7 +5,6 @@ using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
-using Eclipse.Pipelines.Options.Languages;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
@@ -56,10 +55,6 @@ public static class EclipsePipelinesModule
         services.ConfigureOptions<QuatzOptionsConfiguration>();
 
         var configuration = services.GetConfiguration();
-
-        services.Configure<LanguageList>(
-            configuration.GetSection(nameof(LanguageList))
-        );
 
         services.AddPipelinesHealthChecks();
 

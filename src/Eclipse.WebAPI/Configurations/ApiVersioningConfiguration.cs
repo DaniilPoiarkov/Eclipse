@@ -22,7 +22,7 @@ public sealed class ApiVersioningConfiguration : IConfigureOptions<ApiVersioning
         );
 
         options.ApiVersionReader = ApiVersionReader.Combine(
-            new QueryStringApiVersionReader(),
+            new UrlSegmentApiVersionReader(),
             new HeaderApiVersionReader(apiVersioningConfiguration["Header"]!)
         );
 

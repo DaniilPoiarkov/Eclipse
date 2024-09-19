@@ -34,7 +34,7 @@ public sealed class ImportUsersValidatorTests
         var error = $"Invalid field {nameof(row.Gmt)}\'{row.Gmt}\'";
 
         var localizer = LocalizerBuilder<ImportUsersValidator>.Create()
-            .For("InvalidField{0}{1}", nameof(row.Gmt), row.Gmt)
+            .ForWithArgs("InvalidField{0}{1}", nameof(row.Gmt), row.Gmt)
                 .Return(error)
             .Build();
 
@@ -66,11 +66,11 @@ public sealed class ImportUsersValidatorTests
         var chatIdError = $"{nameof(User)} already exists with {nameof(ImportUserDto.ChatId)} \'{rows[2].ChatId}\'";
 
         var localizer = LocalizerBuilder<ImportUsersValidator>.Create()
-            .For(template, nameof(User), nameof(ImportUserDto.Id), rows[0].Id)
+            .ForWithArgs(template, nameof(User), nameof(ImportUserDto.Id), rows[0].Id)
                 .Return(idError)
-            .For(template, nameof(User), nameof(ImportUserDto.UserName), rows[1].UserName)
+            .ForWithArgs(template, nameof(User), nameof(ImportUserDto.UserName), rows[1].UserName)
                 .Return(userNameError)
-            .For(template, nameof(User), nameof(ImportUserDto.ChatId), rows[2].ChatId)
+            .ForWithArgs(template, nameof(User), nameof(ImportUserDto.ChatId), rows[2].ChatId)
                 .Return(chatIdError)
             .Build();
 

@@ -22,7 +22,7 @@ public sealed record Error
     /// </summary>
     public object[] Args { get; }
 
-    private Error(string code, string description, ErrorType type, object[] args)
+    public Error(string code, string description, ErrorType type, object[] args)
     {
         Code = code;
         Description = description;

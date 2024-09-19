@@ -4,7 +4,9 @@ namespace Eclipse.Tests.Builders;
 
 public interface ILocalizerBuilder<T>
 {
-    ILocalizerIndexerSubstituteBuilder<T> For(string name, params object[] args);
+    ILocalizerIndexerSubstituteBuilder<T> ForWithArgs(string name, params object[] args);
+
+    ILocalizerIndexerSubstituteBuilder<T> For(string name);
 
     IStringLocalizer<T> Build();
 }
