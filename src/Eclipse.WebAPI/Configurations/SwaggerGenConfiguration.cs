@@ -1,5 +1,7 @@
 ﻿using Asp.Versioning.ApiExplorer;
 
+using Eclipse.WebAPI.Swagger;
+
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
@@ -32,6 +34,8 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 
         ConfigureApiKeySecurityDefinition(options);
         ConfigureAuthorizationSecurityDefinition(options);
+
+        options.AddOperationFilterInstance(new ContentLanguageHeaderFilter());
     }
 
     private static void ConfigureApiKeySecurityDefinition(SwaggerGenOptions options)

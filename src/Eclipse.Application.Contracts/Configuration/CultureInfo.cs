@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Eclipse.Pipelines.Options.Languages;
+namespace Eclipse.Application.Contracts.Configuration;
 
 [Serializable]
-public sealed class LanguageInfo
+public sealed class CultureInfo
 {
     [Required]
-    public string Language { get; set; } = string.Empty;
+    public string Culture { get; set; } = string.Empty;
 
     [Required]
     public string Code { get; set; } = string.Empty;

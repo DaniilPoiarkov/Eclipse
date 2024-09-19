@@ -7,10 +7,12 @@ using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Caching;
-using Eclipse.Infrastructure.EventBus;
+using Eclipse.Infrastructure.EventBus.InMemory;
+using Eclipse.Infrastructure.EventBus.Redis;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
 
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -22,6 +24,8 @@ using Quartz;
 using Quartz.Logging;
 
 using Serilog;
+
+using StackExchange.Redis;
 
 using Telegram.Bot;
 
@@ -41,14 +45,10 @@ public static class EclipseInfrastructureModule
         services
             .AddSerilogIntegration()
             .AddCache()
+            .AddEventBus()
             .AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
-
-        services
-            .AddSingleton(typeof(InMemoryQueue<>))
-            .AddTransient<IEventBus, InMemoryEventBus>()
-            .AddHostedService<InMemoryChannelReadService>();
 
         services
             .AddSingleton<IExcelManager, ExcelManager>()
@@ -122,9 +122,12 @@ public static class EclipseInfrastructureModule
 
         if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
         {
+            var connectionString = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string is not provided");
+
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = configuration.GetConnectionString("Redis");
+                options.Configuration = connectionString;
             });
         }
         else
@@ -137,11 +140,40 @@ public static class EclipseInfrastructureModule
         return services;
     }
 
+    private static IServiceCollection AddEventBus(this IServiceCollection services)
+    {
+        var configuration = services.GetConfiguration();
+
+        if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
+        {
+            var connectionString = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string is not provided");
+
+            services
+                .AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connectionString))
+                .AddTransient<IEventBus, RedisEventBus>()
+                .AddHostedService<RedisChannelReadService>();
+
+            return services;
+        }
+
+        services
+            .AddSingleton(typeof(InMemoryQueue<>))
+            .AddTransient<IEventBus, InMemoryEventBus>()
+            .AddHostedService<InMemoryChannelReadService>();
+
+        return services;
+    }
+
     private static IServiceCollection AddSerilogIntegration(this IServiceCollection services)
     {
-        services.AddSerilog((_, configuration) =>
+        services.AddSerilog((sp, logger) =>
         {
-            configuration.WriteTo.Async(sink => sink.Console())
+            logger.ReadFrom.Configuration(sp.GetRequiredService<IConfiguration>())
+                .WriteTo.Async(sink => sink.Console())
+                .WriteTo.Async(sink => sink.ApplicationInsights(
+                    sp.GetRequiredService<TelemetryConfiguration>(),
+                    TelemetryConverter.Traces))
                 .Enrich.FromLogContext();
         });
 

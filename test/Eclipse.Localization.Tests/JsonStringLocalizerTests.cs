@@ -1,6 +1,5 @@
 ﻿using Eclipse.Localization.Builder;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Extensions;
 using Eclipse.Localization.Resources;
 
@@ -70,14 +69,14 @@ public sealed class JsonStringLocalizerTests
     }
 
     [Fact]
-    public void GetString_WhenCultureNotExist_ThenExceptionThrown()
+    public void GetString_WhenCultureNotExist_ThenDefaultCultureUsed()
     {
         var currentCulture = Substitute.For<ICurrentCulture>();
         currentCulture.Culture.Returns("fr");
         _sut.UseCurrentCulture(currentCulture);
 
-        var action = () => _sut["Test"];
-        action.Should().ThrowExactly<LocalizationFileNotExistException>();
+        var value = _sut["Test"];
+        value.Value.Should().Be("Test");
     }
 
     [Fact]

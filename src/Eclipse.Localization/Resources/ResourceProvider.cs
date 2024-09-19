@@ -31,18 +31,29 @@ internal sealed class ResourceProvider : IResourceProvider
 
         if (_missingResources.ContainsKey(culture))
         {
-            throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
+            if (_missingResources.ContainsKey(_options.Value.DefaultCulture))
+            {
+                throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
+            }
+
+            return Get(_options.Value.DefaultCulture);
         }
 
         ReadAndCacheLocalizationResources();
 
-        if (!_resourceCache.TryGetValue(culture, out resource))
+        if (_resourceCache.TryGetValue(culture, out resource))
         {
-            _missingResources[culture] = null;
+            return resource;
+        }
+
+        _missingResources[culture] = null;
+
+        if (_missingResources.ContainsKey(_options.Value.DefaultCulture))
+        {
             throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
         }
 
-        return resource;
+        return Get(_options.Value.DefaultCulture);
     }
 
     public LocalizationResource Get(string culture, string location)

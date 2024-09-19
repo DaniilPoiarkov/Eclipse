@@ -77,4 +77,10 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
 
         return entry.Entity;
     }
+
+    public async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        DbSet.UpdateRange(entities);
+        await Context.SaveChangesAsync(cancellationToken);
+    }
 }

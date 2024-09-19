@@ -24,6 +24,9 @@
 <p>Run <i>.\stop.ps1</i> script to stop container. It will also remove image.</p>
 
 ## Architecture diagram
+![Eclipse](https://github.com/user-attachments/assets/06b1b2a7-41dc-4bec-92eb-6569a95d8283)
+
+## References
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)
 
 ## Authorization flow
@@ -104,4 +107,6 @@ Data persistence with EF Core Cosmos Db provider.
 * GitHub actions
 * Azure AppServices
 
-
+<p>Includes build, test, and creating coverage report using reportgenerator.</p>
+<p>Results are added as a comment by <i>github-actions bot</i> to PR.</p>
+<p>Uses <i>Service Principal</i> for deployment with RBAC access.</p>

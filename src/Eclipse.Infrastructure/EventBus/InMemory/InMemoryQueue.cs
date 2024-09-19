@@ -1,6 +1,6 @@
 ﻿using System.Threading.Channels;
 
-namespace Eclipse.Infrastructure.EventBus;
+namespace Eclipse.Infrastructure.EventBus.InMemory;
 
 internal sealed class InMemoryQueue<T>
 {
