@@ -22,7 +22,7 @@ public sealed class CommandsController : ControllerBase
         _stringLocalizer = stringLocalizer;
     }
 
-    [HttpGet("list")]
+    [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         return Ok(await _commandService.GetList(cancellationToken));
@@ -35,7 +35,7 @@ public sealed class CommandsController : ControllerBase
         return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
     }
 
-    [HttpDelete("remove/{command}")]
+    [HttpDelete("{command}/remove")]
     public async Task<IActionResult> Remove(string command, CancellationToken cancellationToken)
     {
         await _commandService.Remove(command, cancellationToken);
