@@ -128,5 +128,11 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
         await Repository.UpdateRangeAsync(entities, cancellationToken);
     }
 
+    public async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
+        await Repository.DeleteRangeAsync(entities, cancellationToken);
+    }
+
     protected static string GetPrefix() => typeof(TEntity).AssemblyQualifiedName ?? string.Empty;
 }

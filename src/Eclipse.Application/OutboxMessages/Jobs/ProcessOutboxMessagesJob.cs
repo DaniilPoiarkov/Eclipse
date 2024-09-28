@@ -1,10 +1,9 @@
 ﻿using Eclipse.Application.Contracts.OutboxMessages;
-
 using Microsoft.Extensions.Configuration;
 
 using Quartz;
 
-namespace Eclipse.Application.OutboxMessages.ProcessMessages;
+namespace Eclipse.Application.OutboxMessages.Jobs;
 
 internal sealed class ProcessOutboxMessagesJob : IJob
 {

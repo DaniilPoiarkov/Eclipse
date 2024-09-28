@@ -1,8 +1,7 @@
 ﻿using Eclipse.Application.Contracts.OutboxMessages;
-
 using Quartz;
 
-namespace Eclipse.Application.OutboxMessages.DeleteSuccessfullyProcessedMessages;
+namespace Eclipse.Application.OutboxMessages.Jobs;
 
 internal sealed class DeleteSuccessfullyProcessedOutboxMessagesJob : IJob
 {

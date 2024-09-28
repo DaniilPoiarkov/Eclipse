@@ -6,6 +6,11 @@ namespace Eclipse.Tests.Generators;
 
 public static class UserDtoGenerator
 {
+    public static UserDto Get(long baseId = 1)
+    {
+        return Generate(baseId, 1).First();
+    }
+
     public static List<UserDto> Generate(long baseId, int count)
     {
         return new Faker<UserDto>()

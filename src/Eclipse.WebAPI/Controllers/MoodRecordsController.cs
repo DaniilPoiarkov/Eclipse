@@ -18,6 +18,6 @@ public class MoodRecordsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetList()
     {
-        return Ok(await _moodRecordsService.GetListAsync());
+        return Ok(await _moodRecordsService.GetListAsync(Guid.NewGuid()));
     }
 }
