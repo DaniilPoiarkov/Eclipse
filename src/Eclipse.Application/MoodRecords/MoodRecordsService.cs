@@ -2,7 +2,9 @@
 using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.MoodRecords;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Repositories;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.MoodRecords;
 
@@ -10,17 +12,27 @@ internal sealed class MoodRecordsService : IMoodRecordsService
 {
     private readonly IRepository<MoodRecord> _repository;
 
+    private readonly UserManager _userManager;
+
     private readonly ITimeProvider _timeProvider;
 
-    public MoodRecordsService(IRepository<MoodRecord> repository, ITimeProvider timeProvider)
+    public MoodRecordsService(IRepository<MoodRecord> repository, UserManager userManager, ITimeProvider timeProvider)
     {
         _repository = repository;
+        _userManager = userManager;
         _timeProvider = timeProvider;
     }
 
-    public async Task<Result<MoodRecordDto>> CreateAsync(Guid userId, bool isGood, CancellationToken cancellationToken = default)
+    public async Task<Result<MoodRecordDto>> CreateAsync(Guid userId, CreateMoodRecordDto model, CancellationToken cancellationToken = default)
     {
-        var record = new MoodRecord(Guid.NewGuid(), userId, isGood, _timeProvider.Now);
+        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound(typeof(User));
+        }
+
+        var record = user.CreateMoodRecord(model.State, _timeProvider.Now);
 
         await _repository.CreateAsync(record, cancellationToken);
 
@@ -28,20 +40,20 @@ internal sealed class MoodRecordsService : IMoodRecordsService
         {
             Id = record.Id,
             CreatedAt = record.CreatedAt,
-            IsGood = isGood,
+            State = record.State,
             UserId = record.UserId,
         };
     }
 
-    public async Task<List<MoodRecordDto>> GetListAsync(CancellationToken cancellationToken = default)
+    public async Task<List<MoodRecordDto>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var records = await _repository.GetAllAsync(cancellationToken);
+        var records = await _repository.GetByExpressionAsync(mr => mr.UserId == userId, cancellationToken);
 
         return records.Select(r => new MoodRecordDto
         {
             Id = r.Id,
             CreatedAt = r.CreatedAt,
-            IsGood = r.IsGood,
+            State = r.State,
             UserId = r.UserId,
         }).ToList();
     }
