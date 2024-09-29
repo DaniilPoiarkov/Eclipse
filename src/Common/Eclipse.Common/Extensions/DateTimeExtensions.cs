@@ -15,29 +15,36 @@ public static class DateTimeExtensions
     }
 
     /// <summary>
-    /// Returns the future day of the week or current date if it is the specified day of week
-    /// </summary>
-    /// <param name="dateTime"></param>
-    /// <param name="day"></param>
-    /// <returns></returns>
-    public static DateTime NextDayOfWeek(this DateTime dateTime, DayOfWeek day)
-    {
-        return FindDayOfWeek(dateTime, day, 1);
-    }
-
-    /// <summary>
-    /// Returns the past day of the week or current date if it is the specified day of week
+    /// Returns the future day of the week or current date if it is the specified day of week and <a href="includeCurrentDaten"></a> is true.
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <param name="day">The day.</param>
+    /// <param name="includeCurrentDate">if set to <c>true</c> [include current date].</param>
     /// <returns></returns>
-    public static DateTime PreviousDayOfWeek(this DateTime dateTime, DayOfWeek day)
+    public static DateTime NextDayOfWeek(this DateTime dateTime, DayOfWeek day, bool includeCurrentDate = false)
     {
-        return FindDayOfWeek(dateTime, day, -1);
+        return FindDayOfWeek(dateTime, day, 1, includeCurrentDate);
     }
 
-    private static DateTime FindDayOfWeek(this DateTime dateTime, DayOfWeek day, int increment)
+    /// <summary>
+    /// Returns the past day of the week or current date if it is the specified day of week and <a href="includeCurrentDaten"></a> is true.
+    /// </summary>
+    /// <param name="dateTime">The date time.</param>
+    /// <param name="day">The day.</param>
+    /// <param name="includeCurrentDate">if set to <c>true</c> [include current date].</param>
+    /// <returns></returns>
+    public static DateTime PreviousDayOfWeek(this DateTime dateTime, DayOfWeek day, bool includeCurrentDate = false)
     {
+        return FindDayOfWeek(dateTime, day, -1, includeCurrentDate);
+    }
+
+    private static DateTime FindDayOfWeek(this DateTime dateTime, DayOfWeek day, int increment, bool includeCurrentDate = false)
+    {
+        if (!includeCurrentDate)
+        {
+            dateTime = dateTime.AddDays(increment);
+        }
+
         while (dateTime.DayOfWeek != day)
         {
             dateTime = dateTime.AddDays(increment);

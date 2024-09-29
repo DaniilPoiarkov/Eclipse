@@ -25,6 +25,8 @@ internal sealed class ArchiveMoodRecordsJob : IJob
 
     private readonly IOptions<TelegramOptions> _options;
 
+    private static readonly TimeOnly _endOfDay = new(23, 59);
+
     public ArchiveMoodRecordsJob(
         IRepository<MoodRecord> repository,
         IExcelManager excelManager,
@@ -41,7 +43,9 @@ internal sealed class ArchiveMoodRecordsJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var date = _timeProvider.Now.AddDays(-1);
+        var date = _timeProvider.Now
+            .PreviousDayOfWeek(DayOfWeek.Sunday)
+            .WithTime(_endOfDay);
 
         var records = await _repository.GetByExpressionAsync(
             mr => mr.CreatedAt < date,

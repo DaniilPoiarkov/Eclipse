@@ -5,31 +5,37 @@ namespace Eclipse.Common.Tests.Extensions;
 public sealed class DateTimeExtensionsTests
 {
     [Theory]
-    [InlineData(2024, 9, 28, DayOfWeek.Sunday, 2024, 9, 29)]
-    [InlineData(2024, 9, 28, DayOfWeek.Monday, 2024, 9, 30)]
-    [InlineData(2024, 9, 28, DayOfWeek.Tuesday, 2024, 10, 1)]
-    [InlineData(2024, 12, 30, DayOfWeek.Wednesday, 2025, 1, 1)]
-    public void NextDayOfWeek_WhenCalled_ThenProperDateTimeReturned(int year, int month, int day, DayOfWeek dayOfWeek, int expectedYear, int expectedMonth, int expectedDay)
+    [InlineData(2024, 9, 28, DayOfWeek.Sunday, true, 2024, 9, 29)]
+    [InlineData(2024, 9, 28, DayOfWeek.Monday, true, 2024, 9, 30)]
+    [InlineData(2024, 9, 28, DayOfWeek.Tuesday, true, 2024, 10, 1)]
+    [InlineData(2024, 12, 30, DayOfWeek.Wednesday, true, 2025, 1, 1)]
+    [InlineData(2024, 9, 29, DayOfWeek.Sunday, false, 2024, 10, 6)]
+    [InlineData(2024, 12, 30, DayOfWeek.Monday, false, 2025, 1, 6)]
+    [InlineData(2024, 9, 22, DayOfWeek.Sunday, false, 2024, 9, 29)]
+    public void NextDayOfWeek_WhenCalled_ThenProperDateTimeReturned(int year, int month, int day, DayOfWeek dayOfWeek, bool includeCurrentDate, int expectedYear, int expectedMonth, int expectedDay)
     {
         var dateTime = new DateTime(year, month, day);
         var expected = new DateTime(expectedYear, expectedMonth, expectedDay);
 
-        var actual = dateTime.NextDayOfWeek(dayOfWeek);
+        var actual = dateTime.NextDayOfWeek(dayOfWeek, includeCurrentDate);
 
         actual.Should().Be(expected);
     }
 
     [Theory]
-    [InlineData(2024, 9, 29, DayOfWeek.Sunday, 2024, 9, 29)]
-    [InlineData(2024, 9, 28, DayOfWeek.Monday, 2024, 9, 23)]
-    [InlineData(2024, 10, 03, DayOfWeek.Friday, 2024, 9, 27)]
-    [InlineData(2025, 1, 2, DayOfWeek.Saturday, 2024, 12, 28)]
-    public void PreviousDayOfWeek_WhenCalled_ThenProperDateTimeReturned(int year, int month, int day, DayOfWeek dayOfWeek, int expectedYear, int expectedMonth, int expectedDay)
+    [InlineData(2024, 9, 29, DayOfWeek.Sunday, true, 2024, 9, 29)]
+    [InlineData(2024, 9, 28, DayOfWeek.Monday, true, 2024, 9, 23)]
+    [InlineData(2024, 10, 03, DayOfWeek.Friday, true, 2024, 9, 27)]
+    [InlineData(2025, 1, 2, DayOfWeek.Saturday, true, 2024, 12, 28)]
+    [InlineData(2025, 1, 1, DayOfWeek.Wednesday, false, 2024, 12, 25)]
+    [InlineData(2024, 9, 29, DayOfWeek.Sunday, false, 2024, 9, 22)]
+    [InlineData(2024, 10, 7, DayOfWeek.Monday, false, 2024, 9, 30)]
+    public void PreviousDayOfWeek_WhenCalled_ThenProperDateTimeReturned(int year, int month, int day, DayOfWeek dayOfWeek, bool includeCurrentDate, int expectedYear, int expectedMonth, int expectedDay)
     {
         var dateTime = new DateTime(year, month, day);
         var expected = new DateTime(expectedYear, expectedMonth, expectedDay);
 
-        var actual = dateTime.PreviousDayOfWeek(dayOfWeek);
+        var actual = dateTime.PreviousDayOfWeek(dayOfWeek, includeCurrentDate);
 
         actual.Should().Be(expected);
     }
