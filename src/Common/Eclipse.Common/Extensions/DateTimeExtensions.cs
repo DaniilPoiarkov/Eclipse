@@ -38,7 +38,7 @@ public static class DateTimeExtensions
         return FindDayOfWeek(dateTime, day, -1, includeCurrentDate);
     }
 
-    private static DateTime FindDayOfWeek(this DateTime dateTime, DayOfWeek day, int increment, bool includeCurrentDate = false)
+    private static DateTime FindDayOfWeek(this DateTime dateTime, DayOfWeek day, int increment, bool includeCurrentDate)
     {
         if (!includeCurrentDate)
         {
@@ -53,11 +53,24 @@ public static class DateTimeExtensions
         return dateTime;
     }
 
+    /// <summary>
+    /// Returns current date with specified time.
+    /// </summary>
+    /// <param name="dateTime">The date time.</param>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
+    /// <returns></returns>
     public static DateTime WithTime(this DateTime dateTime, int hour, int minute)
     {
         return dateTime.WithTime(new TimeOnly(hour, minute));
     }
 
+    /// <summary>
+    /// Returns current date with specified time.
+    /// </summary>
+    /// <param name="dateTime">The date time.</param>
+    /// <param name="timeOnly">The time only.</param>
+    /// <returns></returns>
     public static DateTime WithTime(this DateTime dateTime, TimeOnly timeOnly)
     {
         return new DateTime(
