@@ -10,13 +10,13 @@ namespace Eclipse.Application.MoodRecords;
 
 internal sealed class MoodRecordsService : IMoodRecordsService
 {
-    private readonly IRepository<MoodRecord> _repository;
+    private readonly IMoodRecordRepository _repository;
 
     private readonly UserManager _userManager;
 
     private readonly ITimeProvider _timeProvider;
 
-    public MoodRecordsService(IRepository<MoodRecord> repository, UserManager userManager, ITimeProvider timeProvider)
+    public MoodRecordsService(IMoodRecordRepository repository, UserManager userManager, ITimeProvider timeProvider)
     {
         _repository = repository;
         _userManager = userManager;

@@ -2,7 +2,6 @@
 using Eclipse.Common.Excel;
 using Eclipse.Common.Telegram;
 using Eclipse.Domain.MoodRecords;
-using Eclipse.Domain.Shared.Repositories;
 
 using Microsoft.Extensions.Options;
 
@@ -15,7 +14,7 @@ namespace Eclipse.Application.MoodRecords.Jobs;
 
 internal sealed class ArchiveMoodRecordsJob : IJob
 {
-    private readonly IRepository<MoodRecord> _repository;
+    private readonly IMoodRecordRepository _repository;
 
     private readonly IExcelManager _excelManager;
 
@@ -28,7 +27,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
     private static readonly TimeOnly _endOfDay = new(23, 59);
 
     public ArchiveMoodRecordsJob(
-        IRepository<MoodRecord> repository,
+        IMoodRecordRepository repository,
         IExcelManager excelManager,
         ITelegramBotClient telegramBotClient,
         ITimeProvider timeProvider,
