@@ -1,4 +1,6 @@
-﻿namespace System;
+﻿#pragma warning disable IDE0130
+
+namespace System;
 
 public static class DateTimeExtensions
 {

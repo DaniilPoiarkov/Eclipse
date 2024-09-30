@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+#pragma warning disable IDE0130
+
 namespace System;
 
 public static class GuidExtensions
