@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.OutboxMessages;
+
 using Quartz;
 
 namespace Eclipse.Application.OutboxMessages.Jobs;

@@ -62,7 +62,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
         }
 
         var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
-        
+
         var model = new CreateMoodRecordDto
         {
             State = mood.State.Value

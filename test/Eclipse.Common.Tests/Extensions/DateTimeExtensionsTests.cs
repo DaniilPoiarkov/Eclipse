@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using Eclipse.Common.Tests.Extensions.TestData;
+
+using FluentAssertions;
 
 namespace Eclipse.Common.Tests.Extensions;
 
@@ -71,6 +73,14 @@ public sealed class DateTimeExtensionsTests
 
         var actual = utcNow.WithTime(hour, minutes);
 
+        actual.Should().Be(expected);
+    }
+
+    [Theory]
+    [ClassData(typeof(NextMonthTestData))]
+    public void NextMonth_WhenCalled_ThenFirstDayOfNextMonthReturned(DateTime now, DateTime expected)
+    {
+        var actual = now.NextMonth();
         actual.Should().Be(expected);
     }
 }

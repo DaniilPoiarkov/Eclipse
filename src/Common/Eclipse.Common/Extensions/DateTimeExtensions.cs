@@ -78,4 +78,11 @@ public static class DateTimeExtensions
             timeOnly
         );
     }
+
+    public static DateTime NextMonth(this DateTime dateTime)
+    {
+        dateTime = dateTime.AddMonths(1);
+        return new DateTime(dateTime.Year, dateTime.Month, 1)
+            .WithTime(0, 0);
+    }
 }

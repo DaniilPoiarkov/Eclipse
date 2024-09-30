@@ -48,7 +48,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
             .WithTime(_endOfDay);
 
         var records = await _repository.GetByExpressionAsync(
-            mr => mr.CreatedAt < date,
+            mr => mr.CreatedAt <= date,
             context.CancellationToken
         );
 

@@ -1,7 +1,7 @@
-﻿using Eclipse.Domain.MoodRecords;
+﻿using Eclipse.DataAccess.Model;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Users;
-using Eclipse.DataAccess.Model;
 
 using Microsoft.EntityFrameworkCore;
 
