@@ -79,6 +79,11 @@ public static class DateTimeExtensions
         );
     }
 
+    /// <summary>
+    /// Returns the first day of the next month.
+    /// </summary>
+    /// <param name="dateTime">The date time.</param>
+    /// <returns></returns>
     public static DateTime NextMonth(this DateTime dateTime)
     {
         dateTime = dateTime.AddMonths(1);

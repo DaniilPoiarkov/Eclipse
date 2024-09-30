@@ -3,7 +3,6 @@ using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.Errors;
-using Eclipse.Domain.Shared.Repositories;
 using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.MoodRecords;
@@ -45,16 +44,23 @@ internal sealed class MoodRecordsService : IMoodRecordsService
         };
     }
 
+    public async Task<Result<MoodRecordDto>> GetByIdAsync(Guid userId, Guid id, CancellationToken cancellationToken = default)
+    {
+        var record = await _repository.FindAsync(id, cancellationToken);
+
+        if (record is null || record.UserId != userId)
+        {
+            return DefaultErrors.EntityNotFound(typeof(MoodRecord));
+        }
+
+        return record.ToDto();
+    }
+
     public async Task<List<MoodRecordDto>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var records = await _repository.GetByExpressionAsync(mr => mr.UserId == userId, cancellationToken);
 
-        return records.Select(r => new MoodRecordDto
-        {
-            Id = r.Id,
-            CreatedAt = r.CreatedAt,
-            State = r.State,
-            UserId = r.UserId,
-        }).ToList();
+        return records.Select(r => r.ToDto())
+            .ToList();
     }
 }

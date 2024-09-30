@@ -7,4 +7,6 @@ public interface IMoodRecordsService
     Task<Result<MoodRecordDto>> CreateAsync(Guid userId, CreateMoodRecordDto model, CancellationToken cancellationToken = default);
 
     Task<List<MoodRecordDto>> GetListAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task<Result<MoodRecordDto>> GetByIdAsync(Guid userId, Guid id, CancellationToken cancellationToken = default);
 }
