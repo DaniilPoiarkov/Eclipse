@@ -1,16 +1,16 @@
-﻿using Eclipse.Application.Common;
+﻿using Eclipse.Application.OutboxMessages.Jobs;
 
 using Quartz;
 
-namespace Eclipse.Application.OutboxMessages.DeleteSuccessfullyProcessedMessages;
+namespace Eclipse.Application.OptionsConfigurations.Configurations;
 
 internal sealed class DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration : IJobConfiguration
 {
-    public void Configure(IServiceCollectionQuartzConfigurator configurator)
+    public void Schedule(QuartzOptions options)
     {
         var jobKey = JobKey.Create(nameof(DeleteSuccessfullyProcessedOutboxMessagesJob));
 
-        configurator.AddJob<DeleteSuccessfullyProcessedOutboxMessagesJob>(job => job.WithIdentity(jobKey))
+        options.AddJob<DeleteSuccessfullyProcessedOutboxMessagesJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger
             .ForJob(jobKey)
                 .WithSimpleSchedule(schedule => schedule

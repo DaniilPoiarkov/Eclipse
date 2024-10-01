@@ -6,6 +6,7 @@ using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Suggestions;
@@ -15,9 +16,9 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
+using Eclipse.Application.MoodRecords;
+using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
-using Eclipse.Application.OutboxMessages.DeleteSuccessfullyProcessedMessages;
-using Eclipse.Application.OutboxMessages.ProcessMessages;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
@@ -55,6 +56,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IImportService, ImportService>()
                 .AddTransient<IAccountService, AccountService>()
                 .AddTransient<ILoginManager, LoginManager>()
+                .AddTransient<IMoodRecordsService, MoodRecordsService>()
                 .AddTransient<IConfigurationService, ConfigurationService>()
                 .AddTransient<IOutboxMessagesService, OutboxMessagesService>();
 
@@ -89,18 +91,9 @@ public static class EclipseApplicationModule
             cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
         });
 
-        services.ConfigureBackgroundJobs();
+        services.AddQuartz();
 
-        return services;
-    }
-
-    private static IServiceCollection ConfigureBackgroundJobs(this IServiceCollection services)
-    {
-        services.AddQuartz(configurator =>
-        {
-            new ProcessOutboxMessagesJobConfiguration().Configure(configurator);
-            new DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration().Configure(configurator);
-        });
+        services.ConfigureOptions<QuartzOptionsConfiguration>();
 
         return services;
     }

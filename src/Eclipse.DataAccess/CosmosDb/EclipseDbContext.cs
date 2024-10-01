@@ -1,4 +1,5 @@
 ﻿using Eclipse.DataAccess.Model;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Users;
 
@@ -9,6 +10,8 @@ namespace Eclipse.DataAccess.CosmosDb;
 public sealed class EclipseDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+
+    public DbSet<MoodRecord> MoodRecords { get; set; }
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 

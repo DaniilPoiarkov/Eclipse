@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
@@ -260,5 +261,20 @@ public class UserTests
         var events = user.GetEvents();
 
         events.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData(MoodState.Good)]
+    [InlineData(MoodState.Bad)]
+    public void CreateMoodRecord_WhenCreated_ThenProperValuesSet(MoodState state)
+    {
+        var utcNow = DateTime.UtcNow;
+
+        var moodRecord = _sut.CreateMoodRecord(state, utcNow);
+
+        moodRecord.Id.Should().NotBeEmpty();
+        moodRecord.UserId.Should().Be(_sut.Id);
+        moodRecord.State.Should().Be(state);
+        moodRecord.CreatedAt.Should().Be(utcNow);
     }
 }

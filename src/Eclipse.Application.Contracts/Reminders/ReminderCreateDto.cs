@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Users;
+﻿namespace Eclipse.Application.Contracts.Reminders;
 
 public class ReminderCreateDto
 {

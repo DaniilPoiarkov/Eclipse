@@ -1,6 +1,8 @@
 ﻿using Eclipse.Common.Results;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
@@ -220,6 +222,11 @@ public sealed class User : AggregateRoot
     public Reminder? GetReminder(Guid reminderId)
     {
         return _reminders.FirstOrDefault(reminder => reminder.Id == reminderId);
+    }
+
+    public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
+    {
+        return new MoodRecord(Guid.NewGuid(), Id, state, createdAt);
     }
 
     public override string ToString()

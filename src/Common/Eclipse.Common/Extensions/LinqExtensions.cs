@@ -1,5 +1,7 @@
 ﻿using Eclipse.Common.Linq;
 
+#pragma warning disable IDE0130
+
 namespace System.Linq;
 
 public static class LinqExtensions
