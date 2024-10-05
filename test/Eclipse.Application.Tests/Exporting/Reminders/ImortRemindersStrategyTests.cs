@@ -53,7 +53,7 @@ public sealed class ImortRemindersStrategyTests
 
         await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(Arg.Any<User>());
         result.IsSuccess.Should().BeFalse();
-        result.FailedRows.Count().Should().Be(1);
+        result.FailedRows.Count.Should().Be(1);
         result.FailedRows[0].Should().Be(reminder);
     }
 

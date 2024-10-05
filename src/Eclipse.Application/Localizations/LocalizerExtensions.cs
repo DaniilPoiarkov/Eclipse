@@ -4,7 +4,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Application.Localizations;
 
-public static class EclipseLocalizerExtensions
+public static class LocalizerExtensions
 {
     /// <summary>
     /// Localizes error data to string
