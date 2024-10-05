@@ -1,5 +1,10 @@
-﻿using Eclipse.Application.Contracts.Exporting;
+﻿using Bogus;
+
 using Eclipse.Application.Exporting;
+using Eclipse.Application.Tests.Exporting.Reminders;
+using Eclipse.Application.Tests.Exporting.TodoItems;
+using Eclipse.Application.Tests.Exporting.Users;
+using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Users;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Tests.Generators;
@@ -18,15 +23,13 @@ public sealed class ExportServiceTests
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly Lazy<IExportService> _sut;
-
-    private IExportService Sut => _sut.Value;
+    private readonly ExportService _sut;
 
     public ExportServiceTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
 
-        _sut = new(() => new ExportService(new ExcelManager(), _userRepository));
+        _sut = new ExportService(new ExcelManager(), _userRepository);
     }
 
     [Fact]
@@ -36,34 +39,76 @@ public sealed class ExportServiceTests
 
         _userRepository.GetAllAsync().ReturnsForAnyArgs(users);
 
-        var stream = await Sut.GetUsersAsync();
+        using var stream = await _sut.GetUsersAsync();
 
         var result = stream.Query<ExportedUser>();
 
-        CompareUsers(users, result).Should().BeTrue();
+        Compare(users, result, new UserRowComparer()).Should().BeTrue();
     }
 
-    private static bool CompareUsers(List<User> expected, IEnumerable<ExportedUser> actual)
+    [Fact]
+    public async Task GetTodoItems_WhenExported_ThenProperDataReturned()
     {
-        foreach (var user in expected)
-        {
-            var recieved = actual.FirstOrDefault(a => a.Id == user.Id);
+        var user = UserGenerator.Get();
 
-            if (recieved is null)
+        var faker = new Faker();
+
+        for (int i = 0; i < 5; i++)
+        {
+            user.AddTodoItem(faker.Lorem.Sentence());
+        }
+
+        _userRepository.GetAllAsync().Returns([user]);
+
+        using var stream = await _sut.GetTodoItemsAsync();
+
+        var result = stream.Query<ExportedTodoItem>();
+
+        Compare(user.TodoItems, result, new TodoItemRowComparer()).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetReminders_WhenExported_ThenProperDataReturned()
+    {
+        var user = UserGenerator.Get();
+
+        var count = 5;
+
+        var faker = new Faker();
+
+        for (int i = 0;i < count; i++)
+        {
+            user.AddReminder(
+                faker.Lorem.Sentence(),
+                faker.Date.BetweenTimeOnly(new TimeOnly(0, 0), new TimeOnly(23, 59))
+            );
+        }
+
+        _userRepository.GetAllAsync().Returns([user]);
+
+        using var stream = await _sut.GetRemindersAsync();
+
+        var result = stream.Query<ExportedReminder>();
+
+        Compare(user.Reminders, result, new ReminderRowComparer()).Should().BeTrue();
+    }
+
+    private static bool Compare<TEntity, TRow>(IEnumerable<TEntity> entities, IEnumerable<TRow> rows, IExportRowComparer<TEntity, TRow> comparer)
+        where TEntity : Entity
+        where TRow : ExportedRow
+    {
+        foreach (var entity in entities)
+        {
+            var actual = rows.FirstOrDefault(r => r.Id == entity.Id);
+
+            if (actual is null)
             {
                 return false;
             }
 
-            var equal = user.Id == recieved.Id
-                && user.Name == recieved.Name
-                && user.Surname == recieved.Surname
-                && user.Gmt == TimeSpan.Parse(recieved.Gmt)
-                && user.UserName == recieved.UserName
-                && user.ChatId == recieved.ChatId
-                && user.Culture == recieved.Culture
-                && user.NotificationsEnabled == recieved.NotificationsEnabled;
+            var result = comparer.Compare(entity, actual);
 
-            if (!equal)
+            if (!result)
             {
                 return false;
             }
@@ -71,23 +116,4 @@ public sealed class ExportServiceTests
 
         return true;
     }
-}
-
-internal class ExportedUser
-{
-    public Guid Id { get; set; }
-
-    public string Name { get; set; } = string.Empty;
-
-    public string Surname { get; set; } = string.Empty;
-
-    public string UserName { get; set; } = string.Empty;
-
-    public long ChatId { get; set; }
-
-    public string Culture { get; set; } = string.Empty;
-
-    public bool NotificationsEnabled { get; set; }
-
-    public string Gmt { get; set; } = string.Empty;
 }

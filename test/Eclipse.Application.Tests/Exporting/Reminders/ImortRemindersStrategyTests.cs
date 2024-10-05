@@ -31,6 +31,33 @@ public sealed class ImortRemindersStrategyTests
     }
 
     [Fact]
+    public void Type_WhenChecked_ThenReturnsRemindersSpecification()
+    {
+        _sut.Type.Should().Be(ImportType.Reminders);
+    }
+
+    [Fact]
+    public async Task ImportAsync_WhenRowCannotBeImported_ThenReturnedWithinFailedResult()
+    {
+        var reminder = ImportEntityRowGenerator.Reminder();
+        reminder.Exception = "exception";
+
+        using var ms = new MemoryStream();
+
+        _excelManager.Read<ImportReminderDto>(ms).Returns([reminder]);
+        _validator.ValidateAndSetErrors(
+            Arg.Any<IEnumerable<ImportReminderDto>>()
+        ).Returns([reminder]);
+
+        var result = await _sut.ImportAsync(ms);
+
+        await _userRepository.DidNotReceiveWithAnyArgs().UpdateAsync(Arg.Any<User>());
+        result.IsSuccess.Should().BeFalse();
+        result.FailedRows.Count().Should().Be(1);
+        result.FailedRows[0].Should().Be(reminder);
+    }
+
+    [Fact]
     public async Task ImportAsync_WhenRecordsValid_ThenImportedSuccessfully()
     {
         using var ms = new MemoryStream();
