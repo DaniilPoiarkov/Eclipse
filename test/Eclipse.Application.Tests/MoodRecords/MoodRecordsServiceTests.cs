@@ -12,6 +12,8 @@ using FluentAssertions;
 
 using NSubstitute;
 
+using System.Linq.Expressions;
+
 using Xunit;
 
 namespace Eclipse.Application.Tests.MoodRecords;
@@ -35,6 +37,23 @@ public sealed class MoodRecordsServiceTests
         var manager = new UserManager(_userRepository);
 
         _sut = new(_repository, manager, _timeProvider);
+    }
+
+    [Fact]
+    public async Task GetListAsync_WhenCalled_ThenRecordsReturned()
+    {
+        var record = new MoodRecord(Guid.NewGuid(), Guid.NewGuid(), MoodState.Good, DateTime.UtcNow);
+
+        _repository.GetByExpressionAsync(Arg.Any<Expression<Func<MoodRecord, bool>>>())
+            .Returns([record]);
+
+        var result = await _sut.GetListAsync(record.UserId);
+
+        result.Count.Should().Be(1);
+        result[0].Id.Should().Be(record.Id);
+        result[0].UserId.Should().Be(record.UserId);
+        result[0].State.Should().Be(record.State);
+        result[0].CreatedAt.Should().Be(record.CreatedAt);
     }
 
     [Theory]

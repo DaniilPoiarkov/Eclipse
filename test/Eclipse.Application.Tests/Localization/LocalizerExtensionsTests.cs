@@ -38,7 +38,8 @@ public sealed class LocalizerExtensionsTests
 
         var localizer = LocalizerBuilder<LocalizerExtensionsTests>.Create().Build();
 
-        localizer.Configure()["Test:Error"].Returns(new LocalizedString("Test:Error", "", true));
+        localizer.Configure()["Test:Error", []]
+            .Returns(new LocalizedString("Test:Error", "", true));
 
         var actual = localizer.LocalizeError(error);
 
