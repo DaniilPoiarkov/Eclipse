@@ -45,6 +45,7 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
                     schedule.WithIntervalInWeeks(1))
                 .StartAt(
                     DateTime.UtcNow.NextDayOfWeek(DayOfWeek.Sunday, true)
+                        .WithTime(0, 0)
                 ));
     }
 }
