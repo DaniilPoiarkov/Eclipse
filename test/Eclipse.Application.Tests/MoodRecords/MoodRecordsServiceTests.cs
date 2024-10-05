@@ -58,7 +58,7 @@ public sealed class MoodRecordsServiceTests
         var result = await _sut.CreateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeTrue();
-        
+
         var value = result.Value;
 
         value.Id.Should().NotBeEmpty();

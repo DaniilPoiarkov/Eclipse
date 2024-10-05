@@ -4,7 +4,7 @@ using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
-using User = Eclipse.Domain.Users.User;
+using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
 
@@ -12,7 +12,8 @@ using Quartz;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Eclipse.Localization.Extensions;
+
+using User = Eclipse.Domain.Users.User;
 
 namespace Eclipse.Pipelines.Jobs.SendMoodReport;
 
