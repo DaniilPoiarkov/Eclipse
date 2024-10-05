@@ -76,7 +76,7 @@ public sealed class ExportServiceTests
 
         var faker = new Faker();
 
-        for (int i = 0;i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             user.AddReminder(
                 faker.Lorem.Sentence(),

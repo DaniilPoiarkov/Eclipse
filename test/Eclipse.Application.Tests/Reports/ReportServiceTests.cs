@@ -6,8 +6,6 @@ using Eclipse.Common.Plots;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
 
-using FluentAssertions;
-
 using NSubstitute;
 
 using System.Linq.Expressions;

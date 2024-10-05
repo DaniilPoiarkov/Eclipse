@@ -48,7 +48,7 @@ public sealed class ImportTodoItemsValidatorTests
         todoItem1.UserId = user.Id;
         todoItem2.UserId = user.Id;
         todoItem3.UserId = user.Id;
-        
+
         var options = new ImportTodoItemsValidationOptions
         {
             Users = [user]
@@ -62,7 +62,7 @@ public sealed class ImportTodoItemsValidatorTests
             .ForWithArgs("{0}AlreadyExists{1}{2}", nameof(TodoItem), nameof(todoItem2.Id), todoItem2.Id)
                 .Return($"Todo item with Id {todoItem2.Id} already exists.");
 
-        var result = _sut.ValidateAndSetErrors([ todoItem1, todoItem2, todoItem3 ]).ToList();
+        var result = _sut.ValidateAndSetErrors([todoItem1, todoItem2, todoItem3]).ToList();
 
         result[0].Exception.Should().Be("Empty");
         result[1].Exception.Should().Be($"Todo item with Id {todoItem2.Id} already exists.");

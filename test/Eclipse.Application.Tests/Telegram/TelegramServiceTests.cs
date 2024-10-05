@@ -5,8 +5,6 @@ using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
-using MediatR;
-
 using Microsoft.Extensions.Configuration;
 
 using NSubstitute;
