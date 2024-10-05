@@ -4,6 +4,9 @@
     "Jobs:SendReminders:Message": "Hey there😊\n\rYou asked to remind you:",
 
     "Jobs:Evening:Empty": "Hey, {0}, it's evening!🌒\n\rTime to slow down and prepare for rest😴\n\rHope you had a great day😊",
-    "Jobs:Evening:RemindMarkAsFinished": "Hey, {0}, it's evening!🌒\n\rTime to slow down and prepare for rest😴\n\rQuick reminder:\n\r\n\rYou have {1} unfinished todo items!\n\r\n\rIf you done some of them it's time to mark them as finished😊"
+    "Jobs:Evening:RemindMarkAsFinished": "Hey, {0}, it's evening!🌒\n\rTime to slow down and prepare for rest😴\n\rQuick reminder:\n\r\n\rYou have {1} unfinished todo items!\n\r\n\rIf you done some of them it's time to mark them as finished😊",
+
+    "Jobs:SendMoodReport:Greeting": "Hey, it is evening and I want to show you dynamics of your mood changes during the week!",
+    "Jobs:SendMoodReport:Conclusion": "I recommend you to remind how your week passed and think about how different situations affected your mood"
   }
 }

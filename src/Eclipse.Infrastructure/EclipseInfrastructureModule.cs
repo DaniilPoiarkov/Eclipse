@@ -3,6 +3,7 @@ using Eclipse.Common.Caching;
 using Eclipse.Common.Clock;
 using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
+using Eclipse.Common.Plots;
 using Eclipse.Common.Sheets;
 using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
@@ -11,6 +12,7 @@ using Eclipse.Infrastructure.EventBus.InMemory;
 using Eclipse.Infrastructure.EventBus.Redis;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
+using Eclipse.Infrastructure.Plots;
 
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +54,8 @@ public static class EclipseInfrastructureModule
 
         services
             .AddSingleton<IExcelManager, ExcelManager>()
-            .AddSingleton<IBackgroundJobManager, BackgroundJobManager>();
+            .AddSingleton<IBackgroundJobManager, BackgroundJobManager>()
+            .AddSingleton<IPlotGenerator, PlotGenerator>();
 
         services.AddSingleton<ITimeProvider, UtcNowTimeProvider>();
 
