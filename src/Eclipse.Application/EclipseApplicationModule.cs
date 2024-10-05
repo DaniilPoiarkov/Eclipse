@@ -9,6 +9,7 @@ using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
 using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.Reports;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Telegram.Commands;
@@ -20,6 +21,7 @@ using Eclipse.Application.MoodRecords;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
+using Eclipse.Application.Reports;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.Telegram.Commands;
@@ -58,7 +60,8 @@ public static class EclipseApplicationModule
                 .AddTransient<ILoginManager, LoginManager>()
                 .AddTransient<IMoodRecordsService, MoodRecordsService>()
                 .AddTransient<IConfigurationService, ConfigurationService>()
-                .AddTransient<IOutboxMessagesService, OutboxMessagesService>();
+                .AddTransient<IOutboxMessagesService, OutboxMessagesService>()
+                .AddTransient<IReportsService, ReportsService>();
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()
