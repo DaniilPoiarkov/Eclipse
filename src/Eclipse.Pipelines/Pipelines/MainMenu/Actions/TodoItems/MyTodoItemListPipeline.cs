@@ -5,7 +5,7 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Pipelines.Stores.Messages;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
 [Route("Menu:TodoItemsMenu:MyList", "/todos_my")]
 internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase

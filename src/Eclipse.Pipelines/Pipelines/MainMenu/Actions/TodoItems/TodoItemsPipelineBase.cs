@@ -1,21 +1,20 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Core.Core;
-
 using System.Text;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
-internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
+internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
 {
     protected static readonly string PipelinePrefix = "Pipelines:TodoItems";
 
     protected IEnumerable<IEnumerable<KeyboardButton>> TodoItemMenuButtons => new List<KeyboardButton[]>
     {
         new[] { new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]), new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]) },
-        new[] { new KeyboardButton(Localizer["Menu:MainMenu"]) }
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Actions"]) }
     };
 
     #region Helpers

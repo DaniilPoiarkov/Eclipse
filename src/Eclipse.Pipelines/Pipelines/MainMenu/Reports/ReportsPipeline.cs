@@ -1,7 +1,6 @@
 ﻿using Eclipse.Core.Attributes;
-using Eclipse.Pipelines.Pipelines.MainMenu.Reports;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Reports;
 
 [Route("Menu:MainMenu:Reports")]
 internal sealed class ReportsPipeline : ReportsPipelineBase
