@@ -45,7 +45,7 @@ public sealed class ImportTodoItemsStrategyTests
 
         for (int i = 0; i < 6; i++)
         {
-            user.AddTodoItem($"Todo item #{i + 1}");
+            user.AddTodoItem($"Todo item #{i + 1}", DateTime.UtcNow.AddMinutes(-i));
         }
 
         var todoItem1 = ImportEntityRowGenerator.TodoItem();

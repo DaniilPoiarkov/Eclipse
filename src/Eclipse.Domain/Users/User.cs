@@ -135,9 +135,9 @@ public sealed class User : AggregateRoot
     /// <summary>Adds the todo item.</summary>
     /// <param name="text">The text.</param>
     /// <returns>Created TodoItem item</returns>
-    public Result<TodoItem> AddTodoItem(string? text)
+    public Result<TodoItem> AddTodoItem(string? text, DateTime createdAt)
     {
-        return AddTodoItem(Guid.NewGuid(), text, DateTime.UtcNow.Add(Gmt), false, default);
+        return AddTodoItem(Guid.NewGuid(), text, createdAt, false, default);
     }
 
     public Result<TodoItem> AddTodoItem(Guid id, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)

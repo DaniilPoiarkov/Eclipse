@@ -16,14 +16,14 @@ public sealed class AddTodoItemStepDefinitions
 
         foreach (var item in providedTodoItems)
         {
-            _user.AddTodoItem(item.Text);
+            _user.AddTodoItem(item.Text, DateTime.UtcNow);
         }
     }
 
     [When("Add todo item with following text: \"(.*)\"")]
     public void WhenAddTodoItemWithText(string text)
     {
-        _user.AddTodoItem(text);
+        _user.AddTodoItem(text, DateTime.UtcNow);
     }
 
     [Then("User must have (.*) todo items")]

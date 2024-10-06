@@ -2,6 +2,7 @@
 
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.TodoItems;
+using Eclipse.Common.Clock;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
@@ -13,6 +14,7 @@ using FluentAssertions;
 
 using NSubstitute;
 
+using System;
 using System.Linq.Expressions;
 
 using Xunit;
@@ -23,13 +25,16 @@ public sealed class TodoItemsServiceTests
 {
     private readonly IUserRepository _repository;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly TodoItemService _sut;
 
     public TodoItemsServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
+        _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new TodoItemService(new UserManager(_repository));
+        _sut = new TodoItemService(new UserManager(_repository), _timeProvider);
     }
 
     [Fact]
@@ -59,7 +64,7 @@ public sealed class TodoItemsServiceTests
     {
         var user = UserGenerator.Get();
 
-        var todoItem = user.AddTodoItem("test");
+        var todoItem = user.AddTodoItem("test", DateTime.UtcNow);
 
         _repository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
 
@@ -351,7 +356,7 @@ public sealed class TodoItemsServiceTests
 
         for (int i = 0; i < todoItemsCount; i++)
         {
-            user.AddTodoItem(faker.Lorem.Word());
+            user.AddTodoItem(faker.Lorem.Word(), faker.Date.Past());
         }
 
         return user;

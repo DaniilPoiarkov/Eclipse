@@ -35,7 +35,7 @@ public sealed class ImportTodoItemsValidatorTests
 
         for (int i = 0; i < 6; i++)
         {
-            user.AddTodoItem($"Todo item #{i + 1}");
+            user.AddTodoItem($"Todo item #{i + 1}", DateTime.UtcNow.AddMinutes(-i));
         }
 
         var todoItem1 = ImportEntityRowGenerator.TodoItem();
@@ -76,7 +76,7 @@ public sealed class ImportTodoItemsValidatorTests
 
         for (int i = 0; i < 7; i++)
         {
-            user.AddTodoItem($"Todo item #{i + 1}");
+            user.AddTodoItem($"Todo item #{i + 1}", DateTime.UtcNow.AddMinutes(-i));
         }
 
         var todoItem = ImportEntityRowGenerator.TodoItem();

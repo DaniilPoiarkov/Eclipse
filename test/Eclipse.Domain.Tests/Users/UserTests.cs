@@ -94,7 +94,9 @@ public class UserTests
     [InlineData("Some regular text! With __dif3r3nt &^% characters!)(_++_*@")]
     public void AddTodoItem_WhenTextValid_ThenTodoItemCreated(string text)
     {
-        var result = _sut.AddTodoItem(text);
+        var now = DateTime.UtcNow;
+
+        var result = _sut.AddTodoItem(text, now);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -102,6 +104,7 @@ public class UserTests
         value.Text.Should().Be(text);
         value.Id.Should().NotBeEmpty();
         value.UserId.Should().Be(_sut.Id);
+        value.CreatedAt.Should().Be(now);
         _sut.TodoItems.Count.Should().Be(1);
     }
 
@@ -114,7 +117,7 @@ public class UserTests
     {
         var expectedError = Error.Validation($"User.AddTodoItem.{errorCode}", $"TodoItem:{errorCode}");
 
-        var result = _sut.AddTodoItem(text);
+        var result = _sut.AddTodoItem(text, DateTime.UtcNow);
 
         var error = result.Error;
         error.Should().NotBeNull();
@@ -125,7 +128,7 @@ public class UserTests
     [Fact]
     public void FinishItem_WhenItemExists_ThenItemRemovedFromCollection()
     {
-        var item = _sut.AddTodoItem("test");
+        var item = _sut.AddTodoItem("test", DateTime.UtcNow);
 
         var result = _sut.FinishItem(item.Value.Id);
 

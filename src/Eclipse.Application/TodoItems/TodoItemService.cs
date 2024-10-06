@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.TodoItems;
@@ -12,9 +13,12 @@ internal sealed class TodoItemService : ITodoItemService
 {
     private readonly UserManager _userManager;
 
-    public TodoItemService(UserManager userManager)
+    private readonly ITimeProvider _timeProvider;
+
+    public TodoItemService(UserManager userManager, ITimeProvider timeProvider)
     {
         _userManager = userManager;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
@@ -57,7 +61,7 @@ internal sealed class TodoItemService : ITodoItemService
 
     private async Task<Result<TodoItem>> CreateAsync(User user, CreateTodoItemDto model, CancellationToken cancellationToken)
     {
-        var result = user.AddTodoItem(model.Text);
+        var result = user.AddTodoItem(model.Text, _timeProvider.Now);
 
         if (result.IsSuccess)
         {
