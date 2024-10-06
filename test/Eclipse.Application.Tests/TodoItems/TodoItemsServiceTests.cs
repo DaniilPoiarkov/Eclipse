@@ -14,7 +14,6 @@ using FluentAssertions;
 
 using NSubstitute;
 
-using System;
 using System.Linq.Expressions;
 
 using Xunit;

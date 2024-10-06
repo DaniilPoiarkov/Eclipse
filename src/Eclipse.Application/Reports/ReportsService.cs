@@ -43,7 +43,7 @@ internal sealed class ReportsService : IReportsService
 
         var option = new PlotOptions<DateTime, int>
         {
-            Title = $"{options.From:dd.MM}-{options.To:dd.MM}",
+            Title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}",
             YAxisTitle = "Score",
             Width = 550,
             Height = 300,

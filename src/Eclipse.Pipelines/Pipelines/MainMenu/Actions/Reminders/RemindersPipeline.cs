@@ -1,7 +1,6 @@
 ﻿using Eclipse.Core.Attributes;
-using Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
 
 [Route("Menu:MainMenu:Reminders", "/reminders")]
 internal sealed class RemindersPipeline : RemindersPipelineBase

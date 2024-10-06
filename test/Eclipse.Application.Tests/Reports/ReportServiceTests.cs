@@ -76,8 +76,11 @@ public sealed class ReportServiceTests
         await _moodRecordRepository.Received()
             .GetByExpressionAsync(Arg.Any<Expression<Func<MoodRecord, bool>>>());
 
+        var expectedFrom = expectedDates[0];
+        var expectedTo = expectedDates[^1];
+
         _plotGenerator.Received().Create(
-            Arg.Is<PlotOptions<DateTime, int>>(options => options.Title == $"{from:dd.MM}-{to:dd.MM}"
+            Arg.Is<PlotOptions<DateTime, int>>(options => options.Title == $"{expectedFrom:dd.MM}-{expectedTo:dd.MM}"
                     && options.YAxisTitle == "Score"
                     && options.XAxisTitle == null
                     && options.Width == 550

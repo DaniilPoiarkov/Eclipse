@@ -5,7 +5,7 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Domain.Shared.TodoItems;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
 [Route("Menu:TodoItemsMenu:AddItem", "/todos_add")]
 internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase

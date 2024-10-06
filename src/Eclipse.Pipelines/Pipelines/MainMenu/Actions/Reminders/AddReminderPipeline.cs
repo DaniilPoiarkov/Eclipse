@@ -5,10 +5,10 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
 
 [Route("Menu:Reminders:Add", "/reminders_add")]
-public sealed class AddReminderPipeline : RemindersPipelineBase
+internal sealed class AddReminderPipeline : RemindersPipelineBase
 {
     private readonly ICacheService _cacheService;
 

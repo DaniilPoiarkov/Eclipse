@@ -1,7 +1,6 @@
 ﻿using Eclipse.Core.Attributes;
-using Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
 [Route("Menu:MainMenu:Settings", "/settings")]
 internal sealed class SettingsPipeline : SettingsPipelineBase

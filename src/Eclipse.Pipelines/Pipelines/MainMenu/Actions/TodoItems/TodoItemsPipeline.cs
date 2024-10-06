@@ -1,10 +1,9 @@
 ﻿using Eclipse.Core.Attributes;
-using Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
 [Route("Menu:MainMenu:MyToDos", "/todos")]
-internal sealed class TodoItemsMenuPipeline : TodoItemsPipelineBase
+internal sealed class TodoItemsPipeline : TodoItemsPipelineBase
 {
     protected override void Initialize()
     {
