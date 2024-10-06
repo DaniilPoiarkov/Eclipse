@@ -46,7 +46,11 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetAsync_WhenUserNotExist_ThenErrorReturned()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User).Name)
+            .Return($"{nameof(User)} not found");
+
+        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var result = await _sut.GetAsync(Guid.NewGuid(), Guid.NewGuid());
 
@@ -57,7 +61,11 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetListAsync_WhenUserNotExist_ThenErrorReturned()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User).Name)
+            .Return($"{nameof(User)} not found");
+
+        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var result = await _sut.GetListAsync(Guid.NewGuid());
 
@@ -83,7 +91,11 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task FinishItemAsync_WhenUserNotExist_ThenErrorReturned()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User).Name)
+            .Return($"{nameof(User)} not found");
+
+        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var result = await _sut.FinishItemAsync(1, Guid.NewGuid());
 
@@ -95,11 +107,18 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task FinishItemAsync_WhenItemNotExists_ThenErrorReturned()
     {
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(TodoItem).Name)
+            .Return($"{nameof(TodoItem)} not found");
+
         var user = UserGenerator.Get();
 
-        _repository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
+        _repository.GetByExpressionAsync(
+            Arg.Any<Expression<Func<User, bool>>>()
+        ).Returns([user]);
 
-        var expected = UserDomainErrors.TodoItemNotFound();
+        var expected = UserDomainErrors.TodoItemNotFound()
+            .ToLocalized(_localizer);
 
         var result = await _sut.FinishItemAsync(user.ChatId, Guid.NewGuid());
 
@@ -138,7 +157,14 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItemsAndIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("TodoItem:Limit", TodoItemConstants.Limit)
+            .Return($"Todo items limit reached ({TodoItemConstants.Limit})");
+
+        var expectedError = UserDomainErrors
+            .TodoItemsLimit(TodoItemConstants.Limit)
+            .ToLocalized(_localizer);
+
         var user = CreateUser(7);
 
         _repository.FindAsync(user.Id).Returns(user);
@@ -162,7 +188,11 @@ public sealed class TodoItemsServiceTests
     [InlineData("        ")]
     public async Task CreateAsync_WhenTextIsInvalidAndIdSpecified_ThenErrorReturned(string text)
     {
-        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .For("TodoItem:Empty")
+            .Return($"Todo item is empty");
+
+        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty().ToLocalized(_localizer);
         var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
@@ -184,7 +214,11 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserNotExistsAndIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        LocalizerBuilder<TodoItemService>.Configure(_localizer)
+            .ForWithArgs("Entity:NotFound", typeof(User).Name)
+            .Return($"{nameof(User)} not found");
+
+        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
 
         var createModel = new CreateTodoItemDto
         {
