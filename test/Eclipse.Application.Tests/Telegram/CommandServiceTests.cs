@@ -1,8 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Common.Results;
+using Eclipse.Tests.Builders;
 
 using FluentAssertions;
+
+using Microsoft.Extensions.Localization;
 
 using NSubstitute;
 
@@ -16,6 +19,8 @@ namespace Eclipse.Application.Tests.Telegram;
 
 public sealed class CommandServiceTests
 {
+    private readonly IStringLocalizer<CommandService> _localizer;
+
     private readonly CommandService _sut;
 
     private readonly ITelegramBotClient _botClient;
@@ -25,7 +30,9 @@ public sealed class CommandServiceTests
     public CommandServiceTests()
     {
         _botClient = Substitute.For<ITelegramBotClient>();
-        _sut = new CommandService(_botClient);
+        _localizer = Substitute.For<IStringLocalizer<CommandService>>();
+
+        _sut = new CommandService(_botClient, _localizer);
     }
 
     [Theory]
@@ -46,7 +53,11 @@ public sealed class CommandServiceTests
         "DescriptionMaxLength")]
     public async Task Add_WhenRequestInvalid_ThenProperFailureResultReturned(string command, string description, string errorCode)
     {
-        var expectedError = Error.Validation("Command.Add", $"{_descriptionPrefix}:{errorCode}");
+        LocalizerBuilder<CommandService>.Configure(_localizer)
+            .For($"{_descriptionPrefix}:{errorCode}")
+            .Return($"Error fot {errorCode}");
+
+        var expectedError = Error.Validation("Command.Add", _localizer[$"{_descriptionPrefix}:{errorCode}"]);
 
         var request = new AddCommandRequest
         {

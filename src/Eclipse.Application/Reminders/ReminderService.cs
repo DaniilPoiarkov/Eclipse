@@ -6,15 +6,20 @@ using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 
+using Microsoft.Extensions.Localization;
+
 namespace Eclipse.Application.Reminders;
 
 internal sealed class ReminderService : IReminderService
 {
     private readonly UserManager _userManager;
 
-    public ReminderService(UserManager userManager)
+    private readonly IStringLocalizer<ReminderService> _localizer;
+
+    public ReminderService(UserManager userManager, IStringLocalizer<ReminderService> localizer)
     {
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     public async Task<Result<ReminderDto>> CreateAsync(Guid userId, ReminderCreateDto model, CancellationToken cancellationToken = default)
@@ -23,7 +28,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         var result = await CreateAsync(user, model, cancellationToken);
@@ -37,7 +42,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         await CreateAsync(user, model, cancellationToken);
@@ -60,14 +65,14 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         var reminder = user.GetReminder(reminderId);
 
         if (reminder is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(Reminder));
+            return DefaultErrors.EntityNotFound(typeof(Reminder), _localizer);
         }
 
         return reminder.ToDto();
@@ -79,7 +84,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
@@ -91,7 +96,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
         }
 
         user.RemoveRemindersForTime(time);
