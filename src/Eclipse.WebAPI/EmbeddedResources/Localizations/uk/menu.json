@@ -32,6 +32,9 @@
     "Menu:TodoItemsMenu:AddItem": "Запланувати ✏️",
     "Menu:TodoItemsMenu:MyList": "Мій список 🗒",
 
-    "Menu:Reminders:Add": "Нагадай мені 💭"
+    "Menu:Reminders:Add": "Нагадай мені 💭",
+
+    "Menu:Reports": "Звіти 📑",
+    "Menu:Reports:Mood": "Настрій 🤔"
   }
 }

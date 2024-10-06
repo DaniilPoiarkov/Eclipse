@@ -32,6 +32,9 @@
     "Menu:TodoItemsMenu:AddItem": "Add item ✏️",
     "Menu:TodoItemsMenu:MyList": "My list 🗒",
 
-    "Menu:Reminders:Add": "Remind me 💭"
+    "Menu:Reminders:Add": "Remind me 💭",
+
+    "Menu:Reports": "Reports 📑",
+    "Menu:Reports:Mood": "Mood report 🤔"
   }
 }
