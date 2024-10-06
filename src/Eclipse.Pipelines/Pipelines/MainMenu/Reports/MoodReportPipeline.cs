@@ -1,55 +1,32 @@
-﻿using Eclipse.Application.Contracts.Reports;
-using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Localizations;
-using Eclipse.Common.Clock;
+﻿using Eclipse.Common.Background;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Pipelines.Pipelines.MainMenu.Reports.ExportMoodReport;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reports;
 
 [Route("Menu:Reports:Mood", "/reports_mood")]
 internal sealed class MoodReportPipeline : ReportsPipelineBase
 {
-    private readonly IUserService _userService;
+    private readonly IBackgroundJobManager _jobManager;
 
-    private readonly IReportsService _reportsService;
-
-    private readonly ITimeProvider _timeProvider;
-
-    public MoodReportPipeline(
-        IUserService userService,
-        IReportsService reportsService,
-        ITimeProvider timeProvider)
+    public MoodReportPipeline(IBackgroundJobManager jobManager)
     {
-        _userService = userService;
-        _reportsService = reportsService;
-        _timeProvider = timeProvider;
+        _jobManager = jobManager;
     }
 
     protected override void Initialize()
     {
-        RegisterStage(SendMoodReportAsync);
+        RegisterStage(EnqueueMoodReportExportAsync);
     }
 
-    private async Task<IResult> SendMoodReportAsync(MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> EnqueueMoodReportExportAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
-
-        if (!result.IsSuccess)
+        await _jobManager.EnqueueAsync<ExportMoodReportBackgroundJob, ExportMoodReportBackgroundJobArgs>(new ExportMoodReportBackgroundJobArgs
         {
-            return Text(Localizer.LocalizeError(result.Error));
-        }
+            ChatId = context.ChatId
+        }, cancellationToken);
 
-        var user = result.Value;
-
-        var options = new MoodReportOptions
-        {
-            From = _timeProvider.Now.PreviousDayOfWeek(DayOfWeek.Sunday),
-            To = _timeProvider.Now
-        };
-
-        var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
-
-        return Photo(stream, $"mood-report-{options.To.ToOADate()}.png", Localizer["Pipelines:Reports:Mood:Caption"]);
+        return Text(Localizer["Pipelines:Reports:Mood:InProgress"]);
     }
 }
