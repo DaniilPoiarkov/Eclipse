@@ -2,10 +2,12 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Clock;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reports;
 
+[Route("Menu:Reports:Mood", "/reports_mood")]
 internal sealed class MoodReportPipeline : ReportsPipelineBase
 {
     private readonly IUserService _userService;
@@ -48,6 +50,6 @@ internal sealed class MoodReportPipeline : ReportsPipelineBase
 
         using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
 
-        throw new NotImplementedException();
+        return Photo(stream, $"mood-report-{user.ChatId}.png");
     }
 }
