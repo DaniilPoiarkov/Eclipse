@@ -29,6 +29,18 @@ public sealed class UserCreateUpdateServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_WhenFailedToInsertNewUser_ThenErrorReturned()
+    {
+        var expected = Error.Validation("Users.Create", "{0}IsRequired", nameof(User.Name));
+
+        var result = await _sut.CreateAsync(new UserCreateDto());
+
+        result.IsSuccess.Should().BeFalse();
+
+        ErrorComparer.AreEqual(expected, result.Error);
+    }
+
+    [Fact]
     public async Task UpdateAsync_WhenUserWithSpecifiedIdNotExist_ThenExceptionThrown()
     {
         var expected = DefaultErrors.EntityNotFound(typeof(User));

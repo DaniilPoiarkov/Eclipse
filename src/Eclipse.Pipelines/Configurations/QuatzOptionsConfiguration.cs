@@ -1,6 +1,7 @@
 ﻿using Eclipse.Pipelines.Jobs.Evening;
 using Eclipse.Pipelines.Jobs.Morning;
 using Eclipse.Pipelines.Jobs.Reminders;
+using Eclipse.Pipelines.Jobs.SendMoodReport;
 
 using Microsoft.Extensions.Options;
 
@@ -17,6 +18,7 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
         AddJobWithEveryMinuteFire<MorningJob>(options);
         AddJobWithEveryMinuteFire<SendRemindersJob>(options);
         AddJobWithEveryMinuteFire<EveningJob>(options);
+        AddMoodReportJob(options);
     }
 
     private static void AddJobWithEveryMinuteFire<TJob>(QuartzOptions options)
@@ -31,5 +33,19 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
                     .RepeatForever())
                     .StartNow()
             );
+    }
+
+    private static void AddMoodReportJob(QuartzOptions options)
+    {
+        var key = JobKey.Create(nameof(SendMoodReportJob));
+
+        options.AddJob<SendMoodReportJob>(job => job.WithIdentity(key))
+            .AddTrigger(trigger => trigger.ForJob(key)
+                .WithCalendarIntervalSchedule(schedule =>
+                    schedule.WithIntervalInWeeks(1))
+                .StartAt(
+                    DateTime.UtcNow.NextDayOfWeek(DayOfWeek.Sunday, true)
+                        .WithTime(0, 0)
+                ));
     }
 }

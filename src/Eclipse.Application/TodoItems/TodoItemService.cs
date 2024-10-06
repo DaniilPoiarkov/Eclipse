@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Application.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.TodoItems;
@@ -15,11 +16,17 @@ internal sealed class TodoItemService : ITodoItemService
 {
     private readonly UserManager _userManager;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly IStringLocalizer<TodoItemService> _localizer;
 
-    public TodoItemService(UserManager userManager, IStringLocalizer<TodoItemService> localizer)
+    public TodoItemService(
+        UserManager userManager,
+        ITimeProvider timeProvider,
+        IStringLocalizer<TodoItemService> localizer)
     {
         _userManager = userManager;
+        _timeProvider = timeProvider;
         _localizer = localizer;
     }
 
@@ -63,7 +70,7 @@ internal sealed class TodoItemService : ITodoItemService
 
     private async Task<Result<TodoItem>> CreateAsync(User user, CreateTodoItemDto model, CancellationToken cancellationToken)
     {
-        var result = user.AddTodoItem(model.Text);
+        var result = user.AddTodoItem(model.Text, _timeProvider.Now);
 
         if (result.IsSuccess)
         {

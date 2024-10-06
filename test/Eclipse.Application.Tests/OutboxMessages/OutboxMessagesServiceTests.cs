@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.OutboxMessages;
+﻿using Eclipse.Application.Contracts.OutboxMessages;
+using Eclipse.Application.OutboxMessages;
 using Eclipse.Common.Clock;
 using Eclipse.Common.EventBus;
 using Eclipse.Common.Events;
@@ -34,6 +35,16 @@ public sealed class OutboxMessagesServiceTests
         var logger = Substitute.For<ILogger<OutboxMessagesService>>();
 
         _sut = new(_repository, _eventBus, _timeProvider, logger);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_WhenNoMessagesFound_ThenEmptyResultReturned()
+    {
+        _repository.GetNotProcessedAsync(Arg.Any<int>()).Returns([]);
+
+        var result = await _sut.ProcessAsync(Arg.Any<int>());
+
+        result.Should().Be(ProcessOutboxMessagesResult.Empty);
     }
 
     [Fact]

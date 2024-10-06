@@ -10,6 +10,8 @@ using Microsoft.Extensions.Localization;
 using NSubstitute;
 
 using Telegram.Bot;
+using Telegram.Bot.Requests;
+using Telegram.Bot.Types;
 
 using Xunit;
 
@@ -21,13 +23,16 @@ public sealed class CommandServiceTests
 
     private readonly CommandService _sut;
 
+    private readonly ITelegramBotClient _botClient;
+
     private static readonly string _descriptionPrefix = "BotCommand";
 
     public CommandServiceTests()
     {
-        var botClient = Substitute.For<ITelegramBotClient>();
+        _botClient = Substitute.For<ITelegramBotClient>();
         _localizer = Substitute.For<IStringLocalizer<CommandService>>();
-        _sut = new CommandService(botClient, _localizer);
+
+        _sut = new CommandService(_botClient, _localizer);
     }
 
     [Theory]
@@ -87,5 +92,23 @@ public sealed class CommandServiceTests
         var result = await _sut.Add(request);
 
         result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetList_WhenCalled_ThenAvailableCommandsReturned()
+    {
+        var command = new BotCommand()
+        {
+            Command = "/test",
+            Description = "Test"
+        };
+
+        _botClient.MakeRequestAsync(Arg.Any<GetMyCommandsRequest>()).Returns([command]);
+
+        var result = await _sut.GetList();
+
+        result.Count.Should().Be(1);
+        result[0].Command.Should().Be(command.Command);
+        result[0].Description.Should().Be(command.Description);
     }
 }

@@ -63,6 +63,7 @@ jobs:
           targetdir: ${{ github.workspace }}/coverage-reports
           reporttypes: cobertura;Html_Dark;MarkdownSummaryGithub
           assemblyfilters: '-*.Tests;-*.Infrastructure;-*.DataAccess'
+          classfilters: '-*Module;-*Configuration'
           verbosity: Info
           title: Code Coverage
           tag: ${{ github.run_number }}_${{ github.run_id }}

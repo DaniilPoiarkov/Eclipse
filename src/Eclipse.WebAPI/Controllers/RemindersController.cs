@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 using Eclipse.Common.Session;
 

@@ -1,6 +1,6 @@
 ﻿using Bogus;
 
-using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Reminders;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;

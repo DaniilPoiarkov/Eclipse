@@ -1,7 +1,10 @@
-﻿using Eclipse.Core.Results;
-using Eclipse.Pipelines.Pipelines.Daily;
+﻿using Eclipse.Application.Contracts.MoodRecords;
+using Eclipse.Application.Contracts.Users;
+using Eclipse.Core.Results;
+using Eclipse.Pipelines.Pipelines.Daily.Morning;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Tests.Fixture;
+using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
@@ -29,15 +32,23 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
 
     protected override void ConfigureServices(IServiceCollection services)
     {
-        var messageStore = Substitute.For<IMessageStore>();
+        services
+            .AddSingleton(Substitute.For<IMessageStore>())
+            .AddSingleton(Substitute.For<IMoodRecordsService>())
+            .AddSingleton(Substitute.For<IUserService>());
 
-        services.AddSingleton(messageStore);
         base.ConfigureServices(services);
     }
 
     [Fact]
     public async Task WhenUserHasNoMessageInStore_ThenReturnesMenuWithChoices_AndWhenRecievedGoodMood_ReturnesGoodText()
     {
+        var userService = GetService<IUserService>();
+
+        var user = UserDtoGenerator.Get();
+
+        userService.GetByChatIdAsync(Arg.Any<long>()).Returns(user);
+
         var context = GetContext("/daily_morning");
         var menuResult = await Sut.RunNext(context);
 
