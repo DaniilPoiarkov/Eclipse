@@ -14,7 +14,7 @@ internal sealed class PlotGenerator : IPlotGenerator
 
     private static readonly Color _axesColor = Color.FromHex("#a0acb5");
 
-    private static readonly string _font = "Montresat";
+    private static readonly string _font = "Segoe UI";
 
     private static readonly int _minorTickSize = 0;
 

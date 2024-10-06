@@ -41,9 +41,13 @@ internal sealed class ReportsService : IReportsService
             index++;
         }
 
+        var title = days.IsNullOrEmpty()
+            ? null
+            : $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
+
         var option = new PlotOptions<DateTime, int>
         {
-            Title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}",
+            Title = title,
             YAxisTitle = "Score",
             Width = 550,
             Height = 300,
