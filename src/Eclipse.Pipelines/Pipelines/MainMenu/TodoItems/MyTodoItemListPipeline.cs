@@ -42,7 +42,8 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer.LocalizeError(result.Error));
         }
 
-        var items = result.Value.TodoItems;
+        var user = result.Value;
+        var items = user.TodoItems;
 
         if (items.IsNullOrEmpty())
         {
@@ -50,7 +51,7 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Empty"]);
         }
 
-        var message = BuildMessage(items);
+        var message = BuildMessage(user.Gmt, items);
         var buttons = BuildButtons(items);
 
         return Menu(buttons, message);
@@ -79,7 +80,8 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
 
-        var items = result.Value.TodoItems;
+        var user = result.Value;
+        var items = user.TodoItems;
 
         if (items.IsNullOrEmpty())
         {
@@ -93,6 +95,6 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
             return await SendList(context, cancellationToken);
         }
 
-        return ItemFinishedResult(items, message);
+        return ItemFinishedResult(user.Gmt, items, message);
     }
 }

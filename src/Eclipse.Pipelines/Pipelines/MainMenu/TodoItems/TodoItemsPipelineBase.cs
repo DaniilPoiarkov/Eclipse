@@ -20,7 +20,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 
     #region Helpers
 
-    protected string BuildMessage(IEnumerable<TodoItemDto> items)
+    protected string BuildMessage(TimeSpan userTime, IEnumerable<TodoItemDto> items)
     {
         var sb = new StringBuilder(Localizer[$"{PipelinePrefix}:YourToDos"])
             .AppendLine()
@@ -29,7 +29,7 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         foreach (var item in items)
         {
             sb.AppendLine($"📌 {item.Text}")
-                .AppendLine($"{Localizer["CreatedAt"]}: {item.CreatedAt.ToString("dd.MM, HH:mm")}")
+                .AppendLine($"{Localizer["CreatedAt"]}: {item.CreatedAt.Add(userTime).ToString("dd.MM, HH:mm")}")
                 .AppendLine();
         }
 
@@ -69,13 +69,13 @@ internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
         return Edit(message.MessageId, text);
     }
 
-    protected IResult ItemFinishedResult(IEnumerable<TodoItemDto> leftover, Message message)
+    protected IResult ItemFinishedResult(TimeSpan userTime, IEnumerable<TodoItemDto> leftover, Message message)
     {
         var buttons = BuildButtons(leftover);
 
         var text = $"{Localizer[$"{PipelinePrefix}:YouAreDoingGreat"]}" +
             $"{Environment.NewLine}{Environment.NewLine}" +
-            $"{BuildMessage(leftover)}";
+            $"{BuildMessage(userTime, leftover)}";
 
         var menu = new InlineKeyboardMarkup(buttons);
 

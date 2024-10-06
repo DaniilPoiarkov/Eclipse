@@ -55,7 +55,7 @@ public sealed class ExportServiceTests
 
         for (int i = 0; i < 5; i++)
         {
-            user.AddTodoItem(faker.Lorem.Sentence());
+            user.AddTodoItem(faker.Lorem.Sentence(), faker.Date.Past());
         }
 
         _userRepository.GetAllAsync().Returns([user]);
