@@ -72,8 +72,8 @@ public abstract class Pipeline
         return new MenuResult(message, inlineMenu);
     }
 
-    protected static IResult Photo(MemoryStream stream, string fileName)
+    protected static IResult Photo(MemoryStream stream, string fileName, string? caption = null)
     {
-        return new PhotoResult(stream, fileName);
+        return new PhotoResult(stream, fileName, caption);
     }
 }

@@ -5,15 +5,28 @@ namespace Eclipse.Core.Results;
 
 public sealed class PhotoResult : ResultBase
 {
-    private readonly InputFile _file;
+    private readonly MemoryStream _stream;
 
-    public PhotoResult(MemoryStream stream, string fileName)
+    private readonly string _fileName;
+
+    private readonly string? _caption;
+
+    public PhotoResult(MemoryStream stream, string fileName, string? caption = null)
     {
-        _file = InputFile.FromStream(stream, fileName);
+        _stream = stream;
+        _fileName = fileName;
+        _caption = caption;
     }
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.SendPhotoAsync(ChatId, _file, cancellationToken: cancellationToken);
+        using var _ = _stream;
+
+        return await botClient.SendPhotoAsync(
+            ChatId,
+            InputFile.FromStream(_stream, _fileName),
+            caption: _caption,
+            cancellationToken: cancellationToken
+        );
     }
 }

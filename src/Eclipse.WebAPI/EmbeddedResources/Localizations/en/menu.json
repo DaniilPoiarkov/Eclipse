@@ -7,6 +7,7 @@
     "Menu:MainMenu:MyToDos": "My to dos 📝",
     "Menu:MainMenu:Settings": "Settings ⚙️",
     "Menu:MainMenu:Reminders": "Reminders 🔈",
+    "Menu:MainMenu:Reports": "Reports 📑",
 
     "Menu:Settings:Language": "Change language 🌐",
     "Menu:Settings:Notifications": "Notifications 🔈",
@@ -34,7 +35,6 @@
 
     "Menu:Reminders:Add": "Remind me 💭",
 
-    "Menu:Reports": "Reports 📑",
     "Menu:Reports:Mood": "Mood report 🤔"
   }
 }

@@ -48,8 +48,8 @@ internal sealed class MoodReportPipeline : ReportsPipelineBase
             To = _timeProvider.Now
         };
 
-        using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
+        var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
 
-        return Photo(stream, $"mood-report-{user.ChatId}.png");
+        return Photo(stream, $"mood-report-{options.To.ToOADate()}.png", Localizer["Pipelines:Reports:Mood:Caption"]);
     }
 }
