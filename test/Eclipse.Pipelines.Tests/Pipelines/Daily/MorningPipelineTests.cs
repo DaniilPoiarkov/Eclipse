@@ -40,8 +40,13 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
         base.ConfigureServices(services);
     }
 
-    [Fact]
-    public async Task WhenUserHasNoMessageInStore_ThenReturnesMenuWithChoices_AndWhenRecievedGoodMood_ReturnesGoodText()
+    [Theory]
+    [InlineData("5️⃣", "Good")]
+    [InlineData("4️⃣", "Good")]
+    [InlineData("3️⃣", "Bad")]
+    [InlineData("2️⃣", "Bad")]
+    [InlineData("1️⃣", "Bad")]
+    public async Task WhenUserHasNoMessageInStore_ThenReturnesMenuWithChoices_AndWhenRecievedGoodMood_ReturnesGoodText(string answer, string message)
     {
         var userService = GetService<IUserService>();
 
@@ -54,7 +59,7 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
 
         var isFinished = Sut.IsFinished;
 
-        context = GetContext("👍");
+        context = GetContext(answer);
         var textResult = await Sut.RunNext(context);
 
 
@@ -66,7 +71,7 @@ public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
 
         var text = textResult.As<TextResult>();
         text.Should().NotBeNull();
-        text.Message.Should().Be("Good");
+        text.Message.Should().Be(message);
         Sut.IsFinished.Should().BeTrue();
     }
 

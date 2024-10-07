@@ -36,7 +36,7 @@ internal sealed class ReportsService : IReportsService
         foreach (var record in records.OrderBy(r => r.CreatedAt))
         {
             days[index] = record.CreatedAt.WithTime(0, 0);
-            states[index] = GetMoodScore(record.State);
+            states[index] = record.State.ToScore();
 
             index++;
         }
@@ -56,18 +56,5 @@ internal sealed class ReportsService : IReportsService
         };
 
         return _plotGenerator.Create(option);
-    }
-
-    private static int GetMoodScore(MoodState state)
-    {
-        return state switch
-        {
-            MoodState.Good => 5,
-            MoodState.SlightlyGood => 4,
-            MoodState.Neutral => 3,
-            MoodState.SlightlyBad => 2,
-            MoodState.Bad => 1,
-            _ => 0,
-        };
     }
 }
