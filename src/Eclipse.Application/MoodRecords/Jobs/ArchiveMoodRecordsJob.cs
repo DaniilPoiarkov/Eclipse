@@ -43,7 +43,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         var date = _timeProvider.Now
-            .PreviousDayOfWeek(DayOfWeek.Sunday)
+            .PreviousDayOfWeek(_timeProvider.Now.DayOfWeek)
             .WithTime(_endOfDay);
 
         var records = await _repository.GetByExpressionAsync(

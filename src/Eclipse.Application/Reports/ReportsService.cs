@@ -42,7 +42,7 @@ internal sealed class ReportsService : IReportsService
         }
 
         var title = days.IsNullOrEmpty()
-            ? null
+            ? $"{options.From:dd.MM}-{options.To:dd.MM}"
             : $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
 
         var option = new PlotOptions<DateTime, int>
@@ -62,7 +62,11 @@ internal sealed class ReportsService : IReportsService
     {
         return state switch
         {
-            MoodState.Good => 1,
+            MoodState.Good => 5,
+            MoodState.SlightlyGood => 4,
+            MoodState.Neutral => 3,
+            MoodState.SlightlyBad => 2,
+            MoodState.Bad => 1,
             _ => 0,
         };
     }
