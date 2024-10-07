@@ -36,13 +36,13 @@ internal sealed class ReportsService : IReportsService
         foreach (var record in records.OrderBy(r => r.CreatedAt))
         {
             days[index] = record.CreatedAt.WithTime(0, 0);
-            states[index] = GetMoodScore(record.State);
+            states[index] = record.State.ToScore();
 
             index++;
         }
 
         var title = days.IsNullOrEmpty()
-            ? null
+            ? $"{options.From:dd.MM}-{options.To:dd.MM}"
             : $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
 
         var option = new PlotOptions<DateTime, int>
@@ -56,14 +56,5 @@ internal sealed class ReportsService : IReportsService
         };
 
         return _plotGenerator.Create(option);
-    }
-
-    private static int GetMoodScore(MoodState state)
-    {
-        return state switch
-        {
-            MoodState.Good => 1,
-            _ => 0,
-        };
     }
 }

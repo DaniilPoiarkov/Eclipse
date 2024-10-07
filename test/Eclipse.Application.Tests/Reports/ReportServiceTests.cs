@@ -48,7 +48,7 @@ public sealed class ReportServiceTests
             moodRecords.Add(new MoodRecord(
                 Guid.NewGuid(),
                 userId,
-                faker.Random.Bool() ? MoodState.Good : MoodState.Bad,
+                (MoodState)faker.Random.Int(0, 6),
                 faker.Date.Between(from, to)
             ));
         }
@@ -62,7 +62,7 @@ public sealed class ReportServiceTests
             .ToArray();
 
         var expectedStates = moodRecords.OrderBy(m => m.CreatedAt)
-            .Select(m => m.State == MoodState.Good ? 1 : 0)
+            .Select(m => m.State.ToScore())
             .ToArray();
 
         var options = new MoodReportOptions

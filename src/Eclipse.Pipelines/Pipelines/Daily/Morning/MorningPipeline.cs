@@ -36,8 +36,11 @@ public sealed class MorningPipeline : EclipsePipelineBase
     {
         var buttons = new InlineKeyboardButton[]
         {
-            InlineKeyboardButton.WithCallbackData("👍"),
-            InlineKeyboardButton.WithCallbackData("👎"),
+            InlineKeyboardButton.WithCallbackData("1️⃣"),
+            InlineKeyboardButton.WithCallbackData("2️⃣"),
+            InlineKeyboardButton.WithCallbackData("3️⃣"),
+            InlineKeyboardButton.WithCallbackData("4️⃣"),
+            InlineKeyboardButton.WithCallbackData("5️⃣"),
         };
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
@@ -49,8 +52,11 @@ public sealed class MorningPipeline : EclipsePipelineBase
     {
         var mood = context.Value switch
         {
-            "👍" => new MoodAnswer(MoodState.Good, "Pipelines:Morning:GoodMood"),
-            "👎" => new MoodAnswer(MoodState.Bad, "Pipelines:Morning:BadMood"),
+            "5️⃣" => new MoodAnswer(MoodState.Good, "Pipelines:Morning:GoodMood"),
+            "4️⃣" => new MoodAnswer(MoodState.SlightlyGood, "Pipelines:Morning:GoodMood"),
+            "3️⃣" => new MoodAnswer(MoodState.Neutral, "Pipelines:Morning:BadMood"),
+            "2️⃣" => new MoodAnswer(MoodState.SlightlyBad, "Pipelines:Morning:BadMood"),
+            "1️⃣" => new MoodAnswer(MoodState.Bad, "Pipelines:Morning:BadMood"),
             _ => new MoodAnswer(null, "Pipelines:Morning:NotDefined")
         };
 
