@@ -58,7 +58,9 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
 
         var options = new MoodReportOptions
         {
-            From = _timeProvider.Now.PreviousDayOfWeek(DayOfWeek.Sunday),
+            From = _timeProvider.Now.PreviousDayOfWeek(
+                _timeProvider.Now.DayOfWeek
+            ),
             To = _timeProvider.Now
         };
 
