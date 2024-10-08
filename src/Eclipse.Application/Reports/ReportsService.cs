@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Reports;
 using Eclipse.Common.Plots;
 using Eclipse.Domain.MoodRecords;
-using Eclipse.Domain.Shared.MoodRecords;
 
 namespace Eclipse.Application.Reports;
 
@@ -10,6 +9,12 @@ internal sealed class ReportsService : IReportsService
     private readonly IMoodRecordRepository _moodRecordRepository;
 
     private readonly IPlotGenerator _plotGenerator;
+
+    private static readonly int _width = 550;
+
+    private static readonly int _height = 300;
+
+    private static readonly string _yAxisTitle = "Score";
 
     public ReportsService(
         IMoodRecordRepository moodRecordRepository,
@@ -48,9 +53,9 @@ internal sealed class ReportsService : IReportsService
         var option = new PlotOptions<DateTime, int>
         {
             Title = title,
-            YAxisTitle = "Score",
-            Width = 550,
-            Height = 300,
+            YAxisTitle = _yAxisTitle,
+            Width = _width,
+            Height = _height,
             Ys = states,
             Xs = days
         };
