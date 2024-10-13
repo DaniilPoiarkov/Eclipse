@@ -2,9 +2,9 @@
 
 namespace Eclipse.Application.Reports;
 
-internal static class MoodStateExtensions
+public static class MoodStateExtensions
 {
-    internal static int ToScore(this MoodState state)
+    public static int ToScore(this MoodState state)
     {
         return state switch
         {

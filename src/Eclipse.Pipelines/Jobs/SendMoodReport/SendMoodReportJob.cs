@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Reports;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Plots;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
@@ -102,17 +103,25 @@ internal sealed class SendMoodReportJob : EclipseJobBase
                 var record = records[i];
 
                 days[i] = record.CreatedAt.WithTime(_recordTime);
-                states[i] = GetMoodScore(record.State);
+                states[i] = record.State.ToScore();
             }
 
             var options = new PlotOptions<DateTime, int>
             {
                 Title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}",
-                YAxisTitle = "Score",
+                Left = new AxisOptions<int>
+                {
+                    Label = "Score",
+                    Values = states,
+                    Max = MoodState.Good.ToScore(),
+                    Min = MoodState.Bad.ToScore(),
+                },
+                Bottom = new AxisOptions<DateTime>
+                {
+                    Values = days,
+                },
                 Width = 550,
                 Height = 300,
-                Ys = states,
-                Xs = days
             };
 
             sendings.Add(
@@ -137,14 +146,5 @@ internal sealed class SendMoodReportJob : EclipseJobBase
             caption: message,
             cancellationToken: context.CancellationToken
         );
-    }
-
-    private static int GetMoodScore(MoodState state)
-    {
-        return state switch
-        {
-            MoodState.Good => 1,
-            _ => 0,
-        };
     }
 }

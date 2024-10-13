@@ -34,7 +34,10 @@ internal sealed class PlotGenerator : IPlotGenerator
 
         FillPlotTitles(plot, options);
 
-        plot.Add.Scatter(options.Xs.ToArray(), options.Ys.ToArray());
+        var xValues = options.Bottom?.Values ?? [];
+        var yValues = options.Left?.Values ?? [];
+
+        plot.Add.Scatter(xValues, yValues);
 
         var bytes = plot.GetImageBytes(options.Width, options.Height, ImageFormat.Png);
 
@@ -47,14 +50,23 @@ internal sealed class PlotGenerator : IPlotGenerator
         {
             plot.Title(options.Title);
         }
-        if (!options.XAxisTitle.IsNullOrEmpty())
+
+        FillAxis(options.Bottom, plot.Axes.Bottom);
+        FillAxis(options.Left, plot.Axes.Left);
+    }
+
+    private static void FillAxis<T>(AxisOptions<T>? options, IAxis axis)
+    {
+        if (options is null)
         {
-            plot.XLabel(options.XAxisTitle);
+            return;
         }
-        if (!options.YAxisTitle.IsNullOrEmpty())
-        {
-            plot.YLabel(options.YAxisTitle);
-        }
+
+        axis.Min = options.Min;
+        axis.Max = options.Max;
+
+        axis.Label.Text = options.Label;
+        axis.Label.IsVisible = !options.Label.IsNullOrEmpty();
     }
 
     private static Plot GetTemplate(ITickGenerator xAxisTickGenerator, ITickGenerator yAxisTickGenerator)

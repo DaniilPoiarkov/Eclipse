@@ -81,12 +81,16 @@ public sealed class ReportServiceTests
 
         _plotGenerator.Received().Create(
             Arg.Is<PlotOptions<DateTime, int>>(options => options.Title == $"{expectedFrom:dd.MM}-{expectedTo:dd.MM}"
-                    && options.YAxisTitle == "Score"
-                    && options.XAxisTitle == null
+                    && options.Left != null
+                    && options.Left.Label == "Score"
+                    && options.Left.Values.SequenceEqual(expectedStates)
+
+                    && options.Bottom != null
+                    && options.Bottom.Label == string.Empty
+                    && options.Bottom.Values.SequenceEqual(expectedDates)
+
                     && options.Width == 550
-                    && options.Height == 300
-                    && options.Xs.SequenceEqual(expectedDates)
-                    && options.Ys.SequenceEqual(expectedStates))
+                    && options.Height == 300)
         );
     }
 }

@@ -11,6 +11,12 @@ internal sealed class ReportsService : IReportsService
 
     private readonly IPlotGenerator _plotGenerator;
 
+    private static readonly int _width = 550;
+
+    private static readonly int _height = 300;
+
+    private static readonly string _yAxisTitle = "Score";
+
     public ReportsService(
         IMoodRecordRepository moodRecordRepository,
         IPlotGenerator plotGenerator)
@@ -47,12 +53,20 @@ internal sealed class ReportsService : IReportsService
 
         var option = new PlotOptions<DateTime, int>
         {
+            Bottom = new AxisOptions<DateTime>
+            {
+                Values = days,
+            },
+            Left = new AxisOptions<int>
+            {
+                Values = states,
+                Label = _yAxisTitle,
+                Min = MoodState.Bad.ToScore(),
+                Max = MoodState.Good.ToScore(),
+            },
             Title = title,
-            YAxisTitle = "Score",
-            Width = 550,
-            Height = 300,
-            Ys = states,
-            Xs = days
+            Width = _width,
+            Height = _height,
         };
 
         return _plotGenerator.Create(option);
