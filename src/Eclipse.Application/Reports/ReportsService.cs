@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Reports;
 using Eclipse.Common.Plots;
 using Eclipse.Domain.MoodRecords;
+using Eclipse.Domain.Shared.MoodRecords;
 
 namespace Eclipse.Application.Reports;
 
@@ -52,12 +53,20 @@ internal sealed class ReportsService : IReportsService
 
         var option = new PlotOptions<DateTime, int>
         {
+            Bottom = new AxisOptions<DateTime>
+            {
+                Values = days,
+            },
+            Left = new AxisOptions<int>
+            {
+                Values = states,
+                Label = _yAxisTitle,
+                Min = MoodState.Bad.ToScore(),
+                Max = MoodState.Good.ToScore(),
+            },
             Title = title,
-            YAxisTitle = _yAxisTitle,
             Width = _width,
             Height = _height,
-            Ys = states,
-            Xs = days
         };
 
         return _plotGenerator.Create(option);
