@@ -39,8 +39,6 @@ internal sealed class PlotGenerator : IPlotGenerator
 
         plot.Add.Scatter(xValues, yValues);
 
-        //plot.Add.Scatter(Generate.Consecutive(100), Generate.RandomWalk(100));
-
         var bytes = plot.GetImageBytes(options.Width, options.Height, ImageFormat.Png);
 
         return new MemoryStream(bytes);
