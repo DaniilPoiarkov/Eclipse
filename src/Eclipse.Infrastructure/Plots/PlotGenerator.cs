@@ -27,7 +27,7 @@ internal sealed class PlotGenerator : IPlotGenerator
         var xAxisTickGenerator = new DateTimeFixedInterval(new Day())
         {
             LabelFormatter = date => $"{date:dd.MM}",
-            GetIntervalStartFunc = dt => dt.WithTime(0, 0),
+            GetIntervalStartFunc = date => date.WithTime(0, 0),
         };
 
         using var plot = GetTemplate(xAxisTickGenerator, yAxisTickGenerator);
