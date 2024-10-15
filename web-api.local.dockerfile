@@ -7,6 +7,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y curl && \ 
     apt-get install -y fontconfig
+
 EXPOSE 80
 EXPOSE 443
 
