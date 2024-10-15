@@ -17,6 +17,8 @@ internal sealed class ReportsService : IReportsService
 
     private static readonly string _yAxisTitle = "Score";
 
+    private static readonly double _margin = 0.5d;
+
     public ReportsService(
         IMoodRecordRepository moodRecordRepository,
         IPlotGenerator plotGenerator)
@@ -61,8 +63,8 @@ internal sealed class ReportsService : IReportsService
             {
                 Values = states,
                 Label = _yAxisTitle,
-                Min = MoodState.Bad.ToScore(),
-                Max = MoodState.Good.ToScore(),
+                Min = MoodState.Bad.ToScore() - _margin,
+                Max = MoodState.Good.ToScore() + _margin,
             },
             Title = title,
             Width = _width,
