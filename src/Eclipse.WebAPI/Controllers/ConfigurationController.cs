@@ -1,12 +1,14 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
+using Eclipse.WebAPI.Constants;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/configuration")]
-public class ConfigurationController : ControllerBase
+public sealed class ConfigurationController : ControllerBase
 {
     private readonly IConfigurationService _configurationService;
 
@@ -16,6 +18,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet("cultures")]
+    [EnableRateLimiting(RateLimiterPolicies.IpAddressFiveMinutes)]
     public IActionResult GetCultures()
     {
         return Ok(_configurationService.GetCultures());

@@ -11,9 +11,11 @@ using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
@@ -89,7 +91,7 @@ public static class EclipsePipelinesModule
 
         var endpoint = configuration["Telegram:ActiveEndpoint"]!;
 
-        var webhook = $"{appUrlProvider.AppUrl}/{endpoint}";
+        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{endpoint}";
 
         if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {

@@ -16,7 +16,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Pipelines.Jobs.Morning;
 
-internal sealed class MorningJob : EclipseJobBase
+internal sealed class CollectMoodRecordsJob : EclipseJobBase
 {
     private static readonly TimeOnly Morning = new(9, 0);
 
@@ -28,7 +28,7 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IStringLocalizer<MorningJob> _localizer;
+    private readonly IStringLocalizer<CollectMoodRecordsJob> _localizer;
 
     private readonly IMessageStore _messageStore;
 
@@ -36,12 +36,12 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IUserService _userService;
 
-    public MorningJob(
+    public CollectMoodRecordsJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IServiceProvider serviceProvider,
-        IStringLocalizer<MorningJob> localizer,
+        IStringLocalizer<CollectMoodRecordsJob> localizer,
         IMessageStore messageStore,
         ICurrentCulture currentCulture,
         IUserService userService)

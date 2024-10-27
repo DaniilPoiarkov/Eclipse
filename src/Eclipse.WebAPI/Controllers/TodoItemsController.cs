@@ -11,7 +11,7 @@ namespace Eclipse.WebAPI.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/todo-items")]
-public class TodoItemsController : ControllerBase
+public sealed class TodoItemsController : ControllerBase
 {
     private readonly ITodoItemService _todoItemService;
 
