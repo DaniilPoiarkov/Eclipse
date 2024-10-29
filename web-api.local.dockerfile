@@ -2,7 +2,12 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-RUN apt-get update && apt-get install -y curl
+
+# Install curl for cosmos cert retrieval and fonts for reports
+RUN apt-get update && \
+    apt-get install -y curl && \ 
+    apt-get install -y fontconfig
+
 EXPOSE 80
 EXPOSE 443
 

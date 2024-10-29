@@ -1,0 +1,8 @@
+{
+  "culture": "uk",
+  "texts": {
+    "Pipelines:Reports": "Меню звітів",
+    "Pipelines:Reports:Mood:Caption": "Ось так змінювався твій настрій протягом тижня!",
+    "Pipelines:Reports:Mood:InProgress": "Пару секунд і буде готово!"
+  }
+}

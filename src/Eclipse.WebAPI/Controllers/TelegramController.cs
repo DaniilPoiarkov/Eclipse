@@ -46,7 +46,7 @@ public sealed class TelegramController : ControllerBase
     {
         var endpoint = _configuration[$"Telegram:{Enum.GetName(request.Type)}Endpoint"];
 
-        var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl}/{endpoint}", cancellationToken);
+        var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl.EnsureEndsWith('/')}{endpoint}", cancellationToken);
 
         return result.Match(Ok, () => result.ToProblems(_stringLocalizer));
     }

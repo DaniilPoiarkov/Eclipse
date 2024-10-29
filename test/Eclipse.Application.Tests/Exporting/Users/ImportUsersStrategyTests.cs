@@ -33,6 +33,12 @@ public sealed class ImportUsersStrategyTests
     }
 
     [Fact]
+    public void Type_WhenChecked_ThenReturnsUserSpecification()
+    {
+        _sut.Type.Should().Be(ImportType.Users);
+    }
+
+    [Fact]
     public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSuccessfully()
     {
         using var stream = new MemoryStream();

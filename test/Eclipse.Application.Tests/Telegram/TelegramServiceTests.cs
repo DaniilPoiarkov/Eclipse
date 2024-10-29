@@ -1,14 +1,17 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Telegram;
 using Eclipse.Common.Results;
+using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.Configuration;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using Telegram.Bot;
+using Telegram.Bot.Requests;
 
 using Xunit;
 
@@ -16,6 +19,8 @@ namespace Eclipse.Application.Tests.Telegram;
 
 public sealed class TelegramServiceTests
 {
+    private readonly ITelegramBotClient _botClient;
+
     private readonly TelegramService _sut;
 
     private static readonly string _errorSendCode = "Telegram.Send";
@@ -24,10 +29,10 @@ public sealed class TelegramServiceTests
 
     public TelegramServiceTests()
     {
-        var botClient = Substitute.For<ITelegramBotClient>();
+        _botClient = Substitute.For<ITelegramBotClient>();
         var configuration = Substitute.For<IConfiguration>();
 
-        _sut = new TelegramService(botClient, configuration);
+        _sut = new TelegramService(_botClient, configuration);
     }
 
     [Fact]
@@ -92,5 +97,20 @@ public sealed class TelegramServiceTests
         var result = await _sut.SetWebhookUrlAsync("https://localhost:80/");
 
         result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task SetWebhook_WhenExceptionThrown_ThrnFailureResultReturned()
+    {
+        var exception = new Exception("error");
+
+        var expected = Error.Failure(_errorWebhookCode, exception.Message);
+
+        _botClient.MakeRequestAsync(Arg.Any<SetWebhookRequest>()).Throws(exception);
+
+        var result = await _sut.SetWebhookUrlAsync("https://valid.webhook");
+
+        result.IsSuccess.Should().BeFalse();
+        ErrorComparer.AreEqual(expected, result.Error);
     }
 }

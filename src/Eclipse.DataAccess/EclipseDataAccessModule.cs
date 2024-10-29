@@ -4,8 +4,10 @@ using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Model;
+using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Users;
 
@@ -27,17 +29,19 @@ public static class EclipseDataAccessModule
 {
     public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
-        services
-            .AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
-            .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
-
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
 
         services
+            .AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
+            .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
+            .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
+
+        services
             .Decorate<IUserRepository, CachedUserRepository>()
-            .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>();
+            .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
+            .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>();
 
         services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 
@@ -95,10 +99,11 @@ public static class EclipseDataAccessModule
 
     private static IServiceCollection AddEmulator(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration["Azure:CosmosOptions:DatabaseId"]!;
+        var connectionString = configuration.GetConnectionString("Emulator")!;
+        var databaseId = configuration["Azure:CosmosOptions:DatabaseId"]!;
 
         services.AddDbContext<EclipseDbContext>((sp, b) =>
-            b.UseCosmos(configuration.GetConnectionString("Emulator")!, connectionString)
+            b.UseCosmos(connectionString, databaseId)
                 .AddInterceptors(sp.GetServices<IInterceptor>()));
 
         services.AddSingleton(new CosmosClient(connectionString));

@@ -89,7 +89,7 @@ public static class EclipsePipelinesModule
 
         var endpoint = configuration["Telegram:ActiveEndpoint"]!;
 
-        var webhook = $"{appUrlProvider.AppUrl}/{endpoint}";
+        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{endpoint}";
 
         if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {

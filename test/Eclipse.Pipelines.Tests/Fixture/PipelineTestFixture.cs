@@ -52,4 +52,10 @@ public abstract class PipelineTestFixture<TPipeline>
     {
         return MessageContextGenerator.Generate(value, ServiceProvider);
     }
+
+    protected TService GetService<TService>()
+        where TService : notnull
+    {
+        return ServiceProvider.GetRequiredService<TService>();
+    }
 }

@@ -1,6 +1,8 @@
 ﻿using Eclipse.Common.Results;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
@@ -133,9 +135,9 @@ public sealed class User : AggregateRoot
     /// <summary>Adds the todo item.</summary>
     /// <param name="text">The text.</param>
     /// <returns>Created TodoItem item</returns>
-    public Result<TodoItem> AddTodoItem(string? text)
+    public Result<TodoItem> AddTodoItem(string? text, DateTime createdAt)
     {
-        return AddTodoItem(Guid.NewGuid(), text, DateTime.UtcNow.Add(Gmt), false, default);
+        return AddTodoItem(Guid.NewGuid(), text, createdAt, false, default);
     }
 
     public Result<TodoItem> AddTodoItem(Guid id, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
@@ -220,6 +222,11 @@ public sealed class User : AggregateRoot
     public Reminder? GetReminder(Guid reminderId)
     {
         return _reminders.FirstOrDefault(reminder => reminder.Id == reminderId);
+    }
+
+    public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
+    {
+        return new MoodRecord(Guid.NewGuid(), Id, state, createdAt);
     }
 
     public override string ToString()
