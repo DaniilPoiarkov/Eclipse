@@ -1,17 +1,15 @@
 ﻿using Eclipse.Application.Contracts.Account;
 using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Common.Results;
-using Eclipse.WebAPI.Constants;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/account")]
-public class AccountController : ControllerBase
+public sealed class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
 
@@ -30,7 +28,6 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("send-sign-in-code")]
-    [EnableRateLimiting(RateLimiterPolicies.IpAddressFiveMinutes)]
     public async Task<IActionResult> SendSignInCodeAsync([FromQuery] string userName, CancellationToken cancellationToken)
     {
         var result = await _accountService.SendSignInCodeAsync(userName, cancellationToken);

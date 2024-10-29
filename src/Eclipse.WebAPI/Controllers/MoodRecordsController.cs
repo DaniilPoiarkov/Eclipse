@@ -11,7 +11,7 @@ namespace Eclipse.WebAPI.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/mood-records")]
-public class MoodRecordsController : ControllerBase
+public sealed class MoodRecordsController : ControllerBase
 {
     private readonly IMoodRecordsService _moodRecordsService;
 
