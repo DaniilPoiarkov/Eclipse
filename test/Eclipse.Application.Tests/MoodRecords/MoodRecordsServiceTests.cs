@@ -74,7 +74,7 @@ public sealed class MoodRecordsServiceTests
             State = state
         };
 
-        var result = await _sut.CreateAsync(user.Id, model);
+        var result = await _sut.CreateOrUpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -96,7 +96,7 @@ public sealed class MoodRecordsServiceTests
             State = MoodState.Good
         };
 
-        var result = await _sut.CreateAsync(Guid.NewGuid(), model);
+        var result = await _sut.CreateOrUpdateAsync(Guid.NewGuid(), model);
 
         result.IsSuccess.Should().BeFalse();
 

@@ -74,7 +74,7 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
             State = mood.State.Value
         };
 
-        await _service.CreateAsync(user.Value.Id, model, cancellationToken);
+        await _service.CreateOrUpdateAsync(user.Value.Id, model, cancellationToken);
 
         return EditedOrDefaultResult(message, Text(Localizer[mood.Message]));
     }

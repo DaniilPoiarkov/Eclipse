@@ -61,7 +61,7 @@ public sealed class MoodRecordsController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await _moodRecordsService.CreateAsync(_currentSession.UserId.Value, model, cancellationToken);
+        var result = await _moodRecordsService.CreateOrUpdateAsync(_currentSession.UserId.Value, model, cancellationToken);
 
         var createdUrl = result.IsSuccess
             ? Url.Link("get-mood-record-by-id", new { moodRecordId = result.Value.Id })

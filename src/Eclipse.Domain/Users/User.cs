@@ -226,7 +226,7 @@ public sealed class User : AggregateRoot
 
     public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
     {
-        return new MoodRecord(Guid.NewGuid(), Id, state, createdAt);
+        return new MoodRecord(Guid.NewGuid(), Id, state, createdAt.WithTime(0, 0));
     }
 
     public override string ToString()
