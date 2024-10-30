@@ -107,6 +107,7 @@ public sealed class MoodRecordsServiceTests
         var result = await _sut.CreateOrUpdateAsync(userId, model);
 
         await _repository.DidNotReceiveWithAnyArgs().CreateAsync(moodRecord);
+        await _repository.Received().UpdateAsync(moodRecord);
 
         result.IsSuccess.Should().BeTrue();
 
