@@ -11,7 +11,7 @@ internal sealed class MoodRecordRepository : RepositoryBase<MoodRecord>, IMoodRe
     public MoodRecordRepository(EclipseDbContext context)
         : base(context) { }
 
-    public Task<MoodRecord?> FindForDateAsync(Guid userId, DateTime createdAt, CancellationToken cancellationToken)
+    public Task<MoodRecord?> FindForDateAsync(Guid userId, DateTime createdAt, CancellationToken cancellationToken = default)
     {
         return DbSet.Where(mr => mr.UserId == userId && mr.CreatedAt == createdAt)
             .FirstOrDefaultAsync(cancellationToken);

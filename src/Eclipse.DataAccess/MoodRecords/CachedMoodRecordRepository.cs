@@ -9,7 +9,7 @@ internal sealed class CachedMoodRecordRepository : CachedRepositoryBase<MoodReco
     public CachedMoodRecordRepository(IMoodRecordRepository repository, ICacheService cacheService)
         : base(repository, cacheService) { }
 
-    public Task<MoodRecord?> FindForDateAsync(Guid userId, DateTime createdAt, CancellationToken cancellationToken)
+    public Task<MoodRecord?> FindForDateAsync(Guid userId, DateTime createdAt, CancellationToken cancellationToken = default)
     {
         return Repository.FindForDateAsync(userId, createdAt, cancellationToken);
     }
