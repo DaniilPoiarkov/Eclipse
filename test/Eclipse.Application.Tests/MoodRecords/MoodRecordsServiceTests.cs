@@ -83,7 +83,7 @@ public sealed class MoodRecordsServiceTests
         value.Id.Should().NotBeEmpty();
         value.UserId.Should().Be(user.Id);
         value.State.Should().Be(state);
-        value.CreatedAt.Should().Be(utcNow);
+        value.CreatedAt.Should().Be(utcNow.WithTime(0, 0));
     }
 
     [Theory]
@@ -97,7 +97,9 @@ public sealed class MoodRecordsServiceTests
 
         var moodRecord = new MoodRecord(Guid.NewGuid(), userId, initialState, utcNow);
 
-        _repository.FindForDateAsync(userId, utcNow).Returns(moodRecord);
+        _repository.FindForDateAsync(userId, utcNow.WithTime(0, 0)).Returns(moodRecord);
+        _repository.UpdateAsync(moodRecord).Returns(moodRecord);
+        _timeProvider.Now.Returns(utcNow);
 
         var model = new CreateMoodRecordDto
         {
