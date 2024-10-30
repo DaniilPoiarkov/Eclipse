@@ -50,7 +50,7 @@ internal sealed class SendGoodMorningJob : EclipseJobBase
         }
 
         var notifications = new List<Task>(users.Count);
-        
+
         foreach (var user in users)
         {
             using var _ = _currentCulture.UsingCulture(user.Culture);
