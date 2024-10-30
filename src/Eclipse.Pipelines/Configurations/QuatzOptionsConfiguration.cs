@@ -18,6 +18,7 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
         AddJobWithEveryMinuteFire<CollectMoodRecordsJob>(options);
         AddJobWithEveryMinuteFire<SendRemindersJob>(options);
         AddJobWithEveryMinuteFire<RemindToFinishTodoItemsJob>(options);
+        AddJobWithEveryMinuteFire<SendGoodMorningJob>(options);
         AddMoodReportJob(options);
     }
 

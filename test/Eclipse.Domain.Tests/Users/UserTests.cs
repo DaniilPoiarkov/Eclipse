@@ -278,6 +278,6 @@ public class UserTests
         moodRecord.Id.Should().NotBeEmpty();
         moodRecord.UserId.Should().Be(_sut.Id);
         moodRecord.State.Should().Be(state);
-        moodRecord.CreatedAt.Should().Be(utcNow);
+        moodRecord.CreatedAt.Should().Be(utcNow.WithTime(0, 0));
     }
 }
