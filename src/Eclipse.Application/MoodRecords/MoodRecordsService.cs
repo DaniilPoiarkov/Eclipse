@@ -22,7 +22,27 @@ internal sealed class MoodRecordsService : IMoodRecordsService
         _timeProvider = timeProvider;
     }
 
-    public async Task<Result<MoodRecordDto>> CreateAsync(Guid userId, CreateMoodRecordDto model, CancellationToken cancellationToken = default)
+    public async Task<Result<MoodRecordDto>> CreateOrUpdateAsync(Guid userId, CreateMoodRecordDto model, CancellationToken cancellationToken = default)
+    {
+        var time = _timeProvider.Now.WithTime(0, 0);
+
+        var existing = await _repository.FindForDateAsync(userId, time, cancellationToken);
+
+        if (existing is not null)
+        {
+            return await UpdateAsync(model, existing, cancellationToken);
+        }
+
+        return await CreateAsync(userId, model, cancellationToken);
+    }
+
+    private async Task<Result<MoodRecordDto>> UpdateAsync(CreateMoodRecordDto model, MoodRecord existing, CancellationToken cancellationToken)
+    {
+        existing.SetState(model.State);
+        return (await _repository.UpdateAsync(existing, cancellationToken)).ToDto();
+    }
+
+    private async Task<Result<MoodRecordDto>> CreateAsync(Guid userId, CreateMoodRecordDto model, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(userId, cancellationToken);
 
@@ -31,17 +51,11 @@ internal sealed class MoodRecordsService : IMoodRecordsService
             return DefaultErrors.EntityNotFound(typeof(User));
         }
 
-        var record = user.CreateMoodRecord(model.State, _timeProvider.Now);
+        var record = user.CreateMoodRecord(model.State, _timeProvider.Now.WithTime(0, 0));
 
         await _repository.CreateAsync(record, cancellationToken);
 
-        return new MoodRecordDto
-        {
-            Id = record.Id,
-            CreatedAt = record.CreatedAt,
-            State = record.State,
-            UserId = record.UserId,
-        };
+        return record.ToDto();
     }
 
     public async Task<Result<MoodRecordDto>> GetByIdAsync(Guid userId, Guid id, CancellationToken cancellationToken = default)

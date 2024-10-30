@@ -59,7 +59,7 @@ public sealed class MoodRecordsServiceTests
     [Theory]
     [InlineData(MoodState.Bad)]
     [InlineData(MoodState.Good)]
-    public async Task CreateAsync_WhenUserExists_ThenCreatedMoodRecordReturned(MoodState state)
+    public async Task CreateOrUpdateAsync_WhenUserExists_ThenCreatedMoodRecordReturned(MoodState state)
     {
         var user = UserGenerator.Get();
 
@@ -74,7 +74,7 @@ public sealed class MoodRecordsServiceTests
             State = state
         };
 
-        var result = await _sut.CreateAsync(user.Id, model);
+        var result = await _sut.CreateOrUpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -83,11 +83,46 @@ public sealed class MoodRecordsServiceTests
         value.Id.Should().NotBeEmpty();
         value.UserId.Should().Be(user.Id);
         value.State.Should().Be(state);
-        value.CreatedAt.Should().Be(utcNow);
+        value.CreatedAt.Should().Be(utcNow.WithTime(0, 0));
+    }
+
+    [Theory]
+    [InlineData(MoodState.Good, MoodState.SlightlyGood)]
+    [InlineData(MoodState.Good, MoodState.Good)]
+    [InlineData(MoodState.Bad, MoodState.SlightlyGood)]
+    public async Task CreateOrUpdateAsync_WhenMoodRecordExists_ThenNoNewRecordCreated(MoodState initialState, MoodState newState)
+    {
+        var userId = Guid.NewGuid();
+        var utcNow = DateTime.UtcNow;
+
+        var moodRecord = new MoodRecord(Guid.NewGuid(), userId, initialState, utcNow);
+
+        _repository.FindForDateAsync(userId, utcNow.WithTime(0, 0)).Returns(moodRecord);
+        _repository.UpdateAsync(moodRecord).Returns(moodRecord);
+        _timeProvider.Now.Returns(utcNow);
+
+        var model = new CreateMoodRecordDto
+        {
+            State = newState,
+        };
+
+        var result = await _sut.CreateOrUpdateAsync(userId, model);
+
+        await _repository.DidNotReceiveWithAnyArgs().CreateAsync(moodRecord);
+        await _repository.Received().UpdateAsync(moodRecord);
+
+        result.IsSuccess.Should().BeTrue();
+
+        var actual = result.Value;
+
+        actual.State.Should().Be(newState);
+        actual.UserId.Should().Be(userId);
+        actual.CreatedAt.Should().Be(utcNow);
+        actual.Id.Should().Be(moodRecord.Id);
     }
 
     [Fact]
-    public async Task CreateAsync_WhenUserNotExists_ThenFailedResultReturned()
+    public async Task CreateOrUpdateAsync_WhenUserNotExists_ThenFailedResultReturned()
     {
         var expectedError = DefaultErrors.EntityNotFound(typeof(User));
 
@@ -96,7 +131,7 @@ public sealed class MoodRecordsServiceTests
             State = MoodState.Good
         };
 
-        var result = await _sut.CreateAsync(Guid.NewGuid(), model);
+        var result = await _sut.CreateOrUpdateAsync(Guid.NewGuid(), model);
 
         result.IsSuccess.Should().BeFalse();
 

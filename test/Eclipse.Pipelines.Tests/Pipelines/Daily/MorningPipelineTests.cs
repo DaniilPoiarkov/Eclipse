@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Results;
-using Eclipse.Pipelines.Pipelines.Daily.Morning;
+using Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Tests.Fixture;
 using Eclipse.Tests.Generators;
@@ -20,7 +20,7 @@ using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Pipelines.Daily;
 
-public class MorningPipelineTests : PipelineTestFixture<MorningPipeline>
+public class MorningPipelineTests : PipelineTestFixture<AddMoodRecordPipeline>
 {
     public MorningPipelineTests()
     {
