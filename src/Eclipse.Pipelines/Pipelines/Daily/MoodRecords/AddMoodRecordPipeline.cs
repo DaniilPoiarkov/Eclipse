@@ -8,10 +8,10 @@ using Eclipse.Pipelines.Stores.Messages;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.Daily.Morning;
+namespace Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
 
-[Route("", "/daily_morning")]
-public sealed class MorningPipeline : EclipsePipelineBase
+[Route("", "/href_mood_records_add")]
+public sealed class AddMoodRecordPipeline : EclipsePipelineBase
 {
     private readonly IMessageStore _messageStore;
 
@@ -19,7 +19,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
 
     private readonly IUserService _userService;
 
-    public MorningPipeline(IMessageStore messageStore, IMoodRecordsService service, IUserService userService)
+    public AddMoodRecordPipeline(IMessageStore messageStore, IMoodRecordsService service, IUserService userService)
     {
         _messageStore = messageStore;
         _service = service;

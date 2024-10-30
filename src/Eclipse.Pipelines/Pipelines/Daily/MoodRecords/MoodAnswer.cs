@@ -1,6 +1,6 @@
 ﻿using Eclipse.Domain.Shared.MoodRecords;
 
-namespace Eclipse.Pipelines.Pipelines.Daily.Morning;
+namespace Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
 
 internal sealed record MoodAnswer(
     MoodState? State,
