@@ -20,14 +20,14 @@ using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Pipelines.Daily;
 
-public class MorningPipelineTests : PipelineTestFixture<AddMoodRecordPipeline>
+public class AddMoodRecordPipelineTests : PipelineTestFixture<AddMoodRecordPipeline>
 {
-    public MorningPipelineTests()
+    public AddMoodRecordPipelineTests()
     {
-        Localizer["Pipelines:Morning:AskMood"].Returns(new LocalizedString("Pipelines:Morning:AskMood", "AskMood"));
-        Localizer["Pipelines:Morning:GoodMood"].Returns(new LocalizedString("Pipelines:Morning:GoodMood", "Good"));
-        Localizer["Pipelines:Morning:BadMood"].Returns(new LocalizedString("Pipelines:Morning:BadMood", "Bad"));
-        Localizer["Pipelines:Morning:NotDefined"].Returns(new LocalizedString("Pipelines:Morning:NotDefined", "NotDefined"));
+        Localizer["Pipelines:MoodRecords:Add:AskMood"].Returns(new LocalizedString("Pipelines:MoodRecords:Add:AskMood", "AskMood"));
+        Localizer["Pipelines:MoodRecords:Add:GoodMood"].Returns(new LocalizedString("Pipelines:MoodRecords:Add:GoodMood", "Good"));
+        Localizer["Pipelines:MoodRecords:Add:BadMood"].Returns(new LocalizedString("Pipelines:MoodRecords:Add:BadMood", "Bad"));
+        Localizer["Pipelines:MoodRecords:Add:NotDefined"].Returns(new LocalizedString("Pipelines:MoodRecords:Add:NotDefined", "NotDefined"));
     }
 
     protected override void ConfigureServices(IServiceCollection services)
@@ -54,7 +54,7 @@ public class MorningPipelineTests : PipelineTestFixture<AddMoodRecordPipeline>
 
         userService.GetByChatIdAsync(Arg.Any<long>()).Returns(user);
 
-        var context = GetContext("/daily_morning");
+        var context = GetContext("/href_mood_records_add");
         var menuResult = await Sut.RunNext(context);
 
         var isFinished = Sut.IsFinished;
@@ -86,7 +86,7 @@ public class MorningPipelineTests : PipelineTestFixture<AddMoodRecordPipeline>
         };
 
         messageStore.GetOrDefaultAsync(default!).ReturnsForAnyArgs(message);
-        var context = GetContext("/daily_morning");
+        var context = GetContext("/href_mood_records_add");
 
         // First message act
         var firstStepResult = await Sut.RunNext(context);

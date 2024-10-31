@@ -45,19 +45,19 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
-        return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:Morning:AskMood"]));
+        return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:MoodRecords:Add:AskMood"]));
     }
 
     private async Task<IResult> HandleChoice(MessageContext context, CancellationToken cancellationToken = default)
     {
         var mood = context.Value switch
         {
-            "5️⃣" => new MoodAnswer(MoodState.Good, "Pipelines:Morning:GoodMood"),
-            "4️⃣" => new MoodAnswer(MoodState.SlightlyGood, "Pipelines:Morning:GoodMood"),
-            "3️⃣" => new MoodAnswer(MoodState.Neutral, "Pipelines:Morning:BadMood"),
-            "2️⃣" => new MoodAnswer(MoodState.SlightlyBad, "Pipelines:Morning:BadMood"),
-            "1️⃣" => new MoodAnswer(MoodState.Bad, "Pipelines:Morning:BadMood"),
-            _ => new MoodAnswer(null, "Pipelines:Morning:NotDefined")
+            "5️⃣" => new MoodAnswer(MoodState.Good, "Pipelines:MoodRecords:Add:GoodMood"),
+            "4️⃣" => new MoodAnswer(MoodState.SlightlyGood, "Pipelines:MoodRecords:Add:GoodMood"),
+            "3️⃣" => new MoodAnswer(MoodState.Neutral, "Pipelines:MoodRecords:Add:BadMood"),
+            "2️⃣" => new MoodAnswer(MoodState.SlightlyBad, "Pipelines:MoodRecords:Add:BadMood"),
+            "1️⃣" => new MoodAnswer(MoodState.Bad, "Pipelines:MoodRecords:Add:BadMood"),
+            _ => new MoodAnswer(null, "Pipelines:MoodRecords:Add:NotDefined")
         };
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
