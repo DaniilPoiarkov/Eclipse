@@ -16,12 +16,12 @@ public sealed class UserStatistics : Entity
         UserId = userId;
     }
 
-    public void ReminderRecieved(int count)
+    internal void ReminderRecieved(int count)
     {
         RemindersRecieved += count;
     }
 
-    public void TodoItemFinished()
+    internal void TodoItemFinished()
     {
         TodoItemsFinished++;
     }
