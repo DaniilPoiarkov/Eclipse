@@ -11,6 +11,14 @@ internal sealed class ReportsService : IReportsService
 
     private readonly IPlotGenerator _plotGenerator;
 
+    private static readonly int _width = 550;
+
+    private static readonly int _height = 300;
+
+    private static readonly string _yAxisTitle = "Score";
+
+    private static readonly double _margin = 0.5d;
+
     public ReportsService(
         IMoodRecordRepository moodRecordRepository,
         IPlotGenerator plotGenerator)
@@ -36,30 +44,33 @@ internal sealed class ReportsService : IReportsService
         foreach (var record in records.OrderBy(r => r.CreatedAt))
         {
             days[index] = record.CreatedAt.WithTime(0, 0);
-            states[index] = GetMoodScore(record.State);
+            states[index] = record.State.ToScore();
 
             index++;
         }
 
+        var title = days.IsNullOrEmpty()
+            ? $"{options.From:dd.MM}-{options.To:dd.MM}"
+            : $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
+
         var option = new PlotOptions<DateTime, int>
         {
-            Title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}",
-            YAxisTitle = "Score",
-            Width = 550,
-            Height = 300,
-            Ys = states,
-            Xs = days
+            Bottom = new AxisOptions<DateTime>
+            {
+                Values = days,
+            },
+            Left = new AxisOptions<int>
+            {
+                Values = states,
+                Label = _yAxisTitle,
+                Min = MoodState.Bad.ToScore() - _margin,
+                Max = MoodState.Good.ToScore() + _margin,
+            },
+            Title = title,
+            Width = _width,
+            Height = _height,
         };
 
         return _plotGenerator.Create(option);
-    }
-
-    private static int GetMoodScore(MoodState state)
-    {
-        return state switch
-        {
-            MoodState.Good => 1,
-            _ => 0,
-        };
     }
 }

@@ -8,10 +8,10 @@ using Eclipse.Pipelines.Stores.Messages;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.Daily.Morning;
+namespace Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
 
-[Route("", "/daily_morning")]
-public sealed class MorningPipeline : EclipsePipelineBase
+[Route("", "/href_mood_records_add")]
+public sealed class AddMoodRecordPipeline : EclipsePipelineBase
 {
     private readonly IMessageStore _messageStore;
 
@@ -19,7 +19,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
 
     private readonly IUserService _userService;
 
-    public MorningPipeline(IMessageStore messageStore, IMoodRecordsService service, IUserService userService)
+    public AddMoodRecordPipeline(IMessageStore messageStore, IMoodRecordsService service, IUserService userService)
     {
         _messageStore = messageStore;
         _service = service;
@@ -36,22 +36,28 @@ public sealed class MorningPipeline : EclipsePipelineBase
     {
         var buttons = new InlineKeyboardButton[]
         {
-            InlineKeyboardButton.WithCallbackData("👍"),
-            InlineKeyboardButton.WithCallbackData("👎"),
+            InlineKeyboardButton.WithCallbackData("1️⃣"),
+            InlineKeyboardButton.WithCallbackData("2️⃣"),
+            InlineKeyboardButton.WithCallbackData("3️⃣"),
+            InlineKeyboardButton.WithCallbackData("4️⃣"),
+            InlineKeyboardButton.WithCallbackData("5️⃣"),
         };
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
-        return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:Morning:AskMood"]));
+        return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:MoodRecords:Add:AskMood"]));
     }
 
     private async Task<IResult> HandleChoice(MessageContext context, CancellationToken cancellationToken = default)
     {
         var mood = context.Value switch
         {
-            "👍" => new MoodAnswer(MoodState.Good, "Pipelines:Morning:GoodMood"),
-            "👎" => new MoodAnswer(MoodState.Bad, "Pipelines:Morning:BadMood"),
-            _ => new MoodAnswer(null, "Pipelines:Morning:NotDefined")
+            "5️⃣" => new MoodAnswer(MoodState.Good, "Pipelines:MoodRecords:Add:GoodMood"),
+            "4️⃣" => new MoodAnswer(MoodState.SlightlyGood, "Pipelines:MoodRecords:Add:GoodMood"),
+            "3️⃣" => new MoodAnswer(MoodState.Neutral, "Pipelines:MoodRecords:Add:BadMood"),
+            "2️⃣" => new MoodAnswer(MoodState.SlightlyBad, "Pipelines:MoodRecords:Add:BadMood"),
+            "1️⃣" => new MoodAnswer(MoodState.Bad, "Pipelines:MoodRecords:Add:BadMood"),
+            _ => new MoodAnswer(null, "Pipelines:MoodRecords:Add:NotDefined")
         };
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
@@ -68,7 +74,7 @@ public sealed class MorningPipeline : EclipsePipelineBase
             State = mood.State.Value
         };
 
-        await _service.CreateAsync(user.Value.Id, model, cancellationToken);
+        await _service.CreateOrUpdateAsync(user.Value.Id, model, cancellationToken);
 
         return EditedOrDefaultResult(message, Text(Localizer[mood.Message]));
     }

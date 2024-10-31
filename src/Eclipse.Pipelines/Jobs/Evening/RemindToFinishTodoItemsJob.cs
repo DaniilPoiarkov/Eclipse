@@ -9,11 +9,11 @@ using Quartz;
 
 namespace Eclipse.Pipelines.Jobs.Evening;
 
-internal sealed class EveningJob : EclipseJobBase
+internal sealed class RemindToFinishTodoItemsJob : EclipseJobBase
 {
-    private static readonly TimeOnly Evening = new(18, 0);
+    private static readonly TimeOnly _evening = new(18, 0);
 
-    private readonly IStringLocalizer<EveningJob> _localizer;
+    private readonly IStringLocalizer<RemindToFinishTodoItemsJob> _localizer;
 
     private readonly IUserService _userService;
 
@@ -21,7 +21,11 @@ internal sealed class EveningJob : EclipseJobBase
 
     private readonly ICurrentCulture _currentCulture;
 
-    public EveningJob(IStringLocalizer<EveningJob> localizer, IUserService userService, ITelegramService telegramService, ICurrentCulture currentCulture)
+    public RemindToFinishTodoItemsJob(
+        IStringLocalizer<RemindToFinishTodoItemsJob> localizer,
+        IUserService userService,
+        ITelegramService telegramService,
+        ICurrentCulture currentCulture)
     {
         _localizer = localizer;
         _userService = userService;
@@ -35,7 +39,7 @@ internal sealed class EveningJob : EclipseJobBase
 
         var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
-                && time.Add(u.Gmt) == Evening)
+                && time.Add(u.Gmt) == _evening)
             .ToList();
 
         if (users.IsNullOrEmpty())

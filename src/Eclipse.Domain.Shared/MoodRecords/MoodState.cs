@@ -3,5 +3,8 @@
 public enum MoodState
 {
     Good,
+    SlightlyGood,
+    Neutral,
+    SlightlyBad,
     Bad,
 }

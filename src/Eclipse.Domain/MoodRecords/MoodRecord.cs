@@ -19,4 +19,9 @@ public sealed class MoodRecord : Entity
     public MoodState State { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
+
+    public void SetState(MoodState state)
+    {
+        State = state;
+    }
 }

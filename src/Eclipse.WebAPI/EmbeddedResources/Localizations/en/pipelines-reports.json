@@ -2,6 +2,7 @@
   "culture": "en",
   "texts": {
     "Pipelines:Reports": "Reports menu",
-    "Pipelines:Reports:Mood:Caption": "Here is how your mood changed during this week!"
+    "Pipelines:Reports:Mood:Caption": "Here is how your mood changed during this week!",
+    "Pipelines:Reports:Mood:InProgress": "Give me a few seconds to prepare everything!"
   }
 }

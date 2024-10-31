@@ -14,11 +14,11 @@ using Quartz;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Jobs.Morning;
+namespace Eclipse.Pipelines.Jobs.Evening;
 
-internal sealed class MorningJob : EclipseJobBase
+internal sealed class CollectMoodRecordsJob : EclipseJobBase
 {
-    private static readonly TimeOnly Morning = new(9, 0);
+    private static readonly TimeOnly _evening = new(19, 0);
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -28,7 +28,7 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IStringLocalizer<MorningJob> _localizer;
+    private readonly IStringLocalizer<CollectMoodRecordsJob> _localizer;
 
     private readonly IMessageStore _messageStore;
 
@@ -36,12 +36,12 @@ internal sealed class MorningJob : EclipseJobBase
 
     private readonly IUserService _userService;
 
-    public MorningJob(
+    public CollectMoodRecordsJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IServiceProvider serviceProvider,
-        IStringLocalizer<MorningJob> localizer,
+        IStringLocalizer<CollectMoodRecordsJob> localizer,
         IMessageStore messageStore,
         ICurrentCulture currentCulture,
         IUserService userService)
@@ -62,7 +62,7 @@ internal sealed class MorningJob : EclipseJobBase
 
         var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
-                && time.Add(u.Gmt) == Morning)
+                && time.Add(u.Gmt) == _evening)
             .ToList();
 
         if (users.IsNullOrEmpty())
@@ -77,7 +77,7 @@ internal sealed class MorningJob : EclipseJobBase
             var key = new PipelineKey(user.ChatId);
             await _pipelineStore.RemoveAsync(key, context.CancellationToken);
 
-            var pipeline = (_pipelineProvider.Get("/daily_morning") as EclipsePipelineBase)!;
+            var pipeline = (_pipelineProvider.Get("/href_mood_records_add") as EclipsePipelineBase)!;
 
             using var _ = _currentCulture.UsingCulture(user.Culture);
             _localizer.UseCurrentCulture(_currentCulture);
