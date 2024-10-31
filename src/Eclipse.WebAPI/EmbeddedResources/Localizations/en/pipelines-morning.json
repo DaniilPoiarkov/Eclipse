@@ -1,9 +1,0 @@
-{
-  "Culture": "en",
-  "Texts": {
-    "Pipelines:Morning:AskMood": "Morning🌖\n\rWhat's up'? Rate your mood on a 5-point scale😊",
-    "Pipelines:Morning:GoodMood": "Glad to hear that!\n\rWish you good day😊",
-    "Pipelines:Morning:BadMood": "Its okay, no one of us always in good mood🤗\n\rHope you'll get awesome day😊",
-    "Pipelines:Morning:NotDefined": "I don't fully understand, but I really hope it means you are good😅\n\rAnyway hope you will find a reason to smile today😊"
-  }
-}
