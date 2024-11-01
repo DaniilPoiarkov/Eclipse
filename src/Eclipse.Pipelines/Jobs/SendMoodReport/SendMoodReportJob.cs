@@ -28,6 +28,8 @@ internal sealed class SendMoodReportJob : EclipseJobBase
     
     private static readonly int _height = 300;
 
+    private static readonly int _oneMinute = 1;
+
 
     private readonly IUserRepository _userRepository;
 
@@ -166,7 +168,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
             .ForJob(context.JobDetail.Key)
             .StartAt(date.NextDayOfWeek(DayOfWeek.Sunday))
             .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInMinutes(1)
+                .WithIntervalInMinutes(_oneMinute)
                 .RepeatForever())
             .Build();
 
