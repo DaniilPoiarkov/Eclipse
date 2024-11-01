@@ -43,9 +43,10 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
         options.AddJob<SendMoodReportJob>(job => job.WithIdentity(key))
             .AddTrigger(trigger => trigger.ForJob(key)
                 .WithCalendarIntervalSchedule(schedule =>
-                    schedule.WithIntervalInWeeks(1))
+                    schedule.WithIntervalInMinutes(_oneMinuteScanInterval))
                 .StartAt(
-                    DateTime.UtcNow.NextDayOfWeek(DayOfWeek.Sunday, true)
+                    DateTime.UtcNow
+                        .NextDayOfWeek(DayOfWeek.Sunday, true)
                         .WithTime(0, 0)
                 ));
     }
