@@ -25,7 +25,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
     private static readonly TimeOnly _recordTime = new(0, 0);
 
     private static readonly int _width = 550;
-    
+
     private static readonly int _height = 300;
 
     private static readonly int _oneMinute = 1;
