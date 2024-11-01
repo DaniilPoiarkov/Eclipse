@@ -14,8 +14,6 @@ using Quartz;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-using User = Eclipse.Domain.Users.User;
-
 namespace Eclipse.Pipelines.Jobs.SendMoodReport;
 
 internal sealed class SendMoodReportJob : EclipseJobBase
@@ -104,7 +102,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
             var message = _localizer["Jobs:SendMoodReport:Caption"].Value;
 
             sendings.Add(
-                SendReportAsync(context, user, options, message)
+                SendReportAsync(user.ChatId, options, message, context.CancellationToken)
             );
         }
 
@@ -147,14 +145,14 @@ internal sealed class SendMoodReportJob : EclipseJobBase
         };
     }
 
-    private async Task SendReportAsync(IJobExecutionContext context, User user, PlotOptions<DateTime, int> options, string message)
+    private async Task SendReportAsync(long chatId, PlotOptions<DateTime, int> options, string message, CancellationToken cancellationToken = default)
     {
         using var stream = _plotGenerator.Create(options);
 
-        await _client.SendPhotoAsync(user.ChatId,
+        await _client.SendPhotoAsync(chatId,
             InputFile.FromStream(stream, $"mood-report.png"),
             caption: message,
-            cancellationToken: context.CancellationToken
+            cancellationToken: cancellationToken
         );
     }
 
