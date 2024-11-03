@@ -5,7 +5,6 @@ using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
-using Eclipse.Domain.Statistics;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
 
@@ -56,8 +55,6 @@ public sealed class User : AggregateRoot
     [JsonIgnore]
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
-    public UserStatistics? Statistics { get; private set; }
-
     /// <summary>
     /// Creates this instance.
     /// </summary>
@@ -105,8 +102,7 @@ public sealed class User : AggregateRoot
             _reminders.Remove(reminder);
         }
 
-        Statistics ??= new UserStatistics(Guid.NewGuid(), Id);
-        Statistics.ReminderRecieved(reminders.Count);
+        AddEvent(new RemindersRecievedDomainEvent(Id, reminders.Count));
 
         return reminders;
     }
@@ -191,9 +187,7 @@ public sealed class User : AggregateRoot
             return result.Error;
         }
 
-        Statistics ??= new UserStatistics(Guid.NewGuid(), Id);
-
-        Statistics.TodoItemFinished();
+        AddEvent(new TodoItemFinishedDomainEvent(Id));
 
         return item;
     }
