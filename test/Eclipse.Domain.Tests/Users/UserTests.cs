@@ -284,7 +284,7 @@ public class UserTests
     [Fact]
     public void FinishTodoItem_WhenFinished_ThenEventRaized()
     {
-        var user = UserGenerator.Get();
+        var user = UserGenerator.Get(newRegistered: false);
 
         var todoItem = user.AddTodoItem("test", DateTime.UtcNow);
 
@@ -303,7 +303,7 @@ public class UserTests
     {
         var time = DateTime.UtcNow.GetTime();
 
-        var user = UserGenerator.Get();
+        var user = UserGenerator.Get(newRegistered: false);
 
         user.AddReminder("test", time);
 
@@ -312,7 +312,7 @@ public class UserTests
         var events = user.GetEvents();
 
         events.Should().ContainSingle();
-        
+
         var remindersReceivedEvent = events[0].As<RemindersReceivedDomainEvent>();
         remindersReceivedEvent.Should().NotBeNull();
         remindersReceivedEvent.UserId.Should().Be(user.Id);

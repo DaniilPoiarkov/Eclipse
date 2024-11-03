@@ -30,7 +30,7 @@ public static class UserGenerator
         return result;
     }
 
-    public static User Get(long chatId = default)
+    public static User Get(long chatId = default, bool newRegistered = true)
     {
         var faker = new Faker();
 
@@ -40,7 +40,7 @@ public static class UserGenerator
             faker.Person.LastName,
             faker.Person.UserName,
             chatId,
-            true
+            newRegistered
         );
 
         user.Culture = Random.Shared.Next(0, 10) % 2 == 0

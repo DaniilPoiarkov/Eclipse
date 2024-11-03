@@ -102,7 +102,7 @@ public sealed class User : AggregateRoot
             _reminders.Remove(reminder);
         }
 
-        AddEvent(new RemindersRecievedDomainEvent(Id, reminders.Count));
+        AddEvent(new RemindersReceivedDomainEvent(Id, reminders.Count));
 
         return reminders;
     }
