@@ -6,9 +6,11 @@ using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
+using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
+using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users;
 
 using Microsoft.AspNetCore.Builder;
@@ -36,12 +38,14 @@ public static class EclipseDataAccessModule
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
             .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
+            .AddScoped<IUserStatisticsRepository, UserStatisticsRepository>()
             .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
 
         services
             .Decorate<IUserRepository, CachedUserRepository>()
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
-            .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>();
+            .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>()
+            .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>();
 
         services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 

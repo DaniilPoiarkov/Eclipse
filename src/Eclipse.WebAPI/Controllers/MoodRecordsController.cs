@@ -32,41 +32,26 @@ public sealed class MoodRecordsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetList()
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
-
-        return Ok(await _moodRecordsService.GetListAsync(_currentSession.UserId.Value));
+        return Ok(await _moodRecordsService.GetListAsync(_currentSession.UserId));
     }
 
     [HttpGet("{moodRecordId:guid}", Name = "get-mood-record-by-id")]
     public async Task<IActionResult> GetByIdAsync(Guid moodRecordId, CancellationToken cancellationToken)
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
+        var result = await _moodRecordsService.GetByIdAsync(_currentSession.UserId, moodRecordId, cancellationToken);
 
-        var result = await _moodRecordsService.GetByIdAsync(_currentSession.UserId.Value, moodRecordId, cancellationToken);
-
-        return result.Match(() => Ok(result.Value), () => result.ToProblems(_localizer));
+        return result.Match(Ok, error => error.ToProblems(_localizer));
     }
 
     [HttpPost("add")]
     public async Task<IActionResult> CreateAsync([FromBody] CreateMoodRecordDto model, CancellationToken cancellationToken)
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
-
-        var result = await _moodRecordsService.CreateOrUpdateAsync(_currentSession.UserId.Value, model, cancellationToken);
+        var result = await _moodRecordsService.CreateOrUpdateAsync(_currentSession.UserId, model, cancellationToken);
 
         var createdUrl = result.IsSuccess
             ? Url.Link("get-mood-record-by-id", new { moodRecordId = result.Value.Id })
             : string.Empty;
 
-        return result.Match(() => Created(createdUrl, result.Value), () => result.ToProblems(_localizer));
+        return result.Match(value => Created(createdUrl, value), error => error.ToProblems(_localizer));
     }
 }

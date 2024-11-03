@@ -28,7 +28,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
+            return DefaultErrors.EntityNotFound<User>(_localizer);
         }
 
         var result = await CreateAsync(user, model, cancellationToken);
@@ -42,7 +42,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
+            return DefaultErrors.EntityNotFound<User>(_localizer);
         }
 
         await CreateAsync(user, model, cancellationToken);
@@ -65,14 +65,14 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
+            return DefaultErrors.EntityNotFound<User>(_localizer);
         }
 
         var reminder = user.GetReminder(reminderId);
 
         if (reminder is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(Reminder), _localizer);
+            return DefaultErrors.EntityNotFound<Reminder>(_localizer);
         }
 
         return reminder.ToDto();
@@ -84,7 +84,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
+            return DefaultErrors.EntityNotFound<User>(_localizer);
         }
 
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
@@ -96,7 +96,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
+            return DefaultErrors.EntityNotFound<User>(_localizer);
         }
 
         user.RemoveRemindersForTime(time);

@@ -102,6 +102,8 @@ public sealed class User : AggregateRoot
             _reminders.Remove(reminder);
         }
 
+        AddEvent(new RemindersReceivedDomainEvent(Id, reminders.Count));
+
         return reminders;
     }
 
@@ -184,6 +186,8 @@ public sealed class User : AggregateRoot
         {
             return result.Error;
         }
+
+        AddEvent(new TodoItemFinishedDomainEvent(Id));
 
         return item;
     }
