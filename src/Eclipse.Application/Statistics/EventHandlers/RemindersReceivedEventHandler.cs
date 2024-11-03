@@ -5,11 +5,11 @@ using MediatR;
 
 namespace Eclipse.Application.Statistics.EventHandlers;
 
-internal sealed class RemindersRecievedEventHandler : INotificationHandler<RemindersRecievedDomainEvent>
+internal sealed class RemindersReceivedEventHandler : INotificationHandler<RemindersRecievedDomainEvent>
 {
     private readonly IUserStatisticsRepository _repository;
 
-    public RemindersRecievedEventHandler(IUserStatisticsRepository repository)
+    public RemindersReceivedEventHandler(IUserStatisticsRepository repository)
     {
         _repository = repository;
     }
@@ -19,7 +19,7 @@ internal sealed class RemindersRecievedEventHandler : INotificationHandler<Remin
         var statistics = await _repository.FindByUserIdAsync(notification.UserId, cancellationToken)
             ?? await _repository.CreateAsync(new UserStatistics(Guid.NewGuid(), notification.UserId), cancellationToken);
 
-        statistics.ReminderRecieved(notification.Count);
+        statistics.ReminderReceived(notification.Count);
 
         await _repository.UpdateAsync(statistics, cancellationToken);
     }

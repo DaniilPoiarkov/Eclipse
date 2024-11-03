@@ -7,7 +7,7 @@ public sealed class UserStatistics : Entity
     public Guid UserId { get; private set; }
 
     public int TodoItemsFinished { get; private set; }
-    public int RemindersRecieved { get; private set; }
+    public int RemindersReceived { get; private set; }
 
     private UserStatistics() { }
 
@@ -16,9 +16,9 @@ public sealed class UserStatistics : Entity
         UserId = userId;
     }
 
-    public void ReminderRecieved(int count)
+    public void ReminderReceived(int count)
     {
-        RemindersRecieved += count;
+        RemindersReceived += count;
     }
 
     public void TodoItemFinished()
