@@ -35,6 +35,6 @@ internal sealed class StatisticsPipeline : ReportsPipelineBase
 
         var statistics = await _userStatisticsService.GetByUserIdAsync(result.Value.Id, cancellationToken);
 
-        return Text(Localizer["Pipelines:Statistics:Report{0}{1}", statistics.Value.TodoItemsFinished, statistics.Value.RemindersReceived]);
+        return Text(Localizer["Pipelines:Statistics:Report{0}{1}", statistics.TodoItemsFinished, statistics.RemindersReceived]);
     }
 }

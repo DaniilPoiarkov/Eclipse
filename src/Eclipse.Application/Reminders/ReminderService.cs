@@ -79,7 +79,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return  DefaultErrors.EntityNotFound<User>();
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
