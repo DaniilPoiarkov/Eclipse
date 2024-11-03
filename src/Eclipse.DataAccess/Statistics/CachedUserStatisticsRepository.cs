@@ -12,7 +12,7 @@ internal sealed class CachedUserStatisticsRepository : CachedRepositoryBase<User
 
     public async Task<UserStatistics?> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var key = $"user-statistics-{userId}";
+        var key = $"{GetPrefix()}-{userId}";
         var statistics = await CacheService.GetAsync<UserStatistics>(key, cancellationToken);
 
         if (statistics is not null)
