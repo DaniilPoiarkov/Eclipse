@@ -30,17 +30,16 @@ public sealed class RemindersReceivedEventHandlerTests
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
 
-        _repository.FindByUserIdAsync(statistics.UserId).Returns(statistics);
+        _repository.FindByUserIdAsync(statistics.UserId, CancellationToken.None).Returns(statistics);
 
         var notification = new RemindersReceivedDomainEvent(statistics.UserId, count);
 
-        await _sut.Handle(notification, Arg.Any<CancellationToken>());
+        await _sut.Handle(notification, CancellationToken.None);
 
-        statistics.TodoItemsFinished.Should().Be(1);
+        statistics.RemindersReceived.Should().Be(count);
         await _repository.Received().FindByUserIdAsync(statistics.UserId);
         await _repository.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<UserStatistics>());
         await _repository.Received().UpdateAsync(statistics);
-        statistics.RemindersReceived.Should().Be(count);
     }
 
     [Theory]

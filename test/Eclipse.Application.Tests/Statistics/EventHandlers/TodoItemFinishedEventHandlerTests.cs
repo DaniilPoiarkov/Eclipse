@@ -27,11 +27,11 @@ public sealed class TodoItemFinishedEventHandlerTests
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
 
-        _repository.FindByUserIdAsync(statistics.UserId).Returns(statistics);
+        _repository.FindByUserIdAsync(statistics.UserId, CancellationToken.None).Returns(statistics);
 
         var notification = new TodoItemFinishedDomainEvent(statistics.UserId);
 
-        await _sut.Handle(notification, Arg.Any<CancellationToken>());
+        await _sut.Handle(notification, CancellationToken.None);
 
         statistics.TodoItemsFinished.Should().Be(1);
         await _repository.Received().FindByUserIdAsync(statistics.UserId);
@@ -43,7 +43,7 @@ public sealed class TodoItemFinishedEventHandlerTests
     public async Task Handle_WhenStatisticsNotExists_ThenCreateAndProcess()
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
-        _repository.CreateAsync(Arg.Any<UserStatistics>()).Returns(statistics);
+        _repository.CreateAsync(Arg.Any<UserStatistics>(), Arg.Any<CancellationToken>()).Returns(statistics);
 
         var notification = new TodoItemFinishedDomainEvent(statistics.UserId);
         await _sut.Handle(notification, Arg.Any<CancellationToken>());
