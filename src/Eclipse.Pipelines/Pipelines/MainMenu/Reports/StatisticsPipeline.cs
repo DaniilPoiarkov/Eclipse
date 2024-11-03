@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Statistics;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
@@ -25,15 +26,15 @@ internal sealed class StatisticsPipeline : ReportsPipelineBase
 
     private async Task<IResult> SendStatisticsAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
-        if (!user.IsSuccess)
+        if (!result.IsSuccess)
         {
-            return Text("Error");
+            return Text(Localizer.LocalizeError(result.Error));
         }
 
-        var statistics = await _userStatisticsService.GetByUserIdAsync(user.Value.Id, cancellationToken);
+        var statistics = await _userStatisticsService.GetByUserIdAsync(result.Value.Id, cancellationToken);
 
-        return Text($"Todo items: {statistics.Value.TodoItemsFinished}; Reminders: {statistics.Value.RemindersReceived}");
+        return Text(Localizer["Pipelines:Statistics:Report{0}{1}", statistics.Value.TodoItemsFinished, statistics.Value.RemindersReceived]);
     }
 }
