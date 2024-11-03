@@ -9,34 +9,22 @@ namespace Microsoft.AspNetCore.Mvc;
 
 public static class ResultHttpExtensions
 {
-    public static IActionResult ToProblems(this Result result, IStringLocalizer stringLocalizer)
+    public static IActionResult ToProblems(this Error error, IStringLocalizer stringLocalizer)
     {
-        ArgumentNullException.ThrowIfNull(stringLocalizer, nameof(stringLocalizer));
-
-        var parser = GetErrorParserOrThrow(result);
+        var parser = GetErrorParser(error);
 
         var problemDetails = new ProblemDetails
         {
             Status = parser.StatusCode,
             Title = parser.Title,
             Type = parser.Type,
-            Detail = stringLocalizer[result.Error.Description, result.Error.Args]
+            Detail = stringLocalizer[error.Description, error.Args]
         };
 
         return new ObjectResult(problemDetails)
         {
             StatusCode = problemDetails.Status
         };
-    }
-
-    private static IErrorParser GetErrorParserOrThrow(Result result)
-    {
-        if (result.IsSuccess)
-        {
-            throw new InvalidOperationException($"Success Results cannot be converted to probled details.");
-        }
-
-        return GetErrorParser(result.Error);
     }
 
     private static IErrorParser GetErrorParser(Error error)

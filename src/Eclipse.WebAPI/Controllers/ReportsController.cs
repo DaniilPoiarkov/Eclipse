@@ -29,12 +29,7 @@ public sealed class ReportsController : ControllerBase
     [HttpGet("mood")]
     public async Task<IActionResult> GetMoodReportAsync(CancellationToken cancellationToken)
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
-
-        var stream = await _reportsService.GetMoodReportAsync(_currentSession.UserId.Value, new MoodReportOptions
+        var stream = await _reportsService.GetMoodReportAsync(_currentSession.UserId, new MoodReportOptions
         {
             From = _timeProvider.Now.PreviousDayOfWeek(
                 _timeProvider.Now.DayOfWeek

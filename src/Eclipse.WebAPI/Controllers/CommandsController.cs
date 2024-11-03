@@ -32,7 +32,7 @@ public sealed class CommandsController : ControllerBase
     public async Task<IActionResult> Add([FromBody] AddCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await _commandService.Add(request, cancellationToken);
-        return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
+        return result.Match(NoContent, error => error.ToProblems(_stringLocalizer));
     }
 
     [HttpDelete("{command}/remove")]

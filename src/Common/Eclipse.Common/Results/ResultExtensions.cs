@@ -11,12 +11,12 @@ public static class ResultExtensions
     /// <param name="error"></param>
     /// <returns>
     /// </returns>
-    public static T Match<T>(this Result result, Func<T> ok, Func<T> error)
+    public static T Match<T>(this Result result, Func<T> ok, Func<Error, T> error)
     {
         ArgumentNullException.ThrowIfNull(ok, nameof(ok));
         ArgumentNullException.ThrowIfNull(error, nameof(error));
 
-        return result.IsSuccess ? ok() : error();
+        return result.IsSuccess ? ok() : error(result.Error);
     }
 
     public static TResult Match<TResult, TValue>(this Result<TValue> result, Func<TValue, TResult> ok, Func<Error, TResult> error)
