@@ -2,7 +2,7 @@
 
 public interface ICurrentSession
 {
-    Guid? UserId { get; }
+    Guid UserId { get; }
 
-    long? ChatId { get; }
+    long ChatId { get; }
 }

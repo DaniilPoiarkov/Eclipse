@@ -32,43 +32,28 @@ public sealed class RemindersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetListAsync(CancellationToken cancellationToken)
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
+        var result = await _reminderService.GetListAsync(_currentSession.UserId, cancellationToken);
 
-        var result = await _reminderService.GetListAsync(_currentSession.UserId.Value, cancellationToken);
-
-        return result.Match(() => Ok(result.Value), () => result.ToProblems(_stringLocalizer));
+        return result.Match(Ok, error => error.ToProblems(_stringLocalizer));
     }
 
     [HttpGet("{reminderId:guid}", Name = "get-reminder-by-id")]
     public async Task<IActionResult> GetAsync(Guid reminderId, CancellationToken cancellationToken)
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
+        var result = await _reminderService.GetAsync(_currentSession.UserId, reminderId, cancellationToken);
 
-        var result = await _reminderService.GetAsync(_currentSession.UserId.Value, reminderId, cancellationToken);
-
-        return result.Match(() => Ok(result.Value), () => result.ToProblems(_stringLocalizer));
+        return result.Match(Ok, error => error.ToProblems(_stringLocalizer));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] ReminderCreateDto model, CancellationToken cancellationToken)
     {
-        if (!_currentSession.UserId.HasValue)
-        {
-            return Unauthorized();
-        }
-
-        var result = await _reminderService.CreateAsync(_currentSession.UserId.Value, model, cancellationToken);
+        var result = await _reminderService.CreateAsync(_currentSession.UserId, model, cancellationToken);
 
         var createdUrl = result.IsSuccess
             ? Url.Link("get-reminder-by-id", new { reminderId = result.Value.Id })
             : string.Empty;
 
-        return result.Match(() => Created(createdUrl, result.Value), () => result.ToProblems(_stringLocalizer));
+        return result.Match(value => Created(createdUrl, value), error => error.ToProblems(_stringLocalizer));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 
@@ -23,23 +24,27 @@ internal sealed class SendRemindersJob : EclipseJobBase
 
     private readonly IUserService _userService;
 
+    private readonly ITimeProvider _timeProvider;
+
     public SendRemindersJob(
         ITelegramBotClient botClient,
         IStringLocalizer<SendRemindersJob> localizer,
         IReminderService reminderService,
         ICurrentCulture currentCulture,
-        IUserService userService)
+        IUserService userService,
+        ITimeProvider timeProvider)
     {
         _botClient = botClient;
         _localizer = localizer;
         _reminderService = reminderService;
         _currentCulture = currentCulture;
         _userService = userService;
+        _timeProvider = timeProvider;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var time = DateTime.UtcNow.GetTime();
+        var time = _timeProvider.Now.GetTime();
 
         var specification = new ReminderDtoNotifyAtSpecification(time);
 
