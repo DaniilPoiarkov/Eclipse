@@ -91,7 +91,7 @@ internal sealed class ReminderService : IReminderService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         user.RemoveRemindersForTime(time);

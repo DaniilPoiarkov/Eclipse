@@ -1,6 +1,8 @@
-﻿namespace Eclipse.Application.Contracts.Statistics;
+﻿using Eclipse.Common.Results;
+
+namespace Eclipse.Application.Contracts.Statistics;
 
 public interface IUserStatisticsService
 {
-    Task<UserStatisticsDto> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<Result<UserStatisticsDto>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 }

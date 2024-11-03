@@ -18,4 +18,12 @@ public static class ResultExtensions
 
         return result.IsSuccess ? ok() : error();
     }
+
+    public static TResult Match<TResult, TValue>(this Result<TValue> result, Func<TValue, TResult> ok, Func<Error, TResult> error)
+    {
+        ArgumentNullException.ThrowIfNull(ok, nameof(ok));
+        ArgumentNullException.ThrowIfNull(error, nameof(error));
+
+        return result.IsSuccess ? ok(result.Value) : error(result.Error);
+    }
 }
