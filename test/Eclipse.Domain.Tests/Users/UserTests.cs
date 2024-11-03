@@ -280,4 +280,42 @@ public class UserTests
         moodRecord.State.Should().Be(state);
         moodRecord.CreatedAt.Should().Be(utcNow.WithTime(0, 0));
     }
+
+    [Fact]
+    public void FinishTodoItem_WhenFinished_ThenEventRaized()
+    {
+        var user = UserGenerator.Get();
+
+        var todoItem = user.AddTodoItem("test", DateTime.UtcNow);
+
+        user.FinishItem(todoItem.Value.Id);
+
+        var events = user.GetEvents();
+
+        events.Should().ContainSingle();
+        var todoItemFinishedEvent = events[0].As<TodoItemFinishedDomainEvent>();
+        todoItemFinishedEvent.Should().NotBeNull();
+        todoItemFinishedEvent.UserId.Should().Be(user.Id);
+    }
+
+    [Fact]
+    public void RemoveRemindersForTime_WhenRemoved_ThenEventRaized()
+    {
+        var time = DateTime.UtcNow.GetTime();
+
+        var user = UserGenerator.Get();
+
+        user.AddReminder("test", time);
+
+        user.RemoveRemindersForTime(time);
+
+        var events = user.GetEvents();
+
+        events.Should().ContainSingle();
+        
+        var remindersReceivedEvent = events[0].As<RemindersReceivedDomainEvent>();
+        remindersReceivedEvent.Should().NotBeNull();
+        remindersReceivedEvent.UserId.Should().Be(user.Id);
+        remindersReceivedEvent.Count.Should().Be(1);
+    }
 }
