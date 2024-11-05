@@ -31,7 +31,7 @@ public sealed class ReminderServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WhenUserExists_ThenReturnesDtoWithCreatedReminder()
+    public async Task CreateAsync_WhenUserExists_ThenReturnsDtoWithCreatedReminder()
     {
         var user = UserGenerator.Generate(1).First();
 
@@ -99,9 +99,9 @@ public sealed class ReminderServiceTests
         }
 
         var text = faker.Lorem.Word();
-        var furtureTime = time.AddHours(1);
+        var futureTime = time.AddHours(1);
 
-        user.AddReminder(text, furtureTime);
+        user.AddReminder(text, futureTime);
 
         _repository.FindAsync(user.Id)
             .Returns(Task.FromResult<User?>(user));
@@ -119,7 +119,7 @@ public sealed class ReminderServiceTests
 
         var leftReminder = dto.Reminders[0];
         leftReminder.Text.Should().Be(text);
-        leftReminder.NotifyAt.Should().Be(furtureTime);
+        leftReminder.NotifyAt.Should().Be(futureTime);
 
         await _repository.Received().UpdateAsync(user);
     }

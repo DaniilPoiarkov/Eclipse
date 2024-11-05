@@ -82,7 +82,7 @@ public sealed class User : AggregateRoot
 
     public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
     {
-        var reminder = new Reminder(id, Id, text, notifyAt);
+        var reminder = new Reminder(id, Id, text, notifyAt.Add(Gmt * -1));
         _reminders.Add(reminder);
 
         return reminder;

@@ -34,7 +34,7 @@ internal sealed class UpdateAsyncStepDefinitions
         );
     }
 
-    [Given("An existing user with followind data:")]
+    [Given("An existing user with following data:")]
     public void GivenAUserWithId(Table table)
     {
         var row = table.Rows[0];

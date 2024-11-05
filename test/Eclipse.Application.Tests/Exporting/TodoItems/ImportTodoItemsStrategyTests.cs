@@ -78,7 +78,7 @@ public sealed class ImportTodoItemsStrategyTests
     }
 
     [Fact]
-    public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSeccessfully()
+    public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSuccessfully()
     {
         using var stream = new MemoryStream();
 
@@ -108,7 +108,7 @@ public sealed class ImportTodoItemsStrategyTests
     }
 
     [Fact]
-    public async Task ImportAsyncs_WhenUserNotExist_ThenFailureResultReturned()
+    public async Task ImportAsync_WhenUserNotExist_ThenFailureResultReturned()
     {
         using var stream = new MemoryStream();
 

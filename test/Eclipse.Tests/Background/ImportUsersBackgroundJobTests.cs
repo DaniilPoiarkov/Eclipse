@@ -48,12 +48,12 @@ public sealed class ImportUsersBackgroundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _importService.ReceivedWithAnyArgs().AddUsersAsync(default!);
 
         await _botClient.Received()
-            .MakeRequestAsync(
+            .SendRequest(
                 Arg.Is<SendMessageRequest>(x => x.Text == "All users imported successfully." && x.ChatId == _options.Value.Chat)
             );
     }
@@ -74,10 +74,10 @@ public sealed class ImportUsersBackgroundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
-            .MakeRequestAsync(
+            .SendRequest(
                 Arg.Is<SendDocumentRequest>(x => x.ChatId == _options.Value.Chat && x.Caption == "Failed to import following users")
             );
 
@@ -87,9 +87,9 @@ public sealed class ImportUsersBackgroundJobTests
     [Fact]
     public async Task WhenBytesAreEmpty_ThenNoDependenciesCalled()
     {
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs());
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs());
 
         await _importService.DidNotReceiveWithAnyArgs().AddUsersAsync(default!);
-        await _botClient.DidNotReceiveWithAnyArgs().MakeRequestAsync<SendMessageRequest>(default!);
+        await _botClient.DidNotReceiveWithAnyArgs().SendRequest<SendMessageRequest>(default!);
     }
 }

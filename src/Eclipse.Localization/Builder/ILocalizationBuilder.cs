@@ -3,7 +3,7 @@
 public interface ILocalizationBuilder
 {
     /// <summary>
-    /// Adds json files in specified and all child directories. Multiple resource files with same culture will be combined all toghether.
+    /// Adds json files in specified and all child directories. Multiple resource files with same culture will be combined all together.
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>

@@ -22,7 +22,7 @@ public sealed class PhotoResult : ResultBase
     {
         using var _ = _stream;
 
-        return await botClient.SendPhotoAsync(
+        return await botClient.SendPhoto(
             ChatId,
             InputFile.FromStream(_stream, _fileName),
             caption: _caption,

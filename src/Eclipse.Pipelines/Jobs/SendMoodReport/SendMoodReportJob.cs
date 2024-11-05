@@ -18,7 +18,7 @@ namespace Eclipse.Pipelines.Jobs.SendMoodReport;
 
 internal sealed class SendMoodReportJob : EclipseJobBase
 {
-    private static readonly TimeOnly _time = new(19, 0);
+    private static readonly TimeOnly _time = new(19, 30);
 
     private static readonly TimeOnly _recordTime = new(0, 0);
 
@@ -89,7 +89,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
             .GroupBy(mr => mr.UserId)
             .Join(users, group => group.Key, user => user.Id, (group, user) => (User: user, Options: GeneratePlotOptions([.. group], user.Gmt)));
 
-        var sendings = new List<Task>(users.Count);
+        var sending = new List<Task>(users.Count);
 
         foreach (var pair in pairs)
         {
@@ -101,12 +101,12 @@ internal sealed class SendMoodReportJob : EclipseJobBase
 
             var message = _localizer["Jobs:SendMoodReport:Caption"].Value;
 
-            sendings.Add(
+            sending.Add(
                 SendReportAsync(user.ChatId, options, message, context.CancellationToken)
             );
         }
 
-        await Task.WhenAll(sendings);
+        await Task.WhenAll(sending);
     }
 
     private PlotOptions<DateTime, int> GeneratePlotOptions(List<MoodRecord> records, TimeSpan userGmt)
@@ -149,7 +149,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
     {
         using var stream = _plotGenerator.Create(options);
 
-        await _client.SendPhotoAsync(chatId,
+        await _client.SendPhoto(chatId,
             InputFile.FromStream(stream, $"mood-report.png"),
             caption: message,
             cancellationToken: cancellationToken

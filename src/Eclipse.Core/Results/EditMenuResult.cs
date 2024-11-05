@@ -18,6 +18,6 @@ public sealed class EditMenuResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.EditMessageReplyMarkupAsync(ChatId, MessageId, Menu, cancellationToken);
+        return await botClient.EditMessageReplyMarkup(ChatId, MessageId, Menu, cancellationToken: cancellationToken);
     }
 }

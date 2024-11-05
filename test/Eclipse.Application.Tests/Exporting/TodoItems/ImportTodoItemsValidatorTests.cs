@@ -136,7 +136,7 @@ public sealed class ImportTodoItemsValidatorTests
         };
 
         var notFoundError = $"{nameof(User)} not found";
-        var maxLengthError = $"Max length exceded: {TodoItemConstants.MaxLength}";
+        var maxLengthError = $"Max length exceeded: {TodoItemConstants.MaxLength}";
 
         var localizer = LocalizerBuilder<ImportTodoItemsValidator>.Create()
             .ForWithArgs("{0}NotFound", nameof(User))

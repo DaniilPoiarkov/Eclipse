@@ -35,8 +35,9 @@ public static class EclipseWebApiModule
         services.AddAuthorization();
 
         services
-            .AddControllers()
-            .AddNewtonsoftJson();
+            .AddControllers();
+
+        services.ConfigureTelegramBotMvc();
 
         services
             .AddEndpointsApiExplorer();

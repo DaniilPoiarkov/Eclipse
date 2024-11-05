@@ -52,7 +52,7 @@ public sealed class SendSignInCodeBackgroundJobTests
                 Task.FromResult(Result.Success())
             );
 
-        await _sut.ExecureAsync(args);
+        await _sut.ExecuteAsync(args);
 
         using var _ = _currentCulture.Received(1).UsingCulture(args.Culture);
         _stringLocalizer.Received(1).UseCurrentCulture(_currentCulture);
