@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
@@ -11,16 +10,13 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
 {
     private readonly ICacheService _cacheService;
 
-    private readonly IUserService _userService;
-
     private readonly IReminderService _reminderService;
 
     private static readonly string _pipelinePrefix = "Pipelines:Reminders";
 
-    public AddReminderPipeline(ICacheService cacheService, IUserService userService, IReminderService reminderService)
+    public AddReminderPipeline(ICacheService cacheService, IReminderService reminderService)
     {
         _cacheService = cacheService;
-        _userService = userService;
         _reminderService = reminderService;
     }
 
@@ -67,13 +63,6 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
         }
 
         var chatId = context.ChatId;
-
-        var userResult = await _userService.GetByChatIdAsync(chatId, cancellationToken);
-
-        if (!userResult.IsSuccess)
-        {
-            return Menu(RemindersMenuButtons, Localizer["Error"]);
-        }
 
         var text = await _cacheService.GetAsync<string>(new CacheKey($"reminder-text-{chatId}"), cancellationToken);
 

@@ -71,6 +71,26 @@ public class UserTests
         result.UserId.Should().Be(_sut.Id);
     }
 
+    [Theory]
+    [InlineData(0, 12)]
+    [InlineData(0, 0)]
+    [InlineData(2, 12)]
+    [InlineData(-2, 14)]
+    [InlineData(-2, 23)]
+    [InlineData(-1, 23)]
+    [InlineData(1, 0)]
+    public void AddReminder_WhenUserSpecifiedTimeZone_ThenSavesReminderNotifyAtAsUtc(int userHour, int notifyAtHour)
+    {
+        var utcNow = DateTime.UtcNow;
+
+        _sut.SetGmt(TimeSpan.FromHours(userHour));
+
+        var notifyAt = new TimeOnly(notifyAtHour, utcNow.Minute);
+
+        var reminder = _sut.AddReminder("test", notifyAt);
+        reminder.NotifyAt.Should().Be(notifyAt.AddHours(-userHour));
+    }
+
     [Fact]
     public void RemoveRemindersForTime_WhenUserHasReminder_ThenReminderRemoved()
     {
@@ -165,7 +185,7 @@ public class UserTests
     }
 
     [Fact]
-    public void SetSignInCode_WhenCalledMultipleTImes_ThenNotSetNewCodeUntilPreviousExpires()
+    public void SetSignInCode_WhenCalledMultipleTimes_ThenNotSetNewCodeUntilPreviousExpires()
     {
         var setTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
 
@@ -282,7 +302,7 @@ public class UserTests
     }
 
     [Fact]
-    public void FinishTodoItem_WhenFinished_ThenEventRaized()
+    public void FinishTodoItem_WhenFinished_ThenEventRaised()
     {
         var user = UserGenerator.Get(newRegistered: false);
 
@@ -299,7 +319,7 @@ public class UserTests
     }
 
     [Fact]
-    public void RemoveRemindersForTime_WhenRemoved_ThenEventRaized()
+    public void RemoveRemindersForTime_WhenRemoved_ThenEventRaised()
     {
         var time = DateTime.UtcNow.GetTime();
 
