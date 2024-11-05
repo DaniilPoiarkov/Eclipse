@@ -48,14 +48,14 @@ public abstract class ImportBackgroundJobBase : IBackgroundJob<ImportEntitiesBac
 
     protected Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
     {
-        return BotClient.SendTextMessageAsync(Options.Value.Chat, message, cancellationToken: cancellationToken);
+        return BotClient.SendMessage(Options.Value.Chat, message, cancellationToken: cancellationToken);
     }
 
     protected async Task SendFailedResultAsync<T>(string caption, string fileName, List<T> failedResult, CancellationToken cancellationToken = default)
     {
         using var stream = ExcelManager.Write(failedResult);
 
-        await BotClient.SendDocumentAsync(
+        await BotClient.SendDocument(
             Options.Value.Chat,
             InputFile.FromStream(stream, fileName),
             caption: caption,

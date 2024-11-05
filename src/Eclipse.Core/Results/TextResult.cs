@@ -14,6 +14,6 @@ public sealed class TextResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.SendTextMessageAsync(ChatId, Message, cancellationToken: cancellationToken);
+        return await botClient.SendMessage(ChatId, Message, cancellationToken: cancellationToken);
     }
 }

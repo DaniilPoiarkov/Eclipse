@@ -22,7 +22,7 @@ internal sealed class ExportUsersBackgroundJob : IBackgroundJob<ExportToUserBack
     {
         using var stream = await _exportService.GetUsersAsync(cancellationToken);
 
-        await _botClient.SendDocumentAsync(
+        await _botClient.SendDocument(
             args.ChatId,
             InputFile.FromStream(stream, "users.xlsx"),
             caption: "users excel table",

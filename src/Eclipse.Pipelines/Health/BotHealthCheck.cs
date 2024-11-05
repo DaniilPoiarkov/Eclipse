@@ -15,8 +15,8 @@ public sealed class BotHealthCheck : IHealthCheck
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var me = await _botClient.GetMeAsync(cancellationToken);
-        var apiCallResult = await _botClient.TestApiAsync(cancellationToken);
+        var me = await _botClient.GetMe(cancellationToken);
+        var apiCallResult = await _botClient.TestApi(cancellationToken);
 
         var data = new Dictionary<string, object>()
         {

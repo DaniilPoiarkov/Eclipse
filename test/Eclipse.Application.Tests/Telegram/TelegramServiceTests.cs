@@ -106,7 +106,7 @@ public sealed class TelegramServiceTests
 
         var expected = Error.Failure(_errorWebhookCode, exception.Message);
 
-        _botClient.MakeRequestAsync(Arg.Any<SetWebhookRequest>()).Throws(exception);
+        _botClient.SendRequest(Arg.Any<SetWebhookRequest>()).Throws(exception);
 
         var result = await _sut.SetWebhookUrlAsync("https://valid.webhook");
 

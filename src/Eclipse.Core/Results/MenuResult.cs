@@ -18,10 +18,11 @@ public sealed class MenuResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.SendTextMessageAsync(
+        return await botClient.SendMessage(
             chatId: ChatId,
             text: Message,
             replyMarkup: Menu,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken
+        );
     }
 }

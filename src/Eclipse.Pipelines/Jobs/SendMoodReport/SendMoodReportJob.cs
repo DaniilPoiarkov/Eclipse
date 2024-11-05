@@ -149,7 +149,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
     {
         using var stream = _plotGenerator.Create(options);
 
-        await _client.SendPhotoAsync(chatId,
+        await _client.SendPhoto(chatId,
             InputFile.FromStream(stream, $"mood-report.png"),
             caption: message,
             cancellationToken: cancellationToken

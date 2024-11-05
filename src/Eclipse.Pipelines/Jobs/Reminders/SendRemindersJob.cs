@@ -67,7 +67,7 @@ internal sealed class SendRemindersJob : EclipseJobBase
             var messageSending = user.Reminders
                 .Where(specification)
                 .Select(reminder => $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}")
-                .Select(message => _botClient.SendTextMessageAsync(user.ChatId, message, cancellationToken: context.CancellationToken));
+                .Select(message => _botClient.SendMessage(user.ChatId, message, cancellationToken: context.CancellationToken));
 
             operations.AddRange(messageSending);
 

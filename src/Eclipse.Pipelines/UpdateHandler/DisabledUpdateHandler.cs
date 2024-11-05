@@ -31,6 +31,6 @@ public sealed class DisabledUpdateHandler : IEclipseUpdateHandler
             return Task.CompletedTask;
         }
 
-        return botClient.SendTextMessageAsync(context.ChatId, "Eclipse is under maintenance right now. We'll come back soon!", cancellationToken: cancellationToken);
+        return botClient.SendMessage(context.ChatId, "Eclipse is under maintenance right now. We'll come back soon!", cancellationToken: cancellationToken);
     }
 }

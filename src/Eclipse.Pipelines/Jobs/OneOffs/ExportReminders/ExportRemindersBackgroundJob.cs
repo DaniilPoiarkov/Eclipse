@@ -22,7 +22,7 @@ internal sealed class ExportRemindersBackgroundJob : IBackgroundJob<ExportToUser
     {
         using var stream = await _exportService.GetRemindersAsync(cancellationToken);
 
-        await _botClient.SendDocumentAsync(
+        await _botClient.SendDocument(
             args.ChatId,
             InputFile.FromStream(stream, "reminders.xlsx"),
             caption: "reminders excel table",

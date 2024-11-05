@@ -115,7 +115,7 @@ this.ScenarioInitialize(scenarioInfo);
                             "1",
                             "true"});
 #line 7
- testRunner.Given("An existing user with followind data:", ((string)(null)), table1, "Given ");
+ testRunner.Given("An existing user with following data:", ((string)(null)), table1, "Given ");
 #line hidden
                 TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                             "Name",

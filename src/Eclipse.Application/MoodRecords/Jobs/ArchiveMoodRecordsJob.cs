@@ -53,7 +53,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
 
         using var stream = _excelManager.Write(records);
 
-        await _telegramBotClient.SendDocumentAsync(
+        await _telegramBotClient.SendDocument(
             _options.Value.Chat,
             InputFile.FromStream(stream, $"mood-records-archive-{date:dd.MM.yyyy}.xlsx"),
             caption: "Mood records archive",

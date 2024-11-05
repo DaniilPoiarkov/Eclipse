@@ -17,6 +17,6 @@ public sealed class EditTextResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        return await botClient.EditMessageTextAsync(ChatId, MessageId, Text, cancellationToken: cancellationToken);
+        return await botClient.EditMessageText(ChatId, MessageId, Text, cancellationToken: cancellationToken);
     }
 }

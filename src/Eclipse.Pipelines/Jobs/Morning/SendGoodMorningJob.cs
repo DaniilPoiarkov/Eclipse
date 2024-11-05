@@ -57,7 +57,7 @@ internal sealed class SendGoodMorningJob : EclipseJobBase
             _localizer.UseCurrentCulture(_currentCulture);
 
             notifications.Add(
-                _botClient.SendTextMessageAsync(
+                _botClient.SendMessage(
                     chatId: user.ChatId,
                     text: _localizer["Jobs:Morning:SendGoodMorning"],
                     cancellationToken: context.CancellationToken

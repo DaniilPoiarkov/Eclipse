@@ -22,7 +22,7 @@ internal sealed class ExportTodoItemsBackgroundJob : IBackgroundJob<ExportToUser
     {
         using var stream = await _exportService.GetTodoItemsAsync(cancellationToken);
 
-        await _botClient.SendDocumentAsync(
+        await _botClient.SendDocument(
             args.ChatId,
             InputFile.FromStream(stream, "todo-items.xlsx"),
             caption: "todo items excel table",
