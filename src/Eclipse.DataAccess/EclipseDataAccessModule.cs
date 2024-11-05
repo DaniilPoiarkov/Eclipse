@@ -115,7 +115,7 @@ public static class EclipseDataAccessModule
         return services;
     }
 
-    public static async Task InitializaDataAccessModuleAsync(this WebApplication app)
+    public static async Task InitializeDataAccessModuleAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 

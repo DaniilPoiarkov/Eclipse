@@ -63,11 +63,11 @@ internal sealed class CacheService : ICacheService
         var key = new CacheKey("cache-keys");
         var keys = await GetAsync<List<string>>(key, cancellationToken) ?? [];
 
-        var removings = keys
+        var removing = keys
             .Where(k => k.StartsWith(prefix))
             .Select(k => DeleteAsync(k, cancellationToken));
 
-        await Task.WhenAll(removings);
+        await Task.WhenAll(removing);
     }
 
     private async Task AddKeyAsync(CacheKey cacheKey, CancellationToken cancellationToken)

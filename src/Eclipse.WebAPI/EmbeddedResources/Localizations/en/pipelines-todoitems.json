@@ -10,7 +10,7 @@
     "Pipelines:TodoItems:MyList:Empty": "🫣 It seems to me that you have no plans!\r\nAnyway, what about to add some?😏",
     "Pipelines:TodoItems:MyList:Error": "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can add some more plans!",
 
-    "Pipelines:TodoItems:AddItem:DiscribeWhatToAdd": "Describe what do you wanna to add or press /cancel to return",
+    "Pipelines:TodoItems:AddItem:DescribeWhatToAdd": "Describe what do you wanna to add or press /cancel to return",
     "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",
     "Pipelines:TodoItems:AddItem:Error": "Oops, something went wrong. Try again a bit later",
     "Pipelines:TodoItems:AddItem:{0}Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔"

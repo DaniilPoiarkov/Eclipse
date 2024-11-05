@@ -18,7 +18,7 @@ internal sealed class ExportUsersBackgroundJob : IBackgroundJob<ExportToUserBack
         _botClient = botClient;
     }
 
-    public async Task ExecureAsync(ExportToUserBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(ExportToUserBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         using var stream = await _exportService.GetUsersAsync(cancellationToken);
 

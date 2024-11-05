@@ -32,7 +32,7 @@ public abstract class ImportBackgroundJobBase : IBackgroundJob<ImportEntitiesBac
         Options = options;
     }
 
-    public async Task ExecureAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         try
         {

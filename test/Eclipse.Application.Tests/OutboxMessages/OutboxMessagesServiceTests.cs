@@ -76,7 +76,7 @@ public sealed class OutboxMessagesServiceTests
     }
 
     [Fact]
-    public async Task ProcessAsync_WhenExceptionOccures_ThenErrorsAreSetToMessage()
+    public async Task ProcessAsync_WhenExceptionOccurs_ThenErrorsAreSetToMessage()
     {
         var count = 10;
         var now = DateTime.UtcNow;

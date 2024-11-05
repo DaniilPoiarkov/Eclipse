@@ -27,7 +27,7 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
     {
         if (context.RefireCount > _maxRefireCount)
         {
-            _logger.LogError("Exceded refire count for job {job}.", typeof(TBackgroundJob).Name);
+            _logger.LogError("Exceeded refire count for job {job}.", typeof(TBackgroundJob).Name);
             return;
         }
 
@@ -37,7 +37,7 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
 
         try
         {
-            await _job.ExecureAsync(args, context.CancellationToken);
+            await _job.ExecuteAsync(args, context.CancellationToken);
 
             await context.Scheduler.UnscheduleJob(context.Trigger.Key);
         }

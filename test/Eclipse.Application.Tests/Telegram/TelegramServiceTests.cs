@@ -100,7 +100,7 @@ public sealed class TelegramServiceTests
     }
 
     [Fact]
-    public async Task SetWebhook_WhenExceptionThrown_ThrnFailureResultReturned()
+    public async Task SetWebhook_WhenExceptionThrown_ThenFailureResultReturned()
     {
         var exception = new Exception("error");
 

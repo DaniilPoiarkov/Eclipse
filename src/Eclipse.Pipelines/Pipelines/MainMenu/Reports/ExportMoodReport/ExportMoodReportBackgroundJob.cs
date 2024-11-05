@@ -42,7 +42,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
         _localizer = localizer;
     }
 
-    public async Task ExecureAsync(ExportMoodReportBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(ExportMoodReportBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         var result = await _userService.GetByChatIdAsync(args.ChatId, cancellationToken);
 

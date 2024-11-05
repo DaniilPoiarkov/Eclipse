@@ -17,7 +17,7 @@ public sealed class SuggestPipeline : EclipsePipelineBase
     protected override void Initialize()
     {
         RegisterStage(SendInfo);
-        RegisterStage(RecieveIdea);
+        RegisterStage(ReceiveIdea);
     }
 
     private IResult SendInfo(MessageContext context)
@@ -29,7 +29,7 @@ public sealed class SuggestPipeline : EclipsePipelineBase
         return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
     }
 
-    private async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
+    private async Task<IResult> ReceiveIdea(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.IsNullOrEmpty())
         {
