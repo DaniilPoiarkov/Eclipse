@@ -45,7 +45,7 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Text(Localizer[$"{_pipelinePrefix}:{{0}}Limit", user.TodoItems.Count]);
         }
 
-        return Text(Localizer[$"{_pipelinePrefix}:DiscribeWhatToAdd"]);
+        return Text(Localizer[$"{_pipelinePrefix}:DescribeWhatToAdd"]);
     }
 
     private async Task<IResult> SaveNewTodoItem(MessageContext context, CancellationToken cancellationToken)

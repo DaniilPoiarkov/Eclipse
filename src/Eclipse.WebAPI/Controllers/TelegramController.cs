@@ -42,7 +42,7 @@ public sealed class TelegramController : ControllerBase
     }
 
     [HttpPost("switch-handler")]
-    public async Task<IActionResult> SwichHandlerType([FromBody] SwichHandlerTypeRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SwitchHandlerType([FromBody] SwitchHandlerTypeRequest request, CancellationToken cancellationToken)
     {
         var endpoint = _configuration[$"Telegram:{Enum.GetName(request.Type)}Endpoint"];
 

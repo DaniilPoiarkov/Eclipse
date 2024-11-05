@@ -3,9 +3,9 @@
   "Texts": {
     "Pipelines:Reminders": "Let's take a look to our reminders!",
     "Pipelines:Reminders:AskForText": "Describe what do you want me to remind you or press /cancel to return",
-    "Pipelines:Reminders:ValueCannotBeEmpty": "I can't remind you this😢\r\nNow we need to start from the begginтing😔",
-    "Pipelines:Reminders:AskForTime": "Get it, write time in forman 'hh:mm'",
+    "Pipelines:Reminders:ValueCannotBeEmpty": "I can't remind you this😢\r\nUnfortunately I understand only text, write please or press /cancel to return",
+    "Pipelines:Reminders:AskForTime": "Get it, write time in forman 'hh:mm' or press /cancel to return",
     "Pipelines:Reminders:Created": "Soo..yeah!\r\nI'll send a reminder when time comes😊",
-    "Pipelines:Reminders:CannotParseTime": "Oh, I can't understand which time I should to remind you.\r\nNow we need to start from the beginning😔"
+    "Pipelines:Reminders:CannotParseTime": "Oh, I can't understand which time I should to remind you😔\r\nWrite time in forman 'hh:mm' or press /cancel to return"
   }
 }

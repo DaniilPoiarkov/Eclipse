@@ -42,7 +42,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
         _localizer = localizer;
     }
 
-    public async Task ExecureAsync(ExportMoodReportBackgroundJobArgs args, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(ExportMoodReportBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
         var result = await _userService.GetByChatIdAsync(args.ChatId, cancellationToken);
 
@@ -66,7 +66,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
 
         using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
 
-        await _botClient.SendPhotoAsync(
+        await _botClient.SendPhoto(
             args.ChatId,
             InputFile.FromStream(stream, $"mood-report-{options.To.ToOADate()}.png"),
             caption: _localizer["Pipelines:Reports:Mood:Caption"],

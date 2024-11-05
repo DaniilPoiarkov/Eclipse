@@ -48,10 +48,10 @@ public sealed class ImportTodoItemsBackgroundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
-            .MakeRequestAsync(
+            .SendRequest(
                 Arg.Is<SendMessageRequest>(x => x.Text == "All todo items imported successfully." && x.ChatId == _options.Value.Chat)
             );
 
@@ -74,10 +74,10 @@ public sealed class ImportTodoItemsBackgroundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
-            .MakeRequestAsync(
+            .SendRequest(
                 Arg.Is<SendDocumentRequest>(x => x.ChatId == _options.Value.Chat && x.Caption == "Failed to import following todo items")
             );
 
@@ -87,9 +87,9 @@ public sealed class ImportTodoItemsBackgroundJobTests
     [Fact]
     public async Task WhenBytesAreEmpty_ThenNoDependenciesCalled()
     {
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs());
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs());
 
         await _importService.DidNotReceiveWithAnyArgs().AddTodoItemsAsync(default!);
-        await _botClient.DidNotReceiveWithAnyArgs().MakeRequestAsync<SendMessageRequest>(default!);
+        await _botClient.DidNotReceiveWithAnyArgs().SendRequest<SendMessageRequest>(default!);
     }
 }

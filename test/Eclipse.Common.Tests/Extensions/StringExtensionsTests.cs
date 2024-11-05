@@ -38,7 +38,7 @@ public sealed class StringExtensionsTests
     [InlineData("test", "123", "test123")]
     [InlineData("", "123", "123")]
     [InlineData("test1", "123", "test1123")]
-    public void EnshureEndsWith_WhenCalled_ThenReturnStringWithExpectedEnding(string value, string endsWith, string expected)
+    public void EnsureEndsWith_WhenCalled_ThenReturnStringWithExpectedEnding(string value, string endsWith, string expected)
     {
         value.EnsureEndsWith(endsWith).Should().Be(expected);
     }
@@ -47,7 +47,7 @@ public sealed class StringExtensionsTests
     [InlineData("test", '1', "test1")]
     [InlineData("", '1', "1")]
     [InlineData("test1", '1', "test1")]
-    public void EnshureEndsWith_WhenCalledWithChar_ThenReturnStringWithExpectedEnding(string value, char endsWith, string expected)
+    public void EnsureEndsWith_WhenCalledWithChar_ThenReturnStringWithExpectedEnding(string value, char endsWith, string expected)
     {
         value.EnsureEndsWith(endsWith).Should().Be(expected);
     }

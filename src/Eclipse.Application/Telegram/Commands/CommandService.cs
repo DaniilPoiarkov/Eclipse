@@ -92,12 +92,12 @@ internal sealed partial class CommandService : ICommandService
 
     private Task SetCommands(IEnumerable<BotCommand> commands, CancellationToken cancellationToken = default)
     {
-        return _botClient.SetMyCommandsAsync(commands, BotCommandScope.AllPrivateChats(), cancellationToken: cancellationToken);
+        return _botClient.SetMyCommands(commands, BotCommandScope.AllPrivateChats(), cancellationToken: cancellationToken);
     }
 
     private Task<BotCommand[]> GetMyCommands(CancellationToken cancellationToken = default)
     {
-        return _botClient.GetMyCommandsAsync(
+        return _botClient.GetMyCommands(
             BotCommandScope.AllPrivateChats(),
             cancellationToken: cancellationToken);
     }

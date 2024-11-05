@@ -110,14 +110,9 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()}-{entity.Id}");
-
-        await CacheService.DeleteAsync(key, cancellationToken);
-
         entity = await Repository.UpdateAsync(entity, cancellationToken);
 
         await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
-        await CacheService.SetAsync(key, entity, CacheConsts.FiveMinutes, cancellationToken);
 
         return entity;
     }

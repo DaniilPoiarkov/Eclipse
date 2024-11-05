@@ -103,7 +103,7 @@ public sealed class CommandServiceTests
             Description = "Test"
         };
 
-        _botClient.MakeRequestAsync(Arg.Any<GetMyCommandsRequest>()).Returns([command]);
+        _botClient.SendRequest(Arg.Any<GetMyCommandsRequest>()).Returns([command]);
 
         var result = await _sut.GetList();
 

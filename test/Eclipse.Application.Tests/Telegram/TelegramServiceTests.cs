@@ -113,13 +113,13 @@ public sealed class TelegramServiceTests
     }
 
     [Fact]
-    public async Task SetWebhook_WhenExceptionThrown_ThrnFailureResultReturned()
+    public async Task SetWebhook_WhenExceptionThrown_ThenFailureResultReturned()
     {
         var exception = new Exception("error");
 
         var expected = Error.Failure(_errorWebhookCode, exception.Message);
 
-        _botClient.MakeRequestAsync(Arg.Any<SetWebhookRequest>()).Throws(exception);
+        _botClient.SendRequest(Arg.Any<SetWebhookRequest>()).Throws(exception);
 
         var result = await _sut.SetWebhookUrlAsync("https://valid.webhook");
 

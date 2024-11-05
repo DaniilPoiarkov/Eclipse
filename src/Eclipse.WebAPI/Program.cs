@@ -58,7 +58,7 @@ builder.Host.UseSerilog((context, sp, config) =>
 var app = builder.Build();
 
 app.InitializeWebApiModule();
-await app.InitializaDataAccessModuleAsync();
+await app.InitializeDataAccessModuleAsync();
 await app.InitializePipelineModuleAsync();
 
 app.Run();

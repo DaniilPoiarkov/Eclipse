@@ -22,7 +22,7 @@ internal sealed class SendSignInCodeBackgroundJob : IBackgroundJob<SendSignInCod
         _telegramService = telegramService;
     }
 
-    public Task ExecureAsync(SendSignInCodeArgs args, CancellationToken cancellationToken = default)
+    public Task ExecuteAsync(SendSignInCodeArgs args, CancellationToken cancellationToken = default)
     {
         using var _ = _currentCulture.UsingCulture(args.Culture);
 

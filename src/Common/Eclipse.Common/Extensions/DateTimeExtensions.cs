@@ -17,7 +17,7 @@ public static class DateTimeExtensions
     }
 
     /// <summary>
-    /// Returns the future day of the week or current date if it is the specified day of week and <a href="includeCurrentDaten"></a> is true.
+    /// Returns the future day of the week or current date if it is the specified day of week and <a href="includeCurrentDate"></a> is true.
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <param name="day">The day.</param>
@@ -29,7 +29,7 @@ public static class DateTimeExtensions
     }
 
     /// <summary>
-    /// Returns the past day of the week or current date if it is the specified day of week and <a href="includeCurrentDaten"></a> is true.
+    /// Returns the past day of the week or current date if it is the specified day of week and <a href="includeCurrentDate"></a> is true.
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <param name="day">The day.</param>

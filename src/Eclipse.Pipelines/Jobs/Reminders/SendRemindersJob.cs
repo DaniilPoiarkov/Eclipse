@@ -64,12 +64,12 @@ internal sealed class SendRemindersJob : EclipseJobBase
             using var _ = _currentCulture.UsingCulture(user.Culture);
             _localizer.UseCurrentCulture(_currentCulture);
 
-            var messageSendings = user.Reminders
+            var messageSending = user.Reminders
                 .Where(specification)
                 .Select(reminder => $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}")
-                .Select(message => _botClient.SendTextMessageAsync(user.ChatId, message, cancellationToken: context.CancellationToken));
+                .Select(message => _botClient.SendMessage(user.ChatId, message, cancellationToken: context.CancellationToken));
 
-            operations.AddRange(messageSendings);
+            operations.AddRange(messageSending);
 
             await _reminderService.RemoveForTimeAsync(user.Id, time, context.CancellationToken);
         }

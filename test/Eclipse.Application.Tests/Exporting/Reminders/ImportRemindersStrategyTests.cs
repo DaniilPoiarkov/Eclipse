@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.Exporting.Reminders;
 
-public sealed class ImortRemindersStrategyTests
+public sealed class ImportRemindersStrategyTests
 {
     private readonly IExcelManager _excelManager;
 
@@ -22,7 +22,7 @@ public sealed class ImortRemindersStrategyTests
 
     private readonly ImportRemindersStrategy _sut;
 
-    public ImortRemindersStrategyTests()
+    public ImportRemindersStrategyTests()
     {
         _excelManager = Substitute.For<IExcelManager>();
         _userRepository = Substitute.For<IUserRepository>();

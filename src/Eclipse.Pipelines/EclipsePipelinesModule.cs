@@ -74,7 +74,7 @@ public static class EclipsePipelinesModule
 
         await ResetWebhookAsync(serviceProvider, client);
 
-        var me = await client.GetMeAsync();
+        var me = await client.GetMe();
 
         logger.LogInformation("\tBot: {bot}", me?.Username);
         logger.LogInformation("{module} module initialized successfully", nameof(EclipsePipelinesModule));
@@ -85,7 +85,7 @@ public static class EclipsePipelinesModule
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var appUrlProvider = serviceProvider.GetRequiredService<IAppUrlProvider>();
 
-        var webhookInfo = await client.GetWebhookInfoAsync();
+        var webhookInfo = await client.GetWebhookInfo();
 
         var endpoint = configuration["Telegram:ActiveEndpoint"]!;
 
@@ -96,7 +96,7 @@ public static class EclipsePipelinesModule
             return;
         }
 
-        await client.SetWebhookAsync(
+        await client.SetWebhook(
             url: webhook,
             secretToken: configuration["Telegram:SecretToken"]
         );

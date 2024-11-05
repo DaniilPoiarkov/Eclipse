@@ -8,7 +8,7 @@ namespace Eclipse.WebAPI.Extensions;
 
 public static class RateLimiterOptionsExtensions
 {
-    public static RateLimiterOptions AddIpAddressSlidingWindow(this RateLimiterOptions options, TimeSpan window, int segmentsPerWidnow, int permitLimit)
+    public static RateLimiterOptions AddIpAddressSlidingWindow(this RateLimiterOptions options, TimeSpan window, int segmentsPerWindow, int permitLimit)
     {
         return options.AddPolicy(RateLimiterPolicies.IpAddress, context =>
             RateLimitPartition.GetSlidingWindowLimiter(
@@ -16,7 +16,7 @@ public static class RateLimiterOptionsExtensions
                 ipAddress => new SlidingWindowRateLimiterOptions
                 {
                     Window = window,
-                    SegmentsPerWindow = segmentsPerWidnow,
+                    SegmentsPerWindow = segmentsPerWindow,
                     PermitLimit = permitLimit,
                 })
         );

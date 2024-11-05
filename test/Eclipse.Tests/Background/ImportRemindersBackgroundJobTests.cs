@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Eclipse.Tests.Background;
 
-public sealed class ImportRemindersBackgoundJobTests
+public sealed class ImportRemindersBackgroundJobTests
 {
     private readonly IImportService _importService;
 
@@ -30,7 +30,7 @@ public sealed class ImportRemindersBackgoundJobTests
 
     private ImportRemindersBackgroundJob Sut => _sut.Value;
 
-    public ImportRemindersBackgoundJobTests()
+    public ImportRemindersBackgroundJobTests()
     {
         _importService = Substitute.For<IImportService>();
         _botClient = Substitute.For<ITelegramBotClient>();
@@ -48,10 +48,10 @@ public sealed class ImportRemindersBackgoundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
-            .MakeRequestAsync(
+            .SendRequest(
                 Arg.Is<SendMessageRequest>(x => x.Text == "All reminders imported successfully." && x.ChatId == _options.Value.Chat)
             );
 
@@ -74,10 +74,10 @@ public sealed class ImportRemindersBackgoundJobTests
                 Task.FromResult(result)
             );
 
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
 
         await _botClient.Received()
-            .MakeRequestAsync(
+            .SendRequest(
                 Arg.Is<SendDocumentRequest>(x => x.ChatId == _options.Value.Chat && x.Caption == "Failed to import following reminders")
             );
 
@@ -87,9 +87,9 @@ public sealed class ImportRemindersBackgoundJobTests
     [Fact]
     public async Task WhenBytesAreEmpty_ThenNoDependenciesCalled()
     {
-        await Sut.ExecureAsync(new ImportEntitiesBackgroundJobArgs());
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs());
 
         await _importService.DidNotReceiveWithAnyArgs().AddRemindersAsync(default!);
-        await _botClient.DidNotReceiveWithAnyArgs().MakeRequestAsync<SendMessageRequest>(default!);
+        await _botClient.DidNotReceiveWithAnyArgs().SendRequest<SendMessageRequest>(default!);
     }
 }

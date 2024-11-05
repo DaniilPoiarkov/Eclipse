@@ -3,7 +3,7 @@
 namespace Eclipse.WebAPI.Models;
 
 [Serializable]
-public sealed class SwichHandlerTypeRequest
+public sealed class SwitchHandlerTypeRequest
 {
     public HandlerType Type { get; set; }
 }
