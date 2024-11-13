@@ -164,7 +164,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
 
         var trigger = TriggerBuilder.Create()
             .ForJob(context.JobDetail.Key)
-            .StartAt(date.NextDayOfWeek(DayOfWeek.Sunday))
+            .StartAt(date.NextDayOfWeek(DayOfWeek.Sunday).WithTime(0, 0))
             .WithSimpleSchedule(schedule => schedule
                 .WithIntervalInMinutes(_oneMinute)
                 .RepeatForever())
