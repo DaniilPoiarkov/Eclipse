@@ -63,7 +63,7 @@ public sealed class ReminderServiceTests
     [Fact]
     public async Task CreateReminderAsync_WhenUserNotExists_ThenEntityNotFoundExceptionThrown()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        var expectedError = DefaultErrors.EntityNotFound<User>();
 
         var reminderCreateDto = new ReminderCreateDto
         {

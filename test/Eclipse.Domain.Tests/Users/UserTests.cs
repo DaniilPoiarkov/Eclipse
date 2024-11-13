@@ -161,7 +161,7 @@ public class UserTests
     [Fact]
     public void FinishItem_WhenItemWithSpecifiedIdNotExists_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem));
+        var expectedError = DefaultErrors.EntityNotFound<TodoItem>();
 
         var result = _sut.FinishItem(Guid.NewGuid());
 

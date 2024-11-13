@@ -43,7 +43,7 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         var result = await strategy.UpdateAsync(user, cancellationToken);
