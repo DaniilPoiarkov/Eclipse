@@ -17,7 +17,7 @@ namespace Eclipse.Localization.Tests;
 
 public sealed class CurrentCultureTests
 {
-    private readonly IStringLocalizer<CurrentCultureTests> _localizer;
+    private readonly TypedJsonStringLocalizer<CurrentCultureTests> _localizer;
 
     private readonly CurrentCulture _sut;
 

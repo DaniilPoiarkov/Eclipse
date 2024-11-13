@@ -19,7 +19,7 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
         AddJobWithEveryMinuteFire<SendRemindersJob>(options);
         AddJobWithEveryMinuteFire<RemindToFinishTodoItemsJob>(options);
         AddJobWithEveryMinuteFire<SendGoodMorningJob>(options);
-        AddMoodReportJob(options);
+        AddJobWithEveryMinuteFire<SendMoodReportJob>(options);
     }
 
     private static void AddJobWithEveryMinuteFire<TJob>(QuartzOptions options)
@@ -30,24 +30,9 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
         options.AddJob<TJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(
                 trigger => trigger.ForJob(jobKey)
-                    .WithSimpleSchedule(s => s.WithIntervalInMinutes(_oneMinuteScanInterval)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInMinutes(_oneMinuteScanInterval)
                     .RepeatForever())
                     .StartNow()
             );
-    }
-
-    private static void AddMoodReportJob(QuartzOptions options)
-    {
-        var key = JobKey.Create(nameof(SendMoodReportJob));
-
-        options.AddJob<SendMoodReportJob>(job => job.WithIdentity(key))
-            .AddTrigger(trigger => trigger.ForJob(key)
-                .WithCalendarIntervalSchedule(schedule =>
-                    schedule.WithIntervalInMinutes(_oneMinuteScanInterval))
-                .StartAt(
-                    DateTime.UtcNow
-                        .NextDayOfWeek(DayOfWeek.Sunday, true)
-                        .WithTime(0, 0)
-                ));
     }
 }

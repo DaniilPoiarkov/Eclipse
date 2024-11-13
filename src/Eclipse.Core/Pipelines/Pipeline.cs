@@ -31,10 +31,10 @@ public abstract class Pipeline
         new MultipleActionsResult(results);
 
     protected static IResult Menu(IEnumerable<KeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
-        Menu(new List<IEnumerable<KeyboardButton>>() { buttons }, message, inputPlaceholder, resize);
+        Menu([buttons], message, inputPlaceholder, resize);
 
     protected static IResult Menu(IEnumerable<InlineKeyboardButton> buttons, string message) =>
-        Menu(new List<IEnumerable<InlineKeyboardButton>>() { buttons }, message);
+        Menu([buttons], message);
 
     protected static IResult Menu(IEnumerable<IEnumerable<KeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
     {
