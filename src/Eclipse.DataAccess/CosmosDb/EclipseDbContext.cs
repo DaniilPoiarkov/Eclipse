@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Eclipse.DataAccess.CosmosDb;
 
+#pragma warning disable CS8618
+
 public sealed class EclipseDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }

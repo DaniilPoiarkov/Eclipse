@@ -48,7 +48,7 @@ internal sealed class MoodRecordsService : IMoodRecordsService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         var record = user.CreateMoodRecord(model.State, _timeProvider.Now.WithTime(0, 0));
@@ -64,7 +64,7 @@ internal sealed class MoodRecordsService : IMoodRecordsService
 
         if (record is null || record.UserId != userId)
         {
-            return DefaultErrors.EntityNotFound(typeof(MoodRecord));
+            return DefaultErrors.EntityNotFound<MoodRecord>();
         }
 
         return record.ToDto();

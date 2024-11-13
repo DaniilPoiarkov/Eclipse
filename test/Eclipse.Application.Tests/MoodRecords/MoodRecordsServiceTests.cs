@@ -124,7 +124,7 @@ public sealed class MoodRecordsServiceTests
     [Fact]
     public async Task CreateOrUpdateAsync_WhenUserNotExists_ThenFailedResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        var expectedError = DefaultErrors.EntityNotFound<User>();
 
         var model = new CreateMoodRecordDto
         {
@@ -164,7 +164,7 @@ public sealed class MoodRecordsServiceTests
     [Fact]
     public async Task GetByIdAsync_WhenRecordExist_AndHasAnotherUserId_ThenFailedResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(MoodRecord));
+        var expectedError = DefaultErrors.EntityNotFound<MoodRecord>();
 
         var moodRecord = new MoodRecord(Guid.NewGuid(), Guid.NewGuid(), MoodState.Good, DateTime.UtcNow);
 

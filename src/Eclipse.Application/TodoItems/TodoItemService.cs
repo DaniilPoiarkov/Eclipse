@@ -27,7 +27,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         var result = await CreateAsync(user, model, cancellationToken);
@@ -46,7 +46,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         var result = await CreateAsync(user, model, cancellationToken);
@@ -77,7 +77,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         var result = user.FinishItem(itemId);
@@ -98,7 +98,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         return user.TodoItems.Select(item => item.ToDto()).ToList();
@@ -110,14 +110,14 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         var item = user.GetTodoItem(todoItemId);
 
         if (item is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(TodoItem));
+            return DefaultErrors.EntityNotFound<TodoItem>();
         }
 
         return item.ToDto();

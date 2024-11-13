@@ -73,7 +73,7 @@ public sealed class AccountServiceTests
     public async Task SendSignInCodeAsync_ShouldReturnEntityNotFound_WhenUserIsNull()
     {
         var userName = "nonexistentUser";
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        var expected = DefaultErrors.EntityNotFound<User>();
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
 
         var result = await _sut.SendSignInCodeAsync(userName);

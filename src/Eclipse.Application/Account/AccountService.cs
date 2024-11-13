@@ -29,7 +29,7 @@ internal sealed class AccountService : IAccountService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         user.SetSignInCode(_timeProvider.Now);

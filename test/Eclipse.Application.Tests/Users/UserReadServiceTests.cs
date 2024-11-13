@@ -48,7 +48,7 @@ public sealed class UserReadServiceTests
     [Fact]
     public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        var expectedError = DefaultErrors.EntityNotFound<User>();
 
         var result = await Sut.GetByIdAsync(Guid.NewGuid());
 

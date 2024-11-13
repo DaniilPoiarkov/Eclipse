@@ -39,7 +39,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetAsync_WhenUserNotExist_ThenErrorReturned()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        var expected = DefaultErrors.EntityNotFound<User>();
 
         var result = await _sut.GetAsync(Guid.NewGuid(), Guid.NewGuid());
 
@@ -50,7 +50,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetListAsync_WhenUserNotExist_ThenErrorReturned()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        var expected = DefaultErrors.EntityNotFound<User>();
 
         var result = await _sut.GetListAsync(Guid.NewGuid());
 
@@ -76,7 +76,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task FinishItemAsync_WhenUserNotExist_ThenErrorReturned()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        var expected = DefaultErrors.EntityNotFound<User>();
 
         var result = await _sut.FinishItemAsync(1, Guid.NewGuid());
 
@@ -177,7 +177,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserNotExistsAndIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        var expectedError = DefaultErrors.EntityNotFound<User>();
 
         var createModel = new CreateTodoItemDto
         {
@@ -276,7 +276,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserNotExistsAndChatIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User));
+        var expectedError = DefaultErrors.EntityNotFound<User>();
 
         var createModel = new CreateTodoItemDto
         {
@@ -328,7 +328,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetAsync_WhenTodoItemNotFound_ThenErrorReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem));
+        var expectedError = DefaultErrors.EntityNotFound<TodoItem>();
         var user = CreateUser(0);
 
         _repository.FindAsync(user.Id).Returns(user);
