@@ -84,7 +84,8 @@ public sealed class AccountServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User))
             .Return("Entity user not found");
 
-        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expected = DefaultErrors.EntityNotFound<User>(_localizer);
+
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
 
         var result = await _sut.SendSignInCodeAsync(userName);

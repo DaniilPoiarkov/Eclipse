@@ -50,7 +50,7 @@ public sealed class TodoItemsServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User).Name)
             .Return($"{nameof(User)} not found");
 
-        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expected = DefaultErrors.EntityNotFound<User>(_localizer);
 
         var result = await _sut.GetAsync(Guid.NewGuid(), Guid.NewGuid());
 
@@ -65,7 +65,7 @@ public sealed class TodoItemsServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User).Name)
             .Return($"{nameof(User)} not found");
 
-        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expected = DefaultErrors.EntityNotFound<User>(_localizer);
 
         var result = await _sut.GetListAsync(Guid.NewGuid());
 
@@ -95,7 +95,7 @@ public sealed class TodoItemsServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User).Name)
             .Return($"{nameof(User)} not found");
 
-        var expected = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expected = DefaultErrors.EntityNotFound<User>(_localizer);
 
         var result = await _sut.FinishItemAsync(1, Guid.NewGuid());
 
@@ -218,7 +218,7 @@ public sealed class TodoItemsServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User).Name)
             .Return($"{nameof(User)} not found");
 
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expectedError = DefaultErrors.EntityNotFound<User>(_localizer);
 
         var createModel = new CreateTodoItemDto
         {
@@ -328,7 +328,7 @@ public sealed class TodoItemsServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User).Name)
             .Return("User not found");
 
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expectedError = DefaultErrors.EntityNotFound<User>(_localizer);
 
         var createModel = new CreateTodoItemDto
         {
@@ -381,7 +381,8 @@ public sealed class TodoItemsServiceTests
             .ForWithArgs("Entity:NotFound", typeof(TodoItem).Name)
             .Return("Todo item not found");
 
-        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem), _localizer);
+        var expectedError = DefaultErrors.EntityNotFound<TodoItem>(_localizer);
+
         var user = CreateUser(0);
 
         _repository.FindAsync(user.Id).Returns(user);

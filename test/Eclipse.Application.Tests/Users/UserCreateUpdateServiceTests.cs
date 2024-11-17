@@ -43,7 +43,7 @@ public sealed class UserCreateUpdateServiceTests
     [Fact]
     public async Task UpdateAsync_WhenUserWithSpecifiedIdNotExist_ThenExceptionThrown()
     {
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        var expected = DefaultErrors.EntityNotFound<User>();
         var result = await _sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto());
 
         result.IsSuccess.Should().BeFalse();

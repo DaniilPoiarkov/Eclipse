@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Jobs.Evening;
@@ -23,21 +24,25 @@ internal sealed class SendGoodMorningJob : EclipseJobBase
 
     private readonly IUserService _userService;
 
+    private readonly ITimeProvider _timeProvider;
+
     public SendGoodMorningJob(
         ITelegramBotClient botClient,
         IStringLocalizer<CollectMoodRecordsJob> localizer,
         ICurrentCulture currentCulture,
-        IUserService userService)
+        IUserService userService,
+        ITimeProvider timeProvider)
     {
         _botClient = botClient;
         _localizer = localizer;
         _currentCulture = currentCulture;
         _userService = userService;
+        _timeProvider = timeProvider;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var time = DateTime.UtcNow.GetTime();
+        var time = _timeProvider.Now.GetTime();
 
         var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled

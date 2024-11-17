@@ -48,7 +48,7 @@ internal sealed class LoginManager : ILoginManager
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User), _localizer);
+            return DefaultErrors.EntityNotFound<User>(_localizer);
         }
 
         if (!user.IsValidSignInCode(_timeProvider.Now, request.SignInCode))

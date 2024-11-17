@@ -69,7 +69,7 @@ public sealed class ReminderServiceTests
             .ForWithArgs("Entity:NotFound", typeof(User))
             .Return("User not found");
 
-        var expectedError = DefaultErrors.EntityNotFound(typeof(User), _localizer);
+        var expectedError = DefaultErrors.EntityNotFound<User>(_localizer);
 
         var reminderCreateDto = new ReminderCreateDto
         {

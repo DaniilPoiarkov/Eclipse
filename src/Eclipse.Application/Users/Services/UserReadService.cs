@@ -50,7 +50,7 @@ internal sealed class UserReadService : IUserReadService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         return user.ToDto();
@@ -62,7 +62,7 @@ internal sealed class UserReadService : IUserReadService
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         return user.ToDto();
