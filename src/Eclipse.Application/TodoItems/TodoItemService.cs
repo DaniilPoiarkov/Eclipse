@@ -30,14 +30,9 @@ internal sealed class TodoItemService : ITodoItemService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await CreateAsync(user, model, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        return user.ToDto();
+        return await user.AddTodoItem(model.Text, _timeProvider.Now)
+            .TapAsync(_ => _userManager.UpdateAsync(user, cancellationToken))
+            .BindAsync(_ => user.ToDto());
     }
 
     public async Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
@@ -49,26 +44,9 @@ internal sealed class TodoItemService : ITodoItemService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await CreateAsync(user, model, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        return result.Value.ToDto();
-    }
-
-    private async Task<Result<TodoItem>> CreateAsync(User user, CreateTodoItemDto model, CancellationToken cancellationToken)
-    {
-        var result = user.AddTodoItem(model.Text, _timeProvider.Now);
-
-        if (result.IsSuccess)
-        {
-            await _userManager.UpdateAsync(user, cancellationToken);
-        }
-
-        return result;
+        return await user.AddTodoItem(model.Text, _timeProvider.Now)
+            .TapAsync(_ => _userManager.UpdateAsync(user, cancellationToken))
+            .BindAsync(todoItem =>  todoItem.ToDto());
     }
 
     public async Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
@@ -80,16 +58,9 @@ internal sealed class TodoItemService : ITodoItemService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = user.FinishItem(itemId);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        await _userManager.UpdateAsync(user, cancellationToken);
-
-        return user.ToDto();
+        return await user.FinishItem(itemId)
+            .TapAsync(_ => _userManager.UpdateAsync(user, cancellationToken))
+            .BindAsync(_ => user.ToDto());
     }
 
     public async Task<Result<List<TodoItemDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)

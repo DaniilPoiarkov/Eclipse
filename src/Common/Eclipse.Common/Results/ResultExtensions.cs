@@ -26,4 +26,38 @@ public static class ResultExtensions
 
         return result.IsSuccess ? ok(result.Value) : error(result.Error);
     }
+
+    /// <summary>
+    /// Bind current result to another result.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="K"></typeparam>
+    /// <param name="result">The result.</param>
+    /// <param name="bind">The bind.</param>
+    /// <returns></returns>
+    public static async Task<Result<T>> BindAsync<T, K>(this Task<Result<K>> result, Func<K, T> bind)
+    {
+        var res = await result;
+
+        return res.IsSuccess
+            ? bind(res.Value)
+            : res.Error;
+    }
+
+    /// <summary>
+    /// Execute action and return current result.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="result">The result.</param>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
+    public static async Task<Result<T>> TapAsync<T>(this Result<T> result, Func<T, Task> action)
+    {
+        if (result.IsSuccess)
+        {
+            await action(result.Value);
+        }
+
+        return result;
+    }
 }
