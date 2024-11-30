@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: ${{ github.workspace }}/coverage-reports/Cobertura.xml
+          path: ${{ github.workspace }}/coverage-reports
           retention-days: 3
 
       - name: Publish code coverage summary
