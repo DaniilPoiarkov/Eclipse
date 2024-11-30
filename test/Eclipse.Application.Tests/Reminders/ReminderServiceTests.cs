@@ -18,16 +18,12 @@ public sealed class ReminderServiceTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly Lazy<IReminderService> _lazySut;
-    private IReminderService Sut => _lazySut.Value;
+    private readonly ReminderService _sut;
 
     public ReminderServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _lazySut = new Lazy<IReminderService>(
-            () => new ReminderService(
-                new UserManager(_repository)
-            ));
+        _sut = new ReminderService(new UserManager(_repository));
     }
 
     [Fact]
@@ -44,7 +40,7 @@ public sealed class ReminderServiceTests
         _repository.GetByExpressionAsync(_ => true)!
             .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
 
-        var result = await Sut.CreateAsync(user.ChatId, reminderCreateDto);
+        var result = await _sut.CreateAsync(user.ChatId, reminderCreateDto);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -71,7 +67,7 @@ public sealed class ReminderServiceTests
             Text = "Test"
         };
 
-        var result = await Sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
+        var result = await _sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
 
         result.IsSuccess.Should().BeFalse();
 
@@ -107,7 +103,7 @@ public sealed class ReminderServiceTests
             .Returns(Task.FromResult<User?>(user));
 
         // Act
-        var result = await Sut.RemoveForTimeAsync(user.Id, time);
+        var result = await _sut.RemoveForTimeAsync(user.Id, time);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -122,5 +118,29 @@ public sealed class ReminderServiceTests
         leftReminder.NotifyAt.Should().Be(futureTime);
 
         await _repository.Received().UpdateAsync(user);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    public async Task CreateAsync_WhenUserNotFoundByChatId_ThenErrorReturned(long chatId)
+    {
+        _repository.GetByExpressionAsync(u => u.ChatId == chatId).Returns([]);
+
+        var result = await _sut.CreateAsync(chatId, new ReminderCreateDto());
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
+    }
+
+    [Fact]
+    public async Task CreateAsync_WhenUserNotFoundById_ThenErrorReturned()
+    {
+        var id = Guid.NewGuid();
+        _repository.GetByExpressionAsync(u => u.Id == id).Returns([]);
+
+        var result = await _sut.CreateAsync(id, new ReminderCreateDto());
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
 }
