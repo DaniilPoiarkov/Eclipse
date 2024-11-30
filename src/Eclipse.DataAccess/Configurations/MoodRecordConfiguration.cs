@@ -20,5 +20,10 @@ internal class MoodRecordConfiguration : IEntityTypeConfiguration<MoodRecord>
     {
         builder.ToContainer(_options.Value.Container)
             .HasPartitionKey(mr => mr.Id);
+
+        builder.HasDiscriminator<string>("Discriminator")
+            .HasValue(nameof(MoodRecord));
+
+        builder.HasDiscriminatorInJsonId();
     }
 }

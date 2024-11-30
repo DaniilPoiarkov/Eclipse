@@ -20,5 +20,10 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
     {
         builder.ToContainer(_options.Value.Container)
             .HasPartitionKey(m => m.Id);
+
+        builder.HasDiscriminator<string>("Discriminator")
+            .HasValue(nameof(OutboxMessage));
+
+        builder.HasDiscriminatorInJsonId();
     }
 }
