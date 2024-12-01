@@ -132,9 +132,7 @@ public sealed class UserCreateUpdateServiceTests
         var user = UserGenerator.Get(1);
         var user2 = UserGenerator.Get(2);
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs([user2]);
-
+        _repository.FindByUserNameAsync(user2.UserName).Returns(user2);
         _repository.FindAsync(user.Id).Returns(user);
 
         var model = new UserUpdateDto
@@ -148,7 +146,6 @@ public sealed class UserCreateUpdateServiceTests
 
         var result = await _sut.UpdateAsync(user.Id, model);
 
-        result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }

@@ -10,22 +10,22 @@ namespace Eclipse.Application.Account;
 
 internal sealed class AccountService : IAccountService
 {
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
     private readonly ITimeProvider _timeProvider;
 
     private readonly IBackgroundJobManager _backgroundJobManager;
 
-    public AccountService(UserManager userManager, ITimeProvider timeProvider, IBackgroundJobManager backgroundJobManager)
+    public AccountService(IUserRepository userRepository, ITimeProvider timeProvider, IBackgroundJobManager backgroundJobManager)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
         _timeProvider = timeProvider;
         _backgroundJobManager = backgroundJobManager;
     }
 
     public async Task<Result> SendSignInCodeAsync(string userName, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByUserNameAsync(userName, cancellationToken);
+        var user = await _userRepository.FindByUserNameAsync(userName, cancellationToken);
 
         if (user is null)
         {
@@ -34,7 +34,7 @@ internal sealed class AccountService : IAccountService
 
         user.SetSignInCode(_timeProvider.Now);
 
-        await _userManager.UpdateAsync(user, cancellationToken);
+        await _userRepository.UpdateAsync(user, cancellationToken);
 
         await _backgroundJobManager.EnqueueAsync<SendSignInCodeBackgroundJob, SendSignInCodeArgs>(new SendSignInCodeArgs
         {

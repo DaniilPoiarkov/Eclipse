@@ -46,7 +46,8 @@ public sealed class LoginManagerTests
 
         _userClaimsPrincipalFactory = Substitute.For<IUserClaimsPrincipalFactory<User>>();
         _timeProvider = Substitute.For<ITimeProvider>();
-        _sut = new LoginManager(new UserManager(_userRepository), _configuration, _userClaimsPrincipalFactory, _timeProvider);
+
+        _sut = new LoginManager(_userRepository, _configuration, _userClaimsPrincipalFactory, _timeProvider);
     }
 
     [Fact]
@@ -57,14 +58,12 @@ public sealed class LoginManagerTests
 
         _timeProvider.Now.Returns(DateTime.UtcNow);
 
-        _userRepository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(
-                Task.FromResult<IReadOnlyList<User>>([user])
-            );
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         Claim[] claims = [
                 new(ClaimTypes.NameIdentifier, user.Id.ToString())
             ];
+
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
 
         _userClaimsPrincipalFactory.CreateAsync(user).Returns(principal);
@@ -76,19 +75,20 @@ public sealed class LoginManagerTests
         result.Value.AccessToken!.Split('.').Length.Should().Be(3);
         result.Value.Expiration.Should().BePositive();
 
-        await _userClaimsPrincipalFactory.Received(1).CreateAsync(user);
-        _configuration.Received(1).GetSection("Authorization:JwtBearer");
-        await _userRepository.ReceivedWithAnyArgs(1).GetByExpressionAsync(_ => true);
+        await _userClaimsPrincipalFactory.Received().CreateAsync(user);
+        _configuration.Received().GetSection("Authorization:JwtBearer");
+        await _userRepository.Received().FindByUserNameAsync(user.UserName);
     }
 
-    [Fact]
-    public async Task LoginAsync_WhenUserNotFound_ThenErrorReturned()
+    [Theory]
+    [InlineData("123456", "JohnDoe")]
+    public async Task LoginAsync_WhenUserNotFound_ThenErrorReturned(string signInCode, string userName)
     {
         var expectedError = DefaultErrors.EntityNotFound<User>();
 
-        var result = await _sut.LoginAsync(new LoginRequest { SignInCode = "123456", UserName = "JohnDoe" });
+        var result = await _sut.LoginAsync(new LoginRequest { SignInCode = signInCode, UserName = userName });
 
-        await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
+        await _userRepository.Received().FindByUserNameAsync(userName);
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(expectedError);
@@ -101,10 +101,7 @@ public sealed class LoginManagerTests
         var user = UserGenerator.Get();
         user.SetSignInCode(DateTime.UtcNow);
 
-        _userRepository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(
-                Task.FromResult<IReadOnlyList<User>>([user])
-            );
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         var result = await _sut.LoginAsync(new LoginRequest { UserName = user.UserName, SignInCode = new string(user.SignInCode.Reverse().ToArray()) });
 

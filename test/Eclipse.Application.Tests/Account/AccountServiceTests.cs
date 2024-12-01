@@ -30,7 +30,8 @@ public sealed class AccountServiceTests
         _userRepository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
         _backgroundJobManager = Substitute.For<IBackgroundJobManager>();
-        _sut = new AccountService(new UserManager(_userRepository), _timeProvider, _backgroundJobManager);
+
+        _sut = new AccountService(_userRepository, _timeProvider, _backgroundJobManager);
     }
 
     [Fact]
@@ -43,10 +44,7 @@ public sealed class AccountServiceTests
 
         var expiredSignInCode = user.SignInCode;
 
-        _userRepository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(
-                Task.FromResult<IReadOnlyList<User>>([user])
-            );
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         var now = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(15, 0));
 
@@ -87,7 +85,7 @@ public sealed class AccountServiceTests
         var user = UserGenerator.Get();
         user.SetSignInCode(DateTime.UtcNow.AddMinutes(-10));
 
-        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([user]);
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         var utcNow = DateTime.UtcNow;
         _timeProvider.Now.Returns(utcNow);
@@ -121,8 +119,7 @@ public sealed class AccountServiceTests
         var code = user.SignInCode;
         var expiration = user.SignInCodeExpiresAt;
 
-        _userRepository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs([user]);
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         _timeProvider.Now.Returns(utcNow);
 

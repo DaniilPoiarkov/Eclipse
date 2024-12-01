@@ -66,25 +66,4 @@ public sealed class UserManager
 
         return await _repository.CreateAsync(user, cancellationToken);
     }
-
-    public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
-    {
-        if (userName.IsNullOrEmpty())
-        {
-            return null;
-        }
-
-        return (await _repository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
-            .SingleOrDefault();
-    }
-
-    public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
-    {
-        return _repository.UpdateAsync(user, cancellationToken);
-    }
-
-    public Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return _repository.FindAsync(id, cancellationToken);
-    }
 }

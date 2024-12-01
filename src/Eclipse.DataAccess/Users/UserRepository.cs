@@ -15,4 +15,14 @@ internal sealed class UserRepository : RepositoryBase<User>, IUserRepository
     {
         return DbSet.FirstOrDefaultAsync(u => u.ChatId == chatId, cancellationToken);
     }
+
+    public Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
+    {
+        if (userName.IsNullOrEmpty())
+        {
+            return Task.FromResult<User?>(null);
+        }
+
+        return DbSet.FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
+    }
 }

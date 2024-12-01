@@ -25,4 +25,21 @@ internal sealed class CachedUserRepository : CachedRepositoryBase<User, IUserRep
 
         return user;
     }
+
+    public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
+    {
+        var key = $"{GetPrefix()}-user-name-{userName}";
+        var user = await CacheService.GetAsync<User>(key, cancellationToken);
+
+        if (user is not null)
+        {
+            return user;
+        }
+
+        user = await Repository.FindByUserNameAsync(userName, cancellationToken);
+
+        await CacheService.SetAsync(key, user, CacheConsts.OneDay, cancellationToken);
+
+        return user;
+    }
 }

@@ -32,12 +32,12 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
 
     public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return UpdateInternal(id, new FullUpdateStrategy(model, _userManager), cancellationToken);
+        return UpdateInternal(id, new FullUpdateStrategy(model, _userRepository), cancellationToken);
     }
 
     public Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return UpdateInternal(id, new PartialUpdateStrategy(model, _userManager), cancellationToken);
+        return UpdateInternal(id, new PartialUpdateStrategy(model, _userRepository), cancellationToken);
     }
 
     private async Task<Result<UserDto>> UpdateInternal(Guid id, IUserUpdateStrategy strategy, CancellationToken cancellationToken)
