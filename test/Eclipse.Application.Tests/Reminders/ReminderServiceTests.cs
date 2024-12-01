@@ -39,8 +39,7 @@ public sealed class ReminderServiceTests
             Text = text
         };
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs([user]);
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var result = await _sut.CreateAsync(user.ChatId, create);
 

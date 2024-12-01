@@ -22,11 +22,9 @@ public sealed class LocalizationDecoratorTests
 
     private readonly ICurrentCulture _currentCulture;
 
-    private readonly Lazy<LocalizationDecorator> _lazySut;
-
     private readonly Func<MessageContext, CancellationToken, Task<IResult>> _execution;
 
-    private LocalizationDecorator Sut => _lazySut.Value;
+    private readonly LocalizationDecorator _sut;
 
     public LocalizationDecoratorTests()
     {
@@ -36,11 +34,7 @@ public sealed class LocalizationDecoratorTests
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
 
-        _lazySut = new Lazy<LocalizationDecorator>(
-            () => new LocalizationDecorator(
-                new UserManager(_repository),
-                _cultureTracker,
-                _currentCulture));
+        _sut = new LocalizationDecorator(new UserManager(_repository), _cultureTracker, _currentCulture);
     }
 
     [Fact]
@@ -53,15 +47,15 @@ public sealed class LocalizationDecoratorTests
 
         _cultureTracker.GetAsync(user.ChatId).ReturnsNull();
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
-        await Sut.Decorate(_execution, context);
+        await _sut.Decorate(_execution, context);
 
         _currentCulture.Received().UsingCulture(user.Culture);
-        await _repository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
 
-        await _cultureTracker.ReceivedWithAnyArgs().GetAsync(user.ChatId);
-        await _cultureTracker.ReceivedWithAnyArgs().ResetAsync(user.ChatId, user.Culture);
+        await _repository.Received().FindByChatIdAsync(user.ChatId);
+
+        await _cultureTracker.Received().GetAsync(user.ChatId);
+        await _cultureTracker.Received().ResetAsync(user.ChatId, user.Culture);
     }
 }

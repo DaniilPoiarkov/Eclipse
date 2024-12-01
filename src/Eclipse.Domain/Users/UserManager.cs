@@ -1,17 +1,15 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Repositories;
 
-using System.Linq.Expressions;
-
 namespace Eclipse.Domain.Users;
 
 public sealed class UserManager
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserRepository _repository;
 
-    public UserManager(IUserRepository userRepository)
+    public UserManager(IUserRepository repository)
     {
-        _userRepository = userRepository;
+        _repository = repository;
     }
 
     /// <summary>Creates the user asynchronous.</summary>
@@ -51,9 +49,10 @@ public sealed class UserManager
             return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Id));
         }
 
-        var alreadyExist = await _userRepository.ContainsAsync(
+        var alreadyExist = await _repository.ContainsAsync(
             expression: u => u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty() && u.UserName == request.UserName),
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken
+        );
 
         if (alreadyExist)
         {
@@ -65,27 +64,7 @@ public sealed class UserManager
 
         user.SetGmt(request.Gmt);
 
-        return await _userRepository.CreateAsync(user, cancellationToken);
-    }
-
-    public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
-    {
-        return _userRepository.UpdateAsync(user, cancellationToken);
-    }
-
-    public Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return _userRepository.GetAllAsync(cancellationToken);
-    }
-
-    public Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return _userRepository.FindAsync(id, cancellationToken);
-    }
-
-    public Task<IReadOnlyList<User>> GetByExpressionAsync(Expression<Func<User, bool>> expression, CancellationToken cancellationToken = default)
-    {
-        return _userRepository.GetByExpressionAsync(expression, cancellationToken);
+        return await _repository.CreateAsync(user, cancellationToken);
     }
 
     public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
@@ -95,13 +74,22 @@ public sealed class UserManager
             return null;
         }
 
-        return (await _userRepository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
+        return (await _repository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
             .SingleOrDefault();
     }
 
-    public async Task<User?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
-        return (await _userRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
-            .SingleOrDefault();
+        return _repository.UpdateAsync(user, cancellationToken);
+    }
+
+    public Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return _repository.FindAsync(id, cancellationToken);
+    }
+
+    public Task<User?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
+    {
+        return _repository.FindByChatIdAsync(chatId, cancellationToken);
     }
 }
