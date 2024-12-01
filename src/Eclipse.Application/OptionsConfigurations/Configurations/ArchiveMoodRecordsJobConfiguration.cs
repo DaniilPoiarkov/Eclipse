@@ -14,6 +14,9 @@ internal sealed class ArchiveMoodRecordsJobConfiguration : IJobConfiguration
             .AddTrigger(trigger => trigger.ForJob(jobKey)
                 .WithCalendarIntervalSchedule(schedule =>
                     schedule.WithIntervalInMonths(1))
-                .StartAt(DateTime.UtcNow.NextMonth()));
+                .StartAt(
+                    DateTime.UtcNow.NextMonth()
+                        .WithTime(0, 0)
+                    ));
     }
 }
