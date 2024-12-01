@@ -5,7 +5,6 @@ using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -36,8 +35,7 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.CreateAsync(new UserCreateDto());
 
         result.IsSuccess.Should().BeFalse();
-
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -47,22 +45,18 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto());
 
         result.IsSuccess.Should().BeFalse();
+        result.Error.Should().BeEquivalentTo(expected);
 
-        ErrorComparer.AreEqual(expected, result.Error);
-
-        await _repository.DidNotReceive().UpdateAsync(default!);
+        await _repository.DidNotReceive().UpdateAsync(Arg.Any<User>());
     }
 
     [Fact]
     public async Task UpdateAsync_WhenUserNameChanged_ThenUserUpdated()
     {
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
-        _repository.FindAsync(user.Id)
-            .Returns(Task.FromResult<User?>(user));
-
-        _repository.UpdateAsync(user)
-            .Returns(Task.FromResult(user));
+        _repository.FindAsync(user.Id).Returns(user);
+        _repository.UpdateAsync(user).Returns(user);
 
         var updateDto = new UserUpdateDto
         {
@@ -139,7 +133,7 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.UpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }
 
@@ -168,7 +162,7 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.UpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }
 
@@ -209,7 +203,7 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.UpdatePartialAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }
 
