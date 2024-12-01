@@ -160,8 +160,6 @@ internal sealed class SendMoodReportJob : EclipseJobBase
     {
         var scheduler = context.Scheduler;
 
-        await scheduler.PauseJob(context.JobDetail.Key, context.CancellationToken);
-
         var trigger = TriggerBuilder.Create()
             .ForJob(context.JobDetail.Key)
             .StartAt(date.NextDayOfWeek(DayOfWeek.Sunday).WithTime(0, 0))
