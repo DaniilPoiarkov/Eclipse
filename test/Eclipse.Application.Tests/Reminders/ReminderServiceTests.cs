@@ -24,7 +24,7 @@ public sealed class ReminderServiceTests
     public ReminderServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _sut = new ReminderService(new UserManager(_repository));
+        _sut = new ReminderService(_repository);
     }
 
     [Theory]

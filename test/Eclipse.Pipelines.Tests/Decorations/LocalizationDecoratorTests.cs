@@ -34,7 +34,7 @@ public sealed class LocalizationDecoratorTests
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
 
-        _sut = new LocalizationDecorator(new UserManager(_repository), _cultureTracker, _currentCulture);
+        _sut = new LocalizationDecorator(_repository, _cultureTracker, _currentCulture);
     }
 
     [Fact]

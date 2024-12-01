@@ -13,11 +13,11 @@ internal sealed class TestPipeline : EclipsePipelineBase
 {
     private static readonly DateTime _release = new FileInfo(typeof(TestPipeline).GetTypeInfo().Assembly.Location).LastWriteTimeUtc;
 
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
-    public TestPipeline(UserManager userManager)
+    public TestPipeline(IUserRepository userRepository)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
     }
 
     protected override void Initialize()
@@ -27,7 +27,7 @@ internal sealed class TestPipeline : EclipsePipelineBase
 
     private async Task<IResult> TriggerTestEventAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByChatIdAsync(context.ChatId, cancellationToken);
+        var user = await _userRepository.FindByChatIdAsync(context.ChatId, cancellationToken);
 
         if (user is null)
         {
@@ -36,7 +36,7 @@ internal sealed class TestPipeline : EclipsePipelineBase
 
         user.TriggerTestEvent();
 
-        await _userManager.UpdateAsync(user, cancellationToken);
+        await _userRepository.UpdateAsync(user, cancellationToken);
 
         return Text($"{_release:dd.MM.yyyy HH:mm} | Test triggered successfully.");
     }

@@ -11,19 +11,19 @@ namespace Eclipse.Application.TodoItems;
 
 internal sealed class TodoItemService : ITodoItemService
 {
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
     private readonly ITimeProvider _timeProvider;
 
-    public TodoItemService(UserManager userManager, ITimeProvider timeProvider)
+    public TodoItemService(IUserRepository userRepository, ITimeProvider timeProvider)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
         _timeProvider = timeProvider;
     }
 
     public async Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+        var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
@@ -42,7 +42,7 @@ internal sealed class TodoItemService : ITodoItemService
 
     public async Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
@@ -65,7 +65,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         if (result.IsSuccess)
         {
-            await _userManager.UpdateAsync(user, cancellationToken);
+            await _userRepository.UpdateAsync(user, cancellationToken);
         }
 
         return result;
@@ -73,7 +73,7 @@ internal sealed class TodoItemService : ITodoItemService
 
     public async Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+        var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
@@ -87,14 +87,14 @@ internal sealed class TodoItemService : ITodoItemService
             return result.Error;
         }
 
-        await _userManager.UpdateAsync(user, cancellationToken);
+        await _userRepository.UpdateAsync(user, cancellationToken);
 
         return user.ToDto();
     }
 
     public async Task<Result<List<TodoItemDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
@@ -106,7 +106,7 @@ internal sealed class TodoItemService : ITodoItemService
 
     public async Task<Result<TodoItemDto>> GetAsync(Guid userId, Guid todoItemId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {

@@ -13,8 +13,6 @@ using FluentAssertions;
 
 using NSubstitute;
 
-using System.Linq.Expressions;
-
 using Xunit;
 
 namespace Eclipse.Application.Tests.TodoItems;
@@ -32,7 +30,7 @@ public sealed class TodoItemsServiceTests
         _repository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new TodoItemService(new UserManager(_repository), _timeProvider);
+        _sut = new TodoItemService(_repository, _timeProvider);
     }
 
     [Fact]

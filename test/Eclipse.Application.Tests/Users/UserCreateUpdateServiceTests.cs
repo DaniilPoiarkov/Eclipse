@@ -25,7 +25,7 @@ public sealed class UserCreateUpdateServiceTests
     {
         _repository = Substitute.For<IUserRepository>();
 
-        _sut = new UserCreateUpdateService(new UserManager(_repository));
+        _sut = new UserCreateUpdateService(new UserManager(_repository), _repository);
     }
 
     [Fact]

@@ -87,9 +87,4 @@ public sealed class UserManager
     {
         return _repository.FindAsync(id, cancellationToken);
     }
-
-    public Task<User?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
-    {
-        return _repository.FindByChatIdAsync(chatId, cancellationToken);
-    }
 }

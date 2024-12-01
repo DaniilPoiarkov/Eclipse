@@ -33,9 +33,7 @@ public sealed class MoodRecordsServiceTests
         _userRepository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
 
-        var manager = new UserManager(_userRepository);
-
-        _sut = new(_repository, manager, _timeProvider);
+        _sut = new(_repository, _userRepository, _timeProvider);
     }
 
     [Fact]

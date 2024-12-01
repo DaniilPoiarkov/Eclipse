@@ -11,14 +11,14 @@ internal sealed class MoodRecordsService : IMoodRecordsService
 {
     private readonly IMoodRecordRepository _repository;
 
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
     private readonly ITimeProvider _timeProvider;
 
-    public MoodRecordsService(IMoodRecordRepository repository, UserManager userManager, ITimeProvider timeProvider)
+    public MoodRecordsService(IMoodRecordRepository repository, IUserRepository userRepository, ITimeProvider timeProvider)
     {
         _repository = repository;
-        _userManager = userManager;
+        _userRepository = userRepository;
         _timeProvider = timeProvider;
     }
 
@@ -44,7 +44,7 @@ internal sealed class MoodRecordsService : IMoodRecordsService
 
     private async Task<Result<MoodRecordDto>> CreateAsync(Guid userId, CreateMoodRecordDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
