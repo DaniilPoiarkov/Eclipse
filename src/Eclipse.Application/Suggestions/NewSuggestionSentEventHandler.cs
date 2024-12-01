@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Results;
 using Eclipse.Common.Telegram;
 using Eclipse.Domain.Suggestions;
 
@@ -26,11 +27,12 @@ public sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSugg
 
     public async Task Handle(NewSuggestionSentDomainEvent notification, CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetByChatIdAsync(notification.ChatId, cancellationToken);
+        var result = await _userService.GetByChatIdAsync(notification.ChatId, cancellationToken);
 
-        var message = userResult.IsSuccess
-            ? $"Suggestion from {userResult.Value.Name}{userResult.Value.UserName.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{notification.Text}"
-            : $"Suggestion from unknown user with chat id {notification.ChatId}:{Environment.NewLine}{notification.Text}";
+        var message = result.Match(
+            user => $"Suggestion from {user.Name}{user.UserName.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{notification.Text}",
+            _ => $"Suggestion from unknown user with chat id {notification.ChatId}:{Environment.NewLine}{notification.Text}"
+        );
 
         var send = new SendMessageModel
         {

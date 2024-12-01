@@ -17,5 +17,6 @@ internal sealed class SuggestionsSheetsService : EclipseSheetsService<Suggestion
     {
     }
 
-    protected override string Range => Configuration["Sheets:SuggestionsRange"]!;
+    protected override string Range => Configuration["Sheets:SuggestionsRange"]
+        ?? throw new InvalidDataException("Suggestions range not provided.");
 }
