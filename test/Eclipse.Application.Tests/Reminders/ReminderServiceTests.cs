@@ -132,7 +132,11 @@ public sealed class ReminderServiceTests
     [Fact]
     public async Task GetAsync_WhenReminderNotExist_ThenErrorReturned()
     {
-        var result = await _sut.GetAsync(Guid.NewGuid(), Guid.NewGuid());
+        var user = UserGenerator.Get();
+
+        _repository.FindAsync(user.Id).Returns(user);
+
+        var result = await _sut.GetAsync(user.Id, Guid.NewGuid());
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<Reminder>());
     }
 
@@ -176,7 +180,7 @@ public sealed class ReminderServiceTests
     }
 
     [Fact]
-    public async Task RemodeForTime_WhenUserNotExist_ThenErrorReturned()
+    public async Task RemoveForTime_WhenUserNotExist_ThenErrorReturned()
     {
         var result = await _sut.RemoveForTimeAsync(Guid.NewGuid(), new TimeOnly());
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
