@@ -43,10 +43,10 @@ public sealed class SuggestionsSheetsServiceTests
             Arg.Any<IObjectParser<Suggestion>>()
         ).Returns([suggestion]);
 
-        var result = await _sut.GetAllAsync();
+        var suggestions = (await _sut.GetAllAsync()).ToList();
 
-        result.Count.Should().Be(1);
-        result[0].Should().Be(suggestion);
+        suggestions.Count.Should().Be(1);
+        suggestions[0].Should().Be(suggestion);
     }
 
     [Fact]
