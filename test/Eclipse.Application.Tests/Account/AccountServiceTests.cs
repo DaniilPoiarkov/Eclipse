@@ -6,7 +6,6 @@ using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -79,7 +78,7 @@ public sealed class AccountServiceTests
         var result = await _sut.SendSignInCodeAsync(userName);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]

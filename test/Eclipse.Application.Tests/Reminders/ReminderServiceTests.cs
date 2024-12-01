@@ -70,20 +70,16 @@ public sealed class ReminderServiceTests
         var result = await _sut.CreateAsync(Guid.NewGuid(), reminderCreateDto);
 
         result.IsSuccess.Should().BeFalse();
+        result.Error.Should().BeEquivalentTo(expectedError);
 
-        var error = result.Error;
-        error.Code.Should().Be(error.Code);
-        error.Description.Should().Be(error.Description);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
-        error.Type.Should().Be(expectedError.Type);
-        await _repository.DidNotReceive().UpdateAsync(default!);
+        await _repository.DidNotReceive().UpdateAsync(Arg.Any<User>());
     }
 
     [Fact]
     public async Task RemoveRemindersForTime_WhenUserHaveRemindersForTime_ThenDtoWithoutSpecifiedRemindersReturned()
     {
         // Arrange
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
         var faker = new Faker();
 
@@ -99,8 +95,7 @@ public sealed class ReminderServiceTests
 
         user.AddReminder(text, futureTime);
 
-        _repository.FindAsync(user.Id)
-            .Returns(Task.FromResult<User?>(user));
+        _repository.FindAsync(user.Id).Returns(user);
 
         // Act
         var result = await _sut.RemoveForTimeAsync(user.Id, time);
@@ -110,7 +105,7 @@ public sealed class ReminderServiceTests
 
         var dto = result.Value;
         dto.Should().NotBeNull();
-        dto.Id.Should().Be(dto.Id);
+        dto.Id.Should().Be(user.Id);
         dto.Reminders.Count.Should().Be(1);
 
         var leftReminder = dto.Reminders[0];

@@ -5,7 +5,6 @@ using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -92,7 +91,7 @@ public sealed class LoginManagerTests
         await _userRepository.ReceivedWithAnyArgs().GetByExpressionAsync(_ => true);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(expectedError, result.Error);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 
     [Fact]
@@ -110,6 +109,6 @@ public sealed class LoginManagerTests
         var result = await _sut.LoginAsync(new LoginRequest { UserName = user.UserName, SignInCode = new string(user.SignInCode.Reverse().ToArray()) });
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(expectedError, result.Error);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 }

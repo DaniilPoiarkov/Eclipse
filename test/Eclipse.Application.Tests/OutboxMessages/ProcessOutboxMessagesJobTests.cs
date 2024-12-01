@@ -33,7 +33,7 @@ public sealed class ProcessOutboxMessagesJobTests
     public async Task Execute_WhenTriggered_ThenRetrievesConfigurationAndCallsService(int count)
     {
         var section = Substitute.For<IConfigurationSection>();
-        section.GetValue<int>("ProcessCount").Returns(count);
+        section.GetSection("ProcessCount").Value.Returns($"{count}");
 
         _configuration.GetSection("OutboxMessages").Returns(section);
 

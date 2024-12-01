@@ -8,7 +8,6 @@ using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -44,7 +43,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.GetAsync(Guid.NewGuid(), Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -55,7 +54,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.GetListAsync(Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -81,8 +80,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.FinishItemAsync(1, Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
-
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -97,7 +95,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.FinishItemAsync(user.ChatId, Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Theory]
@@ -131,7 +129,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItemsAndIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
+        var expected = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         var user = CreateUser(7);
 
         _repository.FindAsync(user.Id).Returns(user);
@@ -144,10 +142,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.CreateAsync(user.Id, createModel);
 
         result.IsSuccess.Should().BeFalse();
-
-        var error = result.Error;
-        ErrorComparer.AreEqual(error, expectedError);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Theory]
@@ -155,7 +150,7 @@ public sealed class TodoItemsServiceTests
     [InlineData("        ")]
     public async Task CreateAsync_WhenTextIsInvalidAndIdSpecified_ThenErrorReturned(string text)
     {
-        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
+        var expected = TodoItemDomainErrors.TodoItemIsEmpty();
         var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
@@ -168,16 +163,13 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.CreateAsync(user.Id, createModel);
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
-
-        ErrorComparer.AreEqual(expectedError, error);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
     public async Task CreateAsync_WhenUserNotExistsAndIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound<User>();
+        var expected = DefaultErrors.EntityNotFound<User>();
 
         var createModel = new CreateTodoItemDto
         {
@@ -187,10 +179,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.CreateAsync(Guid.NewGuid(), createModel);
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
-
-        ErrorComparer.AreEqual(expectedError, error);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Theory]
@@ -228,7 +217,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserReachLimitOfItemsAndChatIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
+        var expected = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         var user = CreateUser(7);
 
         _repository.GetByExpressionAsync(_ => true)
@@ -242,10 +231,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
-
-        var error = result.Error;
-        ErrorComparer.AreEqual(error, expectedError);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Theory]
@@ -253,7 +239,7 @@ public sealed class TodoItemsServiceTests
     [InlineData("        ")]
     public async Task CreateAsync_WhenTextIsInvalidAndChatIdSpecified_ThenErrorReturned(string text)
     {
-        var expectedError = TodoItemDomainErrors.TodoItemIsEmpty();
+        var expected = TodoItemDomainErrors.TodoItemIsEmpty();
         var user = UserGenerator.Get();
 
         _repository.GetByExpressionAsync(_ => true)
@@ -267,16 +253,13 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
-
-        ErrorComparer.AreEqual(expectedError, error);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
     public async Task CreateAsync_WhenUserNotExistsAndChatIdSpecified_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound<User>();
+        var expected = DefaultErrors.EntityNotFound<User>();
 
         var createModel = new CreateTodoItemDto
         {
@@ -286,10 +269,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.CreateAsync(2, createModel);
 
         result.IsSuccess.Should().BeFalse();
-        var error = result.Error;
-
-        ErrorComparer.AreEqual(expectedError, error);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Theory]
@@ -328,7 +308,7 @@ public sealed class TodoItemsServiceTests
     [Fact]
     public async Task GetAsync_WhenTodoItemNotFound_ThenErrorReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound<TodoItem>();
+        var expected = DefaultErrors.EntityNotFound<TodoItem>();
         var user = CreateUser(0);
 
         _repository.FindAsync(user.Id).Returns(user);
@@ -336,7 +316,7 @@ public sealed class TodoItemsServiceTests
         var result = await _sut.GetAsync(user.Id, Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expectedError);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     private static bool IsValidTodoItem(TodoItemDto item, User user)
