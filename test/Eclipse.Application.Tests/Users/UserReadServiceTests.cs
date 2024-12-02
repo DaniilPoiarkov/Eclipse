@@ -1,9 +1,7 @@
-﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Users.Services;
+﻿using Eclipse.Application.Users.Services;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -17,29 +15,24 @@ public sealed class UserReadServiceTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly Lazy<IUserReadService> _lazySut;
-
-    private IUserReadService Sut => _lazySut.Value;
+    private readonly UserReadService _sut;
 
     public UserReadServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
 
-        _lazySut = new Lazy<IUserReadService>(
-            () => new UserReadService(
-                new UserManager(_repository),
-                _repository
-            ));
+        _sut = new UserReadService(_repository);
     }
 
-    [Fact]
-    public async Task GetAllAsync_WhenUsersExists_ThenProperDataReturned()
+    [Theory]
+    [InlineData(5)]
+    public async Task GetAllAsync_WhenUsersExists_ThenProperDataReturned(int count)
     {
-        var count = 5;
         var users = UserGenerator.Generate(count);
-        _repository.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<User>>(users));
 
-        var result = await Sut.GetAllAsync();
+        _repository.GetAllAsync().Returns(users);
+
+        var result = await _sut.GetAllAsync();
 
         result.Count.Should().Be(count);
         result.All(r => users.Any(u => u.Id == r.Id)).Should().BeTrue();
@@ -48,12 +41,8 @@ public sealed class UserReadServiceTests
     [Fact]
     public async Task GetByIdAsync_WhenUserWithGivenIdNotExist_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound<User>();
+        var result = await _sut.GetByIdAsync(Guid.NewGuid());
 
-        var result = await Sut.GetByIdAsync(Guid.NewGuid());
-
-        result.IsSuccess.Should().BeFalse();
-
-        ErrorComparer.AreEqual(result.Error, expectedError);
+        result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
 }

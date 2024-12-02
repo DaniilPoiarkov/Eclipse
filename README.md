@@ -81,7 +81,7 @@ Data persistence with EF Core Cosmos Db provider.
 * Telegram API
 
 ### Tech stack
-* ASP.NET 8
+* ASP.NET 9
 * Quartz
 * Azure CosmosDb
 * Polly

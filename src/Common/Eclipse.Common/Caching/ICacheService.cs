@@ -9,8 +9,6 @@ public interface ICacheService
 
     Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default);
 
-    Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default);
-
     Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default);
 
     Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default);

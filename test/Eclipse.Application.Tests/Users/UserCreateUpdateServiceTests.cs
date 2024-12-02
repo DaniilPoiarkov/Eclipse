@@ -1,11 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Tests.Users.TestData;
+using Eclipse.Application.Users;
 using Eclipse.Application.Users.Services;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -25,7 +25,7 @@ public sealed class UserCreateUpdateServiceTests
     {
         _repository = Substitute.For<IUserRepository>();
 
-        _sut = new UserCreateUpdateService(new UserManager(_repository));
+        _sut = new UserCreateUpdateService(new UserManager(_repository), _repository);
     }
 
     [Fact]
@@ -35,9 +35,7 @@ public sealed class UserCreateUpdateServiceTests
 
         var result = await _sut.CreateAsync(new UserCreateDto());
 
-        result.IsSuccess.Should().BeFalse();
-
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -46,39 +44,32 @@ public sealed class UserCreateUpdateServiceTests
         var expected = DefaultErrors.EntityNotFound<User>();
         var result = await _sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto());
 
-        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().BeEquivalentTo(expected);
 
-        ErrorComparer.AreEqual(expected, result.Error);
-
-        await _repository.DidNotReceive().UpdateAsync(default!);
+        await _repository.DidNotReceive().UpdateAsync(Arg.Any<User>());
     }
 
     [Fact]
     public async Task UpdateAsync_WhenUserNameChanged_ThenUserUpdated()
     {
-        var user = UserGenerator.Generate(1).First();
+        var user = UserGenerator.Get();
 
-        _repository.FindAsync(user.Id)
-            .Returns(Task.FromResult<User?>(user));
+        _repository.FindAsync(user.Id).Returns(user);
+        _repository.UpdateAsync(user).Returns(user);
 
-        _repository.UpdateAsync(user)
-            .Returns(Task.FromResult(user));
-
-        var updateDto = new UserUpdateDto
+        var update = new UserUpdateDto
         {
             UserName = "new_username",
             Name = "new_name",
             Surname = "new_surname"
         };
 
-        var result = await _sut.UpdateAsync(user.Id, updateDto);
-
-        result.IsSuccess.Should().BeTrue();
+        var result = await _sut.UpdateAsync(user.Id, update);
 
         var value = result.Value;
-        value.UserName.Should().Be(updateDto.UserName);
-        value.Name.Should().Be(updateDto.Name);
-        value.Surname.Should().Be(updateDto.Surname);
+        value.UserName.Should().Be(update.UserName);
+        value.Name.Should().Be(update.Name);
+        value.Surname.Should().Be(update.Surname);
 
         await _repository.Received().FindAsync(user.Id);
         await _repository.Received().UpdateAsync(user);
@@ -95,17 +86,7 @@ public sealed class UserCreateUpdateServiceTests
 
         var result = await _sut.UpdateAsync(user.Id, model);
 
-        result.IsSuccess.Should().BeTrue();
-
-        var value = result.Value;
-
-        value.Id.Should().Be(user.Id);
-        value.Name.Should().Be(model.Name);
-        value.Surname.Should().Be(model.Surname);
-        value.UserName.Should().Be(model.UserName);
-        value.Culture.Should().Be(model.Culture);
-        value.NotificationsEnabled.Should().Be(model.NotificationsEnabled);
-        value.Gmt.Should().Be(user.Gmt);
+        user.ToDto().Should().BeEquivalentTo(result.Value);
 
         user.Name.Should().Be(model.Name);
         user.Surname.Should().Be(model.Surname);
@@ -139,7 +120,7 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.UpdateAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }
 
@@ -151,9 +132,7 @@ public sealed class UserCreateUpdateServiceTests
         var user = UserGenerator.Get(1);
         var user2 = UserGenerator.Get(2);
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs([user2]);
-
+        _repository.FindByUserNameAsync(user2.UserName).Returns(user2);
         _repository.FindAsync(user.Id).Returns(user);
 
         var model = new UserUpdateDto
@@ -167,8 +146,7 @@ public sealed class UserCreateUpdateServiceTests
 
         var result = await _sut.UpdateAsync(user.Id, model);
 
-        result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }
 
@@ -209,7 +187,7 @@ public sealed class UserCreateUpdateServiceTests
         var result = await _sut.UpdatePartialAsync(user.Id, model);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
         await _repository.DidNotReceive().UpdateAsync(user);
     }
 

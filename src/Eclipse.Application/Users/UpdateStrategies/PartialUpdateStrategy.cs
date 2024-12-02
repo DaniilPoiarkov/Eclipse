@@ -8,12 +8,12 @@ internal sealed class PartialUpdateStrategy : IUserUpdateStrategy
 {
     private readonly UserPartialUpdateDto _model;
 
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
-    public PartialUpdateStrategy(UserPartialUpdateDto model, UserManager userManager)
+    public PartialUpdateStrategy(UserPartialUpdateDto model, IUserRepository userRepository)
     {
         _model = model;
-        _userManager = userManager;
+        _userRepository = userRepository;
     }
 
     public async Task<Result<User>> UpdateAsync(User user, CancellationToken cancellationToken = default)
@@ -84,7 +84,7 @@ internal sealed class PartialUpdateStrategy : IUserUpdateStrategy
             return Error.Validation("Users.Update", "{0}IsRequired", nameof(_model.UserName));
         }
 
-        var userNameReserved = await _userManager.FindByUserNameAsync(_model.UserName, cancellationToken);
+        var userNameReserved = await _userRepository.FindByUserNameAsync(_model.UserName, cancellationToken);
 
         if (userNameReserved is not null && userNameReserved.ChatId != user.ChatId)
         {

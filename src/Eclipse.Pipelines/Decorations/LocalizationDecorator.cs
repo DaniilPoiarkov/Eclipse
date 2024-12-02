@@ -8,15 +8,15 @@ namespace Eclipse.Pipelines.Decorations;
 
 public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
     private readonly ICultureTracker _cultureTracker;
 
     private readonly ICurrentCulture _currentCulture;
 
-    public LocalizationDecorator(UserManager userManager, ICultureTracker cultureTracker, ICurrentCulture currentCulture)
+    public LocalizationDecorator(IUserRepository userRepository, ICultureTracker cultureTracker, ICurrentCulture currentCulture)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
         _cultureTracker = cultureTracker;
         _currentCulture = currentCulture;
     }
@@ -27,7 +27,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
         if (culture is null)
         {
-            var user = await _userManager.FindByChatIdAsync(context.ChatId, cancellationToken);
+            var user = await _userRepository.FindByChatIdAsync(context.ChatId, cancellationToken);
 
             if (user is not null)
             {

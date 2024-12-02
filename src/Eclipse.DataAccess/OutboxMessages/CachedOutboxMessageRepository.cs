@@ -15,20 +15,13 @@ internal sealed class CachedOutboxMessageRepository : CachedRepositoryBase<Outbo
         await Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
     }
 
-    public async Task<List<OutboxMessage>> GetNotProcessedAsync(int count, CancellationToken cancellationToken = default)
+    public Task<List<OutboxMessage>> GetNotProcessedAsync(int count, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()}-not-processed-{count}");
-        var outboxMessages = await CacheService.GetAsync<List<OutboxMessage>>(key, cancellationToken);
-
-        if (outboxMessages is not null)
-        {
-            return outboxMessages;
-        }
-
-        outboxMessages = await Repository.GetNotProcessedAsync(count, cancellationToken);
-
-        await CacheService.SetAsync(key, outboxMessages, CacheConsts.FiveMinutes, cancellationToken);
-
-        return outboxMessages;
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()}-not-processed-{count}",
+            () => Repository.GetNotProcessedAsync(count, cancellationToken),
+            CacheConsts.FiveMinutes,
+            cancellationToken
+        );
     }
 }

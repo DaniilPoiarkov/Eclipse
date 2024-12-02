@@ -6,7 +6,6 @@ using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -34,9 +33,7 @@ public sealed class MoodRecordsServiceTests
         _userRepository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
 
-        var manager = new UserManager(_userRepository);
-
-        _sut = new(_repository, manager, _timeProvider);
+        _sut = new(_repository, _userRepository, _timeProvider);
     }
 
     [Fact]
@@ -134,8 +131,7 @@ public sealed class MoodRecordsServiceTests
         var result = await _sut.CreateOrUpdateAsync(Guid.NewGuid(), model);
 
         result.IsSuccess.Should().BeFalse();
-
-        ErrorComparer.AreEqual(expectedError, result.Error);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 
     [Fact]
@@ -173,7 +169,6 @@ public sealed class MoodRecordsServiceTests
         var result = await _sut.GetByIdAsync(Guid.NewGuid(), moodRecord.Id);
 
         result.IsSuccess.Should().BeFalse();
-
-        ErrorComparer.AreEqual(expectedError, result.Error);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 }

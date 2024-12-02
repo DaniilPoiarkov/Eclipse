@@ -9,15 +9,11 @@ namespace Eclipse.Tests.Bdd.Application.Users.StepDefinitions;
 [Binding]
 internal sealed class UpdateAsyncStepDefinitions
 {
-    private readonly Lazy<UserManager> _lazyManager;
-
     private readonly IUserRepository _repository;
 
     private readonly UserUpdateDto _updateDto = new();
 
-    private readonly Lazy<IUserCreateUpdateService> _lazySut;
-
-    private IUserCreateUpdateService Sut => _lazySut.Value;
+    private readonly UserCreateUpdateService _sut;
 
     private UserDto _result = new();
 
@@ -27,11 +23,9 @@ internal sealed class UpdateAsyncStepDefinitions
     {
         _repository = Substitute.For<IUserRepository>();
 
-        _lazyManager = new Lazy<UserManager>(() => new UserManager(_repository));
+        var manager = new UserManager(_repository);
 
-        _lazySut = new Lazy<IUserCreateUpdateService>(
-            () => new UserCreateUpdateService(_lazyManager.Value)
-        );
+        _sut = new UserCreateUpdateService(manager, _repository);
     }
 
     [Given("An existing user with following data:")]
@@ -62,7 +56,7 @@ internal sealed class UpdateAsyncStepDefinitions
         _updateDto.Culture = row["Culture"];
         _updateDto.NotificationsEnabled = bool.Parse(row["NotificationsEnabled"]);
 
-        _result = await Sut.UpdateAsync(_user.Id, _updateDto);
+        _result = await _sut.UpdateAsync(_user.Id, _updateDto);
     }
 
     [Then("The user details should be updated successfully")]

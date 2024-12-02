@@ -33,14 +33,4 @@ public sealed class ObjectExtensionsTests
     {
         value.ToDateTime().Should().Be(expected);
     }
-
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(true, true)]
-    [InlineData(null, false)]
-    [InlineData("true", true)]
-    public void ToBool_WhenCalled_ThenProperResultReturned(object? value, bool expected)
-    {
-        value.ToBool().Should().Be(expected);
-    }
 }

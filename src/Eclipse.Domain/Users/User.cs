@@ -85,26 +85,9 @@ public sealed class User : AggregateRoot
         var reminder = new Reminder(id, Id, text, notifyAt.Add(Gmt * -1));
         _reminders.Add(reminder);
 
+        AddEvent(new ReminderAddedDomainEvent(id, Id, Gmt, notifyAt, text, Culture, ChatId));
+
         return reminder;
-    }
-
-    /// <summary>Removes the reminders which matches provided time.</summary>
-    /// <param name="time">The time.</param>
-    /// <returns>Removed Reminders</returns>
-    public IReadOnlyList<Reminder> RemoveRemindersForTime(TimeOnly time)
-    {
-        var reminders = _reminders
-            .Where(new ReminderNotifyAtSpecification(time))
-            .ToList();
-
-        foreach (var reminder in reminders)
-        {
-            _reminders.Remove(reminder);
-        }
-
-        AddEvent(new RemindersReceivedDomainEvent(Id, reminders.Count));
-
-        return reminders;
     }
 
     /// <summary>Sets the GMT by given input with user local time.</summary>
@@ -218,19 +201,22 @@ public sealed class User : AggregateRoot
             && utcNow < SignInCodeExpiresAt;
     }
 
-    public TodoItem? GetTodoItem(Guid todoItemId)
-    {
-        return _todoItems.FirstOrDefault(item => item.Id == todoItemId);
-    }
-
-    public Reminder? GetReminder(Guid reminderId)
-    {
-        return _reminders.FirstOrDefault(reminder => reminder.Id == reminderId);
-    }
-
     public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
     {
         return new MoodRecord(Guid.NewGuid(), Id, state, createdAt.WithTime(0, 0));
+    }
+
+    public Reminder? ReceiveReminder(Guid reminderId)
+    {
+        var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
+
+        if (reminder is not null)
+        {
+            _reminders.Remove(reminder);
+            AddEvent(new RemindersReceivedDomainEvent(Id));
+        }
+
+        return reminder;
     }
 
     public override string ToString()

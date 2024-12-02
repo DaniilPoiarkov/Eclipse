@@ -154,4 +154,24 @@ public sealed class OutboxMessagesServiceTests
 
         await _repository.Received().UpdateRangeAsync(messages);
     }
+
+    [Theory]
+    [InlineData(1)]
+    public async Task ProcessAsync_WhenMessageCannotBeDeserialized_ThenErrorSet(int count)
+    {
+        var utcNow = DateTime.UtcNow;
+
+        _timeProvider.Now.Returns(utcNow);
+        var message = new OutboxMessage(Guid.NewGuid(), "", "", utcNow);
+        _repository.GetNotProcessedAsync(count).Returns([message]);
+
+        await _sut.ProcessAsync(count);
+
+        message.Error.Should().Be("Cannot deserialize an event");
+        message.ProcessedAt.Should().Be(utcNow);
+
+        await _repository.Received().UpdateRangeAsync(
+            Arg.Is<IEnumerable<OutboxMessage>>(m => m.Contains(message))
+        );
+    }
 }

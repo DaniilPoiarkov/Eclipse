@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Telegram;
 using Eclipse.Common.Results;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -111,6 +110,6 @@ public sealed class TelegramServiceTests
         var result = await _sut.SetWebhookUrlAsync("https://valid.webhook");
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(expected, result.Error);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 }

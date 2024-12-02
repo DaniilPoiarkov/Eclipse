@@ -16,9 +16,9 @@ public sealed class UserStatistics : Entity
         UserId = userId;
     }
 
-    public void ReminderReceived(int count)
+    public void ReminderReceived()
     {
-        RemindersReceived += count;
+        RemindersReceived++;
     }
 
     public void TodoItemFinished()

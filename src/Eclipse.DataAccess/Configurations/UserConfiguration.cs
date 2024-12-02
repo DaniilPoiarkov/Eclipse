@@ -20,5 +20,10 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToContainer(_options.Value.Container)
             .HasPartitionKey(u => u.Id);
+
+        builder.HasDiscriminator<string>("Discriminator")
+            .HasValue(nameof(User));
+
+        builder.HasDiscriminatorInJsonId();
     }
 }

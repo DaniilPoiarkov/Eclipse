@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\Eclipse.Core\Eclipse.Core.csproj" />
     <ProjectReference Include="..\Eclipse.Application\Eclipse.Application.csproj" />
-    <ProjectReference Include="..\Eclipse.Core\Eclipse.Core.csproj" />
   </ItemGroup>
 
 </Project>

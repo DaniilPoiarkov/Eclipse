@@ -8,12 +8,12 @@ internal sealed class FullUpdateStrategy : IUserUpdateStrategy
 {
     private readonly UserUpdateDto _model;
 
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
-    public FullUpdateStrategy(UserUpdateDto model, UserManager userManager)
+    public FullUpdateStrategy(UserUpdateDto model, IUserRepository userRepository)
     {
         _model = model;
-        _userManager = userManager;
+        _userRepository = userRepository;
     }
 
     public async Task<Result<User>> UpdateAsync(User user, CancellationToken cancellationToken = default)
@@ -50,7 +50,7 @@ internal sealed class FullUpdateStrategy : IUserUpdateStrategy
             return user;
         }
 
-        var userNameReserved = await _userManager.FindByUserNameAsync(_model.UserName, cancellationToken);
+        var userNameReserved = await _userRepository.FindByUserNameAsync(_model.UserName, cancellationToken);
 
         if (userNameReserved is not null && userNameReserved.ChatId != user.ChatId)
         {

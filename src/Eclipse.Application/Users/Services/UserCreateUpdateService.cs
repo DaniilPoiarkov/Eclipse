@@ -10,9 +10,12 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
 {
     private readonly UserManager _userManager;
 
-    public UserCreateUpdateService(UserManager userManager)
+    private readonly IUserRepository _userRepository;
+
+    public UserCreateUpdateService(UserManager userManager, IUserRepository userRepository)
     {
         _userManager = userManager;
+        _userRepository = userRepository;
     }
 
     public async Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default)
@@ -29,17 +32,17 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
 
     public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return UpdateInternal(id, new FullUpdateStrategy(model, _userManager), cancellationToken);
+        return UpdateInternal(id, new FullUpdateStrategy(model, _userRepository), cancellationToken);
     }
 
     public Task<Result<UserDto>> UpdatePartialAsync(Guid id, UserPartialUpdateDto model, CancellationToken cancellationToken = default)
     {
-        return UpdateInternal(id, new PartialUpdateStrategy(model, _userManager), cancellationToken);
+        return UpdateInternal(id, new PartialUpdateStrategy(model, _userRepository), cancellationToken);
     }
 
     private async Task<Result<UserDto>> UpdateInternal(Guid id, IUserUpdateStrategy strategy, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken);
+        var user = await _userRepository.FindAsync(id, cancellationToken);
 
         if (user is null)
         {
@@ -53,6 +56,6 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
             return result.Error;
         }
 
-        return (await _userManager.UpdateAsync(user, cancellationToken)).ToDto();
+        return (await _userRepository.UpdateAsync(user, cancellationToken)).ToDto();
     }
 }

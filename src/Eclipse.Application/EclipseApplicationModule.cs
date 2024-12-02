@@ -91,13 +91,16 @@ public static class EclipseApplicationModule
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo<IJob>())
+            .AsSelfWithInterfaces()
+            .WithScopedLifetime());
+
         services.AddMediatR(cfg =>
         {
             cfg.NotificationPublisher = new TaskWhenAllPublisher();
             cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
         });
-
-        services.AddQuartz();
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 

@@ -35,15 +35,6 @@ public sealed class StringExtensionsTests
     }
 
     [Theory]
-    [InlineData("test", "123", "test123")]
-    [InlineData("", "123", "123")]
-    [InlineData("test1", "123", "test1123")]
-    public void EnsureEndsWith_WhenCalled_ThenReturnStringWithExpectedEnding(string value, string endsWith, string expected)
-    {
-        value.EnsureEndsWith(endsWith).Should().Be(expected);
-    }
-
-    [Theory]
     [InlineData("test", '1', "test1")]
     [InlineData("", '1', "1")]
     [InlineData("test1", '1', "test1")]
