@@ -113,7 +113,7 @@ internal sealed class TodoItemService : ITodoItemService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var item = user.GetTodoItem(todoItemId);
+        var item = user.TodoItems.FirstOrDefault(item => item.Id == todoItemId);
 
         if (item is null)
         {

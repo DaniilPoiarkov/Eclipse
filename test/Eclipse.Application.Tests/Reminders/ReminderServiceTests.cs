@@ -156,30 +156,4 @@ public sealed class ReminderServiceTests
         var result = await _sut.GetListAsync(Guid.NewGuid());
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
-
-    [Theory]
-    [InlineData("test")]
-    public async Task RemoveRemindersForTime_WhenUserHaveRemindersForTime_ThenDtoWithoutSpecifiedRemindersReturned(string text)
-    {
-        var user = UserGenerator.Get();
-        var time = new TimeOnly();
-
-        user.AddReminder(text, time);
-
-        var reminder = user.AddReminder(text, time.AddHours(1));
-
-        _repository.FindAsync(user.Id).Returns(user);
-
-        var result = await _sut.RemoveForTimeAsync(user.Id, time);
-        result.Value.Reminders.Should().BeEquivalentTo([reminder]);
-
-        await _repository.Received().UpdateAsync(user);
-    }
-
-    [Fact]
-    public async Task RemoveForTime_WhenUserNotExist_ThenErrorReturned()
-    {
-        var result = await _sut.RemoveForTimeAsync(Guid.NewGuid(), new TimeOnly());
-        result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
-    }
 }

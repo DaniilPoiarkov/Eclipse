@@ -1,6 +1,6 @@
 ﻿using Eclipse.Pipelines.Jobs.Evening;
 using Eclipse.Pipelines.Jobs.Morning;
-using Eclipse.Pipelines.Jobs.Reminders;
+//using Eclipse.Pipelines.Jobs.Reminders;
 using Eclipse.Pipelines.Jobs.SendMoodReport;
 
 using Microsoft.Extensions.Options;
@@ -16,7 +16,6 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
     public void Configure(QuartzOptions options)
     {
         AddJobWithEveryMinuteFire<CollectMoodRecordsJob>(options);
-        AddJobWithEveryMinuteFire<SendRemindersJob>(options);
         AddJobWithEveryMinuteFire<RemindToFinishTodoItemsJob>(options);
         AddJobWithEveryMinuteFire<SendGoodMorningJob>(options);
         AddJobWithEveryMinuteFire<SendMoodReportJob>(options);
