@@ -13,8 +13,6 @@ using FluentAssertions;
 
 using NSubstitute;
 
-using System.Linq.Expressions;
-
 using Xunit;
 
 namespace Eclipse.Application.Tests.TodoItems;
@@ -32,7 +30,7 @@ public sealed class TodoItemsServiceTests
         _repository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new TodoItemService(new UserManager(_repository), _timeProvider);
+        _sut = new TodoItemService(_repository, _timeProvider);
     }
 
     [Fact]
@@ -64,7 +62,7 @@ public sealed class TodoItemsServiceTests
 
         var todoItem = user.AddTodoItem("test", DateTime.UtcNow);
 
-        _repository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var result = await _sut.FinishItemAsync(user.ChatId, todoItem.Value.Id);
 
@@ -88,7 +86,7 @@ public sealed class TodoItemsServiceTests
     {
         var user = UserGenerator.Get();
 
-        _repository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var expected = UserDomainErrors.TodoItemNotFound();
 
@@ -192,8 +190,7 @@ public sealed class TodoItemsServiceTests
     {
         var user = UserGenerator.Get();
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var createModel = new CreateTodoItemDto
         {
@@ -220,8 +217,7 @@ public sealed class TodoItemsServiceTests
         var expected = UserDomainErrors.TodoItemsLimit(TodoItemConstants.Limit);
         var user = CreateUser(7);
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var createModel = new CreateTodoItemDto
         {
@@ -242,8 +238,7 @@ public sealed class TodoItemsServiceTests
         var expected = TodoItemDomainErrors.TodoItemIsEmpty();
         var user = UserGenerator.Get();
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(Task.FromResult<IReadOnlyList<User>>([user]));
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var createModel = new CreateTodoItemDto
         {

@@ -29,7 +29,7 @@ public sealed class ImportUsersStrategyTests
         _validator = Substitute.For<IImportValidator<ImportUserDto, ImportUsersValidationOptions>>();
         _excelManager = Substitute.For<IExcelManager>();
 
-        _sut = new ImportUsersStrategy(new UserManager(_userRepository), _excelManager, _validator);
+        _sut = new ImportUsersStrategy(new UserManager(_userRepository), _userRepository, _excelManager, _validator);
     }
 
     [Fact]

@@ -21,7 +21,7 @@ public sealed class UserReadServiceTests
     {
         _repository = Substitute.For<IUserRepository>();
 
-        _sut = new UserReadService(new UserManager(_repository), _repository);
+        _sut = new UserReadService(_repository);
     }
 
     [Theory]
@@ -30,7 +30,7 @@ public sealed class UserReadServiceTests
     {
         var users = UserGenerator.Generate(count);
 
-        _repository.GetAllAsync().Returns(Task.FromResult<IReadOnlyList<User>>(users));
+        _repository.GetAllAsync().Returns(users);
 
         var result = await _sut.GetAllAsync();
 
@@ -43,7 +43,6 @@ public sealed class UserReadServiceTests
     {
         var result = await _sut.GetByIdAsync(Guid.NewGuid());
 
-        result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
 }

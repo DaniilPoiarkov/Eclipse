@@ -1,6 +1,4 @@
-﻿using Bogus;
-
-using Eclipse.Application.Contracts.Reminders;
+﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Reminders;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Errors;
@@ -24,7 +22,7 @@ public sealed class ReminderServiceTests
     public ReminderServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _sut = new ReminderService(new UserManager(_repository));
+        _sut = new ReminderService(_repository);
     }
 
     [Theory]
@@ -39,8 +37,7 @@ public sealed class ReminderServiceTests
             Text = text
         };
 
-        _repository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs([user]);
+        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         var result = await _sut.CreateAsync(user.ChatId, create);
 

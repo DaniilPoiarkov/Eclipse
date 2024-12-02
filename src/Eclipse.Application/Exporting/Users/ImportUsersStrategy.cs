@@ -10,16 +10,20 @@ internal sealed class ImportUsersStrategy : IImportStrategy
 
     private readonly UserManager _userManager;
 
+    private readonly IUserRepository _userRepository;
+
     private readonly IExcelManager _excelManager;
 
     private readonly IImportValidator<ImportUserDto, ImportUsersValidationOptions> _validator;
 
     public ImportUsersStrategy(
         UserManager userManager,
+        IUserRepository userRepository,
         IExcelManager excelManager,
         IImportValidator<ImportUserDto, ImportUsersValidationOptions> validator)
     {
         _userManager = userManager;
+        _userRepository = userRepository;
         _excelManager = excelManager;
         _validator = validator;
     }
@@ -33,7 +37,7 @@ internal sealed class ImportUsersStrategy : IImportStrategy
         var userNames = rows.Select(r => r.UserName).Distinct();
         var chatIds = rows.Select(r => r.ChatId).Distinct();
 
-        var users = await _userManager.GetByExpressionAsync(
+        var users = await _userRepository.GetByExpressionAsync(
             u => userIds.Contains(u.Id)
             || userNames.Contains(u.UserName)
             || chatIds.Contains(u.ChatId),

@@ -10,23 +10,13 @@ internal sealed class CachedUserStatisticsRepository : CachedRepositoryBase<User
         IUserStatisticsRepository repository,
         ICacheService cacheService) : base(repository, cacheService) { }
 
-    public async Task<UserStatistics?> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public Task<UserStatistics?> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var key = $"{GetPrefix()}-{userId}";
-        var statistics = await CacheService.GetAsync<UserStatistics>(key, cancellationToken);
-
-        if (statistics is not null)
-        {
-            return statistics;
-        }
-
-        statistics = await Repository.FindByUserIdAsync(userId, cancellationToken);
-
-        if (statistics is not null)
-        {
-            await CacheService.SetAsync(key, statistics, CacheConsts.OneDay, cancellationToken);
-        }
-
-        return statistics;
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()}-{userId}",
+            () => Repository.FindByUserIdAsync(userId, cancellationToken),
+            CacheConsts.OneDay,
+            cancellationToken
+        );
     }
 }

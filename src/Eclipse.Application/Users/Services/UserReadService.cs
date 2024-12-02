@@ -9,19 +9,16 @@ namespace Eclipse.Application.Users.Services;
 
 internal sealed class UserReadService : IUserReadService
 {
-    private readonly UserManager _userManager;
-
     private readonly IUserRepository _repository;
 
-    public UserReadService(UserManager userManager, IUserRepository repository)
+    public UserReadService(IUserRepository repository)
     {
-        _userManager = userManager;
         _repository = repository;
     }
 
     public async Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userManager.GetAllAsync(cancellationToken);
+        var users = await _repository.GetAllAsync(cancellationToken);
 
         return users
             .Select(u => u.ToDto())
@@ -46,7 +43,7 @@ internal sealed class UserReadService : IUserReadService
 
     public async Task<Result<UserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+        var user = await _repository.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
@@ -58,7 +55,7 @@ internal sealed class UserReadService : IUserReadService
 
     public async Task<Result<UserDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(id, cancellationToken);
+        var user = await _repository.FindAsync(id, cancellationToken);
 
         if (user is null)
         {

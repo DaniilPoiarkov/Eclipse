@@ -15,15 +15,6 @@ internal sealed class CacheService : ICacheService
         _cache = cache;
     }
 
-    public async Task<T?> GetAndDeleteAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
-    {
-        var value = await GetAsync<T>(key, cancellationToken);
-
-        await DeleteAsync(key, cancellationToken);
-
-        return value;
-    }
-
     public async Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
     {
         var json = await _cache.GetStringAsync(key.Key, cancellationToken);
