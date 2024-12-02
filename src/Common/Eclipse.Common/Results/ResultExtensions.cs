@@ -60,4 +60,23 @@ public static class ResultExtensions
 
         return result;
     }
+
+    /// <summary>
+    /// Execute action and return current result.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="result">The result.</param>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
+    public static async Task<Result<T>> TapAsync<T>(this Task<Result<T>> result, Func<T, Task> action)
+    {
+        var res = await result;
+
+        if (res.IsSuccess)
+        {
+            await action(res.Value);
+        }
+
+        return res;
+    }
 }

@@ -26,9 +26,8 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await CreateAsync(user, model, cancellationToken);
-
-        return result.Value.ToDto();
+        return await CreateAsync(user, model, cancellationToken)
+            .BindAsync(reminder => reminder.ToDto());
     }
 
     public async Task<Result<UserDto>> CreateAsync(long chatId, ReminderCreateDto model, CancellationToken cancellationToken = default)
@@ -40,9 +39,8 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        await CreateAsync(user, model, cancellationToken);
-
-        return user.ToDto();
+        return await CreateAsync(user, model, cancellationToken)
+            .BindAsync(_ => user.ToDto());
     }
 
     private async Task<Result<Reminder>> CreateAsync(User user, ReminderCreateDto model, CancellationToken cancellationToken)
