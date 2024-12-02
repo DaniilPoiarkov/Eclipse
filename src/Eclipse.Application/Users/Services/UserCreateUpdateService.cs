@@ -20,14 +20,8 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
 
     public async Task<Result<UserDto>> CreateAsync(UserCreateDto model, CancellationToken cancellationToken = default)
     {
-        var result = await _userManager.CreateAsync(model.Name, model.Surname, model.UserName, model.ChatId, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        return result.Value.ToDto();
+        return await _userManager.CreateAsync(model.Name, model.Surname, model.UserName, model.ChatId, cancellationToken)
+            .BindAsync(user => user.ToDto());
     }
 
     public Task<Result<UserDto>> UpdateAsync(Guid id, UserUpdateDto model, CancellationToken cancellationToken = default)
@@ -49,13 +43,8 @@ internal sealed class UserCreateUpdateService : IUserCreateUpdateService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await strategy.UpdateAsync(user, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        return (await _userRepository.UpdateAsync(user, cancellationToken)).ToDto();
+        return await strategy.UpdateAsync(user, cancellationToken)
+            .TapAsync(user => _userRepository.UpdateAsync(user, cancellationToken))
+            .BindAsync(user => user.ToDto());
     }
 }
