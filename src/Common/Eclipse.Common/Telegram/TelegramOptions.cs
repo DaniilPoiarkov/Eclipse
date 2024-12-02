@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Eclipse.Common.Telegram;
+﻿namespace Eclipse.Common.Telegram;
 
 public sealed class TelegramOptions
 {
-    [Required]
-    public string Token { get; set; } = null!;
+    public required string Token { get; set; }
 
     public long Chat { get; set; }
 }
