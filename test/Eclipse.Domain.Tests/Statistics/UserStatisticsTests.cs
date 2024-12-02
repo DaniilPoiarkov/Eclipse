@@ -20,18 +20,15 @@ public sealed class UserStatisticsTests
         statistics.TodoItemsFinished.Should().Be(2);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(5)]
-    public void ReminderReceived_WhenSpecified_ThenIncrementValue(int count)
+    [Fact]
+    public void ReminderReceived_WhenSpecified_ThenIncrementValue()
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
 
-        statistics.ReminderReceived(count);
-        statistics.RemindersReceived.Should().Be(count);
+        statistics.ReminderReceived();
+        statistics.RemindersReceived.Should().Be(1);
 
-        statistics.ReminderReceived(count);
-        statistics.RemindersReceived.Should().Be(count * 2);
+        statistics.ReminderReceived();
+        statistics.RemindersReceived.Should().Be(2);
     }
 }

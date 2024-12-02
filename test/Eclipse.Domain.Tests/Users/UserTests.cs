@@ -9,6 +9,8 @@ using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
+using NSubstitute;
+
 using Xunit;
 
 namespace Eclipse.Domain.Tests.Users;
@@ -303,7 +305,7 @@ public class UserTests
 
     [Theory]
     [InlineData("test")]
-    public void ReceiveReminder_WhenReminderExists_ThenReminderRemovedAndReturned(string text)
+    public void ReceiveReminder_WhenReminderExists_ThenReminderRemovedAndEventOccured(string text)
     {
         var sut = UserGenerator.Get();
         var expected = sut.AddReminder(text, new());
@@ -311,13 +313,17 @@ public class UserTests
         var actual = sut.ReceiveReminder(expected.Id);
 
         actual.Should().BeEquivalentTo(expected);
-        sut.GetEvents().Should().ContainSingle();
+
+        sut.GetEvents().Should().Contain(x => x.As<RemindersReceivedDomainEvent>() != null
+            && x.As<RemindersReceivedDomainEvent>().UserId == sut.Id
+        );
     }
 
     [Fact]
     public void ReceiveReminder_WhenReminderNotExist_ThenNullReturned()
     {
-        var sut = UserGenerator.Get();
+        var sut = UserGenerator.Get(newRegistered: false);
+
         sut.ReceiveReminder(Guid.NewGuid()).Should().BeNull();
         sut.GetEvents().Should().BeEmpty();
     }

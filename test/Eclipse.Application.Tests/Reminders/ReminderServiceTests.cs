@@ -156,4 +156,42 @@ public sealed class ReminderServiceTests
         var result = await _sut.GetListAsync(Guid.NewGuid());
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
+
+    [Fact]
+    public async Task DeleteAsync_WhenUserNotExists_ThenErrorReturned()
+    {
+        var result = await _sut.DeleteAsync(Guid.NewGuid(), Guid.NewGuid());
+        result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenReminderNotExists_ThenErrorReturned()
+    {
+        var user = UserGenerator.Get();
+
+        _repository.FindAsync(user.Id).Returns(user);
+
+        var result = await _sut.DeleteAsync(user.Id, Guid.NewGuid());
+
+        result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<Reminder>());
+
+        await _repository.DidNotReceive().UpdateAsync(user);
+    }
+
+    [Theory]
+    [InlineData("test")]
+    public async Task DeleteAsync_WhenCanBeRemoved_ThenSuccessfullyDeleted(string text)
+    {
+        var user = UserGenerator.Get();
+
+        var reminder = user.AddReminder(text, new TimeOnly());
+
+        _repository.FindAsync(user.Id).Returns(user);
+
+        var result = await _sut.DeleteAsync(user.Id, reminder.Id);
+
+        user.Reminders.Should().BeEmpty();
+        result.IsSuccess.Should().BeTrue();
+        await _repository.Received().UpdateAsync(user);
+    }
 }

@@ -22,40 +22,34 @@ public sealed class RemindersReceivedEventHandlerTests
         _sut = new RemindersReceivedEventHandler(_repository);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(5)]
-    [InlineData(10)]
-    public async Task Handle_WhenStatisticsExists_ThenIncrementValue(int count)
+    [Fact]
+    public async Task Handle_WhenStatisticsExists_ThenIncrementValue()
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
-
         _repository.FindByUserIdAsync(statistics.UserId, CancellationToken.None).Returns(statistics);
 
-        var notification = new RemindersReceivedDomainEvent(statistics.UserId, count);
+        var notification = new RemindersReceivedDomainEvent(statistics.UserId);
 
         await _sut.Handle(notification, CancellationToken.None);
 
-        statistics.RemindersReceived.Should().Be(count);
+        statistics.RemindersReceived.Should().Be(1);
+
         await _repository.Received().FindByUserIdAsync(statistics.UserId);
         await _repository.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<UserStatistics>());
         await _repository.Received().UpdateAsync(statistics);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(5)]
-    [InlineData(10)]
-    public async Task Handle_WhenStatisticsNotExists_ThenCreateAndProcess(int count)
+    [Fact]
+    public async Task Handle_WhenStatisticsNotExists_ThenCreateAndProcess()
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
         _repository.CreateAsync(Arg.Any<UserStatistics>()).Returns(statistics);
 
-        var notification = new RemindersReceivedDomainEvent(statistics.UserId, count);
+        var notification = new RemindersReceivedDomainEvent(statistics.UserId);
+
         await _sut.Handle(notification, Arg.Any<CancellationToken>());
 
         await _repository.Received().CreateAsync(Arg.Is<UserStatistics>(us => us.UserId == statistics.UserId));
         await _repository.Received().UpdateAsync(statistics);
-        statistics.RemindersReceived.Should().Be(count);
     }
 }

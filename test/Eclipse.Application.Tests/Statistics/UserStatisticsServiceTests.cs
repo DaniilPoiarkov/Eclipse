@@ -22,14 +22,14 @@ public sealed class UserStatisticsServiceTests
     }
 
     [Theory]
-    [InlineData(10, 5)]
-    [InlineData(1, 1)]
-    [InlineData(0, 0)]
-    public async Task GetByUserId_WhenRequested_ThenProperStatisticsReturned(int todoItemsFinished, int remindersReceived)
+    [InlineData(10)]
+    [InlineData(1)]
+    [InlineData(0)]
+    public async Task GetByUserId_WhenRequested_ThenProperStatisticsReturned(int todoItemsFinished)
     {
         var statistics = new UserStatistics(Guid.NewGuid(), Guid.NewGuid());
 
-        statistics.ReminderReceived(remindersReceived);
+        statistics.ReminderReceived();
 
         for (int i = 0; i < todoItemsFinished; i++)
         {
@@ -43,7 +43,7 @@ public sealed class UserStatisticsServiceTests
         result.Id.Should().Be(statistics.Id);
         result.UserId.Should().Be(statistics.UserId);
         result.TodoItemsFinished.Should().Be(todoItemsFinished);
-        result.RemindersReceived.Should().Be(remindersReceived);
+        result.RemindersReceived.Should().Be(1);
     }
 
     [Fact]
