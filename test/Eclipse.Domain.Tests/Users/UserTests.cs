@@ -9,8 +9,6 @@ using Eclipse.Tests.Generators;
 
 using FluentAssertions;
 
-using NSubstitute;
-
 using Xunit;
 
 namespace Eclipse.Domain.Tests.Users;

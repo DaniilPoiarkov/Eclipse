@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Reminders;
 using Eclipse.Common.Results;
-using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 using NSubstitute;
-using NSubstitute.Extensions;
 
 using Quartz;
 
@@ -63,7 +61,7 @@ public sealed class SendReminderJobTests
         });
 
         var context = Substitute.For<IJobExecutionContext>();
-        
+
         context.MergedJobDataMap.Returns(map);
 
         var scheduler = Substitute.For<IScheduler>();

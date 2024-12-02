@@ -1,6 +1,5 @@
 ﻿using Eclipse.Pipelines.Jobs.Evening;
 using Eclipse.Pipelines.Jobs.Morning;
-//using Eclipse.Pipelines.Jobs.Reminders;
 using Eclipse.Pipelines.Jobs.SendMoodReport;
 
 using Microsoft.Extensions.Options;
