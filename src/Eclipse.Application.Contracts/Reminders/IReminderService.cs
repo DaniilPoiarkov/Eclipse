@@ -16,14 +16,7 @@ public interface IReminderService
 
     Task<Result<UserDto>> CreateAsync(long chatId, ReminderCreateDto model, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Removes all user reminders for specified time
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="time"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<Result<UserDto>> RemoveForTimeAsync(Guid userId, TimeOnly time, CancellationToken cancellationToken = default);
+    Task<Result> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default);
 
     Task<Result<List<ReminderDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default);
 

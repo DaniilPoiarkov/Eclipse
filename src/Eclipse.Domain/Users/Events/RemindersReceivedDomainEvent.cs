@@ -2,4 +2,4 @@
 
 namespace Eclipse.Domain.Users.Events;
 
-public sealed record RemindersReceivedDomainEvent(Guid UserId, int Count) : IDomainEvent;
+public sealed record RemindersReceivedDomainEvent(Guid UserId) : IDomainEvent;

@@ -91,23 +91,6 @@ public class UserTests
         reminder.NotifyAt.Should().Be(notifyAt.AddHours(-userHour));
     }
 
-    [Fact]
-    public void RemoveRemindersForTime_WhenUserHasReminder_ThenReminderRemoved()
-    {
-        var time = new TimeOnly(5, 0, 0);
-
-        _sut.AddReminder("test", time);
-        _sut.AddReminder("test", time.AddMinutes(1));
-        _sut.AddReminder("test", time.AddMinutes(1));
-
-        var result = _sut.RemoveRemindersForTime(time);
-
-        _sut.Reminders.Count.Should().Be(2);
-        _sut.Reminders.Any(r => r.NotifyAt == time).Should().BeFalse();
-        result.Count.Should().Be(1);
-        result[0].NotifyAt.Should().Be(time);
-    }
-
     [Theory]
     [InlineData("t")]
     [InlineData("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest")]
@@ -318,24 +301,28 @@ public class UserTests
         todoItemFinishedEvent.UserId.Should().Be(user.Id);
     }
 
-    [Fact]
-    public void RemoveRemindersForTime_WhenRemoved_ThenEventRaised()
+    [Theory]
+    [InlineData("test")]
+    public void ReceiveReminder_WhenReminderExists_ThenReminderRemovedAndEventOccured(string text)
     {
-        var time = DateTime.UtcNow.GetTime();
+        var sut = UserGenerator.Get();
+        var expected = sut.AddReminder(text, new());
 
-        var user = UserGenerator.Get(newRegistered: false);
+        var actual = sut.ReceiveReminder(expected.Id);
 
-        user.AddReminder("test", time);
+        actual.Should().BeEquivalentTo(expected);
 
-        user.RemoveRemindersForTime(time);
+        sut.GetEvents().Should().Contain(x => x.As<RemindersReceivedDomainEvent>() != null
+            && x.As<RemindersReceivedDomainEvent>().UserId == sut.Id
+        );
+    }
 
-        var events = user.GetEvents();
+    [Fact]
+    public void ReceiveReminder_WhenReminderNotExist_ThenNullReturned()
+    {
+        var sut = UserGenerator.Get(newRegistered: false);
 
-        events.Should().ContainSingle();
-
-        var remindersReceivedEvent = events[0].As<RemindersReceivedDomainEvent>();
-        remindersReceivedEvent.Should().NotBeNull();
-        remindersReceivedEvent.UserId.Should().Be(user.Id);
-        remindersReceivedEvent.Count.Should().Be(1);
+        sut.ReceiveReminder(Guid.NewGuid()).Should().BeNull();
+        sut.GetEvents().Should().BeEmpty();
     }
 }

@@ -63,7 +63,7 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.GetReminder(reminderId);
+        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
 
         if (reminder is null)
         {
@@ -85,7 +85,7 @@ internal sealed class ReminderService : IReminderService
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
     }
 
-    public async Task<Result<UserDto>> RemoveForTimeAsync(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
@@ -94,10 +94,15 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        user.RemoveRemindersForTime(time);
+        var reminder = user.ReceiveReminder(reminderId);
+
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
+        }
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return user.ToDto();
+        return Result.Success();
     }
 }

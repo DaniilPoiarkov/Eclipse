@@ -90,7 +90,6 @@ public static class EclipseInfrastructureModule
 
         services.AddQuartz(configurator =>
         {
-            configurator.InterruptJobsOnShutdown = true;
             configurator.SchedulerName = $"eclipse";
         });
 

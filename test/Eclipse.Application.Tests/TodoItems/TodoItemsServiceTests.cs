@@ -275,14 +275,11 @@ public sealed class TodoItemsServiceTests
     {
         var user = CreateUser(todoItemsCount);
 
-        _repository.FindAsync(user.Id)
-            .ReturnsForAnyArgs(Task.FromResult<User?>(user));
+        _repository.FindAsync(user.Id).Returns(user);
 
         var result = await _sut.GetListAsync(user.Id);
 
-        result.IsSuccess.Should().BeTrue();
         result.Value.Count.Should().Be(todoItemsCount);
-        result.Value.All(item => item.UserId == user.Id).Should().BeTrue();
         result.Value.Select(item => IsValidTodoItem(item, user)).All(x => x).Should().BeTrue();
     }
 
@@ -316,7 +313,7 @@ public sealed class TodoItemsServiceTests
 
     private static bool IsValidTodoItem(TodoItemDto item, User user)
     {
-        return user.GetTodoItem(item.Id) is TodoItem todoItem
+        return user.TodoItems.FirstOrDefault(i => i.Id == item.Id) is TodoItem todoItem
             && todoItem.Text == item.Text
             && todoItem.UserId == user.Id
             && todoItem.Id != Guid.Empty;

@@ -19,7 +19,7 @@ internal sealed class RemindersReceivedEventHandler : INotificationHandler<Remin
         var statistics = await _repository.FindByUserIdAsync(notification.UserId, cancellationToken)
             ?? await _repository.CreateAsync(new UserStatistics(Guid.NewGuid(), notification.UserId), cancellationToken);
 
-        statistics.ReminderReceived(notification.Count);
+        statistics.ReminderReceived();
 
         await _repository.UpdateAsync(statistics, cancellationToken);
     }
