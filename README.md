@@ -14,7 +14,7 @@
 ### Requirements
 * Docker
 * ngrok
-* .NET 8
+* .NET 9
 
 <p>Go to <i>docker</i> directory, create here a copy of <i>docker-compose.override.yaml</i> file with name <i>docker-compose.local.yaml</i>.</p>
 <p>Follow instructions in this file to build the solution locally.</p>
