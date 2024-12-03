@@ -14,7 +14,7 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
 
     protected IEnumerable<IEnumerable<KeyboardButton>> TodoItemMenuButtons => new List<KeyboardButton[]>
     {
-        new[] { new KeyboardButton(Localizer["Menu:TodoItemsMenu:MyList"]), new KeyboardButton(Localizer["Menu:TodoItemsMenu:AddItem"]) },
+        new[] { new KeyboardButton(Localizer["Menu:TodoItems:List"]), new KeyboardButton(Localizer["Menu:TodoItems:AddItem"]) },
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Actions"]) }
     };
 
