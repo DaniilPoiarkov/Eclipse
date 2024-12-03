@@ -7,7 +7,7 @@ using Eclipse.Domain.Shared.TodoItems;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
-[Route("Menu:TodoItemsMenu:AddItem", "/todos_add")]
+[Route("Menu:TodoItems:AddItem", "/todos_add")]
 internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
