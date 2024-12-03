@@ -7,7 +7,7 @@ using Eclipse.Pipelines.Stores.Messages;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
-[Route("Menu:TodoItemsMenu:MyList", "/todos_my")]
+[Route("Menu:TodoItemsMenu:MyList", "/todos_list")]
 internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
@@ -39,7 +39,7 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 
         if (!result.IsSuccess)
         {
-            return Menu(TodoItemMenuButtons, Localizer.LocalizeError(result.Error));
+            return Menu(TodoItemMenuButtons, Localizer["Error"]);
         }
 
         var user = result.Value;
