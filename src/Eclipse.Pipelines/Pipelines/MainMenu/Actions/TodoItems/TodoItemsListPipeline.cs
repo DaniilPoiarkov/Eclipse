@@ -1,14 +1,13 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Pipelines.Stores.Messages;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
-[Route("Menu:TodoItemsMenu:MyList", "/todos_list")]
-internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
+[Route("Menu:TodoItems:List", "/todos_list")]
+internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
@@ -16,11 +15,11 @@ internal sealed class MyTodoItemListPipeline : TodoItemsPipelineBase
 
     private readonly IMessageStore _messageStore;
 
-    private static readonly string _pipelinePrefix = $"{PipelinePrefix}:MyList";
+    private static readonly string _pipelinePrefix = $"{PipelinePrefix}:List";
 
     private static readonly string _errorMessage = $"{_pipelinePrefix}:Error";
 
-    public MyTodoItemListPipeline(ITodoItemService todoItemService, IUserService userService, IMessageStore messageStore)
+    public TodoItemsListPipeline(ITodoItemService todoItemService, IUserService userService, IMessageStore messageStore)
     {
         _todoItemService = todoItemService;
         _userService = userService;
