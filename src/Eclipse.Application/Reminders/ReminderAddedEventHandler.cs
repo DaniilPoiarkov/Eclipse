@@ -33,7 +33,6 @@ internal sealed class ReminderAddedEventHandler : INotificationHandler<ReminderA
             .Build();
 
         var time = _timeProvider.Now
-            .Add(notification.UserGmt)
             .WithTime(notification.NotifyAt);
 
         var trigger = TriggerBuilder.Create()
