@@ -34,7 +34,7 @@ public sealed class ImportRemindersBackgroundJobTests
     {
         _importService = Substitute.For<IImportService>();
         _botClient = Substitute.For<ITelegramBotClient>();
-        _options = Options.Create(new TelegramOptions { Chat = 1, Token = "" });
+        _options = Options.Create(new TelegramOptions { Chat = 1 });
         _sut = new(() => new ImportRemindersBackgroundJob(_importService, _excelManager, _botClient, _options));
     }
 

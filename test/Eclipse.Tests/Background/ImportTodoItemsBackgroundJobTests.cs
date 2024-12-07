@@ -34,7 +34,7 @@ public sealed class ImportTodoItemsBackgroundJobTests
     {
         _importService = Substitute.For<IImportService>();
         _botClient = Substitute.For<ITelegramBotClient>();
-        _options = Options.Create(new TelegramOptions { Chat = 1, Token = "" });
+        _options = Options.Create(new TelegramOptions { Chat = 1 });
         _sut = new(() => new ImportTodoItemsBackgroundJob(_importService, _excelManager, _botClient, _options));
     }
 

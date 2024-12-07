@@ -66,8 +66,7 @@ public sealed class ArchiveMoodRecordsJobTests
 
         var options = new TelegramOptions
         {
-            Chat = 1,
-            Token = ""
+            Chat = 1
         };
 
         _options.Value.Returns(options);

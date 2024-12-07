@@ -25,7 +25,7 @@ builder.Services
     .AddDomainModule()
     .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
     .AddApplicationContractsModule()
-    .AddPipelinesModule()
+    .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
     .AddInfrastructureModule();

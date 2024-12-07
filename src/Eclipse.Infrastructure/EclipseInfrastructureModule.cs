@@ -38,17 +38,13 @@ namespace Eclipse.Infrastructure;
 /// </summary>
 public static class EclipseInfrastructureModule
 {
-    private static readonly int _retriesCount = 5;
-
-    private static readonly int _baseRetryDelay = 1;
-
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services)
     {
         services
             .AddSerilogIntegration()
             .AddCache()
             .AddEventBus()
-            .AddTelegramIntegration()
+            //.AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
 
@@ -97,23 +93,6 @@ public static class EclipseInfrastructureModule
         {
             options.WaitForJobsToComplete = true;
         });
-
-        return services;
-    }
-
-    private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
-    {
-        services.AddOptions<TelegramOptions>()
-            .BindConfiguration("Telegram")
-            .ValidateOnStart();
-
-        services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((client, sp) =>
-        {
-            var options = sp.GetRequiredService<IOptions<TelegramOptions>>().Value;
-            return new TelegramBotClient(options.Token, client);
-        }).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(
-                Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseRetryDelay), _retriesCount)
-            ));
 
         return services;
     }
