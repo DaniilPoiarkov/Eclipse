@@ -20,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
-    .AddApplicationModule()
+    .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainSharedModule()
     .AddDomainModule()
     .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())

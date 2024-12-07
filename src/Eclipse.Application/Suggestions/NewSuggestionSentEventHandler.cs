@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
-using Eclipse.Common.Telegram;
 using Eclipse.Domain.Suggestions;
 
 using MediatR;
@@ -14,11 +13,11 @@ public sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSugg
 {
     private readonly ITelegramService _telegramService;
 
-    private readonly IOptions<TelegramOptions> _options;
+    private readonly IOptions<ApplicationOptions> _options;
 
     private readonly IUserService _userService;
 
-    public NewSuggestionSentEventHandler(ITelegramService telegramService, IOptions<TelegramOptions> options, IUserService userService)
+    public NewSuggestionSentEventHandler(ITelegramService telegramService, IOptions<ApplicationOptions> options, IUserService userService)
     {
         _telegramService = telegramService;
         _options = options;

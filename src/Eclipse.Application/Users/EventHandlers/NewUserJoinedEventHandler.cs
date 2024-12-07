@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
-using Eclipse.Common.Telegram;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
@@ -18,7 +17,7 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
 
     private readonly IStringLocalizer<NewUserJoinedEventHandler> _localizer;
 
-    private readonly IOptions<TelegramOptions> _telegramOptions;
+    private readonly IOptions<ApplicationOptions> _telegramOptions;
 
     private readonly IUserService _userService;
 
@@ -27,7 +26,7 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
     public NewUserJoinedEventHandler(
         ITelegramService telegramService,
         IStringLocalizer<NewUserJoinedEventHandler> localizer,
-        IOptions<TelegramOptions> telegramOptions,
+        IOptions<ApplicationOptions> telegramOptions,
         IUserService userService,
         ICurrentCulture currentCulture)
     {

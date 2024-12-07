@@ -5,7 +5,6 @@ using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Plots;
 using Eclipse.Common.Sheets;
-using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Caching;
 using Eclipse.Infrastructure.EventBus.InMemory;
@@ -17,10 +16,6 @@ using Eclipse.Infrastructure.Plots;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-
-using Polly;
-using Polly.Contrib.WaitAndRetry;
 
 using Quartz;
 using Quartz.Logging;
@@ -28,8 +23,6 @@ using Quartz.Logging;
 using Serilog;
 
 using StackExchange.Redis;
-
-using Telegram.Bot;
 
 namespace Eclipse.Infrastructure;
 
@@ -44,7 +37,6 @@ public static class EclipseInfrastructureModule
             .AddSerilogIntegration()
             .AddCache()
             .AddEventBus()
-            //.AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
 

@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.Exporting;
+﻿using Eclipse.Application;
+using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Background;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Telegram;
 
 using Microsoft.Extensions.Options;
 
@@ -18,13 +18,13 @@ public abstract class ImportBackgroundJobBase : IBackgroundJob<ImportEntitiesBac
 
     protected readonly ITelegramBotClient BotClient;
 
-    protected readonly IOptions<TelegramOptions> Options;
+    protected readonly IOptions<ApplicationOptions> Options;
 
     protected ImportBackgroundJobBase(
         IImportService importService,
         IExcelManager excelManager,
         ITelegramBotClient botClient,
-        IOptions<TelegramOptions> options)
+        IOptions<ApplicationOptions> options)
     {
         ImportService = importService;
         ExcelManager = excelManager;

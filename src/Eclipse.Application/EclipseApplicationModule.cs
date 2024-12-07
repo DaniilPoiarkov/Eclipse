@@ -47,8 +47,10 @@ namespace Eclipse.Application;
 /// </summary>
 public static class EclipseApplicationModule
 {
-    public static IServiceCollection AddApplicationModule(this IServiceCollection services)
+    public static IServiceCollection AddApplicationModule(this IServiceCollection services, Action<ApplicationOptions> options)
     {
+        services.Configure(options);
+
         services
             .AddSingleton<IAppUrlProvider, AppUrlProvider>()
                 .AddTransient<ICommandService, CommandService>()

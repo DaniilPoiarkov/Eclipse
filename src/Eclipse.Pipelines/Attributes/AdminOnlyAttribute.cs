@@ -1,5 +1,4 @@
-﻿using Eclipse.Common.Telegram;
-using Eclipse.Core.Attributes;
+﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +17,7 @@ internal sealed class AdminOnlyAttribute : ContextValidationAttribute
             return ValidationResult.Failure("Pipelines:NotFound");
         }
 
-        var options = context.ServiceProvider.GetRequiredService<IOptions<TelegramOptions>>().Value;
+        var options = context.ServiceProvider.GetRequiredService<IOptions<PipelinesOptions>>().Value;
 
         if (options is null)
         {
