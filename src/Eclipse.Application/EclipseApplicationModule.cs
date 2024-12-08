@@ -119,6 +119,6 @@ public static class EclipseApplicationModule
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<RescheduleRemindersBackgroundJob>>();
 
         await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
-        logger.LogInformation("Rescheduled {Job}", nameof(RescheduleRemindersBackgroundJob));
+        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
     }
 }

@@ -2,13 +2,9 @@
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 
-using MediatR;
-
 using Newtonsoft.Json;
 
 using Quartz;
-
-using Telegram.Bot.Types;
 
 namespace Eclipse.Application.Reminders;
 
@@ -44,11 +40,10 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
                 Text = r.Text,
                 UserId = r.UserId,
             },
-            r.NotifyAt,
-            u.Gmt)
+            r.NotifyAt)
         ));
 
-        foreach (var (reminder, notifyAt, gmt) in reminders)
+        foreach (var (reminder, notifyAt) in reminders)
         {
             var key = new JobKey($"{nameof(SendReminderJob)}-{reminder.UserId}-{reminder.ReminderId}");
 
@@ -58,7 +53,6 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
                 .Build();
 
             var time = _timeProvider.Now
-                .Add(gmt)
                 .WithTime(notifyAt);
 
             var trigger = TriggerBuilder.Create()
