@@ -1,5 +1,4 @@
-﻿using Eclipse.Common.Telegram;
-using Eclipse.Core.Attributes;
+﻿using Eclipse.Core.Attributes;
 using Eclipse.Core.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +10,7 @@ internal sealed class ComingSoonFeatureAttribute : ContextValidationAttribute
 {
     public override ValidationResult Validate(ValidationContext context)
     {
-        var options = context.ServiceProvider.GetRequiredService<IOptions<TelegramOptions>>();
+        var options = context.ServiceProvider.GetRequiredService<IOptions<PipelinesOptions>>();
 
         if (context.TelegramUser is not null && context.TelegramUser.Id == options.Value.Chat)
         {

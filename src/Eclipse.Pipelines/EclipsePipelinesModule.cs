@@ -11,10 +11,13 @@ using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using Polly;
+using Polly.Contrib.WaitAndRetry;
 
 using Telegram.Bot;
 
@@ -25,8 +28,14 @@ namespace Eclipse.Pipelines;
 /// </summary>
 public static class EclipsePipelinesModule
 {
-    public static IServiceCollection AddPipelinesModule(this IServiceCollection services)
+    private static readonly int _retriesCount = 5;
+
+    private static readonly int _baseRetryDelay = 1;
+
+    public static IServiceCollection AddPipelinesModule(this IServiceCollection services, Action<PipelinesOptions> options)
     {
+        services.Configure(options);
+
         services.RemoveAll<PipelineBase>();
 
         services
@@ -54,9 +63,22 @@ public static class EclipsePipelinesModule
 
         services.ConfigureOptions<QuatzOptionsConfiguration>();
 
-        var configuration = services.GetConfiguration();
+        services
+            .AddPipelinesHealthChecks()
+            .AddTelegramIntegration();
 
-        services.AddPipelinesHealthChecks();
+        return services;
+    }
+
+    private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
+    {
+        services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((client, sp) =>
+        {
+            var options = sp.GetRequiredService<IOptions<PipelinesOptions>>().Value;
+            return new TelegramBotClient(options.Token, client);
+        }).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(
+                Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseRetryDelay), _retriesCount)
+            ));
 
         return services;
     }
@@ -82,14 +104,12 @@ public static class EclipsePipelinesModule
 
     private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)
     {
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var options = serviceProvider.GetRequiredService<IOptions<PipelinesOptions>>();
         var appUrlProvider = serviceProvider.GetRequiredService<IAppUrlProvider>();
 
         var webhookInfo = await client.GetWebhookInfo();
 
-        var endpoint = configuration["Telegram:ActiveEndpoint"]!;
-
-        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{endpoint}";
+        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{options.Value.ActiveEndpoint}";
 
         if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {
@@ -98,7 +118,7 @@ public static class EclipsePipelinesModule
 
         await client.SetWebhook(
             url: webhook,
-            secretToken: configuration["Telegram:SecretToken"]
+            secretToken: options.Value.SecretToken
         );
     }
 }

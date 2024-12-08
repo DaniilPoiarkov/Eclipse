@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.MoodRecords.Jobs;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Telegram;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
 
@@ -30,7 +29,7 @@ public sealed class ArchiveMoodRecordsJobTests
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly IOptions<TelegramOptions> _options;
+    private readonly IOptions<ApplicationOptions> _options;
 
     private readonly ArchiveMoodRecordsJob _sut;
 
@@ -40,7 +39,7 @@ public sealed class ArchiveMoodRecordsJobTests
         _excelManager = Substitute.For<IExcelManager>();
         _telegramBotClient = Substitute.For<ITelegramBotClient>();
         _timeProvider = Substitute.For<ITimeProvider>();
-        _options = Substitute.For<IOptions<TelegramOptions>>();
+        _options = Substitute.For<IOptions<ApplicationOptions>>();
 
         _sut = new ArchiveMoodRecordsJob(_repository, _excelManager, _telegramBotClient, _timeProvider, _options);
     }
@@ -64,10 +63,9 @@ public sealed class ArchiveMoodRecordsJobTests
 
         _excelManager.Write(records).Returns(stream);
 
-        var options = new TelegramOptions
+        var options = new ApplicationOptions
         {
-            Chat = 1,
-            Token = ""
+            Chat = 1
         };
 
         _options.Value.Returns(options);

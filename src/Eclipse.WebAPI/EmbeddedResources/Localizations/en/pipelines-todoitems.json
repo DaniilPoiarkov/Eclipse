@@ -7,8 +7,8 @@
     "Pipelines:TodoItems:YouDidEmAll": "You did em all!\r\nMy congratulations 🥳",
     "Pipelines:TodoItems:YouAreDoingGreat": "Horray! You are doing great!",
 
-    "Pipelines:TodoItems:MyList:Empty": "🫣 It seems to me that you have no plans!\r\nAnyway, what about to add some?😏",
-    "Pipelines:TodoItems:MyList:Error": "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can add some more plans!",
+    "Pipelines:TodoItems:List:Empty": "🫣 It seems to me that you have no plans!\r\nAnyway, what about to add some?😏",
+    "Pipelines:TodoItems:List:Error": "Well, something went wrong. I'll try to figure out what exactly, meanwhile you can add some more plans!",
 
     "Pipelines:TodoItems:AddItem:DescribeWhatToAdd": "Describe what do you wanna to add or press /cancel to return",
     "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",

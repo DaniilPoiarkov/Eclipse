@@ -32,6 +32,7 @@ services:
       - App__SelfUrl=<expose api with ngrok and paste it here>
       - Telegram__Token=<your bot token>
       - Telegram__Chat=<your telegram chat id>
+      - Application__Chat=<your telegram chat id>
       - 'Google__Credentials=<json file>'
       - Sheets__SheetId=<your sheet id>
       - Settings__IsGoogleEnabled=false
