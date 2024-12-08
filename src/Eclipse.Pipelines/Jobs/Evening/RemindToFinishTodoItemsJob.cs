@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 
@@ -21,21 +22,25 @@ internal sealed class RemindToFinishTodoItemsJob : EclipseJobBase
 
     private readonly ICurrentCulture _currentCulture;
 
+    private readonly ITimeProvider _timeProvider;
+
     public RemindToFinishTodoItemsJob(
         IStringLocalizer<RemindToFinishTodoItemsJob> localizer,
         IUserService userService,
         ITelegramService telegramService,
-        ICurrentCulture currentCulture)
+        ICurrentCulture currentCulture,
+        ITimeProvider timeProvider)
     {
         _localizer = localizer;
         _userService = userService;
         _telegramService = telegramService;
         _currentCulture = currentCulture;
+        _timeProvider = timeProvider;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var time = DateTime.UtcNow.GetTime();
+        var time = _timeProvider.Now.GetTime();
 
         var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled
