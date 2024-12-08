@@ -5,7 +5,6 @@ using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Plots;
 using Eclipse.Common.Sheets;
-using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Caching;
 using Eclipse.Infrastructure.EventBus.InMemory;
@@ -17,10 +16,6 @@ using Eclipse.Infrastructure.Plots;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-
-using Polly;
-using Polly.Contrib.WaitAndRetry;
 
 using Quartz;
 using Quartz.Logging;
@@ -29,8 +24,6 @@ using Serilog;
 
 using StackExchange.Redis;
 
-using Telegram.Bot;
-
 namespace Eclipse.Infrastructure;
 
 /// <summary>
@@ -38,17 +31,12 @@ namespace Eclipse.Infrastructure;
 /// </summary>
 public static class EclipseInfrastructureModule
 {
-    private static readonly int _retriesCount = 5;
-
-    private static readonly int _baseRetryDelay = 1;
-
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services)
     {
         services
             .AddSerilogIntegration()
             .AddCache()
             .AddEventBus()
-            .AddTelegramIntegration()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
 
@@ -97,23 +85,6 @@ public static class EclipseInfrastructureModule
         {
             options.WaitForJobsToComplete = true;
         });
-
-        return services;
-    }
-
-    private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
-    {
-        services.AddOptions<TelegramOptions>()
-            .BindConfiguration("Telegram")
-            .ValidateOnStart();
-
-        services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((client, sp) =>
-        {
-            var options = sp.GetRequiredService<IOptions<TelegramOptions>>().Value;
-            return new TelegramBotClient(options.Token, client);
-        }).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(
-                Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseRetryDelay), _retriesCount)
-            ));
 
         return services;
     }

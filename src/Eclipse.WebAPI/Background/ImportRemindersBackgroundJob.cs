@@ -1,6 +1,6 @@
-﻿using Eclipse.Application.Contracts.Exporting;
+﻿using Eclipse.Application;
+using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Telegram;
 
 using Microsoft.Extensions.Options;
 
@@ -14,7 +14,7 @@ public sealed class ImportRemindersBackgroundJob : ImportBackgroundJobBase
         IImportService importService,
         IExcelManager excelManager,
         ITelegramBotClient botClient,
-        IOptions<TelegramOptions> options)
+        IOptions<ApplicationOptions> options)
         : base(importService, excelManager, botClient, options) { }
 
     protected async override Task ImportAsync(ImportEntitiesBackgroundJobArgs args, CancellationToken cancellationToken = default)

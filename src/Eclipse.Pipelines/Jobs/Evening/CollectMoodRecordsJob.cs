@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Localization.Culture;
@@ -36,6 +37,8 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
 
     private readonly IUserService _userService;
 
+    private readonly ITimeProvider _timeProvider;
+
     public CollectMoodRecordsJob(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
@@ -44,7 +47,8 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
         IStringLocalizer<CollectMoodRecordsJob> localizer,
         IMessageStore messageStore,
         ICurrentCulture currentCulture,
-        IUserService userService)
+        IUserService userService,
+        ITimeProvider timeProvider)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -54,11 +58,12 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
         _messageStore = messageStore;
         _currentCulture = currentCulture;
         _userService = userService;
+        _timeProvider = timeProvider;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var time = DateTime.UtcNow.GetTime();
+        var time = _timeProvider.Now.GetTime();
 
         var users = (await _userService.GetAllAsync(context.CancellationToken))
             .Where(u => u.NotificationsEnabled

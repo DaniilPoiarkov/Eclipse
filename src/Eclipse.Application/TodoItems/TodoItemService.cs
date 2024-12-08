@@ -46,7 +46,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         return await user.AddTodoItem(model.Text, _timeProvider.Now)
             .TapAsync(_ => _userRepository.UpdateAsync(user, cancellationToken))
-            .BindAsync(todoItem =>  todoItem.ToDto());
+            .BindAsync(todoItem => todoItem.ToDto());
     }
 
     public async Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)

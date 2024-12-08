@@ -1,6 +1,5 @@
 ﻿using Eclipse.Common.Clock;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Telegram;
 using Eclipse.Domain.MoodRecords;
 
 using Microsoft.Extensions.Options;
@@ -22,7 +21,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly IOptions<TelegramOptions> _options;
+    private readonly IOptions<ApplicationOptions> _options;
 
     private static readonly TimeOnly _endOfDay = new(23, 59);
 
@@ -31,7 +30,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
         IExcelManager excelManager,
         ITelegramBotClient telegramBotClient,
         ITimeProvider timeProvider,
-        IOptions<TelegramOptions> options)
+        IOptions<ApplicationOptions> options)
     {
         _repository = repository;
         _excelManager = excelManager;

@@ -1,7 +1,7 @@
-﻿using Eclipse.Application.Contracts.Exporting;
+﻿using Eclipse.Application;
+using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Exporting.TodoItems;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Telegram;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.WebAPI.Background;
 
@@ -24,7 +24,7 @@ public sealed class ImportTodoItemsBackgroundJobTests
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IOptions<TelegramOptions> _options;
+    private readonly IOptions<ApplicationOptions> _options;
 
     private readonly Lazy<ImportTodoItemsBackgroundJob> _sut;
 
@@ -34,7 +34,7 @@ public sealed class ImportTodoItemsBackgroundJobTests
     {
         _importService = Substitute.For<IImportService>();
         _botClient = Substitute.For<ITelegramBotClient>();
-        _options = Options.Create(new TelegramOptions { Chat = 1, Token = "" });
+        _options = Options.Create(new ApplicationOptions { Chat = 1 });
         _sut = new(() => new ImportTodoItemsBackgroundJob(_importService, _excelManager, _botClient, _options));
     }
 
