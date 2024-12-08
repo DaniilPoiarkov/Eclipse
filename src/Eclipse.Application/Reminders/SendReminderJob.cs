@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 
@@ -50,7 +49,7 @@ internal sealed class SendReminderJob : IJob
             return;
         }
 
-        var reminder = JsonConvert.DeserializeObject<ReminderAddedDomainEvent>(data);
+        var reminder = JsonConvert.DeserializeObject<SendReminderJobData>(data);
 
         if (reminder is null)
         {
