@@ -109,7 +109,7 @@ public static class EclipsePipelinesModule
 
         var webhookInfo = await client.GetWebhookInfo();
 
-        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{options.Value.Webhook}";
+        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{options.Value.ActiveEndpoint}";
 
         if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {
