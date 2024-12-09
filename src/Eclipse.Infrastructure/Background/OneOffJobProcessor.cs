@@ -43,9 +43,11 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
         }
         catch (Exception ex)
         {
+            _logger.LogError("Failed to process {Job} job. Error: {Error}", typeof(TBackgroundJob).Name, ex);
+
             throw new JobExecutionException(
                 msg: $"Failed to process job {typeof(TBackgroundJob).Name}.",
-                refireImmediately: false,
+                refireImmediately: true,
                 cause: ex
             );
         }
@@ -83,9 +85,11 @@ internal sealed class OneOffJobProcessor<TBackgroundJob> : IJob
         }
         catch (Exception ex)
         {
+            _logger.LogError("Failed to process {Job} job. Error: {Error}", typeof(TBackgroundJob).Name, ex);
+
             throw new JobExecutionException(
                 msg: $"Failed to process job {typeof(TBackgroundJob).Name}.",
-                refireImmediately: false,
+                refireImmediately: true,
                 cause: ex
             );
         }

@@ -86,7 +86,7 @@ public static class EclipseApplicationModule
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob)))
+            .AddClasses(c => c.AssignableTo<IBackgroundJob>())
             .AsSelf()
             .WithTransientLifetime());
 
