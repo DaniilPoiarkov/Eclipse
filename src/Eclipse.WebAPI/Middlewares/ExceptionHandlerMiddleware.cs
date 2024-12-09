@@ -8,12 +8,21 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
 {
     private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-    public ExceptionHandlerMiddleware(ILogger<ExceptionHandlerMiddleware> logger)
+    private readonly IStringLocalizer<ExceptionHandlerMiddleware> _stringLocalizer;
+
+    private readonly IProblemDetailsService _problemDetailsService;
+
+    public ExceptionHandlerMiddleware(
+        ILogger<ExceptionHandlerMiddleware> logger,
+        IStringLocalizer<ExceptionHandlerMiddleware> stringLocalizer,
+        IProblemDetailsService problemDetailsService)
     {
         _logger = logger;
+        _stringLocalizer = stringLocalizer;
+        _problemDetailsService = problemDetailsService;
     }
 
-    public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
+    public ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         context.Response.StatusCode = exception switch
         {
@@ -21,22 +30,20 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
             _ => StatusCodes.Status500InternalServerError
         };
 
-        var stringLocalizer = context.RequestServices.GetRequiredService<IStringLocalizer<ExceptionHandlerMiddleware>>();
-
         var problems = new ProblemDetails()
         {
             Status = context.Response.StatusCode,
-            Title = stringLocalizer["InternalError_Title"],
-            Detail = stringLocalizer["InternalError_Details"]
+            Title = _stringLocalizer["InternalError_Title"],
+            Detail = _stringLocalizer["InternalError_Details"]
         };
 
-        await context.Response.WriteAsJsonAsync(problems, cancellationToken);
+        _logger.LogError("Unhandled exception: {Error}", exception);
 
-        _logger.LogError(
-            message: "Unhandled exception:\n{error}",
-            args: stringLocalizer[exception.Message, exception.Data.Values]
-        );
-
-        return true;
+        return _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        {
+            Exception = exception,
+            HttpContext = context,
+            ProblemDetails = problems
+        });
     }
 }
