@@ -8,17 +8,13 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
 {
     private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-    private readonly IStringLocalizer<ExceptionHandlerMiddleware> _stringLocalizer;
-
     private readonly IProblemDetailsService _problemDetailsService;
 
     public ExceptionHandlerMiddleware(
         ILogger<ExceptionHandlerMiddleware> logger,
-        IStringLocalizer<ExceptionHandlerMiddleware> stringLocalizer,
         IProblemDetailsService problemDetailsService)
     {
         _logger = logger;
-        _stringLocalizer = stringLocalizer;
         _problemDetailsService = problemDetailsService;
     }
 
@@ -30,11 +26,14 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
             _ => StatusCodes.Status500InternalServerError
         };
 
+        var stringLocalizer = context.RequestServices.GetRequiredService<IStringLocalizer<ExceptionHandlerMiddleware>>();
+
         var problems = new ProblemDetails()
         {
             Status = context.Response.StatusCode,
-            Title = _stringLocalizer["InternalError_Title"],
-            Detail = _stringLocalizer["InternalError_Details"]
+            Instance = context.Request.Path,
+            Title = stringLocalizer["InternalError_Title"],
+            Detail = stringLocalizer["InternalError_Details"],
         };
 
         _logger.LogError("Unhandled exception: {Error}", exception);
