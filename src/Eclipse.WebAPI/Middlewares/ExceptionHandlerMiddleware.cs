@@ -8,12 +8,17 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
 {
     private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-    public ExceptionHandlerMiddleware(ILogger<ExceptionHandlerMiddleware> logger)
+    private readonly IProblemDetailsService _problemDetailsService;
+
+    public ExceptionHandlerMiddleware(
+        ILogger<ExceptionHandlerMiddleware> logger,
+        IProblemDetailsService problemDetailsService)
     {
         _logger = logger;
+        _problemDetailsService = problemDetailsService;
     }
 
-    public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
+    public ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         context.Response.StatusCode = exception switch
         {
@@ -26,17 +31,18 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
         var problems = new ProblemDetails()
         {
             Status = context.Response.StatusCode,
+            Instance = context.Request.Path,
             Title = stringLocalizer["InternalError_Title"],
-            Detail = stringLocalizer["InternalError_Details"]
+            Detail = stringLocalizer["InternalError_Details"],
         };
 
-        await context.Response.WriteAsJsonAsync(problems, cancellationToken);
+        _logger.LogError("Unhandled exception: {Error}", exception);
 
-        _logger.LogError(
-            message: "Unhandled exception:\n{error}",
-            args: stringLocalizer[exception.Message, exception.Data.Values]
-        );
-
-        return true;
+        return _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        {
+            Exception = exception,
+            HttpContext = context,
+            ProblemDetails = problems
+        });
     }
 }
