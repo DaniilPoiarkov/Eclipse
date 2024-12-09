@@ -68,7 +68,7 @@ internal sealed class SendReminderJob : IJob
 
         if (!result.IsSuccess)
         {
-            _logger.LogError("Failed to remive reminder with id {Id} for user {UserId}", reminder.ReminderId, reminder.UserId);
+            _logger.LogError("Failed to remove reminder with id {Id} for user {UserId}. Error: {Error}", reminder.ReminderId, reminder.UserId, result.Error);
         }
 
         await context.Scheduler.UnscheduleJob(context.Trigger.Key, context.CancellationToken);
