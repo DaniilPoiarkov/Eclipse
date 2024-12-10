@@ -1,4 +1,4 @@
-docker-compose down
+docker-compose -p eclipse down
 
 docker rmi eclipse
 

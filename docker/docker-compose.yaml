@@ -15,8 +15,8 @@ services:
     networks:
       eclipse:
     volumes:
-      - eclipse:/home/node/app/data
-    
+      - eclipse:/data
+
   cache:
     image: redis/redis-stack-server:latest
     container_name: eclipse-cache
@@ -24,7 +24,7 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - eclipse:/home/node/app/cache
+      - eclipse:/cache
     networks:
       - eclipse
 
