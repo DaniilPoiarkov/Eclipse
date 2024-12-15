@@ -7,41 +7,21 @@ namespace Eclipse.Localization.Extensions;
 
 public static class JsonStringLocalizerExtensions
 {
-    public static void UseCurrentCulture<T>(this IStringLocalizer<T> stringLocalizer, ICurrentCulture currentCulture)
-    {
-        if (stringLocalizer is not TypedJsonStringLocalizer<T> jsonStringLocalizer)
-        {
-            return;
-        }
-
-        jsonStringLocalizer.UseCurrentCulture(currentCulture);
-    }
-
     public static void UseCurrentCulture(this IStringLocalizer stringLocalizer, ICurrentCulture currentCulture)
     {
-        if (stringLocalizer is not JsonStringLocalizer jsonStringLocalizer)
+        if (stringLocalizer is not ICanUseCulture canUseCulture)
         {
             return;
         }
 
-        jsonStringLocalizer.UseCurrentCulture(currentCulture);
-    }
-
-    public static string ToLocalizableString<T>(this IStringLocalizer<T> stringLocalizer, string value)
-    {
-        if (stringLocalizer is not TypedJsonStringLocalizer<T> jsonStringLocalizer)
-        {
-            throw new InvalidOperationException($"Converting to localizable string is available only for {nameof(TypedJsonStringLocalizer<T>)} implementation.");
-        }
-
-        return jsonStringLocalizer.ToLocalizableString(value);
+        canUseCulture.UseCurrentCulture(currentCulture);
     }
 
     public static string ToLocalizableString(this IStringLocalizer stringLocalizer, string value)
     {
-        if (stringLocalizer is not JsonStringLocalizer jsonStringLocalizer)
+        if (stringLocalizer is not ILocalizedStringConverter jsonStringLocalizer)
         {
-            throw new InvalidOperationException($"Converting to localizable string is available only for {nameof(JsonStringLocalizer)} implementation.");
+            throw new InvalidOperationException($"Converting to localizable string is available only for {nameof(ILocalizedStringConverter)} implementation.");
         }
 
         return jsonStringLocalizer.ToLocalizableString(value);
