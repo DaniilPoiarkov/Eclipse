@@ -1,8 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
+using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Results;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Extensions;
@@ -13,6 +15,8 @@ using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+
+using System.Reflection;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -83,10 +87,22 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         _currentUser.SetCurrentUser(context.User);
 
+        var result = await HandleAndGetResultAsync(botClient, context.Value, context, cancellationToken);
+
+        if (result is RedirectResult redirect)
+        {
+            var command = redirect.PipelineType.GetCustomAttribute<RouteAttribute>()?.Command ?? string.Empty;
+            await HandleAndGetResultAsync(botClient, command, context, cancellationToken);
+        }
+
+        await AddOrUpdateAsync(context.User, cancellationToken);
+    }
+
+    private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, string route, MessageContext context, CancellationToken cancellationToken)
+    {
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = await GetPipelineAsync(context, key) as EclipsePipelineBase
-            ?? new EclipseNotFoundPipeline();
+        var pipeline = await GetEclipsePipelineAsync(route, key);
 
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
@@ -106,7 +122,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        await AddOrUpdateAsync(context.User, cancellationToken);
+        return result;
     }
 
     private async Task<Result<UserDto>> AddOrUpdateAsync(TelegramUser user, CancellationToken cancellationToken)
@@ -159,7 +175,13 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         }
     }
 
-    private async Task<PipelineBase> GetPipelineAsync(MessageContext context, PipelineKey key)
+    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(string route, PipelineKey key)
+    {
+        return await GetPipelineAsync(route, key) as EclipsePipelineBase
+            ?? new EclipseNotFoundPipeline();
+    }
+
+    private async Task<PipelineBase> GetPipelineAsync(string route, PipelineKey key)
     {
         var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
 
@@ -168,15 +190,15 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return pipeline;
         }
 
-        if (context.Value.StartsWith('/'))
+        if (route.StartsWith('/'))
         {
-            return _pipelineProvider.Get(context.Value);
+            return _pipelineProvider.Get(route);
         }
 
         try
         {
             return _pipelineProvider.Get(
-                _localizer.ToLocalizableString(context.Value)
+                _localizer.ToLocalizableString(route)
             );
         }
         catch (LocalizationNotFoundException)

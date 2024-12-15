@@ -18,6 +18,8 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Actions"]) }
     };
 
+    protected static readonly IReadOnlyList<string> KeyWords = ["Menu:TodoItems:List", "Menu:TodoItems:AddItem", "Menu:MainMenu:Actions"];
+
     #region Helpers
 
     protected string BuildMessage(TimeSpan userTime, IEnumerable<TodoItemDto> items)

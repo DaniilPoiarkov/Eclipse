@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 
-internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer<TResourceType>
+internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer<TResourceType>, ILocalizedStringConverter, ICanUseCulture
 {
     private readonly IStringLocalizer _localizer;
 
