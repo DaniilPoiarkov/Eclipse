@@ -55,9 +55,7 @@ public abstract class Pipeline
         return new MenuResult(message, menu);
     }
 
-    protected static IResult Menu(
-        IEnumerable<IEnumerable<InlineKeyboardButton>> buttons,
-        string message)
+    protected static IResult Menu(IEnumerable<IEnumerable<InlineKeyboardButton>> buttons, string message)
     {
         var hasButtons = buttons.SelectMany(x => x)
             .Any();
@@ -67,9 +65,15 @@ public abstract class Pipeline
             return Text(message);
         }
 
-        var inlineMenu = new InlineKeyboardMarkup(buttons);
+        var menu = new InlineKeyboardMarkup(buttons);
 
-        return new MenuResult(message, inlineMenu);
+        return new MenuResult(message, menu);
+    }
+
+    protected static IResult Redirect<TPipeline>(params IEnumerable<IResult> results)
+        where TPipeline : Pipeline
+    {
+        return new RedirectResult(typeof(TPipeline), results);
     }
 
     protected static IResult Photo(MemoryStream stream, string fileName, string? caption = null)
