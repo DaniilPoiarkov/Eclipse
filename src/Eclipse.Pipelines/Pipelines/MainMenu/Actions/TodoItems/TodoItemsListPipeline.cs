@@ -2,7 +2,12 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Core.Pipelines;
+using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Stores.Messages;
+
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
@@ -65,6 +70,19 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             return GoBackResult(message);
         }
 
+        var localized = Localizer.ToLocalizableString(context.Value);
+
+        if (KeyWords.Contains(localized))
+        {
+            return localized switch
+            {
+                "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
+                "Menu:TodoItems:AddItem" => RemoveMenuAndRedirect<AddTodoItemPipeline>(message),
+                "Menu:TodoItems:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
+                _ => GoBackResult(message),
+            };
+        }
+
         var id = context.Value.ToGuid();
 
         if (id == Guid.Empty)
@@ -95,5 +113,18 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
         }
 
         return ItemFinishedResult(user.Gmt, items, message);
+    }
+
+    private static IResult RemoveMenuAndRedirect<TPipeline>(Message? message)
+        where TPipeline : PipelineBase
+    {
+        if (message is null)
+        {
+            return Redirect<TPipeline>();
+        }
+
+        return Redirect<TPipeline>(
+            Edit(message.MessageId, InlineKeyboardMarkup.Empty())
+        );
     }
 }

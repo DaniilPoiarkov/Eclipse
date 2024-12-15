@@ -8,7 +8,8 @@ namespace Eclipse.Pipelines.Pipelines;
 
 public abstract class EclipsePipelineBase : PipelineBase
 {
-    protected IStringLocalizer Localizer { get; private set; } = null!;
+    private IStringLocalizer? _localizer;
+    protected IStringLocalizer Localizer => _localizer ?? throw new InvalidOperationException("String localizer was not provided.");
 
     protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> MainMenuButtons => new List<KeyboardButton[]>
     {
@@ -18,6 +19,6 @@ public abstract class EclipsePipelineBase : PipelineBase
 
     internal void SetLocalizer(IStringLocalizer localizer)
     {
-        Localizer = localizer;
+        _localizer = localizer;
     }
 }
