@@ -78,7 +78,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             {
                 "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
                 "Menu:TodoItems:AddItem" => RemoveMenuAndRedirect<AddTodoItemPipeline>(message),
-                "Menu:TodoItems:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
+                "Menu:MainMenu:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
                 _ => GoBackResult(message),
             };
         }

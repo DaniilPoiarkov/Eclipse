@@ -57,14 +57,6 @@ public abstract class PipelineBase : Pipeline
             resultBase.ChatId = context.ChatId;
         }
 
-        if (result is RedirectResult redirect)
-        {
-            var pipeline = context.Services.GetService(redirect.PipelineType) as PipelineBase
-                ?? throw new PipelineResolvingException($"Pipeline of type {redirect.PipelineType.FullName} can not be resolved.");
-
-            return await pipeline.RunNext(context, cancellationToken);
-        }
-
         return result;
     }
 

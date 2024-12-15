@@ -7,7 +7,7 @@ namespace Eclipse.Core.Results;
 
 public sealed class RedirectResult : ResultBase
 {
-    internal Type PipelineType { get; }
+    public Type PipelineType { get; }
 
     private readonly IEnumerable<IResult> _results;
 
@@ -19,8 +19,9 @@ public sealed class RedirectResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        foreach (var result in _results)
+        foreach (var result in _results.Cast<ResultBase>())
         {
+            result.ChatId = ChatId;
             await result.SendAsync(botClient, cancellationToken);
         }
 
