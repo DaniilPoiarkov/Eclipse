@@ -70,24 +70,11 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             return GoBackResult(message);
         }
 
-        var localized = Localizer.ToLocalizableString(context.Value);
-
-        if (KeyWords.Contains(localized))
-        {
-            return localized switch
-            {
-                "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
-                "Menu:TodoItems:AddItem" => RemoveMenuAndRedirect<AddTodoItemPipeline>(message),
-                "Menu:MainMenu:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
-                _ => GoBackResult(message),
-            };
-        }
-
         var id = context.Value.ToGuid();
 
         if (id == Guid.Empty)
         {
-            return InterruptedResult(message, Localizer[_errorMessage]);
+            return InvalidActionOrRedirect(context, message);
         }
 
         var result = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
@@ -113,6 +100,31 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
         }
 
         return ItemFinishedResult(user.Gmt, items, message);
+    }
+
+    private IResult InvalidActionOrRedirect(MessageContext context, Message? message)
+    {
+        try
+        {
+            var localized = Localizer.ToLocalizableString(context.Value);
+
+            if (!KeyWords.Contains(localized))
+            {
+                return InterruptedResult(message, Localizer[_errorMessage]);
+            }
+
+            return localized switch
+            {
+                "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
+                "Menu:TodoItems:AddItem" => RemoveMenuAndRedirect<AddTodoItemPipeline>(message),
+                "Menu:MainMenu:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
+                _ => InterruptedResult(message, Localizer[_errorMessage]),
+            };
+        }
+        catch
+        {
+            return InterruptedResult(message, Localizer[_errorMessage]);
+        }
     }
 
     private static IResult RemoveMenuAndRedirect<TPipeline>(Message? message)
