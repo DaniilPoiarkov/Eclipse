@@ -6,6 +6,7 @@ using Eclipse.Domain;
 using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
+using Eclipse.Notifications;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.WebAPI;
@@ -28,7 +29,8 @@ builder.Services
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
-    .AddInfrastructureModule();
+    .AddInfrastructureModule()
+    .AddNotificationsModule(options => options.ChatId = configuration.GetValue<long>("Telegram:Chat"));
 
 builder.Services.AddLocalization(localization =>
 {

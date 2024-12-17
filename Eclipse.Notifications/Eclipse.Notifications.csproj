@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\Common\Eclipse.Common\Eclipse.Common.csproj" />
+    <ProjectReference Include="..\src\Eclipse.IntegrationEvents\Eclipse.IntegrationEvents.csproj" />
   </ItemGroup>
 
 </Project>
