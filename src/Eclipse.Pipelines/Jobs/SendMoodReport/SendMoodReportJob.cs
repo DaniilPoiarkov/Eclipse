@@ -39,8 +39,6 @@ internal sealed class SendMoodReportJob : EclipseJobBase
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly ICurrentCulture _currentCulture;
-
     private readonly IPlotGenerator _plotGenerator;
 
     public SendMoodReportJob(
@@ -49,7 +47,6 @@ internal sealed class SendMoodReportJob : EclipseJobBase
         ITelegramBotClient client,
         IStringLocalizer<SendMoodReportJob> localizer,
         ITimeProvider timeProvider,
-        ICurrentCulture currentCulture,
         IPlotGenerator plotGenerator)
     {
         _userRepository = userRepository;
@@ -57,7 +54,6 @@ internal sealed class SendMoodReportJob : EclipseJobBase
         _client = client;
         _localizer = localizer;
         _timeProvider = timeProvider;
-        _currentCulture = currentCulture;
         _plotGenerator = plotGenerator;
     }
 
@@ -96,8 +92,7 @@ internal sealed class SendMoodReportJob : EclipseJobBase
             var user = pair.User;
             var options = pair.Options;
 
-            using var _ = _currentCulture.UsingCulture(user.Culture);
-            _localizer.UseCurrentCulture(_currentCulture);
+            using var _ = _localizer.UsingCulture(user.Culture);
 
             var message = _localizer["Jobs:SendMoodReport:Caption"].Value;
 

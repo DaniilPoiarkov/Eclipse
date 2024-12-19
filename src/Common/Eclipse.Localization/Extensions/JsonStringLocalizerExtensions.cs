@@ -1,5 +1,4 @@
-﻿using Eclipse.Localization.Culture;
-using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Localizers;
 
 using Microsoft.Extensions.Localization;
 
@@ -7,14 +6,14 @@ namespace Eclipse.Localization.Extensions;
 
 public static class JsonStringLocalizerExtensions
 {
-    public static void UseCurrentCulture(this IStringLocalizer stringLocalizer, ICurrentCulture currentCulture)
+    public static IDisposable UsingCulture(this IStringLocalizer stringLocalizer, string culture)
     {
         if (stringLocalizer is not ICanUseCulture canUseCulture)
         {
-            return;
+            throw new InvalidOperationException($"Using culture is available only for {nameof(ICanUseCulture)} implementation.");
         }
 
-        canUseCulture.UseCurrentCulture(currentCulture);
+        return canUseCulture.UsingCulture(culture);
     }
 
     public static string ToLocalizableString(this IStringLocalizer stringLocalizer, string value)

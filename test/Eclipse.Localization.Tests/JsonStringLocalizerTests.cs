@@ -71,9 +71,7 @@ public sealed class JsonStringLocalizerTests
     [Fact]
     public void GetString_WhenCultureNotExist_ThenDefaultCultureUsed()
     {
-        var currentCulture = Substitute.For<ICurrentCulture>();
-        currentCulture.Culture.Returns("fr");
-        _sut.UseCurrentCulture(currentCulture);
+        using var _ = _sut.UsingCulture("fr");
 
         var value = _sut["Test"];
         value.Value.Should().Be("Test");

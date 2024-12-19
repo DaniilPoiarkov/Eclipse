@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
-using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
@@ -22,8 +21,6 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly ICurrentCulture _currentCulture;
-
     private readonly IStringLocalizer<ExportMoodReportBackgroundJob> _localizer;
 
     public ExportMoodReportBackgroundJob(
@@ -31,14 +28,12 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
         IReportsService reportsService,
         ITimeProvider timeProvider,
         ITelegramBotClient botClient,
-        ICurrentCulture currentCulture,
         IStringLocalizer<ExportMoodReportBackgroundJob> localizer)
     {
         _userService = userService;
         _reportsService = reportsService;
         _timeProvider = timeProvider;
         _botClient = botClient;
-        _currentCulture = currentCulture;
         _localizer = localizer;
     }
 
@@ -53,8 +48,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
 
         var user = result.Value;
 
-        using var _ = _currentCulture.UsingCulture(user.Culture);
-        _localizer.UseCurrentCulture(_currentCulture);
+        using var _ = _localizer.UsingCulture(user.Culture);
 
         var options = new MoodReportOptions
         {

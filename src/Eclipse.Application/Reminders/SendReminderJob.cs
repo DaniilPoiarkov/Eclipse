@@ -23,20 +23,16 @@ internal sealed class SendReminderJob : IJob
 
     private readonly ILogger<SendReminderJob> _logger;
 
-    private readonly ICurrentCulture _currentCulture;
-
     public SendReminderJob(
         ITelegramBotClient client,
         IStringLocalizer<SendReminderJob> localizer,
         IReminderService reminderService,
-        ILogger<SendReminderJob> logger,
-        ICurrentCulture currentCulture)
+        ILogger<SendReminderJob> logger)
     {
         _client = client;
         _localizer = localizer;
         _reminderService = reminderService;
         _logger = logger;
-        _currentCulture = currentCulture;
     }
 
     public async Task Execute(IJobExecutionContext context)
@@ -57,8 +53,7 @@ internal sealed class SendReminderJob : IJob
             return;
         }
 
-        using var _ = _currentCulture.UsingCulture(reminder.Culture);
-        _localizer.UseCurrentCulture(_currentCulture);
+        using var _ = _localizer.UsingCulture(reminder.Culture);
 
         var message = $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}";
 

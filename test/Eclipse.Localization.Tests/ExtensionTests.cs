@@ -82,7 +82,7 @@ public sealed class ExtensionTests
     public void UseCurrentCulture_WhenCultureSpecified_ThenUsesItForLocalization(string culture, string key, string expectedValue, bool resourceNotFound)
     {
         _currentCulture.Culture.Returns(culture);
-        _sut.UseCurrentCulture(_currentCulture);
+        using var _ = _sut.UsingCulture(culture);
 
         var value = _sut[key];
         value.Name.Should().Be(key);
@@ -96,7 +96,7 @@ public sealed class ExtensionTests
     public void UseCurrentCulture_WhenCultureNotExist_ThenDefaultCultureUsed(string key, string culture, string expected)
     {
         _currentCulture.Culture.Returns(culture);
-        _sut.UseCurrentCulture(_currentCulture);
+        using var _ = _sut.UsingCulture(culture);
 
         var value = _sut[key];
         value.Value.Should().Be(expected);

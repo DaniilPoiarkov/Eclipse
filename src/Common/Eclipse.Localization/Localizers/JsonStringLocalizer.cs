@@ -100,8 +100,8 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizedStringCo
         return value;
     }
 
-    public void UseCurrentCulture(ICurrentCulture currentCulture)
+    public IDisposable UsingCulture(string culture)
     {
-        CurrentCulture = currentCulture;
+        return CurrentCulture.UsingCulture(culture);
     }
 }

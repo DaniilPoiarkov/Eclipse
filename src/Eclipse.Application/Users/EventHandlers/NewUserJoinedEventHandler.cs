@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Domain.Users.Events;
-using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 
 using MediatR;
@@ -21,20 +20,16 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
 
     private readonly IUserService _userService;
 
-    private readonly ICurrentCulture _currentCulture;
-
     public NewUserJoinedEventHandler(
         ITelegramService telegramService,
         IStringLocalizer<NewUserJoinedEventHandler> localizer,
         IOptions<ApplicationOptions> telegramOptions,
-        IUserService userService,
-        ICurrentCulture currentCulture)
+        IUserService userService)
     {
         _telegramService = telegramService;
         _localizer = localizer;
         _telegramOptions = telegramOptions;
         _userService = userService;
-        _currentCulture = currentCulture;
     }
 
     public async Task Handle(NewUserJoinedDomainEvent notification, CancellationToken cancellationToken)
@@ -48,8 +43,7 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
 
         var user = result.Value;
 
-        using var _ = _currentCulture.UsingCulture(user.Culture);
-        _localizer.UseCurrentCulture(_currentCulture);
+        using var _ = _localizer.UsingCulture(user.Culture);
 
         var content = _localizer["User:Events:NewUserJoined", notification.UserId, notification.UserName, notification.Name, notification.Surname];
 

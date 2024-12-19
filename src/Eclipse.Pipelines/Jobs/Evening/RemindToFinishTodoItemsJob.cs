@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Clock;
-using Eclipse.Localization.Culture;
 using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
@@ -20,21 +19,17 @@ internal sealed class RemindToFinishTodoItemsJob : EclipseJobBase
 
     private readonly ITelegramService _telegramService;
 
-    private readonly ICurrentCulture _currentCulture;
-
     private readonly ITimeProvider _timeProvider;
 
     public RemindToFinishTodoItemsJob(
         IStringLocalizer<RemindToFinishTodoItemsJob> localizer,
         IUserService userService,
         ITelegramService telegramService,
-        ICurrentCulture currentCulture,
         ITimeProvider timeProvider)
     {
         _localizer = localizer;
         _userService = userService;
         _telegramService = telegramService;
-        _currentCulture = currentCulture;
         _timeProvider = timeProvider;
     }
 
@@ -56,8 +51,7 @@ internal sealed class RemindToFinishTodoItemsJob : EclipseJobBase
 
         foreach (var user in users)
         {
-            using var _ = _currentCulture.UsingCulture(user.Culture);
-            _localizer.UseCurrentCulture(_currentCulture);
+            using var _ = _localizer.UsingCulture(user.Culture);
 
             var template = _localizer[$"Jobs:Evening:{(user.TodoItems.IsNullOrEmpty() ? "Empty" : "RemindMarkAsFinished")}"];
 

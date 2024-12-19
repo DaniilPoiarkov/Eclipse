@@ -1,8 +1,6 @@
-﻿using Eclipse.Localization.Culture;
-
-namespace Eclipse.Localization.Localizers;
+﻿namespace Eclipse.Localization.Localizers;
 
 public interface ICanUseCulture
 {
-    void UseCurrentCulture(ICurrentCulture currentCulture);
+    IDisposable UsingCulture(string culture);
 }
