@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 
-internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizedStringConverter, ICanUseCulture
+internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizedStringConverter//, ICanUseCulture
 {
     private readonly IResourceProvider _resourceProvider;
 
@@ -100,8 +100,8 @@ internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizedStringCo
         return value;
     }
 
-    public IDisposable UsingCulture(string culture)
-    {
-        return CurrentCulture.UsingCulture(culture);
-    }
+    //public IDisposable UsingCulture(string culture)
+    //{
+    //    return CurrentCulture.UsingCulture(culture);
+    //}
 }

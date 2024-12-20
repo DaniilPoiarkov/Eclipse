@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Background;
-using Eclipse.Localization.Extensions;
+using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 
@@ -12,15 +12,21 @@ internal sealed class SendSignInCodeBackgroundJob : IBackgroundJob<SendSignInCod
 
     private readonly ITelegramService _telegramService;
 
-    public SendSignInCodeBackgroundJob(IStringLocalizer<SendSignInCodeBackgroundJob> stringLocalizer, ITelegramService telegramService)
+    private readonly ICurrentCulture _currentCulture;
+
+    public SendSignInCodeBackgroundJob(
+        IStringLocalizer<SendSignInCodeBackgroundJob> stringLocalizer,
+        ITelegramService telegramService,
+        ICurrentCulture currentCulture)
     {
         _stringLocalizer = stringLocalizer;
         _telegramService = telegramService;
+        _currentCulture = currentCulture;
     }
 
     public Task ExecuteAsync(SendSignInCodeArgs args, CancellationToken cancellationToken = default)
     {
-        using var _ = _stringLocalizer.UsingCulture(args.Culture);
+        using var _ = _currentCulture.UsingCulture(args.Culture);
 
         return _telegramService.Send(new SendMessageModel
         {

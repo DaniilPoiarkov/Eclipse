@@ -15,7 +15,7 @@ namespace Eclipse.Localization.Tests;
 
 public sealed class ExtensionTests
 {
-    private readonly ICurrentCulture _currentCulture;
+    //private readonly ICurrentCulture _currentCulture;
 
     private readonly IStringLocalizer<ExtensionTests> _sut;
 
@@ -29,7 +29,7 @@ public sealed class ExtensionTests
             })
             .BuildServiceProvider();
 
-        _currentCulture = Substitute.For<ICurrentCulture>();
+        //_currentCulture = Substitute.For<ICurrentCulture>();
         _sut = serviceProvider.GetRequiredService<IStringLocalizer<ExtensionTests>>();
     }
 
@@ -70,35 +70,35 @@ public sealed class ExtensionTests
         action.Should().ThrowExactly<LocalizationNotFoundException>();
     }
 
-    [Theory]
-    [InlineData("en", "Message{0}", "Message {0}", false)]
-    [InlineData("en", "Test", "Test", false)]
-    [InlineData("en", "Test1", "Test 1", false)]
-    [InlineData("en", "Test2", "Test 2", false)]
-    [InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
-    [InlineData("uk", "Test", "Тест", false)]
-    [InlineData("uk", "Test1", "Тест 1", false)]
-    [InlineData("uk", "Test2", "Тест 2", false)]
-    public void UseCurrentCulture_WhenCultureSpecified_ThenUsesItForLocalization(string culture, string key, string expectedValue, bool resourceNotFound)
-    {
-        _currentCulture.Culture.Returns(culture);
-        using var _ = _sut.UsingCulture(culture);
+    //[Theory]
+    //[InlineData("en", "Message{0}", "Message {0}", false)]
+    //[InlineData("en", "Test", "Test", false)]
+    //[InlineData("en", "Test1", "Test 1", false)]
+    //[InlineData("en", "Test2", "Test 2", false)]
+    //[InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
+    //[InlineData("uk", "Test", "Тест", false)]
+    //[InlineData("uk", "Test1", "Тест 1", false)]
+    //[InlineData("uk", "Test2", "Тест 2", false)]
+    //public void UseCurrentCulture_WhenCultureSpecified_ThenUsesItForLocalization(string culture, string key, string expectedValue, bool resourceNotFound)
+    //{
+    //    _currentCulture.Culture.Returns(culture);
+    //    using var _ = _sut.UsingCulture(culture);
 
-        var value = _sut[key];
-        value.Name.Should().Be(key);
-        value.Value.Should().Be(expectedValue);
-        value.ResourceNotFound.Should().Be(resourceNotFound);
-    }
+    //    var value = _sut[key];
+    //    value.Name.Should().Be(key);
+    //    value.Value.Should().Be(expectedValue);
+    //    value.ResourceNotFound.Should().Be(resourceNotFound);
+    //}
 
-    [Theory]
-    [InlineData("Test", "de", "Test")]
-    [InlineData("Test", "fr", "Test")]
-    public void UseCurrentCulture_WhenCultureNotExist_ThenDefaultCultureUsed(string key, string culture, string expected)
-    {
-        _currentCulture.Culture.Returns(culture);
-        using var _ = _sut.UsingCulture(culture);
+    //[Theory]
+    //[InlineData("Test", "de", "Test")]
+    //[InlineData("Test", "fr", "Test")]
+    //public void UseCurrentCulture_WhenCultureNotExist_ThenDefaultCultureUsed(string key, string culture, string expected)
+    //{
+    //    _currentCulture.Culture.Returns(culture);
+    //    using var _ = _sut.UsingCulture(culture);
 
-        var value = _sut[key];
-        value.Value.Should().Be(expected);
-    }
+    //    var value = _sut[key];
+    //    value.Value.Should().Be(expected);
+    //}
 }

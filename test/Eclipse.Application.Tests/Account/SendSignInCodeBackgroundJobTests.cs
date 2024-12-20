@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Account.Background;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Results;
+using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 
@@ -16,14 +17,17 @@ public sealed class SendSignInCodeBackgroundJobTests
 
     private readonly ITelegramService _telegramService;
 
+    private readonly ICurrentCulture _currentCulture;
+
     private readonly SendSignInCodeBackgroundJob _sut;
 
     public SendSignInCodeBackgroundJobTests()
     {
         _stringLocalizer = Substitute.For<IStringLocalizer<SendSignInCodeBackgroundJob>>();
         _telegramService = Substitute.For<ITelegramService>();
+        _currentCulture = Substitute.For<ICurrentCulture>();
 
-        _sut = new(_stringLocalizer, _telegramService);
+        _sut = new(_stringLocalizer, _telegramService, _currentCulture);
     }
 
     [Theory]

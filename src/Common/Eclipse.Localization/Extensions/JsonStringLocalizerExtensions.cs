@@ -6,16 +6,6 @@ namespace Eclipse.Localization.Extensions;
 
 public static class JsonStringLocalizerExtensions
 {
-    public static IDisposable UsingCulture(this IStringLocalizer stringLocalizer, string culture)
-    {
-        if (stringLocalizer is not ICanUseCulture canUseCulture)
-        {
-            throw new InvalidOperationException($"Using culture is available only for {nameof(ICanUseCulture)} implementation.");
-        }
-
-        return canUseCulture.UsingCulture(culture);
-    }
-
     public static string ToLocalizableString(this IStringLocalizer stringLocalizer, string value)
     {
         if (stringLocalizer is not ILocalizedStringConverter jsonStringLocalizer)
