@@ -3,7 +3,6 @@ using Eclipse.Common.Clock;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;

@@ -1,5 +1,4 @@
-﻿using Eclipse.Localization.Culture;
-using Eclipse.Localization.Resources;
+﻿using Eclipse.Localization.Resources;
 
 using Microsoft.Extensions.Localization;
 

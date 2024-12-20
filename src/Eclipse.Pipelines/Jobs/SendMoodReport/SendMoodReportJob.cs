@@ -5,7 +5,6 @@ using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
 
