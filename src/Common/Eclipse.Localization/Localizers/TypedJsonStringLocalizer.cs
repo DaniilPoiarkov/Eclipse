@@ -1,6 +1,4 @@
-﻿using Eclipse.Localization.Extensions;
-
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 

@@ -7,19 +7,11 @@ namespace Eclipse.Localization.Culture;
 
 internal sealed class CultureResolverMiddleware : IMiddleware
 {
-    private readonly CurrentCulture _currentCulture;
-
-    public CultureResolverMiddleware(CurrentCulture currentCulture)
-    {
-        _currentCulture = currentCulture;
-    }
-
     public Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         if (TryGetCulture(context, out var culture))
         {
             CultureInfo.CurrentUICulture = new CultureInfo(culture);
-            _currentCulture.SetCulture(CultureInfo.CurrentUICulture);
         }
 
         return next(context);

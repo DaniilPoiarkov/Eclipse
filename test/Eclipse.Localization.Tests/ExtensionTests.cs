@@ -1,5 +1,5 @@
 ﻿using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Extensions;
+using Eclipse.Localization.Localizers;
 
 using FluentAssertions;
 

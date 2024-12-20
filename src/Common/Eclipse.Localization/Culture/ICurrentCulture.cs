@@ -4,14 +4,10 @@ namespace Eclipse.Localization.Culture;
 
 public interface ICurrentCulture
 {
-    CultureInfo Culture { get; }
-
     /// <summary>
-    /// Sets the culture in disposable scope.
+    /// Usings the culture.
     /// </summary>
     /// <param name="culture">The culture.</param>
     /// <returns></returns>
-    IDisposable UsingCulture(string culture);
-
-    IDisposable UsingCulture(CultureInfo culture);
+    IDisposable UsingCulture(CultureInfo? culture);
 }

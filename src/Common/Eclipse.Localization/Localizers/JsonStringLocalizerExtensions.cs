@@ -1,8 +1,6 @@
-﻿using Eclipse.Localization.Localizers;
+﻿using Microsoft.Extensions.Localization;
 
-using Microsoft.Extensions.Localization;
-
-namespace Eclipse.Localization.Extensions;
+namespace Eclipse.Localization.Localizers;
 
 public static class JsonStringLocalizerExtensions
 {

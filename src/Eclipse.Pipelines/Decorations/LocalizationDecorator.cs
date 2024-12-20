@@ -39,7 +39,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
         }
 
         // TODO: refactor
-        using var _ = _currentCulture.UsingCulture(culture is null ? _currentCulture.Culture : new CultureInfo(culture));
+        using var _ = _currentCulture.UsingCulture(culture is null ? null : new CultureInfo(culture));
 
         return await execution(context, cancellationToken);
     }
