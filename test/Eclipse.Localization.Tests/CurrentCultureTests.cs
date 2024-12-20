@@ -5,11 +5,8 @@ using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
-
-using NSubstitute;
 
 using Xunit;
 
@@ -33,15 +30,10 @@ public sealed class CurrentCultureTests
         var options = Options.Create(builder);
 
         var resourceProvider = new ResourceProvider(options);
-        var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
 
         _sut = new CurrentCulture(options);
 
-        httpContextAccessor.HttpContext?.RequestServices
-            .GetService(typeof(ICurrentCulture))
-            .Returns(_sut);
-
-        var factory = new JsonStringLocalizerFactory(options, resourceProvider, httpContextAccessor);
+        var factory = new JsonStringLocalizerFactory(resourceProvider);
 
         _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);
     }

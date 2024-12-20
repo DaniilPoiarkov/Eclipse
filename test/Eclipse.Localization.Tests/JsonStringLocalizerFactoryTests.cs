@@ -1,13 +1,11 @@
 ﻿using Eclipse.Localization.Builder;
-using Eclipse.Localization.Culture;
 using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-using NSubstitute;
+using System.Globalization;
 
 using Xunit;
 
@@ -15,16 +13,12 @@ namespace Eclipse.Localization.Tests;
 
 public sealed class JsonStringLocalizerFactoryTests
 {
-    private readonly ICurrentCulture _currentCulture;
-
     private readonly Lazy<JsonStringLocalizerFactory> _sut;
 
     private JsonStringLocalizerFactory Sut => _sut.Value;
 
     public JsonStringLocalizerFactoryTests()
     {
-        _currentCulture = Substitute.For<ICurrentCulture>();
-
         var builder = new LocalizationBuilder
         {
             DefaultCulture = "en"
@@ -34,13 +28,7 @@ public sealed class JsonStringLocalizerFactoryTests
 
         var options = Options.Create(builder);
 
-        var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
-
-        httpContextAccessor.HttpContext?.RequestServices
-            .GetService(typeof(ICurrentCulture))
-            .ReturnsForAnyArgs(_currentCulture);
-
-        _sut = new(() => new JsonStringLocalizerFactory(options, new ResourceProvider(options), httpContextAccessor));
+        _sut = new(() => new JsonStringLocalizerFactory(new ResourceProvider(options)));
     }
 
     [Theory]
@@ -52,7 +40,7 @@ public sealed class JsonStringLocalizerFactoryTests
     [InlineData("uk", "Test4", "Test4", true)]
     public void Create_WhenLocalizerCreated_ThenItCanProperlyLocalizeStrings(string culture, string key, string expected, bool resourceNotFound)
     {
-        _currentCulture.Culture.Returns(culture);
+        CultureInfo.CurrentUICulture = new CultureInfo(culture);
 
         var localizer = Sut.Create(GetType());
 
@@ -72,7 +60,7 @@ public sealed class JsonStringLocalizerFactoryTests
     [InlineData("uk", "", "Resources", "Test4", "Test4", true)]
     public void Create_WhenLocationSpecified_ThenCanProperlyLocalizeStrings(string culture, string baseName, string location, string key, string expected, bool resourceNotFound)
     {
-        _currentCulture.Culture.Returns(culture);
+        CultureInfo.CurrentUICulture = new CultureInfo(culture);
 
         var localizer = Sut.Create(baseName, location);
 

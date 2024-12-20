@@ -8,19 +8,17 @@ namespace Eclipse.Localization.Culture;
 
 internal sealed class CurrentCulture : ICurrentCulture
 {
-    public string Culture { get; private set; }
-
-    public CultureInfo CurrectCulture { get; private set; }
+    public CultureInfo Culture { get; private set; }
 
     public CurrentCulture(IOptions<LocalizationBuilder> options)
     {
-        Culture = options.Value.DefaultCulture;
-        CurrectCulture = new CultureInfo(Culture);
+        Culture = new CultureInfo(options.Value.DefaultCulture);
     }
 
     internal void SetCulture(CultureInfo culture)
     {
-        CurrectCulture = culture;
+        Culture = culture;
+        CultureInfo.CurrentUICulture = culture;
     }
 
     public IDisposable UsingCulture(string culture)
@@ -30,9 +28,10 @@ internal sealed class CurrentCulture : ICurrentCulture
 
     public IDisposable UsingCulture(CultureInfo culture)
     {
-        var scope = new CultureScope(CurrectCulture, this);
+        var scope = new CultureScope(Culture, this);
 
-        CurrectCulture = culture;
+        Culture = culture;
+        CultureInfo.CurrentUICulture = culture;
 
         return scope;
     }

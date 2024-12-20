@@ -4,9 +4,7 @@ namespace Eclipse.Localization.Culture;
 
 public interface ICurrentCulture
 {
-    string Culture { get; }
-
-    CultureInfo CurrectCulture { get; }
+    CultureInfo Culture { get; }
 
     /// <summary>
     /// Sets the culture in disposable scope.

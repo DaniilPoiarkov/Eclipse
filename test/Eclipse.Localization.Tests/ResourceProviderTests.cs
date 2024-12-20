@@ -35,7 +35,7 @@ public sealed class ResourceProviderTests
     [InlineData("invalid.json")]
     public void Get_WhenFileIsWrongFormat_ThenExceptionThrown(string file)
     {
-        var action = () => Sut.Get("en", $"Resources/Invalid/{file}");
+        var action = () => Sut.Get(new("en"), $"Resources/Invalid/{file}");
         action.Should().ThrowExactly<UnableToParseLocalizationResourceException>();
     }
 
@@ -51,7 +51,7 @@ public sealed class ResourceProviderTests
 
         var expected = JsonConvert.DeserializeObject<LocalizationResource>(json);
 
-        var resource = Sut.Get(culture, path);
+        var resource = Sut.Get(new(culture), path);
         resource.Culture.Should().Be(culture);
         resource.Texts.Count.Should().Be(expected!.Texts.Count);
         resource.Texts.Except(expected.Texts).Should().BeEmpty();
@@ -64,7 +64,7 @@ public sealed class ResourceProviderTests
     {
         _builder.AddJsonFiles("Resources/Valid");
 
-        var resource = Sut.Get(culture);
+        var resource = Sut.Get(new(culture));
         resource.Culture.Should().Be(culture);
 
         var value = resource.Texts[key];

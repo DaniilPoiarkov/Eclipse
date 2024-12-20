@@ -4,7 +4,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Eclipse.Localization.Localizers;
 
-internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer<TResourceType>, ILocalizedStringConverter//, ICanUseCulture
+internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer<TResourceType>, ILocalizedStringConverter
 {
     private readonly IStringLocalizer _localizer;
 
@@ -21,11 +21,6 @@ internal sealed class TypedJsonStringLocalizer<TResourceType> : IStringLocalizer
     {
         return _localizer.GetAllStrings(includeParentCultures);
     }
-
-    //public IDisposable UsingCulture(string culture)
-    //{
-    //    return _localizer.UsingCulture(culture);
-    //}
 
     public string ToLocalizableString(string value)
     {

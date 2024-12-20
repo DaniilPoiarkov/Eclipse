@@ -64,6 +64,7 @@ public sealed class JsonStringLocalizerTests
         actual.ResourceNotFound.Should().Be(resourceNotFound);
     }
 
+    // TODO: Review
     //[Fact]
     //public void GetString_WhenCultureNotExist_ThenDefaultCultureUsed()
     //{
@@ -80,7 +81,8 @@ public sealed class JsonStringLocalizerTests
         builder.AddJsonFiles(_file);
         var resourceProvider = new ResourceProvider(Options.Create(builder));
 
-        var resource = resourceProvider.Get(_culture, _file);
+        // TODO: Review
+        var resource = resourceProvider.Get(new(_culture), _file);
 
         var actual = _sut.GetAllStrings().ToArray();
 

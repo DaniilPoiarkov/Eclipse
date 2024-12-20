@@ -1,5 +1,4 @@
-﻿using Eclipse.Localization.Culture;
-using Eclipse.Localization.Exceptions;
+﻿using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Extensions;
 
 using FluentAssertions;
@@ -7,16 +6,12 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
-using NSubstitute;
-
 using Xunit;
 
 namespace Eclipse.Localization.Tests;
 
 public sealed class ExtensionTests
 {
-    //private readonly ICurrentCulture _currentCulture;
-
     private readonly IStringLocalizer<ExtensionTests> _sut;
 
     public ExtensionTests()
@@ -29,7 +24,6 @@ public sealed class ExtensionTests
             })
             .BuildServiceProvider();
 
-        //_currentCulture = Substitute.For<ICurrentCulture>();
         _sut = serviceProvider.GetRequiredService<IStringLocalizer<ExtensionTests>>();
     }
 
@@ -69,6 +63,8 @@ public sealed class ExtensionTests
 
         action.Should().ThrowExactly<LocalizationNotFoundException>();
     }
+
+    // TODO: Review
 
     //[Theory]
     //[InlineData("en", "Message{0}", "Message {0}", false)]

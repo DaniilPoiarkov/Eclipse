@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 using System.Collections.Concurrent;
+using System.Globalization;
 
 namespace Eclipse.Localization.Resources;
 
@@ -22,43 +23,47 @@ internal sealed class ResourceProvider : IResourceProvider
         _options = options;
     }
 
-    public LocalizationResource Get(string culture)
+    public LocalizationResource Get(CultureInfo culture)
     {
-        if (_resourceCache.TryGetValue(culture, out var resource))
+        var cultureName = culture.Name;
+
+        if (_resourceCache.TryGetValue(cultureName, out var resource))
         {
             return resource;
         }
 
-        if (_missingResources.ContainsKey(culture))
+        if (_missingResources.ContainsKey(cultureName))
         {
             if (_missingResources.ContainsKey(_options.Value.DefaultCulture))
             {
-                throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
+                throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), cultureName);
             }
 
-            return Get(_options.Value.DefaultCulture);
+            return Get(new CultureInfo(_options.Value.DefaultCulture));
         }
 
         ReadAndCacheLocalizationResources();
 
-        if (_resourceCache.TryGetValue(culture, out resource))
+        if (_resourceCache.TryGetValue(cultureName, out resource))
         {
             return resource;
         }
 
-        _missingResources[culture] = null;
+        _missingResources[cultureName] = null;
 
         if (_missingResources.ContainsKey(_options.Value.DefaultCulture))
         {
-            throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
+            throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), cultureName);
         }
 
-        return Get(_options.Value.DefaultCulture);
+        return Get(new CultureInfo(_options.Value.DefaultCulture));
     }
 
-    public LocalizationResource Get(string culture, string location)
+    public LocalizationResource Get(CultureInfo culture, string location)
     {
-        var key = $"location={location};culture={culture}";
+        var cultureName = culture.Name;
+
+        var key = $"location={location};culture={cultureName}";
 
         if (_resourceCache.TryGetValue(key, out var resource))
         {
@@ -67,7 +72,7 @@ internal sealed class ResourceProvider : IResourceProvider
 
         if (_missingResources.ContainsKey(key))
         {
-            throw new LocalizationFileNotExistException(location, culture);
+            throw new LocalizationFileNotExistException(location, cultureName);
         }
 
         var fullPath = Path.GetFullPath(location);
@@ -86,12 +91,12 @@ internal sealed class ResourceProvider : IResourceProvider
                 Culture = g.Key,
                 Texts = g.SelectMany(r => r!.Texts).ToDictionary()
             })
-            .FirstOrDefault(r => r.Culture == culture);
+            .FirstOrDefault(r => r.Culture == cultureName);
 
         if (resource is null)
         {
             _missingResources[key] = null;
-            throw new LocalizationFileNotExistException(location, culture);
+            throw new LocalizationFileNotExistException(location, cultureName);
         }
 
         _resourceCache[key] = resource;
