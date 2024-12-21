@@ -27,11 +27,9 @@ public sealed class CurrentCultureTests
 
         builder.AddJsonFiles("Resources");
 
-        var options = Options.Create(builder);
+        _sut = new CurrentCulture();
 
-        _sut = new CurrentCulture(options);
-
-        var resourceProvider = new ResourceProvider(options);
+        var resourceProvider = new ResourceProvider(Options.Create(builder));
         var factory = new JsonStringLocalizerFactory(resourceProvider);
 
         _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);

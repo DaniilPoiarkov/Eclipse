@@ -1,18 +1,9 @@
-﻿using Eclipse.Localization.Builder;
-
-using Microsoft.Extensions.Options;
-
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Eclipse.Localization.Culture;
 
 internal sealed class CurrentCulture : ICurrentCulture
 {
-    public CurrentCulture(IOptions<LocalizationBuilder> options)
-    {
-        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(options.Value.DefaultCulture);
-    }
-
     public IDisposable UsingCulture(CultureInfo? culture)
     {
         var scope = new CultureScope(CultureInfo.CurrentUICulture);

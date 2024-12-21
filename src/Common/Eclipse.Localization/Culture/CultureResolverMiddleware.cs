@@ -1,33 +1,42 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Eclipse.Localization.Builder;
 
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+
 using System.Globalization;
 
 namespace Eclipse.Localization.Culture;
 
 internal sealed class CultureResolverMiddleware : IMiddleware
 {
+    private readonly IOptions<LocalizationBuilder> _options;
+
+    public CultureResolverMiddleware(IOptions<LocalizationBuilder> options)
+    {
+        _options = options;
+    }
+
     public Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        if (TryGetCulture(context, out var culture))
-        {
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
-        }
+        CultureInfo.CurrentUICulture = GetCulture(context);
 
         return next(context);
     }
 
-    private static bool TryGetCulture(HttpContext context, [NotNullWhen(true)] out string? culture)
+    private CultureInfo GetCulture(HttpContext context)
     {
-        culture = null;
-
         if (!context.Request.Headers.TryGetValue("Content-Language", out var values))
         {
-            return false;
+            return CultureInfo.GetCultureInfo(_options.Value.DefaultCulture);
         }
 
-        culture = values.FirstOrDefault();
+        var culture = values.FirstOrDefault();
 
-        return !string.IsNullOrEmpty(culture);
+        if (string.IsNullOrEmpty(culture))
+        {
+            return CultureInfo.GetCultureInfo(_options.Value.DefaultCulture);
+        }
+
+        return CultureInfo.GetCultureInfo(culture);
     }
 }
