@@ -10,7 +10,7 @@ internal sealed class CurrentCulture : ICurrentCulture
 {
     public CurrentCulture(IOptions<LocalizationBuilder> options)
     {
-        CultureInfo.CurrentUICulture = new CultureInfo(options.Value.DefaultCulture);
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(options.Value.DefaultCulture);
     }
 
     public IDisposable UsingCulture(CultureInfo? culture)

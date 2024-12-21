@@ -25,6 +25,8 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 
     public async Task<IResult> Decorate(Func<MessageContext, CancellationToken, Task<IResult>> execution, MessageContext context, CancellationToken cancellationToken = default)
     {
+        CultureInfo? cultureInfo = null;
+
         var culture = await _cultureTracker.GetAsync(context.ChatId, cancellationToken);
 
         if (culture is null)
@@ -34,12 +36,11 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
             if (user is not null)
             {
                 await _cultureTracker.ResetAsync(context.ChatId, user.Culture, cancellationToken);
-                culture = user.Culture;
+                cultureInfo = CultureInfo.GetCultureInfo(user.Culture);
             }
         }
 
-        // TODO: refactor
-        using var _ = _currentCulture.UsingCulture(culture is null ? null : new CultureInfo(culture));
+        using var _ = _currentCulture.UsingCulture(cultureInfo);
 
         return await execution(context, cancellationToken);
     }

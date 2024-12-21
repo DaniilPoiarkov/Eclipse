@@ -29,10 +29,9 @@ public sealed class CurrentCultureTests
 
         var options = Options.Create(builder);
 
-        var resourceProvider = new ResourceProvider(options);
-
         _sut = new CurrentCulture(options);
 
+        var resourceProvider = new ResourceProvider(options);
         var factory = new JsonStringLocalizerFactory(resourceProvider);
 
         _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);
@@ -59,5 +58,27 @@ public sealed class CurrentCultureTests
         beforeUsing.Value.Should().Be(expectedWithDefault);
         withUsing.Value.Should().Be(expectedWithUsing);
         afterUsing.Value.Should().Be(expectedWithDefault);
+    }
+
+    [Theory]
+    [InlineData("en", "Message{0}", "Message {0}", false)]
+    [InlineData("en", "Test", "Test", false)]
+    [InlineData("en", "Test1", "Test 1", false)]
+    [InlineData("en", "Test2", "Test 2", false)]
+    [InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
+    [InlineData("uk", "Test", "Тест", false)]
+    [InlineData("uk", "Test1", "Тест 1", false)]
+    [InlineData("uk", "Test2", "Тест 2", false)]
+    [InlineData("de", "Test", "Test", false)]
+    [InlineData("fr", "Test", "Test", false)]
+    public void UsingCulture_WhenCultureSpecified_ThenUsesItOrDefaultForLocalization(string culture, string key, string expectedValue, bool resourceNotFound)
+    {
+        using var _ = _sut.UsingCulture(culture);
+
+        var value = _localizer[key];
+
+        value.Name.Should().Be(key);
+        value.Value.Should().Be(expectedValue);
+        value.ResourceNotFound.Should().Be(resourceNotFound);
     }
 }

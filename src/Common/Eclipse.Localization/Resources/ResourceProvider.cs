@@ -3,10 +3,9 @@ using Eclipse.Localization.Exceptions;
 
 using Microsoft.Extensions.Options;
 
-using Newtonsoft.Json;
-
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Text.Json;
 
 namespace Eclipse.Localization.Resources;
 
@@ -17,6 +16,11 @@ internal sealed class ResourceProvider : IResourceProvider
     private readonly ConcurrentDictionary<string, object?> _missingResources = [];
 
     private readonly IOptions<LocalizationBuilder> _options;
+
+    private static readonly JsonSerializerOptions _serializationOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
 
     public ResourceProvider(IOptions<LocalizationBuilder> options)
     {
@@ -39,7 +43,7 @@ internal sealed class ResourceProvider : IResourceProvider
                 throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), cultureName);
             }
 
-            return Get(new CultureInfo(_options.Value.DefaultCulture));
+            return Get(CultureInfo.GetCultureInfo(_options.Value.DefaultCulture));
         }
 
         ReadAndCacheLocalizationResources();
@@ -56,7 +60,7 @@ internal sealed class ResourceProvider : IResourceProvider
             throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), cultureName);
         }
 
-        return Get(new CultureInfo(_options.Value.DefaultCulture));
+        return Get(CultureInfo.GetCultureInfo(_options.Value.DefaultCulture));
     }
 
     public LocalizationResource Get(CultureInfo culture, string location)
@@ -84,7 +88,7 @@ internal sealed class ResourceProvider : IResourceProvider
 
         resource = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
             .Select(File.ReadAllText)
-            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
+            .Select(json => JsonSerializer.Deserialize<LocalizationResource>(json, _serializationOptions))
             .GroupBy(r => r!.Culture)
             .Select(g => new LocalizationResource
             {
@@ -108,7 +112,7 @@ internal sealed class ResourceProvider : IResourceProvider
     {
         var json = File.ReadAllText(fullPath);
 
-        var resource = JsonConvert.DeserializeObject<LocalizationResource>(json);
+        var resource = JsonSerializer.Deserialize<LocalizationResource>(json, _serializationOptions);
 
         if (resource is null || string.IsNullOrEmpty(resource.Culture))
         {
@@ -184,7 +188,7 @@ internal sealed class ResourceProvider : IResourceProvider
                 ? [path]
                 : Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             .Select(File.ReadAllText)
-            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
+            .Select(json => JsonSerializer.Deserialize<LocalizationResource>(json, _serializationOptions))
             .Where(r => r is not null)
             .GroupBy(r => r!.Culture)
             .Select(g => new LocalizationResource

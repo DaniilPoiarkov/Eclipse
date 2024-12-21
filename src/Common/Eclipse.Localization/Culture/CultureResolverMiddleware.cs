@@ -11,7 +11,7 @@ internal sealed class CultureResolverMiddleware : IMiddleware
     {
         if (TryGetCulture(context, out var culture))
         {
-            CultureInfo.CurrentUICulture = new CultureInfo(culture);
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
         }
 
         return next(context);

@@ -11,6 +11,6 @@ public static class CurrentCultureExtensions
     /// <returns></returns>
     public static IDisposable UsingCulture(this ICurrentCulture currentCulture, string culture)
     {
-        return currentCulture.UsingCulture(new CultureInfo(culture));
+        return currentCulture.UsingCulture(CultureInfo.GetCultureInfo(culture));
     }
 }
