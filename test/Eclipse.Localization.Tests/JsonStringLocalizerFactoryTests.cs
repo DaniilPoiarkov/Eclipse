@@ -21,7 +21,7 @@ public sealed class JsonStringLocalizerFactoryTests
     {
         var builder = new LocalizationBuilder
         {
-            DefaultCulture = "en"
+            DefaultCulture = "en-US"
         };
 
         builder.AddJsonFiles("Resources");
@@ -32,12 +32,12 @@ public sealed class JsonStringLocalizerFactoryTests
     }
 
     [Theory]
-    [InlineData("en", "Test", "Test", false)]
-    [InlineData("en", "Test1", "Test 1", false)]
-    [InlineData("en", "Test2", "Test 2", false)]
-    [InlineData("uk", "Test", "Тест", false)]
-    [InlineData("uk", "Test3", "Test3", true)]
-    [InlineData("uk", "Test4", "Test4", true)]
+    [InlineData("en-US", "Test", "Test", false)]
+    [InlineData("en-US", "Test1", "Test 1", false)]
+    [InlineData("en-US", "Test2", "Test 2", false)]
+    [InlineData("uk-UA", "Test", "Тест", false)]
+    [InlineData("uk-UA", "Test3", "Test3", true)]
+    [InlineData("uk-UA", "Test4", "Test4", true)]
     public void Create_WhenLocalizerCreated_ThenItCanProperlyLocalizeStrings(string culture, string key, string expected, bool resourceNotFound)
     {
         CultureInfo.CurrentUICulture = new CultureInfo(culture);
@@ -52,12 +52,12 @@ public sealed class JsonStringLocalizerFactoryTests
     }
 
     [Theory]
-    [InlineData("en", "", "Resources", "Test", "Test", false)]
-    [InlineData("en", "", "Resources", "Test1", "Test 1", false)]
-    [InlineData("en", "", "Resources", "Test2", "Test 2", false)]
-    [InlineData("uk", "", "Resources", "Test", "Тест", false)]
-    [InlineData("uk", "", "Resources", "Test3", "Test3", true)]
-    [InlineData("uk", "", "Resources", "Test4", "Test4", true)]
+    [InlineData("en-US", "", "Resources", "Test", "Test", false)]
+    [InlineData("en-US", "", "Resources", "Test1", "Test 1", false)]
+    [InlineData("en-US", "", "Resources", "Test2", "Test 2", false)]
+    [InlineData("uk-UA", "", "Resources", "Test", "Тест", false)]
+    [InlineData("uk-UA", "", "Resources", "Test3", "Test3", true)]
+    [InlineData("uk-UA", "", "Resources", "Test4", "Test4", true)]
     public void Create_WhenLocationSpecified_ThenCanProperlyLocalizeStrings(string culture, string baseName, string location, string key, string expected, bool resourceNotFound)
     {
         CultureInfo.CurrentUICulture = new CultureInfo(culture);

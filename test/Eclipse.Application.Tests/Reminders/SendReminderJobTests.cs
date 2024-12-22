@@ -74,7 +74,7 @@ public sealed class SendReminderJobTests
         _reminderService.DeleteAsync(userId, reminderId).Returns(Result.Success());
 
         await _sut.Execute(context);
-        
+
         _currentCulture.Received().UsingCulture(Arg.Is<CultureInfo>(c => c.Name == culture));
 
         await _client.Received().SendRequest(

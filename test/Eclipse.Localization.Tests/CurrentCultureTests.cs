@@ -22,7 +22,7 @@ public sealed class CurrentCultureTests
     {
         var builder = new LocalizationBuilder
         {
-            DefaultCulture = "en"
+            DefaultCulture = "en-US"
         };
 
         builder.AddJsonFiles("Resources");
@@ -36,10 +36,10 @@ public sealed class CurrentCultureTests
     }
 
     [Theory]
-    [InlineData("Test", "uk", "Test", "Тест")]
-    [InlineData("Test1", "uk", "Test 1", "Тест 1")]
-    [InlineData("Test2", "uk", "Test 2", "Тест 2")]
-    [InlineData("ExceptionMessage", "uk", "Exception {0}", "Помилка {0}")]
+    [InlineData("Test", "uk-UA", "Test", "Тест")]
+    [InlineData("Test1", "uk-UA", "Test 1", "Тест 1")]
+    [InlineData("Test2", "uk-UA", "Test 2", "Тест 2")]
+    [InlineData("ExceptionMessage", "uk-UA", "Exception {0}", "Помилка {0}")]
     public void UsingCulture_WhenSpecified_ThenLocalizerUsesSpecificCultureInScope(string key, string culture, string expectedWithDefault, string expectedWithUsing)
     {
         var beforeUsing = _localizer[key];
@@ -59,14 +59,14 @@ public sealed class CurrentCultureTests
     }
 
     [Theory]
-    [InlineData("en", "Message{0}", "Message {0}", false)]
-    [InlineData("en", "Test", "Test", false)]
-    [InlineData("en", "Test1", "Test 1", false)]
-    [InlineData("en", "Test2", "Test 2", false)]
-    [InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
-    [InlineData("uk", "Test", "Тест", false)]
-    [InlineData("uk", "Test1", "Тест 1", false)]
-    [InlineData("uk", "Test2", "Тест 2", false)]
+    [InlineData("en-US", "Message{0}", "Message {0}", false)]
+    [InlineData("en-US", "Test", "Test", false)]
+    [InlineData("en-US", "Test1", "Test 1", false)]
+    [InlineData("en-US", "Test2", "Test 2", false)]
+    [InlineData("uk-UA", "Message{0}", "Повідомлення {0}", false)]
+    [InlineData("uk-UA", "Test", "Тест", false)]
+    [InlineData("uk-UA", "Test1", "Тест 1", false)]
+    [InlineData("uk-UA", "Test2", "Тест 2", false)]
     [InlineData("de", "Test", "Test", false)]
     [InlineData("fr", "Test", "Test", false)]
     public void UsingCulture_WhenCultureSpecified_ThenUsesItOrDefaultForLocalization(string culture, string key, string expectedValue, bool resourceNotFound)

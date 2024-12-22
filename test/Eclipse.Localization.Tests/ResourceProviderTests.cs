@@ -24,7 +24,7 @@ public sealed class ResourceProviderTests
     {
         _builder = new LocalizationBuilder
         {
-            DefaultCulture = "en"
+            DefaultCulture = "en-US"
         };
 
         _lazy = new(() => new ResourceProvider(Options.Create(_builder)));
@@ -40,10 +40,10 @@ public sealed class ResourceProviderTests
     }
 
     [Theory]
-    [InlineData("en", "en.json")]
-    [InlineData("en", "en-1.json")]
-    [InlineData("uk", "uk.json")]
-    [InlineData("uk", "uk-1.json")]
+    [InlineData("en-US", "en.json")]
+    [InlineData("en-US", "en-1.json")]
+    [InlineData("uk-UA", "uk.json")]
+    [InlineData("uk-UA", "uk-1.json")]
     public void Get_WhenLocationProperlySpecified_ThenResourceReturned(string culture, string file)
     {
         var path = $"Resources/Valid/{file}";
@@ -58,8 +58,8 @@ public sealed class ResourceProviderTests
     }
 
     [Theory]
-    [InlineData("en", "Test", "Test")]
-    [InlineData("uk", "Test", "Тест")]
+    [InlineData("en-US", "Test", "Test")]
+    [InlineData("uk-UA", "Test", "Тест")]
     public void Get_WhenCultureSpecified_ThenReturnsResourceWithProperCulture(string culture, string key, string expected)
     {
         _builder.AddJsonFiles("Resources/Valid");
@@ -72,9 +72,9 @@ public sealed class ResourceProviderTests
     }
 
     [Theory]
-    [InlineData("Test", "en", "Test")]
-    [InlineData("Тест", "uk", "Test")]
-    [InlineData("Message {0}", "en", "Message{0}")]
+    [InlineData("Test", "en-US", "Test")]
+    [InlineData("Тест", "uk-UA", "Test")]
+    [InlineData("Message {0}", "en-US", "Message{0}")]
     public void GetWithValue_ThenResourceExist_ThenReturnsWithSpecifiedValue(string value, string expectedCulture, string expectedKey)
     {
         _builder.AddJsonFiles("Resources/Valid");
