@@ -19,7 +19,7 @@ public sealed class JsonStringLocalizerTests
 
     private static readonly string _file = "Resources/Valid/en.json";
 
-    private static readonly string _culture = "en-US";
+    private static readonly string _culture = "en";
 
     public JsonStringLocalizerTests()
     {
