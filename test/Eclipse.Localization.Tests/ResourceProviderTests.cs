@@ -127,6 +127,7 @@ public sealed class ResourceProviderTests
     {
         _builder.AddJsonFiles("Resources/Valid");
 
+        _ = _sut.Get(CultureInfo.GetCultureInfo(culture));
         _ = _sut.GetWithValue(value);
 
         var resource = _sut.GetWithValue(value);

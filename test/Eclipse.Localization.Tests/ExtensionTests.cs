@@ -6,6 +6,8 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
+using NSubstitute;
+
 using Xunit;
 
 namespace Eclipse.Localization.Tests;
@@ -62,5 +64,14 @@ public sealed class ExtensionTests
         var action = () => _sut.ToLocalizableString(value);
 
         action.Should().ThrowExactly<LocalizationNotFoundException>();
+    }
+
+    [Theory]
+    [InlineData("Test")]
+    public void ToLocalizableString_WhenNotSupported_ThenExceptionThrown(string value)
+    {
+        var localizer = Substitute.For<IStringLocalizer>();
+        var action = () => localizer.ToLocalizableString(value);
+        action.Should().ThrowExactly<InvalidOperationException>();
     }
 }
