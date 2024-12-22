@@ -8,6 +8,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
+using System.Globalization;
+
 using Xunit;
 
 namespace Eclipse.Localization.Tests;
@@ -42,6 +44,8 @@ public sealed class CurrentCultureTests
     [InlineData("ExceptionMessage", "uk", "Exception {0}", "Помилка {0}")]
     public void UsingCulture_WhenSpecified_ThenLocalizerUsesSpecificCultureInScope(string key, string culture, string expectedWithDefault, string expectedWithUsing)
     {
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+
         var beforeUsing = _localizer[key];
 
         var withUsing = new LocalizedString(string.Empty, string.Empty);
