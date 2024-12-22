@@ -1,5 +1,6 @@
 ﻿using Eclipse.Localization.Builder;
 using Eclipse.Localization.Culture;
+using Eclipse.Localization.Culture.Resolvers;
 using Eclipse.Localization.Localizers;
 using Eclipse.Localization.Resources;
 
@@ -24,8 +25,6 @@ public static class LocalizationModule
 
         services.Configure<LocalizationBuilder>(configuration);
 
-        services.AddHttpContextAccessor();
-
         services.AddSingleton<IResourceProvider, ResourceProvider>();
 
         services.RemoveAll<IStringLocalizerFactory>()
@@ -41,6 +40,8 @@ public static class LocalizationModule
             .AddScoped<ICurrentCulture>(sp => sp.GetRequiredService<CurrentCulture>());
 
         services.AddScoped<CultureResolverMiddleware>();
+
+        services.AddSingleton<ICultureResolver, HeaderCultureResolver>();
 
         return services;
     }

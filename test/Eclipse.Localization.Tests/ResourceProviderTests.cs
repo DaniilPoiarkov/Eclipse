@@ -36,7 +36,7 @@ public sealed class ResourceProviderTests
     public void Get_WhenFileIsWrongFormat_ThenExceptionThrown(string file)
     {
         var action = () => Sut.Get(new("en"), $"Resources/Invalid/{file}");
-        action.Should().ThrowExactly<UnableToParseLocalizationResourceException>();
+        action.Should().ThrowExactly<LocalizationFileNotExistException>();
     }
 
     [Theory]

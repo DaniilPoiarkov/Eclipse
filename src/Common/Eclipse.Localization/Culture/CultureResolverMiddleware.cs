@@ -1,6 +1,7 @@
 ﻿using Eclipse.Localization.Builder;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using System.Globalization;
@@ -25,18 +26,16 @@ internal sealed class CultureResolverMiddleware : IMiddleware
 
     private CultureInfo GetCulture(HttpContext context)
     {
-        if (!context.Request.Headers.TryGetValue("Content-Language", out var values))
+        var resolvers = context.RequestServices.GetServices<ICultureResolver>();
+
+        foreach (var resolver in resolvers)
         {
-            return CultureInfo.GetCultureInfo(_options.Value.DefaultCulture);
+            if (resolver.TryGetCulture(context, out var culture))
+            {
+                return culture;
+            }
         }
 
-        var culture = values.FirstOrDefault();
-
-        if (string.IsNullOrEmpty(culture))
-        {
-            return CultureInfo.GetCultureInfo(_options.Value.DefaultCulture);
-        }
-
-        return CultureInfo.GetCultureInfo(culture);
+        return CultureInfo.GetCultureInfo(_options.Value.DefaultCulture);
     }
 }
