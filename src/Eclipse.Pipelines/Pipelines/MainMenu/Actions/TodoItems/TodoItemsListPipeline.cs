@@ -2,7 +2,12 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Core.Pipelines;
+using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Stores.Messages;
+
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
@@ -69,7 +74,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 
         if (id == Guid.Empty)
         {
-            return InterruptedResult(message, Localizer[_errorMessage]);
+            return InvalidActionOrRedirect(context, message);
         }
 
         var result = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
@@ -95,5 +100,43 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
         }
 
         return ItemFinishedResult(user.Gmt, items, message);
+    }
+
+    private IResult InvalidActionOrRedirect(MessageContext context, Message? message)
+    {
+        try
+        {
+            var localized = Localizer.ToLocalizableString(context.Value);
+
+            if (!KeyWords.Contains(localized))
+            {
+                return InterruptedResult(message, Localizer[_errorMessage]);
+            }
+
+            return localized switch
+            {
+                "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
+                "Menu:TodoItems:AddItem" => RemoveMenuAndRedirect<AddTodoItemPipeline>(message),
+                "Menu:MainMenu:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
+                _ => InterruptedResult(message, Localizer[_errorMessage]),
+            };
+        }
+        catch
+        {
+            return InterruptedResult(message, Localizer[_errorMessage]);
+        }
+    }
+
+    private static IResult RemoveMenuAndRedirect<TPipeline>(Message? message)
+        where TPipeline : PipelineBase
+    {
+        if (message is null)
+        {
+            return Redirect<TPipeline>();
+        }
+
+        return Redirect<TPipeline>(
+            Edit(message.MessageId, InlineKeyboardMarkup.Empty())
+        );
     }
 }

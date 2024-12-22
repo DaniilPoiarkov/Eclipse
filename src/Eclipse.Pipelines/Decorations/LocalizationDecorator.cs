@@ -4,6 +4,8 @@ using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
 
+using System.Globalization;
+
 namespace Eclipse.Pipelines.Decorations;
 
 public sealed class LocalizationDecorator : IPipelineExecutionDecorator
@@ -36,7 +38,14 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
             }
         }
 
-        using var _ = _currentCulture.UsingCulture(culture ?? _currentCulture.Culture);
+        CultureInfo? cultureInfo = null;
+
+        if (!culture.IsNullOrEmpty())
+        {
+            cultureInfo = CultureInfo.GetCultureInfo(culture);
+        }
+
+        using var _ = _currentCulture.UsingCulture(cultureInfo);
 
         return await execution(context, cancellationToken);
     }

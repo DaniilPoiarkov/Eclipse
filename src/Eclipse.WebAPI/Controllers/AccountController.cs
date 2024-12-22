@@ -38,6 +38,6 @@ public sealed class AccountController : ControllerBase
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var result = await _loginManager.LoginAsync(request, cancellationToken);
-        return result.Match(() => Ok(result.Value), error => error.ToProblems(_stringLocalizer));
+        return result.Match(Ok, error => error.ToProblems(_stringLocalizer));
     }
 }

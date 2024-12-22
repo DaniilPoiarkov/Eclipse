@@ -1,7 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -50,7 +48,7 @@ internal sealed class SendReminderJob : IJob
             return;
         }
 
-        var reminder = JsonConvert.DeserializeObject<ReminderAddedDomainEvent>(data);
+        var reminder = JsonConvert.DeserializeObject<SendReminderJobData>(data);
 
         if (reminder is null)
         {
@@ -59,7 +57,6 @@ internal sealed class SendReminderJob : IJob
         }
 
         using var _ = _currentCulture.UsingCulture(reminder.Culture);
-        _localizer.UseCurrentCulture(_currentCulture);
 
         var message = $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}";
 
@@ -69,7 +66,7 @@ internal sealed class SendReminderJob : IJob
 
         if (!result.IsSuccess)
         {
-            _logger.LogError("Failed to remive reminder with id {Id} for user {UserId}", reminder.ReminderId, reminder.UserId);
+            _logger.LogError("Failed to remove reminder with id {Id} for user {UserId}. Error: {Error}", reminder.ReminderId, reminder.UserId, result.Error);
         }
 
         await context.Scheduler.UnscheduleJob(context.Trigger.Key, context.CancellationToken);

@@ -6,7 +6,8 @@ using FluentAssertions;
 
 using Microsoft.Extensions.Options;
 
-using Newtonsoft.Json;
+using System.Globalization;
+using System.Text.Json;
 
 using Xunit;
 
@@ -16,9 +17,12 @@ public sealed class ResourceProviderTests
 {
     private readonly LocalizationBuilder _builder;
 
-    private readonly Lazy<IResourceProvider> _lazy;
+    private readonly ResourceProvider _sut;
 
-    private IResourceProvider Sut => _lazy.Value;
+    private static readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
 
     public ResourceProviderTests()
     {
@@ -27,7 +31,7 @@ public sealed class ResourceProviderTests
             DefaultCulture = "en"
         };
 
-        _lazy = new(() => new ResourceProvider(Options.Create(_builder)));
+        _sut = new ResourceProvider(Options.Create(_builder));
     }
 
     [Theory]
@@ -35,8 +39,17 @@ public sealed class ResourceProviderTests
     [InlineData("invalid.json")]
     public void Get_WhenFileIsWrongFormat_ThenExceptionThrown(string file)
     {
-        var action = () => Sut.Get("en", $"Resources/Invalid/{file}");
-        action.Should().ThrowExactly<UnableToParseLocalizationResourceException>();
+        var action = () => _sut.Get(new CultureInfo("en"), $"Resources/Invalid/{file}");
+        action.Should().ThrowExactly<LocalizationFileNotExistException>();
+    }
+
+    [Theory]
+    [InlineData("en")]
+    [InlineData("uk")]
+    public void Get_WhenNoFilesProvided_ThenThrowsException(string culture)
+    {
+        var action = () => _sut.Get(CultureInfo.GetCultureInfo(culture));
+        action.Should().ThrowExactly<LocalizationFileNotExistException>();
     }
 
     [Theory]
@@ -49,41 +62,53 @@ public sealed class ResourceProviderTests
         var path = $"Resources/Valid/{file}";
         var json = File.ReadAllText(Path.GetFullPath(path));
 
-        var expected = JsonConvert.DeserializeObject<LocalizationResource>(json);
+        var expected = JsonSerializer.Deserialize<LocalizationResource>(json, _serializerOptions);
 
-        var resource = Sut.Get(culture, path);
-        resource.Culture.Should().Be(culture);
-        resource.Texts.Count.Should().Be(expected!.Texts.Count);
-        resource.Texts.Except(expected.Texts).Should().BeEmpty();
+        var resource = _sut.Get(new CultureInfo(culture), path);
+
+        resource.Should().BeEquivalentTo(expected);
     }
 
     [Theory]
     [InlineData("en", "Test", "Test")]
     [InlineData("uk", "Test", "Тест")]
-    public void Get_WhenCultureSpecified_ThenReturnsResourceWithProperCulture(string culture, string key, string expected)
+    public void Get_WhenCultureSpecified_ThenReturnsProperResource(string culture, string key, string expected)
     {
         _builder.AddJsonFiles("Resources/Valid");
 
-        var resource = Sut.Get(culture);
-        resource.Culture.Should().Be(culture);
+        var resource = _sut.Get(new CultureInfo(culture));
 
-        var value = resource.Texts[key];
-        value.Should().Be(expected);
+        resource.Culture.Should().Be(culture);
+        resource.Texts[key].Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData("fr")]
+    [InlineData("de")]
+    public void Get_WhenCultureNotExists_ThenReturnsWithDefaultCulture(string culture)
+    {
+        _builder.AddJsonFiles("Resources/Valid");
+
+        var cultureInfo = CultureInfo.GetCultureInfo(culture);
+
+        _ = _sut.Get(cultureInfo);
+
+        var result = _sut.Get(cultureInfo);
+        result.Culture.Should().Be(_builder.DefaultCulture);
     }
 
     [Theory]
     [InlineData("Test", "en", "Test")]
     [InlineData("Тест", "uk", "Test")]
     [InlineData("Message {0}", "en", "Message{0}")]
-    public void GetWithValue_ThenResourceExist_ThenReturnsWithSpecifiedValue(string value, string expectedCulture, string expectedKey)
+    public void GetWithValue_ThenResourceExist_ThenReturnsWithSpecifiedValue(string value, string culture, string key)
     {
         _builder.AddJsonFiles("Resources/Valid");
 
-        var resource = Sut.GetWithValue(value);
+        var resource = _sut.GetWithValue(value);
 
-        resource.Culture.Should().Be(expectedCulture);
-        var pair = resource.Texts.FirstOrDefault(pair => pair.Value == value);
-        pair.Key.Should().Be(expectedKey);
+        resource.Culture.Should().Be(culture);
+        resource.Texts[key].Should().Be(value);
     }
 
     [Theory]
@@ -91,7 +116,51 @@ public sealed class ResourceProviderTests
     [InlineData("localization test")]
     public void GetWithValue_ThenResourceNotExist_THenExceptionThrown(string value)
     {
-        var action = () => Sut.GetWithValue(value);
+        var action = () => _sut.GetWithValue(value);
         action.Should().ThrowExactly<LocalizationNotFoundException>();
+    }
+
+    [Theory]
+    [InlineData("Test", "en", "Test")]
+    [InlineData("Тест", "uk", "Test")]
+    public void GetWithValue_WhenResourceCached_ThenReturnsCachedValue(string value, string culture, string key)
+    {
+        _builder.AddJsonFiles("Resources/Valid");
+
+        _ = _sut.Get(CultureInfo.GetCultureInfo(culture));
+        _ = _sut.GetWithValue(value);
+
+        var resource = _sut.GetWithValue(value);
+        resource.Culture.Should().Be(culture);
+        resource.Texts[key].Should().Be(value);
+    }
+
+    [Theory]
+    [InlineData("x")]
+    public void GetWithValue_WhenCachedAsMissingResource_ThenThrowsException(string value)
+    {
+        try
+        {
+            _sut.GetWithValue(value);
+        }
+        catch (LocalizationNotFoundException)
+        {
+
+        }
+
+        var action = () => _sut.GetWithValue(value);
+        action.Should().ThrowExactly<LocalizationNotFoundException>();
+    }
+
+    [Theory]
+    [InlineData("en", "Test")]
+    public void GetWithValue_WhenResourceWasCached_ThenReturnsIt(string culture, string value)
+    {
+        _builder.AddJsonFiles("Resources/Valid");
+
+        _ = _sut.Get(CultureInfo.GetCultureInfo(culture));
+
+        var result = _sut.GetWithValue(value);
+        result.Culture.Should().Be(culture);
     }
 }

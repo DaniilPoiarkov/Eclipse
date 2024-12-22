@@ -1,5 +1,6 @@
 ﻿using Eclipse.Localization.Builder;
 using Eclipse.Localization.Culture;
+using Eclipse.Localization.Culture.Resolvers;
 using Eclipse.Localization.Localizers;
 using Eclipse.Localization.Resources;
 
@@ -24,21 +25,15 @@ public static class LocalizationModule
 
         services.Configure<LocalizationBuilder>(configuration);
 
-        services.AddHttpContextAccessor();
-
         services.AddSingleton<IResourceProvider, ResourceProvider>();
 
         services.RemoveAll<IStringLocalizerFactory>()
-            .AddSingleton<JsonStringLocalizerFactory>()
-            .AddSingleton<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
-
-        services.AddTransient(sp => sp.GetRequiredService<JsonStringLocalizerFactory>().Create());
+            .AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>()
+            .AddSingleton<ICurrentCulture, CurrentCulture>()
+            .AddSingleton<ICultureResolver, HeaderCultureResolver>();
 
         services.RemoveAll(typeof(IStringLocalizer<>))
             .AddTransient(typeof(IStringLocalizer<>), typeof(TypedJsonStringLocalizer<>));
-
-        services.AddScoped<CurrentCulture>()
-            .AddScoped<ICurrentCulture>(sp => sp.GetRequiredService<CurrentCulture>());
 
         services.AddScoped<CultureResolverMiddleware>();
 

@@ -36,7 +36,9 @@ using Eclipse.Common.Background;
 
 using MediatR.NotificationPublishers;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Quartz;
 
@@ -84,6 +86,11 @@ public static class EclipseApplicationModule
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo<IBackgroundJob>())
+            .AsSelf()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo<IImportStrategy>())
             .AsImplementedInterfaces()
             .WithTransientLifetime());
@@ -107,5 +114,16 @@ public static class EclipseApplicationModule
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 
         return services;
+    }
+
+    public static async Task InitializeApplicationLayerAsync(this WebApplication app)
+    {
+        using var scope = app.Services.CreateAsyncScope();
+
+        var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<RescheduleRemindersBackgroundJob>>();
+
+        await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
     }
 }

@@ -1,32 +1,24 @@
-﻿using Eclipse.Localization.Culture;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Resources;
+﻿using Eclipse.Localization.Resources;
 
 using Microsoft.Extensions.Localization;
 
+using System.Globalization;
+
 namespace Eclipse.Localization.Localizers;
 
-internal sealed class JsonStringLocalizer : IStringLocalizer
+internal sealed class JsonStringLocalizer : IStringLocalizer, ILocalizedStringConverter
 {
     private readonly IResourceProvider _resourceProvider;
 
-    private ICurrentCulture CurrentCulture { get; set; }
-
     private readonly string? _location;
 
-    public JsonStringLocalizer(
-        IResourceProvider resourceProvider,
-        ICurrentCulture currentCulture)
+    public JsonStringLocalizer(IResourceProvider resourceProvider)
     {
         _resourceProvider = resourceProvider;
-        CurrentCulture = currentCulture;
     }
 
-    public JsonStringLocalizer(
-        IResourceProvider resourceProvider,
-        ICurrentCulture currentCulture,
-        string? location)
-        : this(resourceProvider, currentCulture)
+    public JsonStringLocalizer(IResourceProvider resourceProvider, string? location)
+        : this(resourceProvider)
     {
         _location = location;
     }
@@ -58,29 +50,9 @@ internal sealed class JsonStringLocalizer : IStringLocalizer
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
-        var culture = CurrentCulture.Culture;
-
-        var resource = _resourceProvider.Get(culture);
+        var resource = _resourceProvider.Get(CultureInfo.CurrentUICulture);
 
         return resource.Texts.Select(pair => new LocalizedString(pair.Key, pair.Value, false, _location));
-    }
-
-    public string FormatLocalizedException(LocalizedException exception, string? culture = null)
-    {
-        return culture is null
-            ? FormatLocalizedExceptionInternal(exception)
-            : FormatLocalizedExceptionInternal(exception, culture);
-    }
-
-    private string FormatLocalizedExceptionInternal(LocalizedException exception, string culture)
-    {
-        using var _ = CurrentCulture.UsingCulture(culture);
-        return FormatLocalizedExceptionInternal(exception);
-    }
-
-    private string FormatLocalizedExceptionInternal(LocalizedException exception)
-    {
-        return this[exception.Message, exception.Args];
     }
 
     public string ToLocalizableString(string value)
@@ -92,16 +64,11 @@ internal sealed class JsonStringLocalizer : IStringLocalizer
     private string? GetStringSafely(string key)
     {
         var resource = _location is null
-            ? _resourceProvider.Get(CurrentCulture.Culture)
-            : _resourceProvider.Get(CurrentCulture.Culture, _location);
+            ? _resourceProvider.Get(CultureInfo.CurrentUICulture)
+            : _resourceProvider.Get(CultureInfo.CurrentUICulture, _location);
 
         resource.Texts.TryGetValue(key, out var value);
 
         return value;
-    }
-
-    public void UseCurrentCulture(ICurrentCulture currentCulture)
-    {
-        CurrentCulture = currentCulture;
     }
 }

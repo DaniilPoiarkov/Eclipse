@@ -3,7 +3,6 @@ using Eclipse.Application.Reminders;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -13,6 +12,8 @@ using Newtonsoft.Json;
 using NSubstitute;
 
 using Quartz;
+
+using System.Globalization;
 
 using Telegram.Bot;
 using Telegram.Bot.Requests;
@@ -74,8 +75,7 @@ public sealed class SendReminderJobTests
 
         await _sut.Execute(context);
 
-        _currentCulture.Received().UsingCulture(culture);
-        _localizer.Received().UseCurrentCulture(_currentCulture);
+        _currentCulture.Received().UsingCulture(Arg.Is<CultureInfo>(c => c.Name == culture));
 
         await _client.Received().SendRequest(
             Arg.Is<SendMessageRequest>(request => request.ChatId == chatId

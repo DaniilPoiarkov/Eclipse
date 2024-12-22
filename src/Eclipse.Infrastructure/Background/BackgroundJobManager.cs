@@ -22,6 +22,20 @@ internal sealed class BackgroundJobManager : IBackgroundJobManager
             .UsingJobData("args", JsonConvert.SerializeObject(args))
             .Build();
 
+        await ScheduleJob(job, cancellationToken);
+    }
+
+    public async Task EnqueueAsync<TBackgroundJob>(CancellationToken cancellationToken = default)
+        where TBackgroundJob : IBackgroundJob
+    {
+        var job = JobBuilder.Create<OneOffJobProcessor<TBackgroundJob>>()
+            .Build();
+
+        await ScheduleJob(job, cancellationToken);
+    }
+
+    private async Task ScheduleJob(IJobDetail job, CancellationToken cancellationToken)
+    {
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .StartNow()

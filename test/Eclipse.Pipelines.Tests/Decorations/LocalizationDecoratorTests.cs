@@ -10,6 +10,8 @@ using Eclipse.Tests.Generators;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
+using System.Globalization;
+
 using Xunit;
 
 namespace Eclipse.Pipelines.Tests.Decorations;
@@ -51,7 +53,9 @@ public sealed class LocalizationDecoratorTests
 
         await _sut.Decorate(_execution, context);
 
-        _currentCulture.Received().UsingCulture(user.Culture);
+        _currentCulture.Received().UsingCulture(
+            Arg.Is<CultureInfo>(x => x.Name == user.Culture)
+        );
 
         await _repository.Received().FindByChatIdAsync(user.ChatId);
 
