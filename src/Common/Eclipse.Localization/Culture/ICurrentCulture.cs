@@ -1,13 +1,13 @@
-﻿namespace Eclipse.Localization.Culture;
+﻿using System.Globalization;
+
+namespace Eclipse.Localization.Culture;
 
 public interface ICurrentCulture
 {
-    string Culture { get; }
-
     /// <summary>
-    /// Sets the culture in disposable scope.
+    /// Usings the culture.
     /// </summary>
     /// <param name="culture">The culture.</param>
     /// <returns></returns>
-    IDisposable UsingCulture(string culture);
+    IDisposable UsingCulture(CultureInfo? culture);
 }

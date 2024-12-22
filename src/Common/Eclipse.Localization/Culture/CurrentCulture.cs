@@ -1,47 +1,33 @@
-﻿using Eclipse.Localization.Builder;
-
-using Microsoft.Extensions.Options;
+﻿using System.Globalization;
 
 namespace Eclipse.Localization.Culture;
 
 internal sealed class CurrentCulture : ICurrentCulture
 {
-    public string Culture { get; private set; }
-
-    public CurrentCulture(IOptions<LocalizationBuilder> options)
+    public IDisposable UsingCulture(CultureInfo? culture)
     {
-        Culture = options.Value.DefaultCulture;
-    }
+        var scope = new CultureScope(CultureInfo.CurrentUICulture);
 
-    internal void SetCulture(string culture)
-    {
-        Culture = culture;
-    }
-
-    public IDisposable UsingCulture(string culture)
-    {
-        var scope = new CultureScope(Culture, this);
-
-        Culture = culture;
+        if (culture is not null)
+        {
+            CultureInfo.CurrentUICulture = culture;
+        }
 
         return scope;
     }
 
-    private class CultureScope : IDisposable
+    private sealed class CultureScope : IDisposable
     {
-        private readonly string _fallbackCulture;
+        private readonly CultureInfo _fallbackCulture;
 
-        private readonly CurrentCulture _currentCulture;
-
-        public CultureScope(string fallbackCulture, CurrentCulture currentCulture)
+        public CultureScope(CultureInfo fallbackCulture)
         {
             _fallbackCulture = fallbackCulture;
-            _currentCulture = currentCulture;
         }
 
         public void Dispose()
         {
-            _currentCulture.SetCulture(_fallbackCulture);
+            CultureInfo.CurrentUICulture = _fallbackCulture;
         }
     }
 }

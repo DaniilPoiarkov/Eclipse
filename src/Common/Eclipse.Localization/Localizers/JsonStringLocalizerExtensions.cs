@@ -1,22 +1,9 @@
-﻿using Eclipse.Localization.Culture;
-using Eclipse.Localization.Localizers;
+﻿using Microsoft.Extensions.Localization;
 
-using Microsoft.Extensions.Localization;
-
-namespace Eclipse.Localization.Extensions;
+namespace Eclipse.Localization.Localizers;
 
 public static class JsonStringLocalizerExtensions
 {
-    public static void UseCurrentCulture(this IStringLocalizer stringLocalizer, ICurrentCulture currentCulture)
-    {
-        if (stringLocalizer is not ICanUseCulture canUseCulture)
-        {
-            return;
-        }
-
-        canUseCulture.UseCurrentCulture(currentCulture);
-    }
-
     public static string ToLocalizableString(this IStringLocalizer stringLocalizer, string value)
     {
         if (stringLocalizer is not ILocalizedStringConverter jsonStringLocalizer)
