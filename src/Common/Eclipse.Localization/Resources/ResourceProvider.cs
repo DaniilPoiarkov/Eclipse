@@ -63,7 +63,6 @@ internal sealed class ResourceProvider : IResourceProvider
             return Get(_options.Value.DefaultCulture, _options.Value.DefaultCulture, resources);
         }
 
-        _missingResources.Remove(key, out _);
         _resourceCache[key] = resource;
 
         return resource;

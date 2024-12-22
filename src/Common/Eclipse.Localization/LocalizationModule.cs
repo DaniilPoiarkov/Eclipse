@@ -28,20 +28,14 @@ public static class LocalizationModule
         services.AddSingleton<IResourceProvider, ResourceProvider>();
 
         services.RemoveAll<IStringLocalizerFactory>()
-            .AddSingleton<JsonStringLocalizerFactory>()
-            .AddSingleton<IStringLocalizerFactory>(sp => sp.GetRequiredService<JsonStringLocalizerFactory>());
-
-        services.AddTransient(sp => sp.GetRequiredService<JsonStringLocalizerFactory>().Create());
+            .AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>()
+            .AddSingleton<ICurrentCulture, CurrentCulture>()
+            .AddSingleton<ICultureResolver, HeaderCultureResolver>();
 
         services.RemoveAll(typeof(IStringLocalizer<>))
             .AddTransient(typeof(IStringLocalizer<>), typeof(TypedJsonStringLocalizer<>));
 
-        services.AddScoped<CurrentCulture>()
-            .AddScoped<ICurrentCulture>(sp => sp.GetRequiredService<CurrentCulture>());
-
         services.AddScoped<CultureResolverMiddleware>();
-
-        services.AddSingleton<ICultureResolver, HeaderCultureResolver>();
 
         return services;
     }
