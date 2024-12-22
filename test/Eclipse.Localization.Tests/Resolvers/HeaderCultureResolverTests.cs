@@ -66,8 +66,8 @@ public sealed class HeaderCultureResolverTests
         request.Headers.Returns(headers);
         context.Request.Returns(request);
 
-        var result = _sut.TryGetCulture(context,out var cultureInfo);
-        
+        var result = _sut.TryGetCulture(context, out var cultureInfo);
+
         result.Should().BeFalse();
         cultureInfo.Should().BeNull();
     }
