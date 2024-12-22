@@ -1,28 +1,17 @@
-﻿using Eclipse.Localization.Builder;
-using Eclipse.Localization.Culture;
-using Eclipse.Localization.Localizers;
+﻿using Eclipse.Localization.Localizers;
 using Eclipse.Localization.Resources;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 
 namespace Eclipse.Localization;
 
 internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory
 {
-    private readonly IOptions<LocalizationBuilder> _options;
-
     private readonly IResourceProvider _resourceProvider;
 
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public JsonStringLocalizerFactory(IOptions<LocalizationBuilder> options, IResourceProvider resourceProvider, IHttpContextAccessor httpContextAccessor)
+    public JsonStringLocalizerFactory(IResourceProvider resourceProvider)
     {
-        _options = options;
         _resourceProvider = resourceProvider;
-        _httpContextAccessor = httpContextAccessor;
     }
 
     public IStringLocalizer Create()
@@ -42,9 +31,6 @@ internal sealed class JsonStringLocalizerFactory : IStringLocalizerFactory
 
     private JsonStringLocalizer CreateJsonLocalizer(string? location = null)
     {
-        var currentCulture = _httpContextAccessor.HttpContext?.RequestServices.GetRequiredService<ICurrentCulture>()
-            ?? new CurrentCulture(_options);
-
-        return new JsonStringLocalizer(_resourceProvider, currentCulture, location);
+        return new JsonStringLocalizer(_resourceProvider, location);
     }
 }

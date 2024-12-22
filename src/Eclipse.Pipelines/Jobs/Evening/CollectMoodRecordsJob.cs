@@ -3,7 +3,6 @@ using Eclipse.Common.Clock;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
@@ -33,11 +32,11 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
 
     private readonly IMessageStore _messageStore;
 
-    private readonly ICurrentCulture _currentCulture;
-
     private readonly IUserService _userService;
 
     private readonly ITimeProvider _timeProvider;
+
+    private readonly ICurrentCulture _currentCulture;
 
     public CollectMoodRecordsJob(
         IPipelineStore pipelineStore,
@@ -46,9 +45,9 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
         IServiceProvider serviceProvider,
         IStringLocalizer<CollectMoodRecordsJob> localizer,
         IMessageStore messageStore,
-        ICurrentCulture currentCulture,
         IUserService userService,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider,
+        ICurrentCulture currentCulture)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -56,9 +55,9 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
         _serviceProvider = serviceProvider;
         _localizer = localizer;
         _messageStore = messageStore;
-        _currentCulture = currentCulture;
         _userService = userService;
         _timeProvider = timeProvider;
+        _currentCulture = currentCulture;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -85,7 +84,6 @@ internal sealed class CollectMoodRecordsJob : EclipseJobBase
             var pipeline = (_pipelineProvider.Get("/href_mood_records_add") as EclipsePipelineBase)!;
 
             using var _ = _currentCulture.UsingCulture(user.Culture);
-            _localizer.UseCurrentCulture(_currentCulture);
 
             pipeline.SetLocalizer(_localizer);
 

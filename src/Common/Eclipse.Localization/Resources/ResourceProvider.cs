@@ -3,9 +3,9 @@ using Eclipse.Localization.Exceptions;
 
 using Microsoft.Extensions.Options;
 
-using Newtonsoft.Json;
-
 using System.Collections.Concurrent;
+using System.Globalization;
+using System.Text.Json;
 
 namespace Eclipse.Localization.Resources;
 
@@ -17,48 +17,60 @@ internal sealed class ResourceProvider : IResourceProvider
 
     private readonly IOptions<LocalizationBuilder> _options;
 
+    private static readonly Lazy<JsonSerializerOptions> _serializerOptions = new(() => new()
+    {
+        PropertyNameCaseInsensitive = true,
+    });
+
     public ResourceProvider(IOptions<LocalizationBuilder> options)
     {
         _options = options;
     }
 
-    public LocalizationResource Get(string culture)
+    public LocalizationResource Get(CultureInfo culture)
     {
-        if (_resourceCache.TryGetValue(culture, out var resource))
+        return Get(culture.Name, culture.Name, _options.Value.Resources);
+    }
+
+    public LocalizationResource Get(CultureInfo culture, string location)
+    {
+        return Get(culture.Name, $"location={location};culture={culture.Name}", [location]);
+    }
+
+    private LocalizationResource Get(string cultureName, string key, IEnumerable<string> resources)
+    {
+        if (_resourceCache.TryGetValue(key, out var resource))
         {
             return resource;
         }
 
-        if (_missingResources.ContainsKey(culture))
+        if (_missingResources.ContainsKey(key))
         {
             if (_missingResources.ContainsKey(_options.Value.DefaultCulture))
             {
-                throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
+                throw new LocalizationFileNotExistException(string.Join(", ", resources), cultureName);
             }
 
-            return Get(_options.Value.DefaultCulture);
+            return Get(_options.Value.DefaultCulture, _options.Value.DefaultCulture, resources);
         }
 
-        ReadAndCacheLocalizationResources();
+        resource = ReadResources(resources)
+            .FirstOrDefault(r => r.Culture == cultureName);
 
-        if (_resourceCache.TryGetValue(culture, out resource))
+        if (resource is null)
         {
-            return resource;
+            _missingResources[key] = null;
+            return Get(_options.Value.DefaultCulture, _options.Value.DefaultCulture, resources);
         }
 
-        _missingResources[culture] = null;
+        _resourceCache[key] = resource;
 
-        if (_missingResources.ContainsKey(_options.Value.DefaultCulture))
-        {
-            throw new LocalizationFileNotExistException(string.Join(", ", _options.Value.Resources), culture);
-        }
-
-        return Get(_options.Value.DefaultCulture);
+        return resource;
     }
 
-    public LocalizationResource Get(string culture, string location)
+    public LocalizationResource GetWithValue(string value)
     {
-        var key = $"location={location};culture={culture}";
+        var key = $"value={value}";
 
         if (_resourceCache.TryGetValue(key, out var resource))
         {
@@ -67,119 +79,37 @@ internal sealed class ResourceProvider : IResourceProvider
 
         if (_missingResources.ContainsKey(key))
         {
-            throw new LocalizationFileNotExistException(location, culture);
-        }
-
-        var fullPath = Path.GetFullPath(location);
-
-        if (fullPath.EndsWith(".json"))
-        {
-            return ParseAndCacheFile(location, key, fullPath);
-        }
-
-        resource = Directory.GetFiles(fullPath, "*.json", SearchOption.AllDirectories)
-            .Select(File.ReadAllText)
-            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
-            .GroupBy(r => r!.Culture)
-            .Select(g => new LocalizationResource
-            {
-                Culture = g.Key,
-                Texts = g.SelectMany(r => r!.Texts).ToDictionary()
-            })
-            .FirstOrDefault(r => r.Culture == culture);
-
-        if (resource is null)
-        {
-            _missingResources[key] = null;
-            throw new LocalizationFileNotExistException(location, culture);
-        }
-
-        _resourceCache[key] = resource;
-
-        return resource;
-    }
-
-    private LocalizationResource ParseAndCacheFile(string location, string key, string fullPath)
-    {
-        var json = File.ReadAllText(fullPath);
-
-        var resource = JsonConvert.DeserializeObject<LocalizationResource>(json);
-
-        if (resource is null || string.IsNullOrEmpty(resource.Culture))
-        {
-            _missingResources[key] = null;
-            throw new UnableToParseLocalizationResourceException(location);
-        }
-
-        _resourceCache[key] = resource;
-        return resource;
-    }
-
-    public LocalizationResource GetWithValue(string value)
-    {
-        if (_missingResources.ContainsKey(value))
-        {
             throw new LocalizationNotFoundException(value, nameof(value));
         }
 
-        var resource = GetFromCacheByValue(value);
+        resource = _resourceCache.Values.FirstOrDefault(r => r.Texts.ContainsValue(value));
 
         if (resource is not null)
         {
+            _resourceCache[key] = resource;
             return resource;
         }
 
-        ReadAndCacheLocalizationResources();
-
-        resource = GetFromCacheByValue(value);
+        resource = ReadResources(_options.Value.Resources)
+            .FirstOrDefault(r => r.Texts.ContainsValue(value));
 
         if (resource is null)
         {
-            _missingResources[value] = null;
+            _missingResources[key] = null;
             throw new LocalizationNotFoundException(value, nameof(value));
         }
 
         return resource;
     }
 
-    private LocalizationResource GetFromCacheByValue(string value)
+    private static IEnumerable<LocalizationResource> ReadResources(params IEnumerable<string> resources)
     {
-        return _resourceCache.FirstOrDefault(pair => pair.Value.Texts.Any(t => t.Value == value)).Value;
-    }
-
-    private void ReadAndCacheLocalizationResources()
-    {
-        var resources = ReadResources();
-        CacheLocalizers(resources);
-    }
-
-    private void CacheLocalizers(IEnumerable<LocalizationResource> resources)
-    {
-        foreach (var resource in resources)
-        {
-            if (_missingResources.ContainsKey(resource.Culture))
-            {
-                _missingResources.Remove(resource.Culture, out _);
-            }
-
-            if (_resourceCache.ContainsKey(resource.Culture))
-            {
-                continue;
-            }
-
-            _resourceCache[resource.Culture] = resource;
-        }
-    }
-
-    private IEnumerable<LocalizationResource> ReadResources()
-    {
-        return _options.Value.Resources
-            .Select(Path.GetFullPath)
+        return resources.Select(Path.GetFullPath)
             .SelectMany(path => path.EndsWith(".json")
                 ? [path]
                 : Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             .Select(File.ReadAllText)
-            .Select(JsonConvert.DeserializeObject<LocalizationResource>)
+            .Select(json => JsonSerializer.Deserialize<LocalizationResource>(json, _serializerOptions.Value))
             .Where(r => r is not null)
             .GroupBy(r => r!.Culture)
             .Select(g => new LocalizationResource

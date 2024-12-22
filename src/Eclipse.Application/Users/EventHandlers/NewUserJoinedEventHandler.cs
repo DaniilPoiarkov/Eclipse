@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 
 using MediatR;
 
@@ -49,7 +48,6 @@ public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoin
         var user = result.Value;
 
         using var _ = _currentCulture.UsingCulture(user.Culture);
-        _localizer.UseCurrentCulture(_currentCulture);
 
         var content = _localizer["User:Events:NewUserJoined", notification.UserId, notification.UserName, notification.Name, notification.Surname];
 

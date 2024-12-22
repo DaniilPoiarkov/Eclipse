@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -58,7 +57,6 @@ internal sealed class SendReminderJob : IJob
         }
 
         using var _ = _currentCulture.UsingCulture(reminder.Culture);
-        _localizer.UseCurrentCulture(_currentCulture);
 
         var message = $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}";
 

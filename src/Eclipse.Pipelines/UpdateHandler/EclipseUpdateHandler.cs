@@ -7,7 +7,7 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Extensions;
+using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;

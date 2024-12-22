@@ -5,7 +5,6 @@ using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 
 using Microsoft.Extensions.Localization;
 
@@ -39,9 +38,9 @@ internal sealed class SendMoodReportJob : EclipseJobBase
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly ICurrentCulture _currentCulture;
-
     private readonly IPlotGenerator _plotGenerator;
+
+    private readonly ICurrentCulture _currentCulture;
 
     public SendMoodReportJob(
         IUserRepository userRepository,
@@ -49,16 +48,16 @@ internal sealed class SendMoodReportJob : EclipseJobBase
         ITelegramBotClient client,
         IStringLocalizer<SendMoodReportJob> localizer,
         ITimeProvider timeProvider,
-        ICurrentCulture currentCulture,
-        IPlotGenerator plotGenerator)
+        IPlotGenerator plotGenerator,
+        ICurrentCulture currentCulture)
     {
         _userRepository = userRepository;
         _moodRecordRepository = moodRecordRepository;
         _client = client;
         _localizer = localizer;
         _timeProvider = timeProvider;
-        _currentCulture = currentCulture;
         _plotGenerator = plotGenerator;
+        _currentCulture = currentCulture;
     }
 
     public override async Task Execute(IJobExecutionContext context)
@@ -97,7 +96,6 @@ internal sealed class SendMoodReportJob : EclipseJobBase
             var options = pair.Options;
 
             using var _ = _currentCulture.UsingCulture(user.Culture);
-            _localizer.UseCurrentCulture(_currentCulture);
 
             var message = _localizer["Jobs:SendMoodReport:Caption"].Value;
 

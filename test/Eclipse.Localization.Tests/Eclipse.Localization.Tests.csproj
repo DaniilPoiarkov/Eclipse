@@ -15,7 +15,7 @@
 
   <ItemGroup>
 	<EmbeddedResource Include="Resources\**\*.json">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</EmbeddedResource>
   </ItemGroup>
 

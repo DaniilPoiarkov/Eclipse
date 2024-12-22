@@ -3,7 +3,7 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Core.Pipelines;
-using Eclipse.Localization.Extensions;
+using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types;
