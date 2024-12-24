@@ -6,6 +6,7 @@ using Quartz;
 
 namespace Eclipse.Application.OutboxMessages.Jobs;
 
+// TODO: Delete this job
 internal sealed class ProcessOutboxMessagesJob : IJob
 {
     private readonly IOutboxMessagesService _outboxMessagesService;

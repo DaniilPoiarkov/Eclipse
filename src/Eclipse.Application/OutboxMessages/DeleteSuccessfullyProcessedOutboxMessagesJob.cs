@@ -2,7 +2,7 @@
 
 using Quartz;
 
-namespace Eclipse.Application.OutboxMessages.Jobs;
+namespace Eclipse.Application.OutboxMessages;
 
 internal sealed class DeleteSuccessfullyProcessedOutboxMessagesJob : IJob
 {
