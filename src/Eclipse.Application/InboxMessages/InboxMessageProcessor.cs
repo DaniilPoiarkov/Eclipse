@@ -3,7 +3,6 @@ using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.InboxMessages;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
@@ -16,19 +15,19 @@ internal sealed class InboxMessageProcessor : IInboxMessageProcessor
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IEnumerable<IEventHandler<IDomainEvent>> _handlers;
 
     private readonly ILogger<InboxMessageProcessor> _logger;
 
     public InboxMessageProcessor(
         IInboxMessageRepository repository,
         ITimeProvider timeProvider,
-        IServiceProvider serviceProvider,
+        IEnumerable<IEventHandler<IDomainEvent>> handlers,
         ILogger<InboxMessageProcessor> logger)
     {
         _repository = repository;
         _timeProvider = timeProvider;
-        _serviceProvider = serviceProvider;
+        _handlers = handlers;
         _logger = logger;
     }
 
@@ -48,21 +47,8 @@ internal sealed class InboxMessageProcessor : IInboxMessageProcessor
 
         await _repository.UpdateRangeAsync(inboxMessages, cancellationToken);
 
-        var handlers = new Dictionary<Type, IEnumerable<IEventHandler<IDomainEvent>>>();
-
-        using var scope = _serviceProvider.CreateAsyncScope();
-
         foreach (var inboxMessage in inboxMessages)
         {
-            var payloadType = Type.GetType(inboxMessage.Type);
-
-            if (payloadType is null)
-            {
-                _logger.LogError("Cannot resolve payload type \'{Type}\' from {Message} with Id \'{Id}\'", inboxMessage.Type, nameof(InboxMessage), inboxMessage.Id);
-                inboxMessage.SetError("Cannot resolve payload type during converting to inbox message.", _timeProvider.Now);
-                continue;
-            }
-
             var payload = JsonConvert.DeserializeObject<IDomainEvent>(inboxMessage.Payload, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
@@ -70,21 +56,16 @@ internal sealed class InboxMessageProcessor : IInboxMessageProcessor
 
             if (payload is null)
             {
+                _logger.LogError("Cannot deserialize payload type \'{Type}\' from {Message} with Id \'{Id}\'", inboxMessage.Type, nameof(InboxMessage), inboxMessage.Id);
                 inboxMessage.SetError("Cannot deserialize the payload.", _timeProvider.Now);
                 continue;
             }
 
-            var type = typeof(IEventHandler<>).MakeGenericType(payloadType);
-
-            if (!handlers.TryGetValue(type, out _))
-            {
-                handlers[type] = scope.ServiceProvider.GetServices(type).Cast<IEventHandler<IDomainEvent>>();
-            }
-
-            var handler = handlers[type].FirstOrDefault(handler => handler.GetType().FullName == inboxMessage.HandlerName);
+            var handler = _handlers.FirstOrDefault(h => h.GetType().FullName == inboxMessage.HandlerName);
 
             if (handler is null)
             {
+                _logger.LogError("Cannot retrieve handler \'{Handler}\' for {Message} with Id \'{Id}\'", inboxMessage.HandlerName, nameof(InboxMessage), inboxMessage.Id);
                 inboxMessage.SetError("Cannot retrieve handler.", _timeProvider.Now);
                 continue;
             }

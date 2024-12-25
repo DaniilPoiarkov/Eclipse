@@ -6,7 +6,6 @@ using Quartz;
 
 namespace Eclipse.Application.InboxMessages;
 
-// TODO: Configure
 internal sealed class ProcessInboxMessagesJob : IJob
 {
     private readonly IInboxMessageProcessor _processor;

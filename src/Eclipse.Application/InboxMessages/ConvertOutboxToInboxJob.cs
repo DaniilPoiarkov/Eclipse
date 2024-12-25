@@ -6,7 +6,6 @@ using Quartz;
 
 namespace Eclipse.Application.InboxMessages;
 
-// TODO: Add configuration
 internal sealed class ConvertOutboxToInboxJob : IJob
 {
     private readonly IInboxMessageConvertor _inboxMessageConvertor;
@@ -21,8 +20,8 @@ internal sealed class ConvertOutboxToInboxJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var count = _configuration.GetSection("OutboxMessages")
-            .GetValue<int>("ProcessCount");
+        var count = _configuration.GetSection("InboxMessages")
+            .GetValue<int>("ConvertCount");
 
         await _inboxMessageConvertor.ConvertAsync(count, context.CancellationToken);
     }

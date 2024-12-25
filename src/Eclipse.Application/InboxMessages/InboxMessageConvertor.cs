@@ -1,11 +1,9 @@
 ﻿using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Common.Clock;
+using Eclipse.Common.Events;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.OutboxMessages;
 
-using MediatR;
-
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Eclipse.Application.InboxMessages;
@@ -16,7 +14,7 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
 
     private readonly IInboxMessageRepository _inboxMessageRepository;
 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IEnumerable<IEventHandler<IDomainEvent>> _hanlders;
 
     private readonly ITimeProvider _timeProvider;
 
@@ -25,13 +23,13 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
     public InboxMessageConvertor(
         IOutboxMessageRepository outboxMessageRepository,
         IInboxMessageRepository inboxMessageRepository,
-        IServiceProvider serviceProvider,
+        IEnumerable<IEventHandler<IDomainEvent>> hanlders,
         ITimeProvider timeProvider,
         ILogger<InboxMessageConvertor> logger)
     {
         _outboxMessageRepository = outboxMessageRepository;
         _inboxMessageRepository = inboxMessageRepository;
-        _serviceProvider = serviceProvider;
+        _hanlders = hanlders;
         _timeProvider = timeProvider;
         _logger = logger;
     }
@@ -44,8 +42,6 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
         {
             return OutboxToInboxConversionResult.Empty;
         }
-
-        using var scope = _serviceProvider.CreateAsyncScope();
 
         var converted = new List<InboxMessage>();
 
@@ -60,9 +56,9 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
                 continue;
             }
 
-            var type = typeof(INotificationHandler<>).MakeGenericType(payloadType);
+            var type = typeof(IEventHandler<>).MakeGenericType(payloadType);
 
-            var inboxMessages = scope.ServiceProvider.GetServices(type)
+            var inboxMessages = _hanlders.Where(h => h.GetType().IsAssignableTo(type))
                 .Select(handler => handler?.GetType().FullName)
                 .Where(handlerName => !handlerName.IsNullOrEmpty())
                 .Select(handlerName =>
