@@ -1,11 +1,12 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
-
-using MediatR;
 
 namespace Eclipse.Application.Users.EventHandlers;
 
-public sealed class TestEventHandler : INotificationHandler<TestDomainEvent>
+internal sealed class TestEventHandler : 
+    //INotificationHandler<TestDomainEvent>, 
+    IEventHandler<TestDomainEvent>
 {
     private readonly ITelegramService _telegramService;
 
@@ -20,6 +21,25 @@ public sealed class TestEventHandler : INotificationHandler<TestDomainEvent>
         {
             ChatId = notification.ChatId,
             Message = $"Test event triggered"
+        }, cancellationToken);
+    }
+}
+
+internal sealed class AnotherTestEventHandler : IEventHandler<TestDomainEvent>
+{
+    private readonly ITelegramService _telegramService;
+
+    public AnotherTestEventHandler(ITelegramService telegramService)
+    {
+        _telegramService = telegramService;
+    }
+
+    public Task Handle(TestDomainEvent @event, CancellationToken cancellationToken = default)
+    {
+        return _telegramService.Send(new SendMessageModel
+        {
+            ChatId = @event.ChatId,
+            Message = $"Test event triggered #2"
         }, cancellationToken);
     }
 }

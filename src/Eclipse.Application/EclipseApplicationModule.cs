@@ -6,6 +6,7 @@ using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
 using Eclipse.Application.Contracts.Reminders;
@@ -18,6 +19,7 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
+using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
@@ -67,6 +69,9 @@ public static class EclipseApplicationModule
                 .AddTransient<IMoodRecordsService, MoodRecordsService>()
                 .AddTransient<IConfigurationService, ConfigurationService>()
                 .AddTransient<IOutboxMessagesService, OutboxMessagesService>()
+                .AddTransient<IInboxMessageService, InboxMessageService>()
+                .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
+                .AddTransient<IInboxMessageProcessor, InboxMessageProcessor>()
                 .AddTransient<IReportsService, ReportsService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>();
 
