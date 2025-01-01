@@ -27,8 +27,9 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
 
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
+        entity = await Repository.CreateAsync(entity, cancellationToken);
         await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
-        return await Repository.CreateAsync(entity, cancellationToken);
+        return entity;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

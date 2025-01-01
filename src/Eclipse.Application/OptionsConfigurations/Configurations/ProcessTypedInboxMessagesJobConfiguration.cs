@@ -1,4 +1,11 @@
-﻿using Eclipse.Application.InboxMessages.Processors.Test;
+﻿using Eclipse.Application.InboxMessages;
+using Eclipse.Application.Reminders;
+using Eclipse.Application.Statistics.EventHandlers;
+using Eclipse.Application.Suggestions;
+using Eclipse.Application.Users.EventHandlers;
+using Eclipse.Common.Events;
+using Eclipse.Domain.Suggestions;
+using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
@@ -10,33 +17,34 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
     public void Schedule(QuartzOptions options)
     {
-        AddJob<TestEventHandlerProcessorJob>(options);
-        AddJob<AnotherTestEventHandlerProcessorJob>(options);
+        /// <see cref="TestDomainEvent"/>
+        AddJob<TestDomainEvent, TestEventHandler>(options);
+        AddJob<TestDomainEvent, AnotherTestEventHandler>(options);
+
+        /// <see cref="NewUserJoinedDomainEvent"/>
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
+
+        /// <see cref="NewSuggestionSentDomainEvent"/>
+        AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
+
+        /// <see cref="ReminderAddedDomainEvent"/>
+        AddJob<ReminderAddedDomainEvent, ReminderAddedEventHandler>(options);
+
+        /// <see cref="RemindersReceivedDomainEvent"/>
+        AddJob<RemindersReceivedDomainEvent, RemindersReceivedEventHandler>(options);
+
+        /// <see cref="TodoItemFinishedDomainEvent"/>
+        AddJob<TodoItemFinishedDomainEvent, TodoItemFinishedEventHandler>(options);
     }
 
-    //private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
-    //    where TEvent : IDomainEvent
-    //    where TEventHanlder : IEventHandler<TEvent>
-    //{
-    //    var jobKey = JobKey.Create(typeof(ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>).FullName
-    //        ?? throw new InvalidOperationException($"Cannot schedule processing for {typeof(TEvent).Name} type"));
-
-    //    options.AddJob<ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>>(job => job.WithIdentity(jobKey))
-    //        .AddTrigger(trigger => trigger
-    //            .ForJob(jobKey)
-    //            .WithSimpleSchedule(schedule => schedule
-    //                .WithIntervalInSeconds(_delay)
-    //                .RepeatForever())
-    //            .StartNow());
-    //}
-
-    private static void AddJob<TJob>(QuartzOptions options)
-        where TJob : IJob
+    private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
+        where TEvent : IDomainEvent
+        where TEventHanlder : IEventHandler<TEvent>
     {
-        var jobKey = JobKey.Create(typeof(TJob).FullName
-            ?? throw new InvalidOperationException($"Cannot schedule processing for {typeof(TJob).Name} type"));
+        var jobKey = JobKey.Create(typeof(ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>).FullName
+            ?? throw new InvalidOperationException($"Cannot schedule processing for {typeof(TEvent).Name} type"));
 
-        options.AddJob<TJob>(job => job.WithIdentity(jobKey))
+        options.AddJob<ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger
                 .ForJob(jobKey)
                 .WithSimpleSchedule(schedule => schedule

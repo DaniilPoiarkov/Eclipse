@@ -84,7 +84,7 @@ internal sealed class TypedInboxMessageProcessor<TEvent, TEventHandler> : IInbox
 
         return new ProcessInboxMessagesResult(
             inboxMessages.Count,
-            inboxMessages.Where(m => m.Error.IsNullOrEmpty()).Count(),
+            inboxMessages.Count - errors.Count,
             errors.Count,
             errors
         );

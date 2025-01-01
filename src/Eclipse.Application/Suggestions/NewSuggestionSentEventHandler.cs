@@ -1,15 +1,14 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Events;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Suggestions;
-
-using MediatR;
 
 using Microsoft.Extensions.Options;
 
 namespace Eclipse.Application.Suggestions;
 
-public sealed class NewSuggestionSentEventHandler : INotificationHandler<NewSuggestionSentDomainEvent>
+public sealed class NewSuggestionSentEventHandler : IEventHandler<NewSuggestionSentDomainEvent>
 {
     private readonly ITelegramService _telegramService;
 

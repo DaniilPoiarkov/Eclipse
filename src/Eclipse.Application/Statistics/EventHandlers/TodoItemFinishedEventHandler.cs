@@ -1,11 +1,10 @@
-﻿using Eclipse.Domain.Statistics;
+﻿using Eclipse.Common.Events;
+using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users.Events;
-
-using MediatR;
 
 namespace Eclipse.Application.Statistics.EventHandlers;
 
-internal sealed class TodoItemFinishedEventHandler : INotificationHandler<TodoItemFinishedDomainEvent>
+internal sealed class TodoItemFinishedEventHandler : IEventHandler<TodoItemFinishedDomainEvent>
 {
     private readonly IUserStatisticsRepository _repository;
 
