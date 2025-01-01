@@ -6,15 +6,15 @@ using Quartz;
 
 namespace Eclipse.Application.InboxMessages;
 
-internal sealed class ProcessTypedInboxMessagesJob<TEvent, TEventHanlder> : IJob
+internal class ProcessTypedInboxMessagesJob<TEvent, TEventHandler> : IJob
     where TEvent : IDomainEvent
-    where TEventHanlder : IEventHandler<TEvent>
+    where TEventHandler : IEventHandler<TEvent>
 {
-    private readonly TypedInboxMessageProcessor<TEvent, TEventHanlder> _processor;
+    private readonly TypedInboxMessageProcessor<TEvent, TEventHandler> _processor;
 
     private readonly IConfiguration _configuration;
 
-    public ProcessTypedInboxMessagesJob(TypedInboxMessageProcessor<TEvent, TEventHanlder> processor, IConfiguration configuration)
+    public ProcessTypedInboxMessagesJob(TypedInboxMessageProcessor<TEvent, TEventHandler> processor, IConfiguration configuration)
     {
         _processor = processor;
         _configuration = configuration;

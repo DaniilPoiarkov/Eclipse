@@ -28,6 +28,8 @@ public sealed class InboxMessage : Entity
         OccuredAt = occuredAt;
     }
 
+    private InboxMessage() { }
+
     public static InboxMessage Create(Guid id, Guid outboxMessageId, string handlerName, string payload, string type, DateTime occuredAt)
     {
         return new InboxMessage(id, outboxMessageId, handlerName, payload, type, InboxMessageStatus.Pending, occuredAt);

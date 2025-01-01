@@ -110,14 +110,11 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
-        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo<IInboxMessageProcessor>())
-            .AsSelfWithInterfaces()
-            .WithScopedLifetime());
+        services.AddScoped(typeof(TypedInboxMessageProcessor<,>));
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)))
-            .AsImplementedInterfaces()
+            .AsSelfWithInterfaces()
             .WithTransientLifetime());
 
         //// TODO: Remove MediatR

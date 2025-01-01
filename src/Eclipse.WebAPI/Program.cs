@@ -1,5 +1,4 @@
 using Eclipse.Application;
-using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
@@ -25,7 +24,6 @@ builder.Services
     .AddDomainSharedModule()
     .AddDomainModule()
     .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
-    .AddApplicationContractsModule()
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
