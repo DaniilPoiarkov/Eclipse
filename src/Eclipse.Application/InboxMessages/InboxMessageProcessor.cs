@@ -3,90 +3,120 @@ using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.InboxMessages;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
 namespace Eclipse.Application.InboxMessages;
 
-internal sealed class InboxMessageProcessor : IInboxMessageProcessor
-{
-    private readonly IInboxMessageRepository _repository;
+// TODO: Remove
+//internal sealed class InboxMessageProcessor : IInboxMessageProcessor
+//{
+//    private readonly IInboxMessageRepository _repository;
 
-    private readonly ITimeProvider _timeProvider;
+//    private readonly ITimeProvider _timeProvider;
 
-    private readonly IEnumerable<IEventHandler<IDomainEvent>> _handlers;
+//    private readonly IServiceProvider _serviceProvider;
 
-    private readonly ILogger<InboxMessageProcessor> _logger;
+//    private readonly ILogger<InboxMessageProcessor> _logger;
 
-    public InboxMessageProcessor(
-        IInboxMessageRepository repository,
-        ITimeProvider timeProvider,
-        IEnumerable<IEventHandler<IDomainEvent>> handlers,
-        ILogger<InboxMessageProcessor> logger)
-    {
-        _repository = repository;
-        _timeProvider = timeProvider;
-        _handlers = handlers;
-        _logger = logger;
-    }
+//    public InboxMessageProcessor(
+//        IInboxMessageRepository repository,
+//        ITimeProvider timeProvider,
+//        IServiceProvider serviceProvider,
+//        ILogger<InboxMessageProcessor> logger)
+//    {
+//        _repository = repository;
+//        _timeProvider = timeProvider;
+//        _serviceProvider = serviceProvider;
+//        _logger = logger;
+//    }
 
-    public async Task<ProcessInboxMessagesResult> ProcessAsync(int count, CancellationToken cancellationToken = default)
-    {
-        var inboxMessages = await _repository.GetPendingAsync(count, cancellationToken);
+//    public async Task<ProcessInboxMessagesResult> ProcessAsync(int count, CancellationToken cancellationToken = default)
+//    {
+//        var inboxMessages = await _repository.GetPendingAsync(count, cancellationToken);
 
-        if (inboxMessages.IsNullOrEmpty())
-        {
-            return ProcessInboxMessagesResult.Empty;
-        }
+//        if (inboxMessages.IsNullOrEmpty())
+//        {
+//            return ProcessInboxMessagesResult.Empty;
+//        }
 
-        foreach (var message in inboxMessages)
-        {
-            message.SetInProcess();
-        }
+//        foreach (var message in inboxMessages)
+//        {
+//            message.SetInProcess();
+//        }
 
-        await _repository.UpdateRangeAsync(inboxMessages, cancellationToken);
+//        await _repository.UpdateRangeAsync(inboxMessages, cancellationToken);
 
-        foreach (var inboxMessage in inboxMessages)
-        {
-            var payload = JsonConvert.DeserializeObject<IDomainEvent>(inboxMessage.Payload, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All,
-            });
+//        var handlers = new Dictionary<Type, IEnumerable<object>>();
 
-            if (payload is null)
-            {
-                _logger.LogError("Cannot deserialize payload type \'{Type}\' from {Message} with Id \'{Id}\'", inboxMessage.Type, nameof(InboxMessage), inboxMessage.Id);
-                inboxMessage.SetError("Cannot deserialize the payload.", _timeProvider.Now);
-                continue;
-            }
+//        using var scope = _serviceProvider.CreateAsyncScope();
 
-            var handler = _handlers.FirstOrDefault(h => h.GetType().FullName == inboxMessage.HandlerName);
+//        foreach (var inboxMessage in inboxMessages)
+//        {
+//            var payloadType = Type.GetType(inboxMessage.Type);
 
-            if (handler is null)
-            {
-                _logger.LogError("Cannot retrieve handler \'{Handler}\' for {Message} with Id \'{Id}\'", inboxMessage.HandlerName, nameof(InboxMessage), inboxMessage.Id);
-                inboxMessage.SetError("Cannot retrieve handler.", _timeProvider.Now);
-                continue;
-            }
+//            if (payloadType is null)
+//            {
+//                _logger.LogError("Cannot resolve payload type \'{Type}\' from {Message} with Id \'{Id}\'", inboxMessage.Type, nameof(InboxMessage), inboxMessage.Id);
+//                inboxMessage.SetError("Cannot resolve payload type during converting to inbox message.", _timeProvider.Now);
+//                continue;
+//            }
 
-            await handler.Handle(payload, cancellationToken);
+//            var payload = JsonConvert.DeserializeObject<IDomainEvent>(inboxMessage.Payload, new JsonSerializerSettings
+//            {
+//                TypeNameHandling = TypeNameHandling.All,
+//            });
 
-            inboxMessage.SetProcessed(_timeProvider.Now);
-        }
+//            if (payload is null)
+//            {
+//                _logger.LogError("Cannot deserialize payload type \'{Type}\' from {Message} with Id \'{Id}\'", inboxMessage.Type, nameof(InboxMessage), inboxMessage.Id);
+//                inboxMessage.SetError("Cannot deserialize the payload.", _timeProvider.Now);
+//                continue;
+//            }
 
-        await _repository.UpdateRangeAsync(inboxMessages, cancellationToken);
+//            var type = typeof(IEventHandler<>).MakeGenericType(payloadType);
 
-        var errors = inboxMessages
-            .Where(m => !m.Error.IsNullOrEmpty())
-            .Select(m => m.Error!)
-            .ToList();
+//            if (!handlers.TryGetValue(type, out _))
+//            {
+//                handlers[type] = scope.ServiceProvider.GetServices(type)!;
+//            }
 
-        return new ProcessInboxMessagesResult(
-            inboxMessages.Count,
-            inboxMessages.Where(m => m.Error.IsNullOrEmpty()).Count(),
-            errors.Count,
-            errors
-        );
-    }
-}
+//            var handler = handlers[type].FirstOrDefault(handler => handler.GetType().FullName == inboxMessage.HandlerName);
+
+//            if (handler is null)
+//            {
+//                _logger.LogError("Cannot retrieve handler \'{Handler}\' for {Message} with Id \'{Id}\'", inboxMessage.HandlerName, nameof(InboxMessage), inboxMessage.Id);
+//                inboxMessage.SetError("Cannot retrieve handler.", _timeProvider.Now);
+//                continue;
+//            }
+
+//            try
+//            {
+//                // TODO: Review
+//                //await handler.Handle(payload, cancellationToken);
+
+//                inboxMessage.SetProcessed(_timeProvider.Now);
+//            }
+//            catch (Exception ex)
+//            {
+//                inboxMessage.SetError(JsonConvert.SerializeObject(ex), _timeProvider.Now);
+//            }
+//        }
+
+//        await _repository.UpdateRangeAsync(inboxMessages, cancellationToken);
+
+//        var errors = inboxMessages
+//            .Where(m => !m.Error.IsNullOrEmpty())
+//            .Select(m => m.Error!)
+//            .ToList();
+
+//        return new ProcessInboxMessagesResult(
+//            inboxMessages.Count,
+//            inboxMessages.Where(m => m.Error.IsNullOrEmpty()).Count(),
+//            errors.Count,
+//            errors
+//        );
+//    }
+//}

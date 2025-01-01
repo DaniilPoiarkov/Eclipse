@@ -1,0 +1,30 @@
+﻿using Eclipse.Common.Events;
+
+using Microsoft.Extensions.Configuration;
+
+using Quartz;
+
+namespace Eclipse.Application.InboxMessages;
+
+internal sealed class ProcessTypedInboxMessagesJob<TEvent, TEventHanlder> : IJob
+    where TEvent : IDomainEvent
+    where TEventHanlder : IEventHandler<TEvent>
+{
+    private readonly TypedInboxMessageProcessor<TEvent, TEventHanlder> _processor;
+
+    private readonly IConfiguration _configuration;
+
+    public ProcessTypedInboxMessagesJob(TypedInboxMessageProcessor<TEvent, TEventHanlder> processor, IConfiguration configuration)
+    {
+        _processor = processor;
+        _configuration = configuration;
+    }
+
+    public async Task Execute(IJobExecutionContext context)
+    {
+        var count = _configuration.GetSection("InboxMessages")
+            .GetValue<int>("ProcessCount");
+
+        await _processor.ProcessAsync(count, context.CancellationToken);
+    }
+}

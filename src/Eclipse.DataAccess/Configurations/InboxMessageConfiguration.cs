@@ -20,5 +20,10 @@ internal sealed class InboxMessageConfiguration : IEntityTypeConfiguration<Inbox
     {
         builder.ToContainer(_options.Value.Container)
             .HasPartitionKey(m => m.Id);
+
+        builder.HasDiscriminator<string>("Discriminator")
+            .HasValue(nameof(InboxMessage));
+
+        builder.HasDiscriminatorInJsonId();
     }
 }

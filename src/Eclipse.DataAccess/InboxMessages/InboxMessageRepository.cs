@@ -12,10 +12,14 @@ internal sealed class InboxMessageRepository : RepositoryBase<InboxMessage>, IIn
     public InboxMessageRepository(EclipseDbContext context)
         : base(context) { }
 
-    public Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
+    public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {
-        return DbSet.Where(i => i.Status == InboxMessageStatus.Processed)
-            .ExecuteDeleteAsync(cancellationToken);
+        var messages = await DbSet.Where(i => i.Status == InboxMessageStatus.Processed)
+            .ToListAsync(cancellationToken);
+
+        DbSet.RemoveRange(messages);
+
+        await Context.SaveChangesAsync(cancellationToken);
     }
 
     public Task<List<InboxMessage>> GetPendingAsync(int count, CancellationToken cancellationToken = default)

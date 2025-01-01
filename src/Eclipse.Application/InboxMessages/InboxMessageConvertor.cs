@@ -4,6 +4,7 @@ using Eclipse.Common.Events;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.OutboxMessages;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Eclipse.Application.InboxMessages;
@@ -14,7 +15,7 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
 
     private readonly IInboxMessageRepository _inboxMessageRepository;
 
-    private readonly IEnumerable<IEventHandler<IDomainEvent>> _hanlders;
+    private readonly IServiceProvider _serviceProvider;
 
     private readonly ITimeProvider _timeProvider;
 
@@ -23,13 +24,13 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
     public InboxMessageConvertor(
         IOutboxMessageRepository outboxMessageRepository,
         IInboxMessageRepository inboxMessageRepository,
-        IEnumerable<IEventHandler<IDomainEvent>> hanlders,
+        IServiceProvider serviceProvider,
         ITimeProvider timeProvider,
         ILogger<InboxMessageConvertor> logger)
     {
         _outboxMessageRepository = outboxMessageRepository;
         _inboxMessageRepository = inboxMessageRepository;
-        _hanlders = hanlders;
+        _serviceProvider = serviceProvider;
         _timeProvider = timeProvider;
         _logger = logger;
     }
@@ -45,6 +46,8 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
 
         var converted = new List<InboxMessage>();
 
+        using var scope = _serviceProvider.CreateAsyncScope();
+
         foreach (var outboxMessage in outboxMessages)
         {
             var payloadType = Type.GetType(outboxMessage.Type);
@@ -58,7 +61,7 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
 
             var type = typeof(IEventHandler<>).MakeGenericType(payloadType);
 
-            var inboxMessages = _hanlders.Where(h => h.GetType().IsAssignableTo(type))
+            var inboxMessages = scope.ServiceProvider.GetServices(type)
                 .Select(handler => handler?.GetType().FullName)
                 .Where(handlerName => !handlerName.IsNullOrEmpty())
                 .Select(handlerName =>

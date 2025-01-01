@@ -35,6 +35,7 @@ using Eclipse.Application.Users;
 using Eclipse.Application.Users.EventHandlers;
 using Eclipse.Application.Users.Services;
 using Eclipse.Common.Background;
+using Eclipse.Common.Events;
 
 using MediatR.NotificationPublishers;
 
@@ -71,7 +72,6 @@ public static class EclipseApplicationModule
                 .AddTransient<IOutboxMessagesService, OutboxMessagesService>()
                 .AddTransient<IInboxMessageService, InboxMessageService>()
                 .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
-                .AddTransient<IInboxMessageProcessor, InboxMessageProcessor>()
                 .AddTransient<IReportsService, ReportsService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>();
 
@@ -110,11 +110,22 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
-        services.AddMediatR(cfg =>
-        {
-            cfg.NotificationPublisher = new TaskWhenAllPublisher();
-            cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
-        });
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo<IInboxMessageProcessor>())
+            .AsSelfWithInterfaces()
+            .WithScopedLifetime());
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        //// TODO: Remove MediatR
+        //services.AddMediatR(cfg =>
+        //{
+        //    cfg.NotificationPublisher = new TaskWhenAllPublisher();
+        //    cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
+        //});
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 

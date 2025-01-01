@@ -36,7 +36,7 @@ internal sealed class DomainEventsToOutboxMessagesInterceptor : SaveChangesInter
             .SelectMany(entity => entity.GetEvents())
             .Select(domainEvent => new OutboxMessage(
                 Guid.NewGuid(),
-                domainEvent.GetType().Name,
+                domainEvent.GetType().AssemblyQualifiedName!,
                 JsonConvert.SerializeObject(domainEvent, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All,

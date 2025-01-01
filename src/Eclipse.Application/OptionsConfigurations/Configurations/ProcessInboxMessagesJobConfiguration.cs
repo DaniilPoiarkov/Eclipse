@@ -4,6 +4,7 @@ using Quartz;
 
 namespace Eclipse.Application.OptionsConfigurations.Configurations;
 
+// TODO: Remove
 internal sealed class ProcessInboxMessagesJobConfiguration : IJobConfiguration
 {
     private static readonly int _delay = 5;
