@@ -11,7 +11,6 @@ internal sealed class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptio
     public void Configure(QuartzOptions options)
     {
         AddJob<ConvertOutboxToInboxJobConfiguration>(options);
-        AddJob<ProcessInboxMessagesJobConfiguration>(options); // TODO: Review
         AddJob<ProcessTypedInboxMessagesJobConfiguration>(options);
         AddJob<ProcessTypedInboxMessagesJobConfiguration>(options);
         AddJob<DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration>(options);
