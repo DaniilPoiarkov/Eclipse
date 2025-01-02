@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eclipse.Infrastructure.EventBus.InMemory;
 
+// TODO: Review as probably not relevant
 internal sealed class InMemoryChannelReadService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
