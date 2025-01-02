@@ -32,12 +32,9 @@ using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
 using Eclipse.Application.Url;
 using Eclipse.Application.Users;
-using Eclipse.Application.Users.EventHandlers;
 using Eclipse.Application.Users.Services;
 using Eclipse.Common.Background;
 using Eclipse.Common.Events;
-
-using MediatR.NotificationPublishers;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -116,13 +113,6 @@ public static class EclipseApplicationModule
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)))
             .AsSelfWithInterfaces()
             .WithTransientLifetime());
-
-        //// TODO: Remove MediatR
-        //services.AddMediatR(cfg =>
-        //{
-        //    cfg.NotificationPublisher = new TaskWhenAllPublisher();
-        //    cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
-        //});
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 

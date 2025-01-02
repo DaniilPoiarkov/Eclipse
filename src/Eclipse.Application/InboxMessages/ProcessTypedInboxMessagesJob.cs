@@ -6,7 +6,7 @@ using Quartz;
 
 namespace Eclipse.Application.InboxMessages;
 
-internal class ProcessTypedInboxMessagesJob<TEvent, TEventHandler> : IJob
+internal sealed class ProcessTypedInboxMessagesJob<TEvent, TEventHandler> : IJob
     where TEvent : IDomainEvent
     where TEventHandler : IEventHandler<TEvent>
 {
