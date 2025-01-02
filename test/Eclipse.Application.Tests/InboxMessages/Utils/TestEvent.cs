@@ -2,4 +2,4 @@
 
 namespace Eclipse.Application.Tests.InboxMessages.Utils;
 
-internal sealed record TestEvent(Guid Data) : IDomainEvent;
+public sealed record TestEvent(Guid Data) : IDomainEvent;

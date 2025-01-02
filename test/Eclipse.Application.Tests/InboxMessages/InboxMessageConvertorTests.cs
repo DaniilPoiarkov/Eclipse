@@ -45,7 +45,7 @@ public sealed class InboxMessageConvertorTests
     }
 
     [Theory]
-    [InlineData(1)]
+    [InlineData(10)]
     public async Task ConvertAsync_WhenNoOutboxMessages_ThenReturnsEmptyResult(int count)
     {
         _outboxMessageRepository.GetNotProcessedAsync(count, Arg.Any<CancellationToken>()).Returns([]);
@@ -56,7 +56,7 @@ public sealed class InboxMessageConvertorTests
     }
 
     [Theory]
-    [InlineData(1)]
+    [InlineData(10)]
     public async Task ConvertAsync_WhenHasOutboxMessages_ThenConvertsToInboxForEachHandler(int count)
     {
         var utcNow = DateTime.UtcNow;
@@ -144,7 +144,7 @@ public sealed class InboxMessageConvertorTests
     }
 
     [Theory]
-    [InlineData(1)]
+    [InlineData(10)]
     public async Task ConvertAsync_WhenPayloadTypeCannotBeResolved_ThenErrorSet(int count)
     {
         var utcNow = DateTime.UtcNow;
