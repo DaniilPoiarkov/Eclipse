@@ -16,7 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Eclipse.Application.Contracts\Eclipse.Application.Contracts.csproj" />
     <ProjectReference Include="..\Eclipse.Domain\Eclipse.Domain.csproj" />
-    <ProjectReference Include="..\Eclipse.IntegrationEvents\Eclipse.IntegrationEvents.csproj" />
   </ItemGroup>
 
 </Project>
