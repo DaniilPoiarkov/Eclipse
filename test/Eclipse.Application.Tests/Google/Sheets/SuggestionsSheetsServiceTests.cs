@@ -1,11 +1,14 @@
 ﻿using Eclipse.Application.Google.Sheets;
-using Eclipse.Common.EventBus;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Sheets;
+using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Suggestions;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.Configuration;
+
+using Newtonsoft.Json;
 
 using NSubstitute;
 
@@ -19,7 +22,9 @@ public sealed class SuggestionsSheetsServiceTests
 
     private readonly IConfiguration _configuration;
 
-    private readonly IEventBus _eventBus;
+    private readonly IOutboxMessageRepository _outboxMessageRepository;
+
+    private readonly ITimeProvider _timeProvider;
 
     private readonly SuggestionsSheetsService _sut;
 
@@ -27,15 +32,17 @@ public sealed class SuggestionsSheetsServiceTests
     {
         _sheetsService = Substitute.For<ISheetsService>();
         _configuration = Substitute.For<IConfiguration>();
-        _eventBus = Substitute.For<IEventBus>();
+        _outboxMessageRepository = Substitute.For<IOutboxMessageRepository>();
+        _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new SuggestionsSheetsService(_sheetsService, new SuggestionParser(), _configuration, _eventBus);
+        _sut = new SuggestionsSheetsService(_sheetsService, new SuggestionParser(), _configuration, _outboxMessageRepository, _timeProvider);
     }
 
-    [Fact]
-    public async Task GetAllAsync_WhenCalled_ThenReturnsSuggestions()
+    [Theory]
+    [InlineData("Text", 1)]
+    public async Task GetAllAsync_WhenCalled_ThenReturnsSuggestions(string text, long chatid)
     {
-        var suggestion = Suggestion.Create(Guid.NewGuid(), "suggestion", 1, DateTime.UtcNow);
+        var suggestion = Suggestion.Create(Guid.NewGuid(), text, chatid, DateTime.UtcNow);
 
         _sheetsService.GetAsync(
             Arg.Any<string>(),
@@ -43,24 +50,46 @@ public sealed class SuggestionsSheetsServiceTests
             Arg.Any<IObjectParser<Suggestion>>()
         ).Returns([suggestion]);
 
-        var suggestions = (await _sut.GetAllAsync()).ToList();
+        var suggestions = await _sut.GetAllAsync();
 
-        suggestions.Count.Should().Be(1);
-        suggestions[0].Should().Be(suggestion);
+        suggestions.Should().BeEquivalentTo([suggestion]);
     }
 
-    [Fact]
-    public async Task AddAsync_WhenItemAdded_ThenEventsTriggered()
+    [Theory]
+    [InlineData("text", 1)]
+    public async Task AddAsync_WhenItemAdded_ThenEventsTriggered(string text, long chatId)
     {
-        var suggestion = Suggestion.Create(Guid.NewGuid(), "suggestion", 1, DateTime.UtcNow);
+        var utcNow = DateTime.UtcNow;
+        _timeProvider.Now.Returns(utcNow);
 
-        var @event = suggestion.GetEvents()[0];
+        var suggestion = Suggestion.Create(Guid.NewGuid(), text, chatId, utcNow);
+
+        var expectedOutboxMessages = suggestion.GetEvents()
+            .Select(@event => new OutboxMessage(
+                Guid.CreateVersion7(),
+                @event.GetType().AssemblyQualifiedName!,
+                JsonConvert.SerializeObject(@event, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                }),
+                utcNow
+            ))
+            .ToList();
 
         await _sut.AddAsync(suggestion);
 
-        await _eventBus.Received(1).Publish(@event);
+        await _outboxMessageRepository.Received().CreateRangeAsync(
+            Arg.Is<IEnumerable<OutboxMessage>>(messages =>
+                messages.All(message =>
+                    expectedOutboxMessages.Exists(expected => message.Type == expected.Type
+                        && message.JsonContent == expected.JsonContent
+                        && message.OccuredAt == expected.OccuredAt
+                    )
+                )
+            )
+        );
 
-        await _sheetsService.Received(1).AppendAsync(
+        await _sheetsService.Received().AppendAsync(
             Arg.Any<string>(),
             Arg.Any<string>(),
             suggestion,
