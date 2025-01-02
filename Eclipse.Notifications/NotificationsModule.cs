@@ -1,6 +1,4 @@
-﻿using MassTransit;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Notifications;
 

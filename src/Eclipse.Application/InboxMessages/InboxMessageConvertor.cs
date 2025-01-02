@@ -90,7 +90,7 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
 
         return new OutboxToInboxConversionResult(
             outboxMessages.Count,
-            outboxMessages.Where(m => m.Error.IsNullOrEmpty()).Count(),
+            outboxMessages.Count - errors.Count,
             errors.Count,
             errors
         );

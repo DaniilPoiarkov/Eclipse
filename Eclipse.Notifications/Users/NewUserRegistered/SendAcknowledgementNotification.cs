@@ -44,7 +44,7 @@ public sealed class SendAcknowledgementNotification : IConsumer<NewUserRegistere
         var notification = context.Message;
 
         var content = _localizer["User:Events:NewUserJoined", notification.UserId, notification.UserName, notification.FirstName, notification.LastName];
-        
+
         await _client.SendMessage(_options.Value.ChatId, content, cancellationToken: context.CancellationToken);
     }
 }
