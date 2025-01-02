@@ -1,14 +1,11 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.Common.Caching;
 using Eclipse.Common.Clock;
-using Eclipse.Common.EventBus;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Plots;
 using Eclipse.Common.Sheets;
 using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Caching;
-using Eclipse.Infrastructure.EventBus.InMemory;
-using Eclipse.Infrastructure.EventBus.Redis;
 using Eclipse.Infrastructure.Excel;
 using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Plots;
@@ -22,8 +19,6 @@ using Quartz.Logging;
 
 using Serilog;
 
-using StackExchange.Redis;
-
 namespace Eclipse.Infrastructure;
 
 /// <summary>
@@ -36,7 +31,6 @@ public static class EclipseInfrastructureModule
         services
             .AddSerilogIntegration()
             .AddCache()
-            .AddEventBus()
             .AddQuartzIntegration()
             .AddGoogleIntegration();
 
@@ -109,31 +103,6 @@ public static class EclipseInfrastructureModule
         }
 
         services.AddSingleton<ICacheService, CacheService>();
-
-        return services;
-    }
-
-    private static IServiceCollection AddEventBus(this IServiceCollection services)
-    {
-        var configuration = services.GetConfiguration();
-
-        if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
-        {
-            var connectionString = configuration.GetConnectionString("Redis")
-                ?? throw new InvalidOperationException("Redis connection string is not provided");
-
-            services
-                .AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(connectionString))
-                .AddTransient<IEventBus, RedisEventBus>()
-                .AddHostedService<RedisChannelReadService>();
-
-            return services;
-        }
-
-        services
-            .AddSingleton(typeof(InMemoryQueue<>))
-            .AddTransient<IEventBus, InMemoryEventBus>()
-            .AddHostedService<InMemoryChannelReadService>();
 
         return services;
     }
