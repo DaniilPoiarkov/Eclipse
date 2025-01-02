@@ -166,11 +166,11 @@ public sealed class InboxMessageConvertorTests
         var scope = Substitute.For<IServiceScope>();
         factory.CreateScope().Returns(scope);
 
-        List<OutboxMessage> outboxMessages = [ outboxMessage ];
+        List<OutboxMessage> outboxMessages = [outboxMessage];
 
         _outboxMessageRepository.GetNotProcessedAsync(count).Returns(outboxMessages);
 
-        var expected = new OutboxToInboxConversionResult(1, 0, 1, [ "Cannot resolve payload type during converting to inbox message." ]);
+        var expected = new OutboxToInboxConversionResult(1, 0, 1, ["Cannot resolve payload type during converting to inbox message."]);
 
         var result = await _sut.ConvertAsync(count);
 
