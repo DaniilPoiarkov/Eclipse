@@ -1,6 +1,6 @@
 ﻿using Eclipse.Common.Caching;
 
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Hybrid;
 
 using Newtonsoft.Json;
 
@@ -8,16 +8,16 @@ namespace Eclipse.Infrastructure.Caching;
 
 internal sealed class CacheService : ICacheService
 {
-    private readonly IDistributedCache _cache;
+    private readonly HybridCache _cache;
 
-    public CacheService(IDistributedCache cache)
+    public CacheService(HybridCache cache)
     {
         _cache = cache;
     }
 
     public async Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
     {
-        var json = await _cache.GetStringAsync(key.Key, cancellationToken);
+        var json = await _cache.GetOrCreateAsync<string>(key.Key, factory: (_) => default, cancellationToken: cancellationToken);
 
         if (json.IsNullOrEmpty())
         {
@@ -35,18 +35,19 @@ internal sealed class CacheService : ICacheService
     {
         var json = JsonConvert.SerializeObject(value);
 
-        var options = new DistributedCacheEntryOptions
+        var options = new HybridCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = expiration
+            Expiration = expiration,
         };
 
-        await _cache.SetStringAsync(key.Key, json, options, cancellationToken);
+        await _cache.SetAsync(key.Key, json, options, cancellationToken: cancellationToken);
+
         await AddKeyAsync(key, cancellationToken);
     }
 
-    public Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
     {
-        return _cache.RemoveAsync(key.Key, cancellationToken);
+        await _cache.RemoveAsync(key.Key, cancellationToken);
     }
 
     public async Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default)
@@ -56,7 +57,8 @@ internal sealed class CacheService : ICacheService
 
         var removing = keys
             .Where(k => k.StartsWith(prefix))
-            .Select(k => DeleteAsync(k, cancellationToken));
+            .Select(k => DeleteAsync(k, cancellationToken))
+            .Concat([_cache.RemoveByTagAsync(prefix, cancellationToken).AsTask()]);
 
         await Task.WhenAll(removing);
     }

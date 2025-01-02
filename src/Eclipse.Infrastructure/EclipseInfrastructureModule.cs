@@ -28,11 +28,14 @@ public static class EclipseInfrastructureModule
 {
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services)
     {
+#pragma warning disable EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         services
             .AddSerilogIntegration()
             .AddCache()
             .AddQuartzIntegration()
-            .AddGoogleIntegration();
+            .AddGoogleIntegration()
+            .AddHybridCache();
+#pragma warning restore EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
         services
             .AddSingleton<IExcelManager, ExcelManager>()
