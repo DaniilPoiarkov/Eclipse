@@ -16,6 +16,7 @@ internal sealed class CachedUserStatisticsRepository : CachedRepositoryBase<User
             $"{GetPrefix()}-{userId}",
             () => Repository.FindByUserIdAsync(userId, cancellationToken),
             CacheConsts.OneDay,
+            [GetPrefix()],
             cancellationToken
         );
     }

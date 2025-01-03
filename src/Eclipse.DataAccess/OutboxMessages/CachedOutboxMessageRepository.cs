@@ -21,6 +21,7 @@ internal sealed class CachedOutboxMessageRepository : CachedRepositoryBase<Outbo
             $"{GetPrefix()}-not-processed-{count}",
             () => Repository.GetNotProcessedAsync(count, cancellationToken),
             CacheConsts.FiveMinutes,
+            [GetPrefix()],
             cancellationToken
         );
     }

@@ -20,6 +20,7 @@ internal sealed class CachedInboxMessageRepository : CachedRepositoryBase<InboxM
             $"{GetPrefix()}-pending-{count}",
             () => Repository.GetPendingAsync(count, cancellationToken),
             CacheConsts.FiveMinutes,
+            [GetPrefix()],
             cancellationToken
         );
     }
@@ -30,6 +31,7 @@ internal sealed class CachedInboxMessageRepository : CachedRepositoryBase<InboxM
             $"{GetPrefix()}-pending-{handlerName}-{count}",
             () => Repository.GetPendingAsync(count, handlerName, cancellationToken),
             CacheConsts.FiveMinutes,
+            [GetPrefix()],
             cancellationToken
         );
     }

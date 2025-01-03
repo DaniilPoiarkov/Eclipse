@@ -19,7 +19,7 @@ internal sealed class CultureTracker : ICultureTracker
 
     public Task ResetAsync(long chatId, string culture, CancellationToken cancellationToken = default)
     {
-        return _cacheService.SetAsync(GetKey(chatId), culture, CacheConsts.ThreeDays, cancellationToken);
+        return _cacheService.SetAsync(GetKey(chatId), culture, CacheConsts.ThreeDays, [GetKey(chatId).Key], cancellationToken);
     }
 
     private static CacheKey GetKey(long chatId) => new($"lang-{chatId}");

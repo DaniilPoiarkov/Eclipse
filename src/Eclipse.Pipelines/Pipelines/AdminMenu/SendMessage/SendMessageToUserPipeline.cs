@@ -36,7 +36,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
     {
         if (long.TryParse(context.Value, out var chatId))
         {
-            await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, CacheConsts.ThreeDays, cancellationToken);
+            await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, CacheConsts.ThreeDays, [$"send-chat-{context.ChatId}"], cancellationToken);
             return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
         }
 
@@ -52,7 +52,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        await _cacheService.SetAsync($"send-message-{context.ChatId}", context.Value, CacheConsts.ThreeDays, cancellationToken);
+        await _cacheService.SetAsync($"send-message-{context.ChatId}", context.Value, CacheConsts.ThreeDays, [$"send-message-{context.ChatId}"], cancellationToken);
 
         return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }

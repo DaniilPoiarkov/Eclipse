@@ -44,6 +44,7 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
             $"{GetPrefix()}-{id}",
             () => Repository.FindAsync(id, cancellationToken),
             CacheConsts.FiveMinutes,
+            [GetPrefix()],
             cancellationToken
         );
     }
@@ -54,6 +55,7 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
             $"{GetPrefix()}-all",
             () => Repository.GetAllAsync(cancellationToken),
             CacheConsts.ThreeDays,
+            [GetPrefix()],
             cancellationToken
         );
     }
@@ -64,6 +66,7 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
             $"{GetPrefix()};{expression.Body}",
             () => Repository.GetByExpressionAsync(expression, cancellationToken),
             CacheConsts.FiveMinutes,
+            [GetPrefix()],
             cancellationToken
         );
     }
@@ -74,6 +77,7 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
             $"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}",
             () => Repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken),
             CacheConsts.FiveMinutes,
+            [GetPrefix()],
             cancellationToken
         );
     }

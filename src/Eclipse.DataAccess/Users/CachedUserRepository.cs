@@ -15,6 +15,7 @@ internal sealed class CachedUserRepository : CachedRepositoryBase<User, IUserRep
             $"{GetPrefix()}-chat-id-{chatId}",
             () => Repository.FindByChatIdAsync(chatId, cancellationToken),
             CacheConsts.OneDay,
+            [GetPrefix()],
             cancellationToken
         );
     }
@@ -25,6 +26,7 @@ internal sealed class CachedUserRepository : CachedRepositoryBase<User, IUserRep
             $"{GetPrefix()}-user-name-{userName}",
             () => Repository.FindByUserNameAsync(userName, cancellationToken),
             CacheConsts.OneDay,
+            [GetPrefix()],
             cancellationToken
         );
     }

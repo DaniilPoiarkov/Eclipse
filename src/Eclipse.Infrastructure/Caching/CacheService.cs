@@ -31,7 +31,7 @@ internal sealed class CacheService : ICacheService
         });
     }
 
-    public async Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, CancellationToken cancellationToken = default)
+    public async Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, IEnumerable<string> tags, CancellationToken cancellationToken = default)
     {
         var json = JsonConvert.SerializeObject(value);
 
@@ -40,7 +40,7 @@ internal sealed class CacheService : ICacheService
             Expiration = expiration,
         };
 
-        await _cache.SetAsync(key.Key, json, options, cancellationToken: cancellationToken);
+        await _cache.SetAsync(key.Key, json, options, cancellationToken: cancellationToken, tags: tags);
 
         await AddKeyAsync(key, cancellationToken);
     }
@@ -75,6 +75,6 @@ internal sealed class CacheService : ICacheService
 
         keys.Add(cacheKey.Key);
 
-        await SetAsync(key, keys, CacheConsts.ThreeDays, cancellationToken);
+        await SetAsync(key, keys, CacheConsts.ThreeDays, [], cancellationToken);
     }
 }
