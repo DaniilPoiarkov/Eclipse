@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Eclipse.Application.InboxMessages;
 
-internal sealed class TypedInboxMessageProcessor<TEvent, TEventHandler> : IInboxMessageProcessor
+internal sealed class TypedInboxMessageProcessor<TEvent, TEventHandler> : IInboxMessageProcessor<TEvent, TEventHandler>
     where TEvent : IDomainEvent
     where TEventHandler : IEventHandler<TEvent>
 {

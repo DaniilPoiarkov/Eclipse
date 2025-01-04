@@ -130,4 +130,37 @@ public sealed class TypedInboxMessageProcessorTests
         message.ProcessedAt.Should().Be(utcNow);
         message.Error.Should().NotBeNullOrEmpty();
     }
+
+    [Theory]
+    [InlineData(10)]
+    public async Task ProcessAsync_WhenPayloadCannotBeResolved_ThenErrorSet(int count)
+    {
+        var utcNow = DateTime.UtcNow;
+        _timeProvider.Now.Returns(utcNow);
+
+        var inboxMessage = InboxMessage.Create(
+            Guid.CreateVersion7(),
+            Guid.CreateVersion7(),
+            _eventHandler.GetType().FullName!,
+            string.Empty,
+            typeof(TestEvent).Name,
+            utcNow
+        );
+
+        _repository.GetPendingAsync(count, _eventHandler.GetType().FullName).Returns([inboxMessage]);
+
+        await _sut.ProcessAsync(count);
+
+        inboxMessage.Status.Should().Be(InboxMessageStatus.Failed);
+        inboxMessage.Error.Should().Be("Cannot deserialize the payload.");
+        inboxMessage.ProcessedAt.Should().Be(utcNow);
+
+        _logger.Received().Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>()
+        );
+    }
 }

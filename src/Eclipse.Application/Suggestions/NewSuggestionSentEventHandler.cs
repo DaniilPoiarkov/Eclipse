@@ -23,7 +23,7 @@ public sealed class NewSuggestionSentEventHandler : IEventHandler<NewSuggestionS
         _userService = userService;
     }
 
-    public async Task Handle(NewSuggestionSentDomainEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(NewSuggestionSentDomainEvent notification, CancellationToken cancellationToken = default)
     {
         var result = await _userService.GetByChatIdAsync(notification.ChatId, cancellationToken);
 

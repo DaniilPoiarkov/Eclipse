@@ -107,7 +107,7 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
-        services.AddScoped(typeof(TypedInboxMessageProcessor<,>));
+        services.AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)))

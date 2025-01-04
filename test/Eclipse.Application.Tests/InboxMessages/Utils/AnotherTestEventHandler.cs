@@ -2,7 +2,7 @@
 
 namespace Eclipse.Application.Tests.InboxMessages.Utils;
 
-internal sealed class AnotherTestEventHandler : IEventHandler<TestEvent>
+public sealed class AnotherTestEventHandler : IEventHandler<TestEvent>
 {
     public Task Handle(TestEvent @event, CancellationToken cancellationToken = default)
     {
