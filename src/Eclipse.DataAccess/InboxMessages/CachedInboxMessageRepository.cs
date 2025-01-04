@@ -24,7 +24,7 @@ internal sealed class CachedInboxMessageRepository : CachedRepositoryBase<InboxM
         );
     }
 
-    public Task<List<InboxMessage>> GetPendingAsync(int count, string? handlerName, CancellationToken cancellationToken)
+    public Task<List<InboxMessage>> GetPendingAsync(int count, string? handlerName, CancellationToken cancellationToken = default)
     {
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-pending-{handlerName}-{count}",
