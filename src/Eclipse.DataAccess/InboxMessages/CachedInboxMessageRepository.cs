@@ -9,9 +9,10 @@ internal sealed class CachedInboxMessageRepository : CachedRepositoryBase<InboxM
     public CachedInboxMessageRepository(IInboxMessageRepository repository, ICacheService cacheService)
         : base(repository, cacheService) { }
 
-    public Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
+    public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {
-        return Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
+        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
+        await Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
     }
 
     public Task<List<InboxMessage>> GetPendingAsync(int count, CancellationToken cancellationToken = default)

@@ -10,6 +10,8 @@ internal sealed class CacheService : ICacheService
 {
     private readonly HybridCache _cache;
 
+    private static readonly string _cacheKeys = "cache-keys";
+
     public CacheService(HybridCache cache)
     {
         _cache = cache;
@@ -52,8 +54,7 @@ internal sealed class CacheService : ICacheService
 
     public async Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey("cache-keys");
-        var keys = await GetAsync<List<string>>(key, cancellationToken) ?? [];
+        var keys = await GetAsync<List<string>>(_cacheKeys, cancellationToken) ?? [];
 
         var removing = keys
             .Where(k => k.StartsWith(prefix))
@@ -65,8 +66,7 @@ internal sealed class CacheService : ICacheService
 
     private async Task AddKeyAsync(CacheKey cacheKey, CancellationToken cancellationToken)
     {
-        var key = new CacheKey("cache-keys");
-        var keys = await GetAsync<List<string>>(key, cancellationToken) ?? [];
+        var keys = await GetAsync<List<string>>(_cacheKeys, cancellationToken) ?? [];
 
         if (keys.Contains(cacheKey.Key))
         {
@@ -75,6 +75,6 @@ internal sealed class CacheService : ICacheService
 
         keys.Add(cacheKey.Key);
 
-        await SetAsync(key, keys, CacheConsts.ThreeDays, [], cancellationToken);
+        await SetAsync(_cacheKeys, keys, CacheConsts.ThreeDays, [], cancellationToken);
     }
 }
