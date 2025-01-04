@@ -6,6 +6,7 @@ using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Google.Sheets;
+using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
 using Eclipse.Application.Contracts.Reminders;
@@ -18,6 +19,7 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
+using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
@@ -30,11 +32,9 @@ using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
 using Eclipse.Application.Url;
 using Eclipse.Application.Users;
-using Eclipse.Application.Users.EventHandlers;
 using Eclipse.Application.Users.Services;
 using Eclipse.Common.Background;
-
-using MediatR.NotificationPublishers;
+using Eclipse.Common.Events;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,6 +67,8 @@ public static class EclipseApplicationModule
                 .AddTransient<IMoodRecordsService, MoodRecordsService>()
                 .AddTransient<IConfigurationService, ConfigurationService>()
                 .AddTransient<IOutboxMessagesService, OutboxMessagesService>()
+                .AddTransient<IInboxMessageService, InboxMessageService>()
+                .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
                 .AddTransient<IReportsService, ReportsService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>();
 
@@ -105,11 +107,12 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
-        services.AddMediatR(cfg =>
-        {
-            cfg.NotificationPublisher = new TaskWhenAllPublisher();
-            cfg.RegisterServicesFromAssemblyContaining<NewUserJoinedEventHandler>();
-        });
+        services.AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)))
+            .AsSelfWithInterfaces()
+            .WithTransientLifetime());
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 

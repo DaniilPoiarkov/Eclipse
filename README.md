@@ -24,7 +24,11 @@
 <p>Run <i>.\stop.ps1</i> script to stop container. It will also remove image.</p>
 
 ## Architecture diagram
+### High level
 ![Eclipse](https://github.com/user-attachments/assets/06b1b2a7-41dc-4bec-92eb-6569a95d8283)
+
+### Outbox and Inbox messages processing
+![outbox-and-inbox-processing](https://github.com/user-attachments/assets/36f4b4f2-d04e-4d20-b3cf-fd35d7cb94a2)
 
 ## References
 ![Eclipse-Project references drawio](https://github.com/DaniilPoiarkov/Eclipse/assets/101814817/8c32847f-ecaf-4927-9e24-de2210a353b0)

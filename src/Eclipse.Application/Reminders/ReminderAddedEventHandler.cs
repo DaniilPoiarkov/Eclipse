@@ -1,7 +1,6 @@
 ﻿using Eclipse.Common.Clock;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
-
-using MediatR;
 
 using Newtonsoft.Json;
 
@@ -9,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders;
 
-internal sealed class ReminderAddedEventHandler : INotificationHandler<ReminderAddedDomainEvent>
+internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDomainEvent>
 {
     private readonly ISchedulerFactory _schedulerFactory;
 

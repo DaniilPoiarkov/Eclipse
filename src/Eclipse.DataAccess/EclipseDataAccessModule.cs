@@ -2,12 +2,14 @@
 
 using Eclipse.DataAccess.CosmosDb;
 using Eclipse.DataAccess.Health;
+using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
 using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Statistics;
@@ -37,6 +39,7 @@ public static class EclipseDataAccessModule
         services
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
+            .AddScoped<IInboxMessageRepository, InboxMessageRepository>()
             .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
             .AddScoped<IUserStatisticsRepository, UserStatisticsRepository>()
             .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
@@ -44,6 +47,7 @@ public static class EclipseDataAccessModule
         services
             .Decorate<IUserRepository, CachedUserRepository>()
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
+            .Decorate<IInboxMessageRepository, CachedInboxMessageRepository>()
             .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>()
             .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>();
 

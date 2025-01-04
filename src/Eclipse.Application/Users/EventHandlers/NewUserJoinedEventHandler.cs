@@ -1,16 +1,15 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Localization.Culture;
-
-using MediatR;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
 namespace Eclipse.Application.Users.EventHandlers;
 
-public sealed class NewUserJoinedEventHandler : INotificationHandler<NewUserJoinedDomainEvent>
+public sealed class NewUserJoinedEventHandler : IEventHandler<NewUserJoinedDomainEvent>
 {
     private readonly ITelegramService _telegramService;
 
