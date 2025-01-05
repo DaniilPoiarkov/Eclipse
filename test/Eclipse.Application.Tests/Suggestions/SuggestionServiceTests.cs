@@ -57,7 +57,7 @@ public class SuggestionServiceTests
             TelegramUserId = 1,
             Text = "text"
         };
-        
+
         var result = await _sut.CreateAsync(suggestion);
 
         result.IsSuccess.Should().BeTrue();

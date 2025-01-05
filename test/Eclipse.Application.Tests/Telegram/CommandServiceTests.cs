@@ -1,6 +1,4 @@
-﻿using Bogus;
-
-using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Common.Results;
 

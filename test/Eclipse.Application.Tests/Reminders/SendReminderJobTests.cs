@@ -16,11 +16,9 @@ using NSubstitute;
 using Quartz;
 
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 using Telegram.Bot;
 using Telegram.Bot.Requests;
-using Telegram.Bot.Types;
 
 using Xunit;
 
