@@ -1,4 +1,6 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Bogus;
+
+using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Application.Telegram.Commands;
 using Eclipse.Common.Results;
 
@@ -97,5 +99,27 @@ public sealed class CommandServiceTests
         result.Count.Should().Be(1);
         result[0].Command.Should().Be(command.Command);
         result[0].Description.Should().Be(command.Description);
+    }
+
+    [Theory]
+    [InlineData("/test")]
+    public async Task Remove_WhenCalled_ThenResetsCommandsWithoutSpecified(string command)
+    {
+        var commands = new BotCommand[]
+        {
+            new()
+            {
+                Command = command,
+            }
+        };
+
+        _botClient.SendRequest(Arg.Any<GetMyCommandsRequest>()).Returns(commands);
+
+        await _sut.Remove(command);
+
+        await _botClient.Received().SendRequest(Arg.Any<GetMyCommandsRequest>());
+        await _botClient.Received().SendRequest(
+            Arg.Is<SetMyCommandsRequest>(request => request.Commands.IsNullOrEmpty())
+        );
     }
 }

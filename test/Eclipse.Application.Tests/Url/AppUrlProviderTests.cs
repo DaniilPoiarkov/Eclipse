@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 
 using NSubstitute;
 
-using System.Security.Policy;
-
 using Xunit;
 
 namespace Eclipse.Application.Tests.Url;
