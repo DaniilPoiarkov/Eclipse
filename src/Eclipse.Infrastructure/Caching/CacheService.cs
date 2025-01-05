@@ -21,14 +21,14 @@ internal sealed class CacheService : ICacheService
         return _cache.GetOrCreateAsync<T>(key.Key, factory: _ => default, cancellationToken: cancellationToken);
     }
 
-    public async Task<T> GetOrCreateAsync<T>(CacheKey key, Func<Task<T>> factory, CacheOptions cacheOptions, CancellationToken cancellationToken = default)
+    public async Task<T> GetOrCreateAsync<T>(CacheKey key, Func<Task<T>> factory, CacheOptions? cacheOptions = null, CancellationToken cancellationToken = default)
     {
         var options = new HybridCacheEntryOptions
         {
-            Expiration = cacheOptions.Expiration,
+            Expiration = cacheOptions?.Expiration,
         };
 
-        return await _cache.GetOrCreateAsync(key.Key, async _ => await factory(), options, cacheOptions.Tags, cancellationToken);
+        return await _cache.GetOrCreateAsync(key.Key, async _ => await factory(), options, cacheOptions?.Tags, cancellationToken);
     }
 
     public async Task SetAsync<T>(CacheKey key, T value, CacheOptions cacheOptions, CancellationToken cancellationToken = default)
@@ -43,9 +43,9 @@ internal sealed class CacheService : ICacheService
         await AddKeyAsync(key, cancellationToken);
     }
 
-    public ValueTask DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
     {
-        return _cache.RemoveAsync(key.Key, cancellationToken);
+        await _cache.RemoveAsync(key.Key, cancellationToken);
     }
 
     public async Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default)

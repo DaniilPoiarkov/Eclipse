@@ -15,7 +15,7 @@ internal abstract class StoreBase<TObject, TKey> : IStore<TObject, TKey>
     // TODO: Review
     public virtual async Task<TObject?> GetOrDefaultAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        return await _cacheService.GetAsync<TObject>(key.ToCacheKey(), cancellationToken);
+        return await _cacheService.GetOrCreateAsync(key.ToCacheKey(), () => Task.FromResult<TObject?>(default), cancellationToken: cancellationToken);
     }
 
     public virtual Task RemoveAsync(TKey key, CancellationToken cancellationToken = default)
@@ -25,6 +25,11 @@ internal abstract class StoreBase<TObject, TKey> : IStore<TObject, TKey>
 
     public virtual Task SetAsync(TKey key, TObject value, CancellationToken cancellationToken = default)
     {
-        return _cacheService.SetAsync(key.ToCacheKey(), value, CacheConsts.ThreeDays, [], cancellationToken);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays
+        };
+
+        return _cacheService.SetAsync(key.ToCacheKey(), value, options, cancellationToken);
     }
 }

@@ -44,7 +44,17 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Okay"]);
         }
 
-        await _cacheService.SetAsync(new CacheKey($"reminder-text-{context.ChatId}"), context.Value, CacheConsts.ThreeDays, [], cancellationToken);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays
+        };
+
+        await _cacheService.SetAsync(
+            $"reminder-text-{context.ChatId}",
+            context.Value,
+            options,
+            cancellationToken
+        );
 
         return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }
@@ -64,7 +74,11 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
 
         var chatId = context.ChatId;
 
-        var text = await _cacheService.GetAsync<string>(new CacheKey($"reminder-text-{chatId}"), cancellationToken);
+        var text = await _cacheService.GetOrCreateAsync(
+            $"reminder-text-{chatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
 
         if (text.IsNullOrEmpty())
         {

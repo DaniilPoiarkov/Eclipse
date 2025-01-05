@@ -30,7 +30,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
             Expiration = CacheConsts.ThreeDays,
         };
 
-        string culture = await _cacheService.GetOrCreateAsync(
+        string? culture = await _cacheService.GetOrCreateAsync(
             $"lang-{context.ChatId}",
             () => GetCultureAsync(context, cancellationToken),
             options,
@@ -49,7 +49,7 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
         return await execution(context, cancellationToken);
     }
 
-    private async Task<string> GetCultureAsync(MessageContext context, CancellationToken cancellationToken)
+    private async Task<string?> GetCultureAsync(MessageContext context, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindByChatIdAsync(context.ChatId, cancellationToken);
 
@@ -58,6 +58,6 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
             return user.Culture;
         }
 
-        return string.Empty;
+        return null;
     }
 }

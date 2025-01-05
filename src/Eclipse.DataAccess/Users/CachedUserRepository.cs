@@ -11,22 +11,32 @@ internal sealed class CachedUserRepository : CachedRepositoryBase<User, IUserRep
 
     public Task<User?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.OneDay,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-chat-id-{chatId}",
             () => Repository.FindByChatIdAsync(chatId, cancellationToken),
-            CacheConsts.OneDay,
-            [GetPrefix()],
+            options,
             cancellationToken
         );
     }
 
     public Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.OneDay,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-user-name-{userName}",
             () => Repository.FindByUserNameAsync(userName, cancellationToken),
-            CacheConsts.OneDay,
-            [GetPrefix()],
+            options,
             cancellationToken
         );
     }

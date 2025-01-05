@@ -22,14 +22,6 @@ internal sealed class InboxMessageRepository : RepositoryBase<InboxMessage>, IIn
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<List<InboxMessage>> GetPendingAsync(int count, CancellationToken cancellationToken = default)
-    {
-        return DbSet.Where(i => i.Status == InboxMessageStatus.Pending)
-            .OrderBy(i => i.OccuredAt)
-            .Take(count)
-            .ToListAsync(cancellationToken);
-    }
-
     public Task<List<InboxMessage>> GetPendingAsync(int count, string? handlerName, CancellationToken cancellationToken)
     {
         return DbSet.Where(i => i.Status == InboxMessageStatus.Pending && i.HandlerName == handlerName)

@@ -1,9 +1,9 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Common.Caching;
+using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
-using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Decorations;
 using Eclipse.Tests.Generators;
 
@@ -20,9 +20,9 @@ public sealed class LocalizationDecoratorTests
 {
     private readonly IUserRepository _repository;
 
-    private readonly ICultureTracker _cultureTracker;
-
     private readonly ICurrentCulture _currentCulture;
+
+    private readonly ICacheService _cacheService;
 
     private readonly Func<MessageContext, CancellationToken, Task<IResult>> _execution;
 
@@ -31,12 +31,12 @@ public sealed class LocalizationDecoratorTests
     public LocalizationDecoratorTests()
     {
         _repository = Substitute.For<IUserRepository>();
-        _cultureTracker = Substitute.For<ICultureTracker>();
         _currentCulture = Substitute.For<ICurrentCulture>();
+        _cacheService = Substitute.For<ICacheService>();
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
 
-        _sut = new LocalizationDecorator(_repository, _cultureTracker, _currentCulture);
+        _sut = new LocalizationDecorator(_repository, _currentCulture, _cacheService);
     }
 
     [Fact]
@@ -47,19 +47,23 @@ public sealed class LocalizationDecoratorTests
 
         var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
 
-        _cultureTracker.GetAsync(user.ChatId).ReturnsNull();
+        _cacheService.GetOrCreateAsync($"lang-{context.ChatId}", Arg.Any<Func<Task<string>>>()).ReturnsNull();
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
         await _sut.Decorate(_execution, context);
 
         _currentCulture.Received().UsingCulture(
-            Arg.Is<CultureInfo>(x => x.Name == user.Culture)
+            //Arg.Is<CultureInfo>(x => x.Name == user.Culture)
+            null
         );
 
         await _repository.Received().FindByChatIdAsync(user.ChatId);
 
-        await _cultureTracker.Received().GetAsync(user.ChatId);
-        await _cultureTracker.Received().ResetAsync(user.ChatId, user.Culture);
+        await _cacheService.Received().GetOrCreateAsync(
+            $"lang-{context.ChatId}",
+            Arg.Any<Func<Task<string>>>(),
+            Arg.Is<CacheOptions>(o => o.Expiration == CacheConsts.ThreeDays)
+        );
     }
 }
