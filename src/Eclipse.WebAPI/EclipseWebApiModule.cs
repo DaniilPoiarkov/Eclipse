@@ -70,7 +70,7 @@ public static class EclipseWebApiModule
             .ConfigureOptions<AuthorizationConfiguration>();
 
         services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
-            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 

@@ -54,7 +54,7 @@ public static class EclipseDataAccessModule
         services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 

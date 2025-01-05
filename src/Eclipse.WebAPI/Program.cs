@@ -2,7 +2,6 @@ using Eclipse.Application;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
-using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
@@ -20,7 +19,6 @@ var configuration = builder.Configuration;
 
 builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
-    .AddDomainSharedModule()
     .AddDomainModule()
     .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))

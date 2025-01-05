@@ -28,13 +28,13 @@ public static class EclipseCoreModule
                 .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
 
         services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
-            .AddClasses(c => c.AssignableTo<IParseStrategy>())
+            .AddClasses(c => c.AssignableTo<IParseStrategy>(), publicOnly: false)
             .AsSelf()
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<PipelineBase>()
-            .AddClasses(c => c.AssignableTo<PipelineBase>())
+            .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
             .As<PipelineBase>()
             .AsImplementedInterfaces()
             .WithTransientLifetime());
