@@ -62,7 +62,7 @@ jobs:
           reports: ${{ github.workspace }}/test-results/**/*.xml
           targetdir: ${{ github.workspace }}/coverage-reports
           reporttypes: cobertura;Html_Dark;MarkdownSummaryGithub
-          assemblyfilters: '-*.Tests;-*.Infrastructure;-*.DataAccess'
+          assemblyfilters: '-*.Tests;-*.Infrastructure;-*.DataAccess;-*.Generated'
           classfilters: '-*Module;-*Configuration'
           verbosity: Info
           title: Code Coverage
