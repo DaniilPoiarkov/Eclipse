@@ -58,9 +58,7 @@ public sealed class CommandServiceTests
 
         result.IsSuccess.Should().BeFalse();
 
-        var error = result.Error;
-        error.Code.Should().Be(expectedError.Code);
-        error.Description.Should().Be(expectedError.Description);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 
     [Theory]
