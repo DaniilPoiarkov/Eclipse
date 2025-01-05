@@ -40,44 +40,64 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
 
     public Task<TEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-{id}",
             () => Repository.FindAsync(id, cancellationToken),
-            CacheConsts.FiveMinutes,
-            [GetPrefix()],
+            options,
             cancellationToken
         );
     }
 
     public Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-all",
             () => Repository.GetAllAsync(cancellationToken),
-            CacheConsts.ThreeDays,
-            [GetPrefix()],
+            options,
             cancellationToken
         );
     }
 
     public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()};{expression.Body}",
             () => Repository.GetByExpressionAsync(expression, cancellationToken),
-            CacheConsts.FiveMinutes,
-            [GetPrefix()],
+            options,
             cancellationToken
         );
     }
 
     public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}",
             () => Repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken),
-            CacheConsts.FiveMinutes,
-            [GetPrefix()],
+            options,
             cancellationToken
         );
     }

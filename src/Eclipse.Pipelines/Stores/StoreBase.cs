@@ -12,9 +12,10 @@ internal abstract class StoreBase<TObject, TKey> : IStore<TObject, TKey>
         _cacheService = cacheService;
     }
 
-    public virtual Task<TObject?> GetOrDefaultAsync(TKey key, CancellationToken cancellationToken = default)
+    // TODO: Review
+    public virtual async Task<TObject?> GetOrDefaultAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        return _cacheService.GetAsync<TObject>(key.ToCacheKey(), cancellationToken);
+        return await _cacheService.GetAsync<TObject>(key.ToCacheKey(), cancellationToken);
     }
 
     public virtual Task RemoveAsync(TKey key, CancellationToken cancellationToken = default)

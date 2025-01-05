@@ -2,8 +2,6 @@
 
 using Microsoft.Extensions.Caching.Hybrid;
 
-using Newtonsoft.Json;
-
 namespace Eclipse.Infrastructure.Caching;
 
 internal sealed class CacheService : ICacheService
@@ -17,64 +15,86 @@ internal sealed class CacheService : ICacheService
         _cache = cache;
     }
 
-    public async Task<T?> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
+    [Obsolete("Use GetOrCreateAsync instead")]
+    public ValueTask<T> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
     {
-        var json = await _cache.GetOrCreateAsync<string>(key.Key, factory: (_) => default, cancellationToken: cancellationToken);
-
-        if (json.IsNullOrEmpty())
-        {
-            return default;
-        }
-
-        return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
-        {
-            ContractResolver = PrivateMembersContractResolver.Instance,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-        });
+        return _cache.GetOrCreateAsync<T>(key.Key, factory: _ => default, cancellationToken: cancellationToken);
     }
 
-    public async Task SetAsync<T>(CacheKey key, T value, TimeSpan expiration, IEnumerable<string> tags, CancellationToken cancellationToken = default)
+    public async Task<T> GetOrCreateAsync<T>(CacheKey key, Func<Task<T>> factory, CacheOptions cacheOptions, CancellationToken cancellationToken = default)
     {
-        var json = JsonConvert.SerializeObject(value);
-
         var options = new HybridCacheEntryOptions
         {
-            Expiration = expiration,
+            Expiration = cacheOptions.Expiration,
         };
 
-        await _cache.SetAsync(key.Key, json, options, cancellationToken: cancellationToken, tags: tags);
+        return await _cache.GetOrCreateAsync(key.Key, async _ => await factory(), options, cacheOptions.Tags, cancellationToken);
+    }
+
+    public async Task SetAsync<T>(CacheKey key, T value, CacheOptions cacheOptions, CancellationToken cancellationToken = default)
+    {
+        var options = new HybridCacheEntryOptions
+        {
+            Expiration = cacheOptions.Expiration,
+        };
+
+        await _cache.SetAsync(key.Key, value, options, cacheOptions.Tags, cancellationToken);
 
         await AddKeyAsync(key, cancellationToken);
     }
 
-    public async Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
+    public ValueTask DeleteAsync(CacheKey key, CancellationToken cancellationToken = default)
     {
-        await _cache.RemoveAsync(key.Key, cancellationToken);
+        return _cache.RemoveAsync(key.Key, cancellationToken);
     }
 
     public async Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default)
     {
-        var keys = await GetAsync<List<string>>(_cacheKeys, cancellationToken) ?? [];
+        var options = new HybridCacheEntryOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+        };
 
-        var removing = keys
-            .Where(k => k.StartsWith(prefix))
-            .Select(k => DeleteAsync(k, cancellationToken))
-            .Concat([_cache.RemoveByTagAsync(prefix, cancellationToken).AsTask()]);
+        var keys = await GetCacheKeys(options, cancellationToken);
 
-        await Task.WhenAll(removing);
+        foreach (var key in keys.Where(k => k.StartsWith(prefix)))
+        {
+            keys.Remove(key);
+            await _cache.RemoveAsync(key, cancellationToken);
+        }
+
+        await _cache.RemoveByTagAsync(prefix, cancellationToken);
+
+        await _cache.SetAsync(_cacheKeys, keys, options, [_cacheKeys], cancellationToken);
     }
 
-    private async Task AddKeyAsync(CacheKey cacheKey, CancellationToken cancellationToken)
+    private async Task AddKeyAsync(CacheKey key, CancellationToken cancellationToken)
     {
-        var keys = await GetAsync<List<string>>(_cacheKeys, cancellationToken) ?? [];
+        var options = new HybridCacheEntryOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+        };
 
-        if (keys.Contains(cacheKey.Key))
+        var keys = await GetCacheKeys(options, cancellationToken);
+
+        if (keys.Contains(key.Key))
         {
             return;
         }
 
-        keys.Add(cacheKey.Key);
+        keys.Add(key.Key);
 
-        await SetAsync(_cacheKeys, keys, CacheConsts.ThreeDays, [], cancellationToken);
+        await _cache.SetAsync(_cacheKeys, keys, options, [_cacheKeys], cancellationToken);
+    }
+
+    private ValueTask<List<string>> GetCacheKeys(HybridCacheEntryOptions options, CancellationToken cancellationToken)
+    {
+        return _cache.GetOrCreateAsync(
+            _cacheKeys,
+            _ => ValueTask.FromResult(new List<string>()),
+            options,
+            [_cacheKeys],
+            cancellationToken
+        );
     }
 }

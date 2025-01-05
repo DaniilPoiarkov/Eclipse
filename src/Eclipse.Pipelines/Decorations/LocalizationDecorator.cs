@@ -1,8 +1,8 @@
-﻿using Eclipse.Core.Builder;
+﻿using Eclipse.Common.Caching;
+using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
-using Eclipse.Pipelines.Culture;
 
 using System.Globalization;
 
@@ -12,31 +12,30 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly ICultureTracker _cultureTracker;
-
     private readonly ICurrentCulture _currentCulture;
 
-    public LocalizationDecorator(IUserRepository userRepository, ICultureTracker cultureTracker, ICurrentCulture currentCulture)
+    private readonly ICacheService _cacheService;
+
+    public LocalizationDecorator(IUserRepository userRepository, ICurrentCulture currentCulture, ICacheService cacheService)
     {
         _userRepository = userRepository;
-        _cultureTracker = cultureTracker;
         _currentCulture = currentCulture;
+        _cacheService = cacheService;
     }
 
     public async Task<IResult> Decorate(Func<MessageContext, CancellationToken, Task<IResult>> execution, MessageContext context, CancellationToken cancellationToken = default)
     {
-        var culture = await _cultureTracker.GetAsync(context.ChatId, cancellationToken);
-
-        if (culture is null)
+        var options = new CacheOptions
         {
-            var user = await _userRepository.FindByChatIdAsync(context.ChatId, cancellationToken);
+            Expiration = CacheConsts.ThreeDays,
+        };
 
-            if (user is not null)
-            {
-                await _cultureTracker.ResetAsync(context.ChatId, user.Culture, cancellationToken);
-                culture = user.Culture;
-            }
-        }
+        string culture = await _cacheService.GetOrCreateAsync(
+            $"lang-{context.ChatId}",
+            () => GetCultureAsync(context, cancellationToken),
+            options,
+            cancellationToken
+        );
 
         CultureInfo? cultureInfo = null;
 
@@ -48,5 +47,17 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
         using var _ = _currentCulture.UsingCulture(cultureInfo);
 
         return await execution(context, cancellationToken);
+    }
+
+    private async Task<string> GetCultureAsync(MessageContext context, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.FindByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (user is not null)
+        {
+            return user.Culture;
+        }
+
+        return string.Empty;
     }
 }

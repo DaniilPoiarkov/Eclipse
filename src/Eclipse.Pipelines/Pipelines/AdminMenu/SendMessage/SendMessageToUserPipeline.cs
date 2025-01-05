@@ -34,14 +34,20 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
     private async Task<IResult> AskForMessage(MessageContext context, CancellationToken cancellationToken)
     {
-        if (long.TryParse(context.Value, out var chatId))
+        if (!long.TryParse(context.Value, out var chatId))
         {
-            await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, CacheConsts.ThreeDays, [$"send-chat-{context.ChatId}"], cancellationToken);
-            return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
+            FinishPipeline();
+            return Text(Localizer["Pipelines:AdminMenu:SendToUser:UnableToParse"]);
         }
 
-        FinishPipeline();
-        return Text(Localizer["Pipelines:AdminMenu:SendToUser:UnableToParse"]);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays
+        };
+
+        await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, options, cancellationToken);
+
+        return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
     }
 
     private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
@@ -52,7 +58,17 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        await _cacheService.SetAsync($"send-message-{context.ChatId}", context.Value, CacheConsts.ThreeDays, [$"send-message-{context.ChatId}"], cancellationToken);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+        };
+
+        await _cacheService.SetAsync(
+            $"send-message-{context.ChatId}",
+            context.Value,
+            options,
+            cancellationToken
+        );
 
         return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
