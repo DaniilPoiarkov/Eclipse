@@ -78,39 +78,39 @@ public static class EclipseApplicationModule
             .AddTransient<IUserService, UserService>();
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IEclipseSheetsService<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IEclipseSheetsService<>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo<IBackgroundJob>())
+            .AddClasses(c => c.AssignableTo<IBackgroundJob>(), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo<IImportStrategy>())
+            .AddClasses(c => c.AssignableTo<IImportStrategy>(), publicOnly: false)
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IImportValidator<,>)))
+            .AddClasses(c => c.AssignableTo(typeof(IImportValidator<,>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo<IJob>())
+            .AddClasses(c => c.AssignableTo<IJob>(), publicOnly: false)
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
         services.AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)), publicOnly: false)
             .AsSelfWithInterfaces()
             .WithTransientLifetime());
 

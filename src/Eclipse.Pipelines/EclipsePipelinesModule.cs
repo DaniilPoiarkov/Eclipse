@@ -46,18 +46,18 @@ public static class EclipsePipelinesModule
             .AddTransient<ICultureTracker, CultureTracker>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
-            .AddClasses(c => c.AssignableTo<PipelineBase>())
+            .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
             .As<PipelineBase>()
             .AsSelf()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
-            .AddClasses(c => c.AssignableTo<EclipseJobBase>())
+            .AddClasses(c => c.AssignableTo<EclipseJobBase>(), publicOnly: false)
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
-            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 
