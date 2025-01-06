@@ -1,0 +1,98 @@
+name: Build, Test, and generate report
+
+env:
+  DOTNET_VERSION: '9.0.*'
+  DOTNET_CONFIGURATION: 'Release'
+
+on:
+  pull_request:
+    branches: develop
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Set up dependency caching
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+            ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore ./Eclipse.WebAPI.sln
+
+    - name: Build
+      run: dotnet build ./Eclipse.WebAPI.sln
+        --configuration ${{ env.DOTNET_CONFIGURATION }}
+        --no-restore
+
+    - name: Run tests
+      run: dotnet test ./Eclipse.WebAPI.sln 
+        --configuration ${{ env.DOTNET_CONFIGURATION }}
+        --no-build
+        --logger trx
+        --results-directory ${{ github.workspace }}/test-results
+        --collect "XPlat Code Coverage;Format=Cobertura"
+
+    - name: Generate code coverage report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
+      with:
+        reports: ${{ github.workspace }}/test-results/**/*.xml
+        targetdir: ${{ github.workspace }}/coverage-reports
+        reporttypes: cobertura;Html_Dark;MarkdownSummaryGithub
+        assemblyfilters: '-*.Tests;-*.Infrastructure;-*.DataAccess;-*.Generated'
+        classfilters: '-*Module;-*Configuration'
+        verbosity: Info
+        title: Code Coverage
+        tag: ${{ github.run_number }}_${{ github.run_id }}
+    
+    - name: Upload code coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: ${{ github.workspace }}/coverage-reports
+        retention-days: 3
+
+    - name: Publish code coverage summary
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: 'coverage-reports/Cobertura.xml'
+        badge: true
+        format: markdown
+        hide_branch_rate: false
+        hide_complexity: false
+        indicators: true
+        fail_below_min: false
+        output: both
+        thresholds: '10 30'
+    
+    - name: Add coverage comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: code-coverage-results.md
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: ${{ github.workspace }}/test-results/**/*
+        retention-days: 3
+
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2.16.1
+      if: always()
+      with:
+        trx_files: ${{ github.workspace }}/**/*.trx
