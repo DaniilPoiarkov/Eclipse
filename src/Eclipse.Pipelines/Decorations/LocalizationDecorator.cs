@@ -1,8 +1,7 @@
-﻿using Eclipse.Common.Caching;
-using Eclipse.Core.Builder;
+﻿using Eclipse.Core.Builder;
 using Eclipse.Core.Core;
-using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
+using Eclipse.Pipelines.Culture;
 
 using System.Globalization;
 
@@ -10,32 +9,19 @@ namespace Eclipse.Pipelines.Decorations;
 
 public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {
-    private readonly IUserRepository _userRepository;
-
     private readonly ICurrentCulture _currentCulture;
 
-    private readonly ICacheService _cacheService;
+    private readonly ICultureTracker _cultureTracker;
 
-    public LocalizationDecorator(IUserRepository userRepository, ICurrentCulture currentCulture, ICacheService cacheService)
+    public LocalizationDecorator(ICurrentCulture currentCulture, ICultureTracker cultureTracker)
     {
-        _userRepository = userRepository;
         _currentCulture = currentCulture;
-        _cacheService = cacheService;
+        _cultureTracker = cultureTracker;
     }
 
     public async Task<IResult> Decorate(Func<MessageContext, CancellationToken, Task<IResult>> execution, MessageContext context, CancellationToken cancellationToken = default)
     {
-        var options = new CacheOptions
-        {
-            Expiration = CacheConsts.ThreeDays,
-        };
-
-        string? culture = await _cacheService.GetOrCreateAsync(
-            $"lang-{context.ChatId}",
-            () => GetCultureAsync(context, cancellationToken),
-            options,
-            cancellationToken
-        );
+        string? culture = await _cultureTracker.GetAsync(context.ChatId, cancellationToken);
 
         CultureInfo? cultureInfo = null;
 
@@ -47,17 +33,5 @@ public sealed class LocalizationDecorator : IPipelineExecutionDecorator
         using var _ = _currentCulture.UsingCulture(cultureInfo);
 
         return await execution(context, cancellationToken);
-    }
-
-    private async Task<string?> GetCultureAsync(MessageContext context, CancellationToken cancellationToken)
-    {
-        var user = await _userRepository.FindByChatIdAsync(context.ChatId, cancellationToken);
-
-        if (user is not null)
-        {
-            return user.Culture;
-        }
-
-        return null;
     }
 }
