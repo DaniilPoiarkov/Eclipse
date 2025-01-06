@@ -2,6 +2,8 @@
 
 using Microsoft.Extensions.Caching.Hybrid;
 
+using Newtonsoft.Json;
+
 namespace Eclipse.Infrastructure.Caching;
 
 internal sealed class CacheService : ICacheService
@@ -28,7 +30,21 @@ internal sealed class CacheService : ICacheService
             Expiration = cacheOptions?.Expiration,
         };
 
-        return await _cache.GetOrCreateAsync(key.Key, async _ => await factory(), options, cacheOptions?.Tags, cancellationToken);
+        var json = await _cache.GetOrCreateAsync(
+            key.Key,
+            async _ => JsonConvert.SerializeObject(await factory()),
+            options,
+            cacheOptions?.Tags,
+            cancellationToken
+        );
+
+        var value = JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
+        {
+            ContractResolver = PrivateMembersContractResolver.Instance,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        });
+
+        return value ?? await factory();
     }
 
     public async Task SetAsync<T>(CacheKey key, T value, CacheOptions cacheOptions, CancellationToken cancellationToken = default)
@@ -38,7 +54,9 @@ internal sealed class CacheService : ICacheService
             Expiration = cacheOptions.Expiration,
         };
 
-        await _cache.SetAsync(key.Key, value, options, cacheOptions.Tags, cancellationToken);
+        var json = JsonConvert.SerializeObject(value);
+
+        await _cache.SetAsync(key.Key, json, options, cacheOptions.Tags, cancellationToken);
 
         await AddKeyAsync(key, cancellationToken);
     }
