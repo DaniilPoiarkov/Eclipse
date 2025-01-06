@@ -50,7 +50,7 @@ jobs:
       with:
         reports: ${{ github.workspace }}/test-results/**/*.xml
         targetdir: ${{ github.workspace }}/coverage-reports
-        reporttypes: cobertura;Html_Dark;MarkdownSummaryGithub
+        reporttypes: Html_Dark;MarkdownSummaryGithub
         assemblyfilters: '-*.Tests;-*.Infrastructure;-*.DataAccess;-*.Generated'
         classfilters: '-*Module;-*Configuration'
         verbosity: Info
