@@ -82,7 +82,7 @@ jobs:
       if: github.event_name == 'pull_request'
       with:
         recreate: true
-        path: code-coverage-results.md
+        path: ${{ github.workspace }}/coverage-reports/SummaryGithub.md
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
