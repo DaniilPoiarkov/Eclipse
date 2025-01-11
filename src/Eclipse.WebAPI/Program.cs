@@ -59,6 +59,6 @@ await app.InitializeApplicationLayerAsync();
 await app.InitializeDataAccessModuleAsync();
 await app.InitializePipelineModuleAsync();
 
-app.Run();
+await app.RunAsync();
 
 public partial class Program;
