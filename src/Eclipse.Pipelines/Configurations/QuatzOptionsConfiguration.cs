@@ -16,7 +16,6 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
     {
         // TODO: Make those jobs configured per user.
         AddJobWithEveryMinuteFire<CollectMoodRecordsJob>(options);
-        AddJobWithEveryMinuteFire<RemindToFinishTodoItemsJob>(options);
         AddJobWithEveryMinuteFire<SendGoodMorningJob>(options);
         AddJobWithEveryMinuteFire<SendMoodReportJob>(options);
     }

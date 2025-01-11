@@ -24,6 +24,7 @@ using Eclipse.Application.MoodRecords;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.FinishTodoItems;
 using Eclipse.Application.Reports;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
@@ -128,5 +129,8 @@ public static class EclipseApplicationModule
 
         await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
         logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
+
+        await manager.EnqueueAsync<RescheduleRemindToFinishTodoItemsJob>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindToFinishTodoItemsJob));
     }
 }
