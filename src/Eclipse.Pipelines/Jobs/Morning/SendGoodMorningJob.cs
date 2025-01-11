@@ -41,6 +41,8 @@ internal sealed class SendGoodMorningJob : EclipseJobBase
 
     public override async Task Execute(IJobExecutionContext context)
     {
+        return;
+
         var time = _timeProvider.Now.GetTime();
 
         var users = (await _userService.GetAllAsync(context.CancellationToken))
