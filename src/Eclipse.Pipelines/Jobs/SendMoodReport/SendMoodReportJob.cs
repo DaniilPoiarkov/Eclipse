@@ -7,6 +7,7 @@ using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 using Quartz;
 
@@ -42,6 +43,8 @@ internal sealed class SendMoodReportJob : EclipseJobBase
 
     private readonly ICurrentCulture _currentCulture;
 
+    private readonly ILogger<SendMoodReportJob> _logger;
+
     public SendMoodReportJob(
         IUserRepository userRepository,
         IMoodRecordRepository moodRecordRepository,
@@ -49,7 +52,8 @@ internal sealed class SendMoodReportJob : EclipseJobBase
         IStringLocalizer<SendMoodReportJob> localizer,
         ITimeProvider timeProvider,
         IPlotGenerator plotGenerator,
-        ICurrentCulture currentCulture)
+        ICurrentCulture currentCulture,
+        ILogger<SendMoodReportJob> logger)
     {
         _userRepository = userRepository;
         _moodRecordRepository = moodRecordRepository;
@@ -58,53 +62,63 @@ internal sealed class SendMoodReportJob : EclipseJobBase
         _timeProvider = timeProvider;
         _plotGenerator = plotGenerator;
         _currentCulture = currentCulture;
+        _logger = logger;
     }
 
     public override async Task Execute(IJobExecutionContext context)
     {
-        var date = _timeProvider.Now;
-
-        if (date.DayOfWeek != DayOfWeek.Sunday)
+        try
         {
-            await RescheduleJobAsync(context, date);
-            return;
-        }
 
-        var time = date.GetTime();
+            var date = _timeProvider.Now;
 
-        var users = (await _userRepository.GetByExpressionAsync(u => u.NotificationsEnabled, context.CancellationToken))
-            .Where(u => time.Add(u.Gmt) == _time)
-            .ToList();
+            if (date.DayOfWeek != DayOfWeek.Sunday)
+            {
+                _logger.LogInformation("Rescheduling job {Job} to the next Sunday.", nameof(SendMoodReportJob));
+                await RescheduleJobAsync(context, date);
+                return;
+            }
 
-        var after = date.PreviousDayOfWeek(DayOfWeek.Sunday);
+            var time = date.GetTime();
 
-        var moodRecords = await _moodRecordRepository.GetByExpressionAsync(
-            mr => users.Select(u => u.Id).Contains(mr.UserId) && mr.CreatedAt >= after,
-            context.CancellationToken
-        );
+            var users = (await _userRepository.GetByExpressionAsync(u => u.NotificationsEnabled, context.CancellationToken))
+                .Where(u => time.Add(u.Gmt) == _time)
+                .ToList();
 
-        var pairs = moodRecords
-            .OrderBy(mr => mr.CreatedAt)
-            .GroupBy(mr => mr.UserId)
-            .Join(users, group => group.Key, user => user.Id, (group, user) => (User: user, Options: GeneratePlotOptions([.. group], user.Gmt)));
+            var after = date.PreviousDayOfWeek(DayOfWeek.Sunday);
 
-        var sending = new List<Task>(users.Count);
-
-        foreach (var pair in pairs)
-        {
-            var user = pair.User;
-            var options = pair.Options;
-
-            using var _ = _currentCulture.UsingCulture(user.Culture);
-
-            var message = _localizer["Jobs:SendMoodReport:Caption"].Value;
-
-            sending.Add(
-                SendReportAsync(user.ChatId, options, message, context.CancellationToken)
+            var moodRecords = await _moodRecordRepository.GetByExpressionAsync(
+                mr => users.Select(u => u.Id).Contains(mr.UserId) && mr.CreatedAt >= after,
+                context.CancellationToken
             );
-        }
 
-        await Task.WhenAll(sending);
+            var pairs = moodRecords
+                .OrderBy(mr => mr.CreatedAt)
+                .GroupBy(mr => mr.UserId)
+                .Join(users, group => group.Key, user => user.Id, (group, user) => (User: user, Options: GeneratePlotOptions([.. group], user.Gmt)));
+
+            var sending = new List<Task>(users.Count);
+
+            foreach (var pair in pairs)
+            {
+                var user = pair.User;
+                var options = pair.Options;
+
+                using var _ = _currentCulture.UsingCulture(user.Culture);
+
+                var message = _localizer["Jobs:SendMoodReport:Caption"].Value;
+
+                sending.Add(
+                    SendReportAsync(user.ChatId, options, message, context.CancellationToken)
+                );
+            }
+
+            await Task.WhenAll(sending);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send weekly mood report job. {Exception}", ex);
+        }
     }
 
     private PlotOptions<DateTime, int> GeneratePlotOptions(List<MoodRecord> records, TimeSpan userGmt)

@@ -14,6 +14,7 @@ internal sealed class QuatzOptionsConfiguration : IConfigureOptions<QuartzOption
 
     public void Configure(QuartzOptions options)
     {
+        // TODO: Make those jobs configured per user.
         AddJobWithEveryMinuteFire<CollectMoodRecordsJob>(options);
         AddJobWithEveryMinuteFire<RemindToFinishTodoItemsJob>(options);
         AddJobWithEveryMinuteFire<SendGoodMorningJob>(options);
