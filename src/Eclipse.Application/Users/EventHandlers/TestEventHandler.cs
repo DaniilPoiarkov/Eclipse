@@ -1,11 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
-
-using MediatR;
 
 namespace Eclipse.Application.Users.EventHandlers;
 
-public sealed class TestEventHandler : INotificationHandler<TestDomainEvent>
+internal sealed class TestEventHandler : IEventHandler<TestDomainEvent>
 {
     private readonly ITelegramService _telegramService;
 

@@ -251,17 +251,18 @@ public sealed class TodoItemsServiceTests
         result.Error.Should().BeEquivalentTo(expected);
     }
 
-    [Fact]
-    public async Task CreateAsync_WhenUserNotExistsAndChatIdSpecified_ThenFailureResultReturned()
+    [Theory]
+    [InlineData(2, "text")]
+    public async Task CreateAsync_WhenUserNotExistsAndChatIdSpecified_ThenFailureResultReturned(long chatId, string text)
     {
         var expected = DefaultErrors.EntityNotFound<User>();
 
         var createModel = new CreateTodoItemDto
         {
-            Text = "text",
+            Text = text,
         };
 
-        var result = await _sut.CreateAsync(2, createModel);
+        var result = await _sut.CreateAsync(chatId, createModel);
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(expected);

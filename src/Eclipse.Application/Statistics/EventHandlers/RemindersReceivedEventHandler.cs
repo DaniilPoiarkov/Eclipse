@@ -1,11 +1,10 @@
-﻿using Eclipse.Domain.Statistics;
+﻿using Eclipse.Common.Events;
+using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users.Events;
-
-using MediatR;
 
 namespace Eclipse.Application.Statistics.EventHandlers;
 
-internal sealed class RemindersReceivedEventHandler : INotificationHandler<RemindersReceivedDomainEvent>
+internal sealed class RemindersReceivedEventHandler : IEventHandler<RemindersReceivedDomainEvent>
 {
     private readonly IUserStatisticsRepository _repository;
 
@@ -17,7 +16,7 @@ internal sealed class RemindersReceivedEventHandler : INotificationHandler<Remin
     public async Task Handle(RemindersReceivedDomainEvent notification, CancellationToken cancellationToken)
     {
         var statistics = await _repository.FindByUserIdAsync(notification.UserId, cancellationToken)
-            ?? await _repository.CreateAsync(new UserStatistics(Guid.NewGuid(), notification.UserId), cancellationToken);
+            ?? await _repository.CreateAsync(new UserStatistics(Guid.CreateVersion7(), notification.UserId), cancellationToken);
 
         statistics.ReminderReceived();
 

@@ -1,9 +1,7 @@
 using Eclipse.Application;
-using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
-using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
@@ -21,10 +19,8 @@ var configuration = builder.Configuration;
 
 builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
-    .AddDomainSharedModule()
     .AddDomainModule()
     .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
-    .AddApplicationContractsModule()
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
@@ -63,6 +59,6 @@ await app.InitializeApplicationLayerAsync();
 await app.InitializeDataAccessModuleAsync();
 await app.InitializePipelineModuleAsync();
 
-app.Run();
+await app.RunAsync();
 
 public partial class Program;

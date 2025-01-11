@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.OutboxMessages;
-using Eclipse.Application.OutboxMessages.Jobs;
+using Eclipse.Application.OutboxMessages;
 
 using NSubstitute;
 
