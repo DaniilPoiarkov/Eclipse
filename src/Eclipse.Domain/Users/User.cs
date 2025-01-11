@@ -77,7 +77,7 @@ public sealed class User : AggregateRoot
     /// <returns>Created Reminder</returns>
     public Reminder AddReminder(string text, TimeOnly notifyAt)
     {
-        return AddReminder(Guid.NewGuid(), text, notifyAt);
+        return AddReminder(Guid.CreateVersion7(), text, notifyAt);
     }
 
     public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
@@ -122,7 +122,7 @@ public sealed class User : AggregateRoot
     /// <returns>Created TodoItem item</returns>
     public Result<TodoItem> AddTodoItem(string? text, DateTime createdAt)
     {
-        return AddTodoItem(Guid.NewGuid(), text, createdAt, false, default);
+        return AddTodoItem(Guid.CreateVersion7(), text, createdAt, false, default);
     }
 
     public Result<TodoItem> AddTodoItem(Guid id, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
@@ -203,7 +203,7 @@ public sealed class User : AggregateRoot
 
     public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
     {
-        return new MoodRecord(Guid.NewGuid(), Id, state, createdAt.WithTime(0, 0));
+        return new MoodRecord(Guid.CreateVersion7(), Id, state, createdAt.WithTime(0, 0));
     }
 
     public Reminder? ReceiveReminder(Guid reminderId)
