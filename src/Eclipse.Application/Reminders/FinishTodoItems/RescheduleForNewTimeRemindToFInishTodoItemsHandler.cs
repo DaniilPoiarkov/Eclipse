@@ -8,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class RescheduleForNewTimeRemindToFInishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
 {
     private static readonly TimeOnly _evening = new(18, 0);
 
@@ -18,7 +18,7 @@ internal sealed class RescheduleForNewTimeRemindToFInishTodoItemsHandler : IEven
 
     private readonly ITimeProvider _timeProvider;
 
-    public RescheduleForNewTimeRemindToFInishTodoItemsHandler(ISchedulerFactory schedulerFactory, ITimeProvider timeProvider)
+    public RescheduleForNewTimeRemindToFinishTodoItemsHandler(ISchedulerFactory schedulerFactory, ITimeProvider timeProvider)
     {
         _schedulerFactory = schedulerFactory;
         _timeProvider = timeProvider;
