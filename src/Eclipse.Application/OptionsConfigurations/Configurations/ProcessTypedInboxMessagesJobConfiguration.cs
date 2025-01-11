@@ -1,5 +1,7 @@
 ﻿using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.FinishTodoItems;
+using Eclipse.Application.Reminders.GoodMorning;
 using Eclipse.Application.Statistics.EventHandlers;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Users.EventHandlers;
@@ -35,6 +37,10 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="TodoItemFinishedDomainEvent"/>
         AddJob<TodoItemFinishedDomainEvent, TodoItemFinishedEventHandler>(options);
+
+        /// <see cref="GmtChangedDomainEvent"/>
+        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeRemindToFinishTodoItemsHandler>(options);
+        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeSendGoodMorningHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
