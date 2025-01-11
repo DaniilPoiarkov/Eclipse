@@ -15,6 +15,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY /src .
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
 
 RUN dotnet restore "Eclipse.WebAPI/Eclipse.WebAPI.csproj"
 COPY /src .
