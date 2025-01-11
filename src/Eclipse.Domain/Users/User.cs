@@ -110,11 +110,14 @@ public sealed class User : AggregateRoot
         }
 
         Gmt = offset;
+
+        AddEvent(new GmtChangedDomainEvent(Id, Gmt));
     }
 
     public void SetGmt(TimeSpan gmt)
     {
         Gmt = gmt;
+        AddEvent(new GmtChangedDomainEvent(Id, Gmt));
     }
 
     /// <summary>Adds the todo item.</summary>
