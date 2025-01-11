@@ -16,7 +16,7 @@ internal sealed class TodoItemFinishedEventHandler : IEventHandler<TodoItemFinis
     public async Task Handle(TodoItemFinishedDomainEvent notification, CancellationToken cancellationToken)
     {
         var statistics = await _repository.FindByUserIdAsync(notification.UserId, cancellationToken)
-            ?? await _repository.CreateAsync(new UserStatistics(Guid.NewGuid(), notification.UserId), cancellationToken);
+            ?? await _repository.CreateAsync(new UserStatistics(Guid.CreateVersion7(), notification.UserId), cancellationToken);
 
         statistics.TodoItemFinished();
 
