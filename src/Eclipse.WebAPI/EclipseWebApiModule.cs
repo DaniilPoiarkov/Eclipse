@@ -12,6 +12,8 @@ using Eclipse.WebAPI.Session;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
+using System.Text.Json.Serialization;
+
 namespace Eclipse.WebAPI;
 
 /// <summary>
@@ -35,7 +37,11 @@ public static class EclipseWebApiModule
         services.AddAuthorization();
 
         services
-            .AddControllers();
+            .AddControllers()
+            .AddJsonOptions(jsonOptions =>
+            {
+                jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
         services.ConfigureTelegramBotMvc();
 
