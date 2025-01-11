@@ -6,24 +6,21 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class RescheduleRemindToFinishTodoItemsJob : IBackgroundJob
+internal sealed class RescheduleSendGoodMorningJob : IBackgroundJob
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly ISchedulerFactory _schedulerFactory;
-
     private readonly ITimeProvider _timeProvider;
 
-    public RescheduleRemindToFinishTodoItemsJob(
-        IUserRepository userRepository,
-        ISchedulerFactory schedulerFactory,
-        ITimeProvider timeProvider)
+    private readonly ISchedulerFactory _schedulerFactory;
+
+    public RescheduleSendGoodMorningJob(IUserRepository userRepository, ITimeProvider timeProvider, ISchedulerFactory schedulerFactory)
     {
         _userRepository = userRepository;
-        _schedulerFactory = schedulerFactory;
         _timeProvider = timeProvider;
+        _schedulerFactory = schedulerFactory;
     }
 
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
@@ -34,15 +31,15 @@ internal sealed class RescheduleRemindToFinishTodoItemsJob : IBackgroundJob
 
         foreach (var user in users)
         {
-            var key = new JobKey($"{nameof(RemindToFinishTodoItemsJob)}-{user.Id}");
+            var key = JobKey.Create($"{nameof(SendGoodMorningJob)}-{user.Id}");
 
-            var job = JobBuilder.Create<RemindToFinishTodoItemsJob>()
+            var job = JobBuilder.Create<SendGoodMorningJob>()
                 .WithIdentity(key)
-                .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(user.Id)))
+                .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(user.Id)))
                 .Build();
 
             var time = _timeProvider.Now.Add(user.Gmt)
-                .WithTime(RemindersConsts.Evening6PM);
+                .WithTime(RemindersConsts.Morning9AM);
 
             var trigger = TriggerBuilder.Create()
                 .ForJob(job)

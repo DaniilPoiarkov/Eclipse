@@ -9,27 +9,27 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandler<NewUserJoinedDomainEvent>
+internal sealed class ScheduleSendGoodMorningJobHandler : IEventHandler<NewUserJoinedDomainEvent>
 {
-    private readonly IUserRepository _userRepository;
-
     private readonly ISchedulerFactory _schedulerFactory;
+
+    private readonly IUserRepository _userRepository;
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly ILogger<ScheduleRemindToFinishTodoItemsEventHandler> _logger;
+    private readonly ILogger<ScheduleSendGoodMorningJobHandler> _logger;
 
-    public ScheduleRemindToFinishTodoItemsEventHandler(
-        IUserRepository userRepository,
+    public ScheduleSendGoodMorningJobHandler(
         ISchedulerFactory schedulerFactory,
+        IUserRepository userRepository,
         ITimeProvider timeProvider,
-        ILogger<ScheduleRemindToFinishTodoItemsEventHandler> logger)
+        ILogger<ScheduleSendGoodMorningJobHandler> logger)
     {
         _schedulerFactory = schedulerFactory;
-        _timeProvider = timeProvider;
         _userRepository = userRepository;
+        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -39,19 +39,19 @@ internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandle
 
         if (user is null)
         {
-            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(RemindToFinishTodoItemsJob), @event.UserId, "User not found");
+            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(SendGoodMorningJob), @event.UserId, "User not found");
             return;
         }
 
-        var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{@event.UserId}");
+        var key = JobKey.Create($"{nameof(SendGoodMorningJob)}-{user.Id}");
 
-        var job = JobBuilder.Create<RemindToFinishTodoItemsJob>()
+        var job = JobBuilder.Create<SendGoodMorningJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(@event.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(user.Id)))
             .Build();
 
         var time = _timeProvider.Now.Add(user.Gmt)
-            .WithTime(RemindersConsts.Evening6PM);
+            .WithTime(RemindersConsts.Morning9AM);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)

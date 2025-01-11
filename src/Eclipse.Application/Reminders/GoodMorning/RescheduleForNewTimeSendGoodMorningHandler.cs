@@ -6,15 +6,15 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class RescheduleForNewTimeSendGoodMorningHandler : IEventHandler<GmtChangedDomainEvent>
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
     private readonly ITimeProvider _timeProvider;
 
-    public RescheduleForNewTimeRemindToFinishTodoItemsHandler(ISchedulerFactory schedulerFactory, ITimeProvider timeProvider)
+    public RescheduleForNewTimeSendGoodMorningHandler(ISchedulerFactory schedulerFactory, ITimeProvider timeProvider)
     {
         _schedulerFactory = schedulerFactory;
         _timeProvider = timeProvider;
@@ -22,16 +22,19 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
 
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var scheduler = await _schedulerFactory.GetScheduler();
+        var key = JobKey.Create($"{nameof(SendGoodMorningJob)}-{@event.UserId}");
 
-        var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{@event.UserId}");
+        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
         await scheduler.DeleteJob(key, cancellationToken);
 
-        var job = JobBuilder.Create<RemindToFinishTodoItemsJob>()
+        var job = JobBuilder.Create<SendGoodMorningJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(@event.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(@event.UserId)))
             .Build();
+
+        var time = _timeProvider.Now.Add(@event.Gmt)
+            .WithTime(RemindersConsts.Morning9AM);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
@@ -39,7 +42,7 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
                 .WithIntervalInHours(RemindersConsts.OneDayInHours)
                 .RepeatForever()
             )
-            .StartAt(_timeProvider.Now.Add(@event.Gmt).WithTime(RemindersConsts.Evening6PM))
+            .StartAt(time)
             .Build();
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
