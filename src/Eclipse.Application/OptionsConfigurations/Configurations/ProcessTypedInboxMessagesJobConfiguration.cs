@@ -2,6 +2,7 @@
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Reminders.FinishTodoItems;
 using Eclipse.Application.Reminders.GoodMorning;
+using Eclipse.Application.Reminders.MoodReport;
 using Eclipse.Application.Statistics.EventHandlers;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Users.EventHandlers;
@@ -25,6 +26,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewUserJoinedDomainEvent"/>
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, ScheduleRemindToFinishTodoItemsEventHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, ScheduleSendGoodMorningJobHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, ScheduleSendMoodReportHandler>(options);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
@@ -41,6 +45,7 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         /// <see cref="GmtChangedDomainEvent"/>
         AddJob<GmtChangedDomainEvent, RescheduleForNewTimeRemindToFinishTodoItemsHandler>(options);
         AddJob<GmtChangedDomainEvent, RescheduleForNewTimeSendGoodMorningHandler>(options);
+        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeMoodReportHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
