@@ -50,8 +50,8 @@ internal sealed class ScheduleSendGoodMorningJobHandler : IEventHandler<NewUserJ
             .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(user.Id)))
             .Build();
 
-        var time = _timeProvider.Now.Add(user.Gmt)
-            .WithTime(RemindersConsts.Morning9AM);
+        var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)
+            .Add(user.Gmt);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)

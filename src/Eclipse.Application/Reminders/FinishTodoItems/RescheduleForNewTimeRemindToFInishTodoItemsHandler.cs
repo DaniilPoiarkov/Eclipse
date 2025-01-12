@@ -39,7 +39,7 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
                 .WithIntervalInHours(RemindersConsts.OneDayInHours)
                 .RepeatForever()
             )
-            .StartAt(_timeProvider.Now.Add(@event.Gmt).WithTime(RemindersConsts.Evening6PM))
+            .StartAt(_timeProvider.Now.WithTime(RemindersConsts.Evening6PM).Add(@event.Gmt))
             .Build();
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);

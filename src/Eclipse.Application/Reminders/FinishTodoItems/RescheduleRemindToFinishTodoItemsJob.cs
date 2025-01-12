@@ -41,8 +41,8 @@ internal sealed class RescheduleRemindToFinishTodoItemsJob : IBackgroundJob
                 .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(user.Id)))
                 .Build();
 
-            var time = _timeProvider.Now.Add(user.Gmt)
-                .WithTime(RemindersConsts.Evening6PM);
+            var time = _timeProvider.Now.WithTime(RemindersConsts.Evening6PM)
+                .Add(user.Gmt);
 
             var trigger = TriggerBuilder.Create()
                 .ForJob(job)

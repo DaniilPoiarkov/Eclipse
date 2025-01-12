@@ -33,8 +33,8 @@ internal sealed class RescheduleForNewTimeSendGoodMorningHandler : IEventHandler
             .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(@event.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.Add(@event.Gmt)
-            .WithTime(RemindersConsts.Morning9AM);
+        var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)
+            .Add(@event.Gmt);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)

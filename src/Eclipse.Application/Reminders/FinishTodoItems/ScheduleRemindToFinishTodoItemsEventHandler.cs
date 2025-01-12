@@ -50,8 +50,8 @@ internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandle
             .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(@event.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.Add(user.Gmt)
-            .WithTime(RemindersConsts.Evening6PM);
+        var time = _timeProvider.Now.WithTime(RemindersConsts.Evening6PM)
+            .Add(user.Gmt);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
