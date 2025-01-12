@@ -25,7 +25,7 @@ internal sealed class SendGoodMorningScheduler : IJobScheduler<SendGoodMorningJo
             .Build();
 
         var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)
-            .Add(options.Gmt);
+            .Add(-options.Gmt);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)

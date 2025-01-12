@@ -25,7 +25,7 @@ internal sealed class FinishTodoItemsScheduler : IJobScheduler<RemindToFinishTod
             .Build();
 
         var time = _timeProvider.Now.WithTime(RemindersConsts.Evening6PM)
-            .Add(options.Gmt);
+            .Add(-options.Gmt);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
