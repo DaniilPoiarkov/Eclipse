@@ -26,6 +26,7 @@ using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Reminders.FinishTodoItems;
 using Eclipse.Application.Reminders.GoodMorning;
+using Eclipse.Application.Reminders.MoodReport;
 using Eclipse.Application.Reports;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
@@ -140,5 +141,8 @@ public static class EclipseApplicationModule
 
         await manager.EnqueueAsync<RescheduleSendGoodMorningJob>();
         logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleSendGoodMorningJob));
+
+        await manager.EnqueueAsync<RescheduleSendMoodReportJob>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleSendMoodReportJob));
     }
 }
