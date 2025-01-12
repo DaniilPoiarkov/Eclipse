@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Reminders.GoodMorning;
-using Eclipse.Common.Events;
+﻿using Eclipse.Common.Events;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 
@@ -17,13 +16,13 @@ internal sealed class ScheduleSendMoodReportHandler : IEventHandler<NewUserJoine
 
     private readonly IJobScheduler<SendMoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
 
-    private readonly ILogger<ScheduleSendGoodMorningJobHandler> _logger;
+    private readonly ILogger<ScheduleSendMoodReportHandler> _logger;
 
     public ScheduleSendMoodReportHandler(
         ISchedulerFactory schedulerFactory,
         IUserRepository userRepository,
         IJobScheduler<SendMoodReportJob, MoodReportSchedulerOptions> jobScheduler,
-        ILogger<ScheduleSendGoodMorningJobHandler> logger)
+        ILogger<ScheduleSendMoodReportHandler> logger)
     {
         _schedulerFactory = schedulerFactory;
         _userRepository = userRepository;
@@ -37,7 +36,7 @@ internal sealed class ScheduleSendMoodReportHandler : IEventHandler<NewUserJoine
 
         if (user is null)
         {
-            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(SendGoodMorningJob), @event.UserId, "User not found");
+            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(SendMoodReportJob), @event.UserId, "User not found");
             return;
         }
 
