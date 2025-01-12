@@ -23,6 +23,10 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
     {
         var scheduler = await _schedulerFactory.GetScheduler();
 
+        var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{@event.UserId}");
+
+        await scheduler.DeleteJob(key, cancellationToken);
+
         var options = new FinishTodoItemsSchedulerOptions(@event.UserId, @event.Gmt);
 
         await _jobScheduler.Schedule(scheduler, options, cancellationToken);
