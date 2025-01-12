@@ -1,8 +1,5 @@
-﻿using Eclipse.Common.Clock;
-using Eclipse.Common.Events;
+﻿using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
-
-using Newtonsoft.Json;
 
 using Quartz;
 
@@ -12,12 +9,14 @@ internal sealed class RescheduleForNewTimeSendGoodMorningHandler : IEventHandler
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly ITimeProvider _timeProvider;
+    private readonly IJobScheduler<SendGoodMorningJob, SendGoodMorningSchedulerOptions> _jobScheduler;
 
-    public RescheduleForNewTimeSendGoodMorningHandler(ISchedulerFactory schedulerFactory, ITimeProvider timeProvider)
+    public RescheduleForNewTimeSendGoodMorningHandler(
+        ISchedulerFactory schedulerFactory,
+        IJobScheduler<SendGoodMorningJob, SendGoodMorningSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
-        _timeProvider = timeProvider;
+        _jobScheduler = jobScheduler;
     }
 
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
@@ -28,23 +27,6 @@ internal sealed class RescheduleForNewTimeSendGoodMorningHandler : IEventHandler
 
         await scheduler.DeleteJob(key, cancellationToken);
 
-        var job = JobBuilder.Create<SendGoodMorningJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(@event.UserId)))
-            .Build();
-
-        var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)
-            .Add(@event.Gmt);
-
-        var trigger = TriggerBuilder.Create()
-            .ForJob(job)
-            .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(RemindersConsts.OneDayInHours)
-                .RepeatForever()
-            )
-            .StartAt(time)
-            .Build();
-
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await _jobScheduler.Schedule(scheduler, new SendGoodMorningSchedulerOptions(@event.UserId, @event.Gmt), cancellationToken);
     }
 }

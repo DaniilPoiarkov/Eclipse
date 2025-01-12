@@ -37,9 +37,8 @@ public static class EclipseInfrastructureModule
         services
             .AddSingleton<IExcelManager, ExcelManager>()
             .AddSingleton<IBackgroundJobManager, BackgroundJobManager>()
-            .AddSingleton<IPlotGenerator, PlotGenerator>();
-
-        services.AddSingleton<ITimeProvider, UtcNowTimeProvider>();
+            .AddSingleton<IPlotGenerator, PlotGenerator>()
+            .AddSingleton<ITimeProvider, UtcNowTimeProvider>();
 
         return services;
     }

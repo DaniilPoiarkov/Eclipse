@@ -1,8 +1,5 @@
-﻿using Eclipse.Common.Clock;
-using Eclipse.Common.Events;
+﻿using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
-
-using Newtonsoft.Json;
 
 using Quartz;
 
@@ -12,36 +9,22 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly ITimeProvider _timeProvider;
+    private readonly IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
-    public RescheduleForNewTimeRemindToFinishTodoItemsHandler(ISchedulerFactory schedulerFactory, ITimeProvider timeProvider)
+    public RescheduleForNewTimeRemindToFinishTodoItemsHandler(
+        ISchedulerFactory schedulerFactory,
+        IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
-        _timeProvider = timeProvider;
+        _jobScheduler = jobScheduler;
     }
 
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
         var scheduler = await _schedulerFactory.GetScheduler();
 
-        var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{@event.UserId}");
+        var options = new FinishTodoItemsSchedulerOptions(@event.UserId, @event.Gmt);
 
-        await scheduler.DeleteJob(key, cancellationToken);
-
-        var job = JobBuilder.Create<RemindToFinishTodoItemsJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(@event.UserId)))
-            .Build();
-
-        var trigger = TriggerBuilder.Create()
-            .ForJob(job)
-            .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(RemindersConsts.OneDayInHours)
-                .RepeatForever()
-            )
-            .StartAt(_timeProvider.Now.WithTime(RemindersConsts.Evening6PM).Add(@event.Gmt))
-            .Build();
-
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }
 }

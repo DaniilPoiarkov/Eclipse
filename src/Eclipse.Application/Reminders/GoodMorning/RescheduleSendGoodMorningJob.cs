@@ -1,8 +1,5 @@
 ﻿using Eclipse.Common.Background;
-using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
-
-using Newtonsoft.Json;
 
 using Quartz;
 
@@ -12,15 +9,18 @@ internal sealed class RescheduleSendGoodMorningJob : IBackgroundJob
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly ITimeProvider _timeProvider;
-
     private readonly ISchedulerFactory _schedulerFactory;
 
-    public RescheduleSendGoodMorningJob(IUserRepository userRepository, ITimeProvider timeProvider, ISchedulerFactory schedulerFactory)
+    private readonly IJobScheduler<SendGoodMorningJob, SendGoodMorningSchedulerOptions> _jobScheduler;
+
+    public RescheduleSendGoodMorningJob(
+        IUserRepository userRepository,
+        ISchedulerFactory schedulerFactory,
+        IJobScheduler<SendGoodMorningJob, SendGoodMorningSchedulerOptions> jobScheduler)
     {
         _userRepository = userRepository;
-        _timeProvider = timeProvider;
         _schedulerFactory = schedulerFactory;
+        _jobScheduler = jobScheduler;
     }
 
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
@@ -31,26 +31,7 @@ internal sealed class RescheduleSendGoodMorningJob : IBackgroundJob
 
         foreach (var user in users)
         {
-            var key = JobKey.Create($"{nameof(SendGoodMorningJob)}-{user.Id}");
-
-            var job = JobBuilder.Create<SendGoodMorningJob>()
-                .WithIdentity(key)
-                .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(user.Id)))
-                .Build();
-
-            var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)
-                .Add(user.Gmt);
-
-            var trigger = TriggerBuilder.Create()
-                .ForJob(job)
-                .WithSimpleSchedule(schedule => schedule
-                    .WithIntervalInHours(RemindersConsts.OneDayInHours)
-                    .RepeatForever()
-                )
-                .StartAt(time)
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await _jobScheduler.Schedule(scheduler, new SendGoodMorningSchedulerOptions(user.Id, user.Gmt), cancellationToken);
         }
     }
 }
