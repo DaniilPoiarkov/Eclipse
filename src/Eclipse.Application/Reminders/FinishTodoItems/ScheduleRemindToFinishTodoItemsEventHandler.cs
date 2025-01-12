@@ -1,11 +1,8 @@
-﻿using Eclipse.Common.Clock;
-using Eclipse.Common.Events;
+﻿using Eclipse.Common.Events;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 
 using Microsoft.Extensions.Logging;
-
-using Newtonsoft.Json;
 
 using Quartz;
 
@@ -17,20 +14,20 @@ internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandle
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly ITimeProvider _timeProvider;
-
     private readonly ILogger<ScheduleRemindToFinishTodoItemsEventHandler> _logger;
+
+    private readonly IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
     public ScheduleRemindToFinishTodoItemsEventHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        ITimeProvider timeProvider,
-        ILogger<ScheduleRemindToFinishTodoItemsEventHandler> logger)
+        ILogger<ScheduleRemindToFinishTodoItemsEventHandler> logger,
+        IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
-        _timeProvider = timeProvider;
         _userRepository = userRepository;
         _logger = logger;
+        _jobScheduler = jobScheduler;
     }
 
     public async Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
@@ -43,27 +40,10 @@ internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandle
             return;
         }
 
-        var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{@event.UserId}");
+        var scheduler = await _schedulerFactory.GetScheduler();
 
-        var job = JobBuilder.Create<RemindToFinishTodoItemsJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(@event.UserId)))
-            .Build();
+        var options = new FinishTodoItemsSchedulerOptions(user.Id, user.Gmt);
 
-        var time = _timeProvider.Now.Add(user.Gmt)
-            .WithTime(RemindersConsts.Evening6PM);
-
-        var trigger = TriggerBuilder.Create()
-            .ForJob(job)
-            .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(RemindersConsts.OneDayInHours)
-                .RepeatForever()
-            )
-            .StartAt(time)
-            .Build();
-
-        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }
 }
