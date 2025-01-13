@@ -17,6 +17,14 @@
     "Pipelines:AdminMenu:Send": "Send menu",
     "Pipelines:AdminMenu:Export": "Exporting menu",
 
-    "Pipelines:Admin:Export:Requested": "Exporting in progress"
+    "Pipelines:Admin:Export:Requested": "Exporting in progress",
+
+    "Pipelines:Admin:Promotions": "Promotions menu",
+    "Pipelines:Admin:Promotions:Post": "Post promotion",
+    "Pipelines:Admin:Promotions:Post:Request": "Send a promotion post",
+    "Pipelines:Admin:Promotions:Post:Review": "Review please if everything is ok",
+    "Pipelines:Admin:Promotions:Post:Confirm{0}": "Send this code {0} to confirm post",
+    "Pipelines:Admin:Promotions:Post:Confirmed": "Successfully confirmed, post is now sending to the users",
+    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Invalid code, post not sent."
   }
 }

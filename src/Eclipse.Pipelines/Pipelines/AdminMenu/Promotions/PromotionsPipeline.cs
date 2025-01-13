@@ -7,6 +7,6 @@ internal sealed class PromotionsPipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {
-        RegisterStage(context => Menu(PromotionsButtons, Localizer["Pipelines:AdminMenu:Promotions"]));
+        RegisterStage(context => Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions"]));
     }
 }

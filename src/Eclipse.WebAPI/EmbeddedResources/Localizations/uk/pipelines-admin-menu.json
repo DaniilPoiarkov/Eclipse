@@ -17,6 +17,14 @@
     "Pipelines:AdminMenu:Send": "Меню надсилань",
     "Pipelines:AdminMenu:Export": "Меню експортування",
 
-    "Pipelines:Admin:Export:Requested": "Експортування у процесі"
+    "Pipelines:Admin:Export:Requested": "Експортування у процесі",
+
+    "Pipelines:Admin:Promotions": "Меню просувань",
+    "Pipelines:Admin:Promotions:Post": "Надіслати пост",
+    "Pipelines:Admin:Promotions:Post:Request": "Відправте приклад повідомлення.",
+    "Pipelines:Admin:Promotions:Post:Review": "Перевірте чи все правильно",
+    "Pipelines:Admin:Promotions:Post:Confirm{0}": "Відправте цей код {0} аби підтвердити надсилання.",
+    "Pipelines:Admin:Promotions:Post:Confirmed": "Успішно підтверджено, пост відправляється користувачам",
+    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Неправильний код, пост не відправляється."
   }
 }

@@ -23,23 +23,23 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private IResult RequestPostMessage(MessageContext context)
     {
-        return Text(Localizer["Admin:Promotions:SendPromotionPost:RequestPostMessage"]);
+        return Text(Localizer["Pipelines:Admin:Promotions:Post:Request"]);
     }
 
     private async Task<IResult> SendConfirmationCodeAsync(MessageContext context, CancellationToken cancellationToken)
     {
         var confirmationCode = Enumerable.Range(0, 6)
             .Select(_ => Random.Shared.Next(0, 10))
-            .Aggregate("", (s, i) => $"{s}{i}");
+            .Aggregate(string.Empty, (s, i) => $"{s}{i}");
 
         await _cacheService.SetAsync(
             $"promotions-post-confiramtion-code-{context.ChatId}",
             confirmationCode,
-            TimeSpan.FromMinutes(5),
+            CacheConsts.FiveMinutes,
             cancellationToken
         );
 
-        return Text(confirmationCode);
+        return Text(Localizer["Pipelines:Admin:Promotions:Post:Confirm{0}", confirmationCode]);
     }
 
     private async Task<IResult> SendPromotionPostAsync(MessageContext context, CancellationToken cancellationToken)
@@ -48,9 +48,9 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
         if (context.Value.Equals(confirmationCode))
         {
-            return Text("Valid");
+            return Text(Localizer["Pipelines:Admin:Promotions:Post:Confirmed"]);
         }
 
-        return Text("Invalid");
+        return Text(Localizer["Pipelines:Admin:Promotions:Post:ConfirmationFailed"]);
     }
 }
