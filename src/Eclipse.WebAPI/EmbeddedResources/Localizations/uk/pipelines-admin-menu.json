@@ -23,6 +23,9 @@
     "Pipelines:Admin:Promotions:Post": "Надіслати пост",
     "Pipelines:Admin:Promotions:Post:Request": "Відправте приклад повідомлення.",
     "Pipelines:Admin:Promotions:Post:Review": "Перевірте чи все правильно",
+    "Pipelines:Admin:Promotions:Post:Review:Continue": "Продовжити",
+    "Pipelines:Admin:Promotions:Post:Review:Cancel": "Скасувати",
+    "Pipelines:Admin:Promotions:Post:Cancelled": "Скасовано підготовку посту.",
     "Pipelines:Admin:Promotions:Post:Confirm{0}": "Відправте цей код {0} аби підтвердити надсилання.",
     "Pipelines:Admin:Promotions:Post:Confirmed": "Успішно підтверджено, пост відправляється користувачам",
     "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Неправильний код, пост не відправляється."
