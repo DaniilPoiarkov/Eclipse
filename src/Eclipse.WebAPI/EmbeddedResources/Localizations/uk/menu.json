@@ -31,6 +31,9 @@
 
     "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
+    "Menu:AdminMenu:Promotions": "Просування",
+    "Menu:AdminMenu:Promotions:Post": "Надіслати пост",
+
     "Menu:TodoItems:AddItem": "Запланувати ✏️",
     "Menu:TodoItems:List": "Мій список 🗒",
 
