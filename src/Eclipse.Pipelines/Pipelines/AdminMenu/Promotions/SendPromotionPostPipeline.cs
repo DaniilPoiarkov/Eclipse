@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Caching;
+﻿using Eclipse.Common.Background;
+using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Core.UpdateParsing;
@@ -18,11 +19,18 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private readonly IUpdateProvider _updateProvider;
 
-    public SendPromotionPostPipeline(ICacheService cacheService, ITelegramBotClient botClient, IUpdateProvider updateProvider)
+    private readonly IBackgroundJobManager _backgroundJobManager;
+
+    public SendPromotionPostPipeline(
+        ICacheService cacheService,
+        ITelegramBotClient botClient,
+        IUpdateProvider updateProvider,
+        IBackgroundJobManager backgroundJobManager)
     {
         _cacheService = cacheService;
         _botClient = botClient;
         _updateProvider = updateProvider;
+        _backgroundJobManager = backgroundJobManager;
     }
 
     protected override void Initialize()
@@ -48,6 +56,13 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Invalid"]);
 
         }
+
+        await _cacheService.SetAsync(
+            $"promotions-post-message-{context.ChatId}",
+            update.Message.Id,
+            CacheConsts.FiveMinutes,
+            cancellationToken
+        );
 
         await _botClient.CopyMessage(context.ChatId, context.ChatId, update.Message.Id, cancellationToken: cancellationToken);
 
@@ -91,7 +106,15 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:ConfirmationFailed"]);
         }
 
-        // TODO: Start processing.
+        var messageId = await _cacheService.GetAsync<int>($"promotions-post-message-{context.ChatId}", cancellationToken);
+
+        await _backgroundJobManager.EnqueueAsync<SendPromotionBackgroundJob, SendPromotionBackgroundJobArgs>(
+            new SendPromotionBackgroundJobArgs
+            {
+                FromChatId = context.ChatId,
+                MessageId = messageId,
+            }
+        );
 
         return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Confirmed"]);
     }
