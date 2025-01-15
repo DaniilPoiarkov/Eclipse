@@ -22,6 +22,7 @@
     "Pipelines:Admin:Promotions": "Меню просувань",
     "Pipelines:Admin:Promotions:Post": "Надіслати пост",
     "Pipelines:Admin:Promotions:Post:Request": "Відправте приклад повідомлення.",
+    "Pipelines:Admin:Promotions:Post:Invalid": "Некорректе повідомлення. Подальша обробка припинена.",
     "Pipelines:Admin:Promotions:Post:Review": "Перевірте чи все правильно",
     "Pipelines:Admin:Promotions:Post:Review:Continue": "Продовжити",
     "Pipelines:Admin:Promotions:Post:Review:Cancel": "Скасувати",

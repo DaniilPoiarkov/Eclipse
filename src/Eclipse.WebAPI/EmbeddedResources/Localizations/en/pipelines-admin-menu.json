@@ -22,6 +22,7 @@
     "Pipelines:Admin:Promotions": "Promotions menu",
     "Pipelines:Admin:Promotions:Post": "Post promotion",
     "Pipelines:Admin:Promotions:Post:Request": "Send a promotion post",
+    "Pipelines:Admin:Promotions:Post:Invalid": "Invalid message. Further processing cancelled.",
     "Pipelines:Admin:Promotions:Post:Review": "Review please if everything is ok",
     "Pipelines:Admin:Promotions:Post:Review:Continue": "Continue processing",
     "Pipelines:Admin:Promotions:Post:Review:Cancel": "Cancel processing",

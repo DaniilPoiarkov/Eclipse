@@ -1,6 +1,7 @@
 ﻿using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Localizers;
 
 using Telegram.Bot;
@@ -15,10 +16,13 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private readonly ITelegramBotClient _botClient;
 
-    public SendPromotionPostPipeline(ICacheService cacheService, ITelegramBotClient botClient)
+    private readonly IUpdateProvider _updateProvider;
+
+    public SendPromotionPostPipeline(ICacheService cacheService, ITelegramBotClient botClient, IUpdateProvider updateProvider)
     {
         _cacheService = cacheService;
         _botClient = botClient;
+        _updateProvider = updateProvider;
     }
 
     protected override void Initialize()
@@ -36,8 +40,16 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private async Task<IResult> ReviewPostMessageAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        // TODO: Replace with actual message id
-        await _botClient.CopyMessage(context.ChatId, context.ChatId, 15746, cancellationToken: cancellationToken);
+        var update = _updateProvider.Get();
+
+        if (update.Message is not { })
+        {
+            FinishPipeline();
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Invalid"]);
+
+        }
+
+        await _botClient.CopyMessage(context.ChatId, context.ChatId, update.Message.Id, cancellationToken: cancellationToken);
 
         return Menu(
             [ 
@@ -74,12 +86,14 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
     {
         var confirmationCode = await _cacheService.GetAsync<string>($"promotions-post-confiramtion-code-{context.ChatId}", cancellationToken);
 
-        if (context.Value.Equals(confirmationCode))
+        if (!context.Value.Equals(confirmationCode))
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Confirmed"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:ConfirmationFailed"]);
         }
 
-        return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:ConfirmationFailed"]);
+        // TODO: Start processing.
+
+        return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Confirmed"]);
     }
 
     private bool ContinuePromotionProcessing(MessageContext context)
