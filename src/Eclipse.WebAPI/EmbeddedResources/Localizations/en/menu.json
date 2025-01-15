@@ -31,6 +31,9 @@
 
     "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 
+    "Menu:AdminMenu:Promotions": "Promotions",
+    "Menu:AdminMenu:Promotions:Post": "Post promotion",
+
     "Menu:TodoItems:AddItem": "Add item ✏️",
     "Menu:TodoItems:List": "My list 🗒",
 

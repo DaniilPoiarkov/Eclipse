@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Eclipse.Localization.Localizers;
 
 public static class JsonStringLocalizerExtensions
@@ -12,5 +14,20 @@ public static class JsonStringLocalizerExtensions
         }
 
         return jsonStringLocalizer.ToLocalizableString(value);
+    }
+
+    public static bool TryConvertToLocalizableString(this IStringLocalizer stringLocalizer, string value, [NotNullWhen(true)] out string? key)
+    {
+        key = null;
+
+        try
+        {
+            key = stringLocalizer.ToLocalizableString(value);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

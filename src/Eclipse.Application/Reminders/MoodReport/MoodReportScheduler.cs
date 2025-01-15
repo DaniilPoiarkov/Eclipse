@@ -24,7 +24,8 @@ internal sealed class MoodReportScheduler : IJobScheduler<SendMoodReportJob, Moo
             .UsingJobData("data", JsonConvert.SerializeObject(new SendMoodReportJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.WithTime(RemindersConsts.Evening730PM)
+        var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)
+            .WithTime(RemindersConsts.Evening730PM)
             .Add(-options.Gmt);
 
         var trigger = TriggerBuilder.Create()

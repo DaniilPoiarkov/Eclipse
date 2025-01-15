@@ -10,7 +10,7 @@ public abstract class AdminPipelineBase : EclipsePipelineBase
     protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> AdminMenuButtons => new List<KeyboardButton[]>
     {
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:View"]), new KeyboardButton(Localizer["Menu:AdminMenu:Send"]) },
-        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Export"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Export"]), new KeyboardButton(Localizer["Menu:AdminMenu:Promotions"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:SwitchToUserMode"]) },
     };
 
@@ -31,6 +31,12 @@ public abstract class AdminPipelineBase : EclipsePipelineBase
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Export:Users"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Export:TodoItems"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Export:Reminders"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu"]) }
+    };
+
+    protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> PromotionsButtons => new List<KeyboardButton[]>()
+    {
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Promotions:Post"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu"]) }
     };
 }
