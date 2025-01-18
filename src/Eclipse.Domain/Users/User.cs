@@ -14,14 +14,14 @@ namespace Eclipse.Domain.Users;
 
 public sealed class User : AggregateRoot
 {
-    private User(Guid id, string name, string surname, string userName, long chatId, DateTime createAt)
+    private User(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt)
         : base(id)
     {
         Name = name;
         Surname = surname;
         UserName = userName;
         ChatId = chatId;
-        CreatedAt = createAt;
+        CreatedAt = createdAt;
     }
 
     private User() { }
