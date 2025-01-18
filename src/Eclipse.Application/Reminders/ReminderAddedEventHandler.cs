@@ -38,9 +38,7 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
             }))
             .Build();
 
-        var time = _timeProvider.Now
-            .WithTime(notification.NotifyAt)
-            .Add(-notification.UserGmt);
+        var time = _timeProvider.Now.WithTime(notification.NotifyAt);
 
         if (time < _timeProvider.Now)
         {
