@@ -41,7 +41,7 @@ internal sealed class ScheduleSendMoodReportHandler : IEventHandler<NewUserJoine
         }
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-        
+
         await _jobScheduler.Schedule(scheduler, new MoodReportSchedulerOptions(user.Id, user.Gmt), cancellationToken);
     }
 }

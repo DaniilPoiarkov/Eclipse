@@ -27,7 +27,7 @@ internal sealed class SendPromotionBackgroundJob : IBackgroundJob<SendPromotionB
         var users = await _userService.GetAllAsync(cancellationToken);
 
         var notifications = users.Select(u => SendPromotion(u.ChatId, args, cancellationToken));
-        
+
         var results = await Task.WhenAll(notifications);
 
         var failedResults = results.Where(r => !r.IsSuccess);

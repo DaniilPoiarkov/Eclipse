@@ -67,7 +67,7 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
         await _botClient.CopyMessage(context.ChatId, context.ChatId, update.Message.Id, cancellationToken: cancellationToken);
 
         return Menu(
-            [ 
+            [
                 [ new KeyboardButton(Localizer["Pipelines:Admin:Promotions:Post:Review:Continue"]) ],
                 [ new KeyboardButton(Localizer["Pipelines:Admin:Promotions:Post:Review:Cancel"]) ]
             ],

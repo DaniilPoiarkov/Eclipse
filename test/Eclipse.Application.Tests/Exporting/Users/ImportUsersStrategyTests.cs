@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Exporting;
 using Eclipse.Application.Exporting.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Excel;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
@@ -21,6 +22,8 @@ public sealed class ImportUsersStrategyTests
 
     private readonly IImportValidator<ImportUserDto, ImportUsersValidationOptions> _validator;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly ImportUsersStrategy _sut;
 
     public ImportUsersStrategyTests()
@@ -28,8 +31,9 @@ public sealed class ImportUsersStrategyTests
         _userRepository = Substitute.For<IUserRepository>();
         _validator = Substitute.For<IImportValidator<ImportUserDto, ImportUsersValidationOptions>>();
         _excelManager = Substitute.For<IExcelManager>();
+        _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new ImportUsersStrategy(new UserManager(_userRepository), _userRepository, _excelManager, _validator);
+        _sut = new ImportUsersStrategy(new UserManager(_userRepository, _timeProvider), _userRepository, _excelManager, _validator);
     }
 
     [Fact]

@@ -29,7 +29,7 @@ internal sealed class MoodReportScheduler : IJobScheduler<SendMoodReportJob, Moo
             .Add(-options.Gmt);
 
         var trigger = TriggerBuilder.Create()
-            .ForJob(job) 
+            .ForJob(job)
             .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInWeeks(RemindersConsts.OneWeek))
             .StartAt(time)
             .Build();

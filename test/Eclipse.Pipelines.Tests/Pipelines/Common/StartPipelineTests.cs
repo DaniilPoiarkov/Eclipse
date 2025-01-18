@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Users;
-using Eclipse.Common.Results;
 using Eclipse.Core.Results;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
@@ -36,7 +35,7 @@ public sealed class StartPipelineTests : PipelineTestFixture<StartPipeline>
     public async Task RunNext_WhenExecuted_ThenTextReturned()
     {
         var userService = ServiceProvider.GetRequiredService<IUserService>();
-        
+
         var user = UserGenerator.Get();
         var context = GetContext("/start");
 

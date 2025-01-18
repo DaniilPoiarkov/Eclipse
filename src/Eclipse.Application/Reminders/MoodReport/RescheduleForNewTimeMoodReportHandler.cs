@@ -28,7 +28,7 @@ internal sealed class RescheduleForNewTimeMoodReportHandler : IEventHandler<GmtC
         await scheduler.DeleteJob(key, cancellationToken);
 
         var options = new MoodReportSchedulerOptions(@event.UserId, @event.Gmt);
-        
+
         await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }
 }
