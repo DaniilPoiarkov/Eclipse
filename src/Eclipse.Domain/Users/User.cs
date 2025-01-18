@@ -14,13 +14,14 @@ namespace Eclipse.Domain.Users;
 
 public sealed class User : AggregateRoot
 {
-    private User(Guid id, string name, string surname, string userName, long chatId)
+    private User(Guid id, string name, string surname, string userName, long chatId, DateTime createAt)
         : base(id)
     {
         Name = name;
         Surname = surname;
         UserName = userName;
         ChatId = chatId;
+        CreateAt = createAt;
     }
 
     private User() { }
@@ -49,6 +50,8 @@ public sealed class User : AggregateRoot
 
     public TimeSpan Gmt { get; private set; }
 
+    public DateTime CreateAt { get; init; }
+
     [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
 
@@ -59,9 +62,9 @@ public sealed class User : AggregateRoot
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static User Create(Guid id, string name, string surname, string userName, long chatId, bool newRegistered)
+    internal static User Create(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool newRegistered)
     {
-        var user = new User(id, name, surname, userName, chatId);
+        var user = new User(id, name, surname, userName, chatId, createdAt);
 
         if (newRegistered)
         {

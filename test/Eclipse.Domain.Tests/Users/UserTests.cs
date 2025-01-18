@@ -243,7 +243,7 @@ public class UserTests
     [Fact]
     public void Create_WhenNewRegisteredSetAsTrue_ThenNewUserJoinedDomainEventRaised()
     {
-        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, true);
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, DateTime.UtcNow, true);
 
         var events = user.GetEvents();
 
@@ -262,7 +262,7 @@ public class UserTests
     [Fact]
     public void Create_WhenNewRegisteredSetAsFalse_ThenNoDomainEventRaised()
     {
-        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, false);
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, DateTime.UtcNow, false);
 
         var events = user.GetEvents();
 

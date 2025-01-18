@@ -20,6 +20,7 @@ public static class UserGenerator
                 faker.Person.LastName,
                 faker.Person.UserName,
                 chatId: i,
+                DateTime.UtcNow,
                 newRegistered: i % 2 == 0);
 
             user.Culture = i % 2 == 0 ? "en" : "uk";
@@ -40,6 +41,7 @@ public static class UserGenerator
             faker.Person.LastName,
             faker.Person.UserName,
             chatId,
+            DateTime.UtcNow,
             newRegistered
         );
 
@@ -60,6 +62,7 @@ public static class UserGenerator
                 faker.Person.LastName,
                 faker.Person.UserName,
                 faker.Random.Long(min: 1),
+                DateTime.UtcNow,
                 false)
         );
     }

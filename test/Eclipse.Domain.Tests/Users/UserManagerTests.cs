@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Users;
+﻿using Eclipse.Common.Clock;
+using Eclipse.Domain.Users;
 
 using FluentAssertions;
 
@@ -12,11 +13,16 @@ public class UserManagerTests
 {
     private readonly IUserRepository _repository;
 
-    private UserManager Sut => new(_repository);
+    private readonly ITimeProvider _timeProvider;
+
+    private readonly UserManager _sut;
 
     public UserManagerTests()
     {
         _repository = Substitute.For<IUserRepository>();
+        _timeProvider = Substitute.For<ITimeProvider>();
+
+        _sut = new UserManager(_repository, _timeProvider);
     }
 
     [Theory]
@@ -25,11 +31,14 @@ public class UserManagerTests
     [InlineData("Jane", "Doe", "", 2)]
     public async Task CreateAsync_WhenModelValid_ThenCreatedUserReturned(string name, string surname, string userName, long chatId)
     {
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, true);
+        var utcNow = DateTime.UtcNow;
+        _timeProvider.Now.Returns(utcNow);
+
+        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, utcNow, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 
-        var result = await Sut.CreateAsync(name, surname, userName, chatId);
+        var result = await _sut.CreateAsync(name, surname, userName, chatId);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -49,7 +58,7 @@ public class UserManagerTests
         _repository.CountAsync(u => true)
             .ReturnsForAnyArgs(Task.FromResult(1));
 
-        var result = await Sut.CreateAsync("Name", "Surname", "UserName", chatId);
+        var result = await _sut.CreateAsync("Name", "Surname", "UserName", chatId);
 
         result.IsSuccess.Should().BeFalse();
 
