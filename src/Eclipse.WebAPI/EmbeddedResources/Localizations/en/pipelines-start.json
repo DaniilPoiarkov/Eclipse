@@ -1,0 +1,7 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Start": "Hello, {0}, I'm Eclipse. Right now I'm studying different things, so if you don't mind helping me become better you can click the 'Suggest' button and describe your thoughts.\nSee you 🌒",
+    "Pipelines:Start:SetLanguage": "Select a language, you'll be able to change it later"
+  }
+}
