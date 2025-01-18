@@ -30,7 +30,7 @@ public sealed class UserManager
     {
         var request = new CreateUserRequest
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             Name = name,
             Surname = surname,
             UserName = userName,
