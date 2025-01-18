@@ -102,7 +102,7 @@ public sealed class StartPipeline : EclipsePipelineBase
         await _cultureTracker.ResetAsync(context.ChatId, context.Value, cancellationToken);
 
         using var _ = _currentCulture.UsingCulture(context.Value);
-        
+
         return SendGreeting(context, message);
     }
 

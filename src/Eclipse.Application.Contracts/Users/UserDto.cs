@@ -21,7 +21,7 @@ public sealed class UserDto : AggregateRootDto
 
     public TimeSpan Gmt { get; init; }
 
-    public DateTime CreatedAt { get; init; }
+    public DateTime? CreatedAt { get; init; }
 
     public IReadOnlyList<ReminderDto> Reminders { get; init; } = [];
 

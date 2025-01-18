@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users.Extensions;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
@@ -11,9 +12,12 @@ internal sealed class UserReadService : IUserReadService
 {
     private readonly IUserRepository _repository;
 
-    public UserReadService(IUserRepository repository)
+    private readonly ITimeProvider _timeProvider;
+
+    public UserReadService(IUserRepository repository, ITimeProvider timeProvider)
     {
         _repository = repository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<IReadOnlyList<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -50,6 +54,8 @@ internal sealed class UserReadService : IUserReadService
             return DefaultErrors.EntityNotFound<User>();
         }
 
+        await SetCreatedAtIfNullAsync(user, cancellationToken);
+
         return user.ToDto();
     }
 
@@ -62,6 +68,19 @@ internal sealed class UserReadService : IUserReadService
             return DefaultErrors.EntityNotFound<User>();
         }
 
+        await SetCreatedAtIfNullAsync(user, cancellationToken);
+
         return user.ToDto();
+    }
+
+    private async Task SetCreatedAtIfNullAsync(User user, CancellationToken cancellationToken)
+    {
+        if (user.CreatedAt != default)
+        {
+            return;
+        }
+
+        user.SetCreatedAtIfNull(_timeProvider.Now);
+        await _repository.UpdateAsync(user, cancellationToken);
     }
 }

@@ -21,7 +21,7 @@ public sealed class User : AggregateRoot
         Surname = surname;
         UserName = userName;
         ChatId = chatId;
-        CreateAt = createAt;
+        CreatedAt = createAt;
     }
 
     private User() { }
@@ -50,7 +50,7 @@ public sealed class User : AggregateRoot
 
     public TimeSpan Gmt { get; private set; }
 
-    public DateTime CreateAt { get; init; }
+    public DateTime? CreatedAt { get; private set; }
 
     [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
@@ -223,6 +223,11 @@ public sealed class User : AggregateRoot
         }
 
         return reminder;
+    }
+
+    public void SetCreatedAtIfNull(DateTime createdAt)
+    {
+        CreatedAt ??= createdAt;
     }
 
     public override string ToString()

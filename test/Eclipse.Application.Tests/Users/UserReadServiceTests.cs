@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
 using Eclipse.Application.Users.Services;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
@@ -20,13 +21,16 @@ public sealed class UserReadServiceTests
 {
     private readonly IUserRepository _repository;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly UserReadService _sut;
 
     public UserReadServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
+        _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new UserReadService(_repository);
+        _sut = new UserReadService(_repository, _timeProvider);
     }
 
     [Theory]

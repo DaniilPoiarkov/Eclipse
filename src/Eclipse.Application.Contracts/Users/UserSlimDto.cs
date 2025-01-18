@@ -19,5 +19,5 @@ public sealed class UserSlimDto : AggregateRootDto
 
     public TimeSpan Gmt { get; init; }
 
-    public DateTime CreatedAt { get; init; }
+    public DateTime? CreatedAt { get; init; }
 }

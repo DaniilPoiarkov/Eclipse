@@ -19,7 +19,7 @@ internal static class UserExtensions
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled,
             Gmt = value.Gmt,
-            CreatedAt = value.CreateAt,
+            CreatedAt = value.CreatedAt,
 
             Reminders = value.Reminders
                 .Select(r => r.ToDto())
@@ -43,7 +43,7 @@ internal static class UserExtensions
             Culture = value.Culture,
             NotificationsEnabled = value.NotificationsEnabled,
             Gmt = value.Gmt,
-            CreatedAt = value.CreateAt,
+            CreatedAt = value.CreatedAt,
         };
     }
 }
