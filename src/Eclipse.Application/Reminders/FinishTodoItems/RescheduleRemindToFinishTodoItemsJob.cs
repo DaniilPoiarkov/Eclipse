@@ -25,7 +25,7 @@ internal sealed class RescheduleRemindToFinishTodoItemsJob : IBackgroundJob
 
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository.GetByExpressionAsync(u => u.NotificationsEnabled, cancellationToken);
+        var users = await _userRepository.GetAllAsync(cancellationToken);
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 

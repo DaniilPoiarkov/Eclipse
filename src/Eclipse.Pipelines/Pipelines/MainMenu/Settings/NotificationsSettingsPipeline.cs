@@ -2,12 +2,14 @@
 using Eclipse.Application.Localizations;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+using Eclipse.Pipelines.Attributes;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
+[FeatureFlag(false)]
 [Route("Menu:Settings:Notifications", "/settings_notifications")]
 internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 {
