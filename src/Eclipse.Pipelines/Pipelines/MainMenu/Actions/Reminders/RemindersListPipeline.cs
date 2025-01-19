@@ -38,6 +38,7 @@ internal sealed class RemindersListPipeline : RemindersPipelineBase
         var message = Localizer[
             "Pipelines:Reminders:List:Pending{0}",
             user.Reminders
+                .OrderBy(r => r.NotifyAt)
                 .Select(r => $"🕑 {r.NotifyAt.Add(user.Gmt)} {r.Text}")
                 .Join("\n\r")
         ];
