@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Reminders.FinishTodoItems;
-using Eclipse.Application.Reminders.FinishTodoItems.Options;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;

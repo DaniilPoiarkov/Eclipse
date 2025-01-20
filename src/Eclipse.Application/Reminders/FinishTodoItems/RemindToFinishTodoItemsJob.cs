@@ -1,18 +1,15 @@
-﻿using Eclipse.Domain.Users;
+﻿using Eclipse.Application.Reminders.Core;
+using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
-using Quartz;
-
 using Telegram.Bot;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class RemindToFinishTodoItemsJob : IJob
+internal sealed class RemindToFinishTodoItemsJob : INotificationJob<RemindToFinishTodoItemsJobData>
 {
     private readonly IStringLocalizer<RemindToFinishTodoItemsJob> _localizer;
 
@@ -38,25 +35,9 @@ internal sealed class RemindToFinishTodoItemsJob : IJob
         _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async Task Handle(RemindToFinishTodoItemsJobData args, CancellationToken cancellationToken = default)
     {
-        var data = context.MergedJobDataMap.GetString("data");
-
-        if (data.IsNullOrEmpty())
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
-            return;
-        }
-
-        var args = JsonConvert.DeserializeObject<RemindToFinishTodoItemsJobData>(data);
-
-        if (args is null)
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", data);
-            return;
-        }
-
-        var user = await _userRepository.FindAsync(args.UserId, context.CancellationToken);
+        var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
         if (user is null)
         {
@@ -72,6 +53,6 @@ internal sealed class RemindToFinishTodoItemsJob : IJob
             user.TodoItems.Count
         ];
 
-        await _client.SendMessage(user.ChatId, message, cancellationToken: context.CancellationToken);
+        await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
     }
 }

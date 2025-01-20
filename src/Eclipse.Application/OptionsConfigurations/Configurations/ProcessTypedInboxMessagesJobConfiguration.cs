@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.Core.NewUserJoined;
 using Eclipse.Application.Reminders.FinishTodoItems;
 using Eclipse.Application.Reminders.GoodMorning;
 using Eclipse.Application.Reminders.MoodReport;
@@ -26,9 +27,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewUserJoinedDomainEvent"/>
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleRemindToFinishTodoItemsEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleSendGoodMorningJobHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleSendMoodReportHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedNotificationHandler<NewUserJoinedJob<RemindToFinishTodoItemsJob, RemindToFinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedNotificationHandler<SendGoodMorningJob, SendGoodMorningSchedulerOptions>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedNotificationHandler<SendMoodReportJob, MoodReportSchedulerOptions>>(options);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);

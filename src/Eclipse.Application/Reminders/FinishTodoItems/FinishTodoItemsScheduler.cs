@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Reminders.Core.NewUserJoined;
+using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
 
@@ -6,7 +7,7 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class FinishTodoItemsScheduler : IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions>
+internal sealed class FinishTodoItemsScheduler : IJobScheduler<NewUserJoinedJob<RemindToFinishTodoItemsJob, RemindToFinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -19,7 +20,7 @@ internal sealed class FinishTodoItemsScheduler : IJobScheduler<RemindToFinishTod
     {
         var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<RemindToFinishTodoItemsJob>()
+        var job = JobBuilder.Create<NewUserJoinedJob<RemindToFinishTodoItemsJob, RemindToFinishTodoItemsJobData>>()
             .WithIdentity(key)
             .UsingJobData("data", JsonConvert.SerializeObject(new RemindToFinishTodoItemsJobData(options.UserId)))
             .Build();

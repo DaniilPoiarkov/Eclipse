@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Reminders.FinishTodoItems;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 
@@ -6,28 +7,33 @@ using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Application.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Reminders.Core.NewUserJoined;
 
-internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandler<NewUserJoinedDomainEvent>
+internal sealed class NewUserJoinedNotificationHandler<TJob, TSchedulerOptions> : IEventHandler<NewUserJoinedDomainEvent>
+    where TJob : IJob
 {
     private readonly IUserRepository _userRepository;
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly ILogger<ScheduleRemindToFinishTodoItemsEventHandler> _logger;
+    private readonly ILogger<NewUserJoinedNotificationHandler<TJob, TSchedulerOptions>> _logger;
 
-    private readonly IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<TJob, TSchedulerOptions> _jobScheduler;
 
-    public ScheduleRemindToFinishTodoItemsEventHandler(
+    private readonly IOptionsConvertor<User, TSchedulerOptions> _convertor;
+
+    public NewUserJoinedNotificationHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        ILogger<ScheduleRemindToFinishTodoItemsEventHandler> logger,
-        IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
+        ILogger<NewUserJoinedNotificationHandler<TJob, TSchedulerOptions>> logger,
+        IJobScheduler<TJob, TSchedulerOptions> jobScheduler,
+        IOptionsConvertor<User, TSchedulerOptions> convertor)
     {
-        _schedulerFactory = schedulerFactory;
         _userRepository = userRepository;
+        _schedulerFactory = schedulerFactory;
         _logger = logger;
         _jobScheduler = jobScheduler;
+        _convertor = convertor;
     }
 
     public async Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
@@ -42,7 +48,7 @@ internal sealed class ScheduleRemindToFinishTodoItemsEventHandler : IEventHandle
 
         var scheduler = await _schedulerFactory.GetScheduler();
 
-        var options = new FinishTodoItemsSchedulerOptions(user.Id, user.Gmt);
+        var options = _convertor.Convert(user);
 
         await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }

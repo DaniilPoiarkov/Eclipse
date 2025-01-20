@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Reminders.Core.NewUserJoined;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
 
 using Quartz;
@@ -9,11 +10,11 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<NewUserJoinedJob<RemindToFinishTodoItemsJob, RemindToFinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
     public RescheduleForNewTimeRemindToFinishTodoItemsHandler(
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
+        IJobScheduler<NewUserJoinedJob<RemindToFinishTodoItemsJob, RemindToFinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
