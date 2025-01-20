@@ -49,9 +49,13 @@ internal sealed class ReportsService : IReportsService
             index++;
         }
 
-        var title = days.IsNullOrEmpty()
-            ? $"{options.From:dd.MM}-{options.To:dd.MM}"
-            : $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
+        if (days.IsNullOrEmpty())
+        {
+            days = [options.From, options.To];
+            states = new int[2];
+        }
+
+        var title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
 
         var option = new PlotOptions<DateTime, int>
         {
