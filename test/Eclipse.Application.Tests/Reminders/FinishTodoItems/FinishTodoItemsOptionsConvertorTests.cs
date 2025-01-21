@@ -11,6 +11,11 @@ public sealed class FinishTodoItemsOptionsConvertorTests
 {
     private readonly FinishTodoItemsOptionsConvertor _sut;
 
+    public FinishTodoItemsOptionsConvertorTests()
+    {
+        _sut = new FinishTodoItemsOptionsConvertor();
+    }
+
     [Fact]
     public void Convert_WhenCalled_ThenConverts()
     {
