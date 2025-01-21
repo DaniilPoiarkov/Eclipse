@@ -4,18 +4,18 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.Reminders.Core.NewUserJoined;
+namespace Eclipse.Application.Reminders.Core;
 
-internal sealed class NewUserJoinedJob<TNotificationJob, TArgs> : IJob
+internal sealed class RegularJob<TNotificationJob, TArgs> : IJob
     where TNotificationJob : INotificationJob<TArgs>
 {
-    private readonly ILogger<NewUserJoinedJob<TNotificationJob, TArgs>> _logger;
+    private readonly ILogger<RegularJob<TNotificationJob, TArgs>> _logger;
 
     private readonly TNotificationJob _job;
 
     private const int _maxRefireCount = 5;
 
-    public NewUserJoinedJob(ILogger<NewUserJoinedJob<TNotificationJob, TArgs>> logger, TNotificationJob job)
+    public RegularJob(ILogger<RegularJob<TNotificationJob, TArgs>> logger, TNotificationJob job)
     {
         _logger = logger;
         _job = job;

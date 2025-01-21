@@ -1,3 +1,3 @@
 ﻿namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal record SendGoodMorningJobData(Guid UserId);
+internal record GoodMorningJobData(Guid UserId);

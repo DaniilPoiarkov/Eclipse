@@ -7,35 +7,35 @@ using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 
-namespace Eclipse.Application.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class RemindToFinishTodoItemsJob : INotificationJob<RemindToFinishTodoItemsJobData>
+internal sealed class GoodMorningJob : INotificationJob<GoodMorningJobData>
 {
-    private readonly IStringLocalizer<RemindToFinishTodoItemsJob> _localizer;
-
     private readonly ICurrentCulture _currentCulture;
+
+    private readonly IStringLocalizer<GoodMorningJob> _localizer;
 
     private readonly ITelegramBotClient _client;
 
     private readonly IUserRepository _userRepository;
 
-    private readonly ILogger<RemindToFinishTodoItemsJob> _logger;
+    private readonly ILogger<GoodMorningJob> _logger;
 
-    public RemindToFinishTodoItemsJob(
-        IStringLocalizer<RemindToFinishTodoItemsJob> localizer,
+    public GoodMorningJob(
         ICurrentCulture currentCulture,
+        IStringLocalizer<GoodMorningJob> localizer,
         ITelegramBotClient client,
         IUserRepository userRepository,
-        ILogger<RemindToFinishTodoItemsJob> logger)
+        ILogger<GoodMorningJob> logger)
     {
-        _localizer = localizer;
         _currentCulture = currentCulture;
+        _localizer = localizer;
         _client = client;
         _userRepository = userRepository;
         _logger = logger;
     }
 
-    public async Task Handle(RemindToFinishTodoItemsJobData args, CancellationToken cancellationToken = default)
+    public async Task Handle(GoodMorningJobData args, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
@@ -47,12 +47,10 @@ internal sealed class RemindToFinishTodoItemsJob : INotificationJob<RemindToFini
 
         using var _ = _currentCulture.UsingCulture(user.Culture);
 
-        var message = _localizer[
-            $"Jobs:Evening:{(user.TodoItems.IsNullOrEmpty() ? "Empty" : "RemindMarkAsFinished")}",
-            user.Name,
-            user.TodoItems.Count
-        ];
-
-        await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
+        await _client.SendMessage(
+            chatId: user.ChatId,
+            text: _localizer["Jobs:Morning:SendGoodMorning"],
+            cancellationToken: cancellationToken
+        );
     }
 }

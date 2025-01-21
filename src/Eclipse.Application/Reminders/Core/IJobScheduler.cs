@@ -1,6 +1,6 @@
 ﻿using Quartz;
 
-namespace Eclipse.Application.Reminders;
+namespace Eclipse.Application.Reminders.Core;
 
 internal interface IJobScheduler<TJob, TOptions>
     where TJob : IJob

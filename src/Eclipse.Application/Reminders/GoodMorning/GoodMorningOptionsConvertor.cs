@@ -3,10 +3,10 @@ using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class GoodMorningOptionsConvertor : IOptionsConvertor<User, SendGoodMorningSchedulerOptions>
+internal sealed class GoodMorningOptionsConvertor : IOptionsConvertor<User, GoodMorningSchedulerOptions>
 {
-    public SendGoodMorningSchedulerOptions Convert(User from)
+    public GoodMorningSchedulerOptions Convert(User from)
     {
-        return new SendGoodMorningSchedulerOptions(from.Id, from.Gmt);
+        return new GoodMorningSchedulerOptions(from.Id, from.Gmt);
     }
 }

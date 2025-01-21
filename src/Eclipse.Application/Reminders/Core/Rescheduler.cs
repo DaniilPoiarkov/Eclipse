@@ -1,8 +1,9 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.Domain.Users;
+
 using Quartz;
 
-namespace Eclipse.Application.Reminders.Core.NewUserJoined;
+namespace Eclipse.Application.Reminders.Core;
 
 internal sealed class Rescheduler<TJob, TSchedulerOptions> : IBackgroundJob
     where TJob : IJob
