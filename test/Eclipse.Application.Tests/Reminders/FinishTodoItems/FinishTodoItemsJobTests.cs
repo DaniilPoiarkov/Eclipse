@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Eclipse.Application.Tests.Reminders.FinishTodoItems;
 
-public sealed class RemindToFinishTodoItemsJobTests
+public sealed class FinishTodoItemsJobTests
 {
     private readonly IStringLocalizer<FinishTodoItemsJob> _localizer;
 
@@ -29,7 +29,7 @@ public sealed class RemindToFinishTodoItemsJobTests
 
     private readonly FinishTodoItemsJob _sut;
 
-    public RemindToFinishTodoItemsJobTests()
+    public FinishTodoItemsJobTests()
     {
         _localizer = Substitute.For<IStringLocalizer<FinishTodoItemsJob>>();
         _currentCulture = Substitute.For<ICurrentCulture>();

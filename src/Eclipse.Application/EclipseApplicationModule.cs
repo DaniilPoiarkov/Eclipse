@@ -127,6 +127,11 @@ public static class EclipseApplicationModule
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
 
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(INotificationJob<>)), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime());
+
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 
         return services;
