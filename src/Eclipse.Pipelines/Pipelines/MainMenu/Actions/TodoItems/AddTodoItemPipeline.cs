@@ -5,6 +5,8 @@ using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 using Eclipse.Domain.Shared.TodoItems;
 
+using Telegram.Bot.Types.ReplyMarkups;
+
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
 [Route("Menu:TodoItems:AddItem", "/todos_add")]
@@ -45,7 +47,7 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Text(Localizer[$"{_pipelinePrefix}:{{0}}Limit", user.TodoItems.Count]);
         }
 
-        return Text(Localizer[$"{_pipelinePrefix}:DescribeWhatToAdd"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer[$"{_pipelinePrefix}:DescribeWhatToAdd"]);
     }
 
     private async Task<IResult> SaveNewTodoItem(MessageContext context, CancellationToken cancellationToken)
