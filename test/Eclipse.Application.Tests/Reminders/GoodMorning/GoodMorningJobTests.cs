@@ -37,7 +37,7 @@ public sealed class GoodMorningJobTests
         _client = Substitute.For<ITelegramBotClient>();
         _repository = Substitute.For<IUserRepository>();
         _logger = Substitute.For<ILogger<GoodMorningJob>>();
-        
+
         _sut = new GoodMorningJob(_currentCulture, _localizer, _client, _repository, _logger);
     }
 

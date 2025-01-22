@@ -8,6 +8,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
 using Quartz;
+
 using Xunit;
 
 namespace Eclipse.Application.Tests.Reminders.Core;

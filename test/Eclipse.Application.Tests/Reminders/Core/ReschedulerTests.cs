@@ -28,7 +28,7 @@ public sealed class ReschedulerTests
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
         _jobScheduler = Substitute.For<IJobScheduler<IJob, object>>();
         _convertor = Substitute.For<IOptionsConvertor<User, object>>();
-        
+
         _sut = new Rescheduler<IJob, object>(_userRepository, _schedulerFactory, _jobScheduler, _convertor);
     }
 
