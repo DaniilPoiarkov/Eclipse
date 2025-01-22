@@ -6,6 +6,8 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Stores.Messages;
 
+using System.Globalization;
+
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -55,7 +57,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Empty"]);
         }
 
-        var message = BuildMessage(user.Gmt, items);
+        var message = BuildMessage(user.Gmt, CultureInfo.GetCultureInfo(user.Culture), items);
         var buttons = BuildButtons(items);
 
         return Menu(buttons, message);
@@ -99,7 +101,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             return await SendList(context, cancellationToken);
         }
 
-        return ItemFinishedResult(user.Gmt, items, message);
+        return ItemFinishedResult(user.Gmt, CultureInfo.GetCultureInfo(user.Culture), items, message);
     }
 
     private IResult InvalidActionOrRedirect(MessageContext context, Message? message)
