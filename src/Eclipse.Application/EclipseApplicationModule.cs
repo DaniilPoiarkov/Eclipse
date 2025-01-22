@@ -144,6 +144,9 @@ public static class EclipseApplicationModule
         var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<RescheduleRemindersBackgroundJob>>();
 
+        await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
+
         await manager.EnqueueAsync<Rescheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>>();
         logger.LogInformation("Enqueued {Job} job.", nameof(Rescheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>));
 
