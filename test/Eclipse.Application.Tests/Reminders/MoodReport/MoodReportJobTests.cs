@@ -97,7 +97,7 @@ public sealed class MoodReportJobTests
 
         await _client.Received().SendRequest(
             Arg.Is<SendPhotoRequest>(r => r.ChatId == user.ChatId
-                && r.Caption == "good morning"
+                && r.Caption == "mood report"
                 && r.Photo.FileType == FileType.Stream)
         );
     }
