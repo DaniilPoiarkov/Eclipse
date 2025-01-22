@@ -15,22 +15,23 @@ namespace Eclipse.Application.Tests.Reminders.Core;
 
 public sealed class RegularJobTests
 {
-    private readonly INotificationJob<object> _job;
+    private readonly INotificationJob<TestArgs> _job;
 
-    private readonly ILogger<RegularJob<INotificationJob<object>, object>> _logger;
+    private readonly ILogger<RegularJob<INotificationJob<TestArgs>, TestArgs>> _logger;
 
-    private readonly RegularJob<INotificationJob<object>, object> _sut;
+    private readonly RegularJob<INotificationJob<TestArgs>, TestArgs> _sut;
 
     public RegularJobTests()
     {
-        _job = Substitute.For<INotificationJob<object>>();
-        _logger = Substitute.For<ILogger<RegularJob<INotificationJob<object>, object>>>();
-        _sut = new RegularJob<INotificationJob<object>, object>(_logger, _job);
+        _job = Substitute.For<INotificationJob<TestArgs>>();
+        _logger = Substitute.For<ILogger<RegularJob<INotificationJob<TestArgs>, TestArgs>>>();
+        _sut = new RegularJob<INotificationJob<TestArgs>, TestArgs>(_logger, _job);
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
+    [InlineData("\"\"")]
     public async Task Execute_WhenDataInvalid_ThenLogsError(string? data)
     {
         var context = Substitute.For<IJobExecutionContext>();
@@ -70,7 +71,7 @@ public sealed class RegularJobTests
             Arg.Any<Func<object, Exception?, string>>()
         );
 
-        await _job.DidNotReceive().Handle(Arg.Any<object>());
+        await _job.DidNotReceive().Handle(Arg.Any<TestArgs>());
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public sealed class RegularJobTests
 
         context.MergedJobDataMap.Returns(dataMap);
 
-        _job.Handle(Arg.Any<object>()).Throws<InvalidOperationException>();
+        _job.Handle(Arg.Any<TestArgs>()).Throws<InvalidOperationException>();
 
         var action = () => _sut.Execute(context);
 
@@ -93,4 +94,21 @@ public sealed class RegularJobTests
             .WithMessage($"Failed to process {typeof(INotificationJob<object>).Name} job.")
             .WithInnerException(typeof(InvalidOperationException));
     }
+
+    [Fact]
+    public async Task Execute_WhenHasValidArgs_ThenProcessSuccessfully()
+    {
+        var context = Substitute.For<IJobExecutionContext>();
+
+        var dataMap = new JobDataMap
+        {
+            { "data", "{}" }
+        };
+
+        context.MergedJobDataMap.Returns(dataMap);
+
+        await _sut.Execute(context);
+    }
 }
+
+public record TestArgs();
