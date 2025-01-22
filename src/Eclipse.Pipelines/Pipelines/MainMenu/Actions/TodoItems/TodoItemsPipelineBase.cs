@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Core.Core;
 
+using System.Globalization;
 using System.Text;
 
 using Telegram.Bot.Types;
@@ -22,7 +23,7 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
 
     #region Helpers
 
-    protected string BuildMessage(TimeSpan userTime, IEnumerable<TodoItemDto> items)
+    protected string BuildMessage(TimeSpan userTime, CultureInfo culture, IEnumerable<TodoItemDto> items)
     {
         var sb = new StringBuilder(Localizer[$"{PipelinePrefix}:YourToDos"])
             .AppendLine()
@@ -31,7 +32,7 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
         foreach (var item in items)
         {
             sb.AppendLine($"📌 {item.Text}")
-                .AppendLine($"{Localizer["CreatedAt"]}: {item.CreatedAt.Add(userTime).ToString("dd.MM, HH:mm")}")
+                .AppendLine($"{Localizer["CreatedAt"]}: {item.CreatedAt.Add(userTime).ToString(culture)}")
                 .AppendLine();
         }
 
@@ -71,13 +72,13 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
         return Edit(message.MessageId, text);
     }
 
-    protected IResult ItemFinishedResult(TimeSpan userTime, IEnumerable<TodoItemDto> leftover, Message message)
+    protected IResult ItemFinishedResult(TimeSpan userTime, CultureInfo culture, IEnumerable<TodoItemDto> leftover, Message message)
     {
         var buttons = BuildButtons(leftover);
 
         var text = $"{Localizer[$"{PipelinePrefix}:YouAreDoingGreat"]}" +
             $"{Environment.NewLine}{Environment.NewLine}" +
-            $"{BuildMessage(userTime, leftover)}";
+            $"{BuildMessage(userTime, culture, leftover)}";
 
         var menu = new InlineKeyboardMarkup(buttons);
 
