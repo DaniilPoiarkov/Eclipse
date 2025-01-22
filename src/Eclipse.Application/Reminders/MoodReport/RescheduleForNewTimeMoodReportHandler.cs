@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Reminders.Core;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
 
 using Quartz;
@@ -9,11 +10,11 @@ internal sealed class RescheduleForNewTimeMoodReportHandler : IEventHandler<GmtC
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<SendMoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions> _jobScheduler;
 
     public RescheduleForNewTimeMoodReportHandler(
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<SendMoodReportJob, MoodReportSchedulerOptions> jobScheduler)
+        IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -23,7 +24,7 @@ internal sealed class RescheduleForNewTimeMoodReportHandler : IEventHandler<GmtC
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var key = JobKey.Create($"{nameof(SendMoodReportJob)}-{@event.UserId}");
+        var key = JobKey.Create($"{nameof(MoodReportJob)}-{@event.UserId}");
 
         await scheduler.DeleteJob(key, cancellationToken);
 

@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Reminders.Core;
+using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
 
@@ -6,22 +7,22 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class SendGoodMorningScheduler : IJobScheduler<SendGoodMorningJob, SendGoodMorningSchedulerOptions>
+internal sealed class GoodMorningScheduler : IJobScheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
-    public SendGoodMorningScheduler(ITimeProvider timeProvider)
+    public GoodMorningScheduler(ITimeProvider timeProvider)
     {
         _timeProvider = timeProvider;
     }
 
-    public async Task Schedule(IScheduler scheduler, SendGoodMorningSchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Schedule(IScheduler scheduler, GoodMorningSchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(SendGoodMorningJob)}-{options.UserId}");
+        var key = JobKey.Create($"{nameof(GoodMorningJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<SendGoodMorningJob>()
+        var job = JobBuilder.Create<RegularJob<GoodMorningJob, GoodMorningJobData>>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new SendGoodMorningJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new GoodMorningJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)

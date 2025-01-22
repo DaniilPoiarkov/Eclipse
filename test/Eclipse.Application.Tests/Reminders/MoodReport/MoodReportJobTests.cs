@@ -1,0 +1,104 @@
+﻿using Eclipse.Application.Contracts.Reports;
+using Eclipse.Application.Reminders.MoodReport;
+using Eclipse.Common.Clock;
+using Eclipse.Domain.Users;
+using Eclipse.Localization.Culture;
+using Eclipse.Tests.Generators;
+
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+
+using NSubstitute;
+
+using Telegram.Bot;
+using Telegram.Bot.Requests;
+using Telegram.Bot.Types.Enums;
+
+using Xunit;
+
+namespace Eclipse.Application.Tests.Reminders.MoodReport;
+
+public sealed class MoodReportJobTests
+{
+    private readonly IUserRepository _repository;
+
+    private readonly ICurrentCulture _currentCulture;
+
+    private readonly IReportsService _reportsService;
+
+    private readonly ITelegramBotClient _client;
+
+    private readonly ITimeProvider _timeProvider;
+
+    private readonly IStringLocalizer<MoodReportJob> _localizer;
+
+    private readonly ILogger<MoodReportJob> _logger;
+
+    private readonly MoodReportJob _sut;
+
+    public MoodReportJobTests()
+    {
+        _repository = Substitute.For<IUserRepository>();
+        _currentCulture = Substitute.For<ICurrentCulture>();
+        _reportsService = Substitute.For<IReportsService>();
+        _client = Substitute.For<ITelegramBotClient>();
+        _timeProvider = Substitute.For<ITimeProvider>();
+        _localizer = Substitute.For<IStringLocalizer<MoodReportJob>>();
+        _logger = Substitute.For<ILogger<MoodReportJob>>();
+
+        _sut = new MoodReportJob(_repository, _currentCulture, _reportsService, _client, _timeProvider, _localizer, _logger);
+    }
+
+    [Fact]
+    public async Task Execute_WhenUserNotFound_ThenLogsError()
+    {
+        _repository.FindAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult<User?>(null));
+
+        var args = new MoodReportJobData(Guid.NewGuid());
+
+        await _sut.Handle(args);
+
+        _logger.Received().Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>()
+        );
+    }
+
+    [Fact]
+    public async Task Execute_WhenUserFound_ThenSendsNotification()
+    {
+        var user = UserGenerator.Get();
+
+        _repository.FindAsync(user.Id).Returns(user);
+
+        _localizer[Arg.Any<string>()].Returns(new LocalizedString("", "mood report"));
+
+        var utcNow = DateTime.UtcNow;
+        _timeProvider.Now.Returns(utcNow);
+
+        var expectedFrom = utcNow.PreviousDayOfWeek(DayOfWeek.Sunday);
+
+        using var stream = new MemoryStream();
+        _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
+
+        var args = new MoodReportJobData(user.Id);
+
+        await _sut.Handle(args);
+
+        _currentCulture.Received().UsingCulture(user.Culture);
+
+        await _reportsService.Received().GetMoodReportAsync(user.Id,
+            Arg.Is<MoodReportOptions>(o => o.From == expectedFrom && o.To == utcNow)
+        );
+
+        await _client.Received().SendRequest(
+            Arg.Is<SendPhotoRequest>(r => r.ChatId == user.ChatId
+                && r.Caption == "mood report"
+                && r.Photo.FileType == FileType.Stream)
+        );
+    }
+}

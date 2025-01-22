@@ -1,0 +1,50 @@
+﻿using Eclipse.Application.Reminders.MoodReport;
+using Eclipse.Common.Clock;
+
+using Newtonsoft.Json;
+
+using NSubstitute;
+
+using Quartz;
+
+using Xunit;
+
+namespace Eclipse.Application.Tests.Reminders.MoodReport;
+
+public sealed class MoodReportSchedulerTests
+{
+    private readonly ITimeProvider _timeProvider;
+
+    private readonly MoodReportScheduler _sut;
+
+    public MoodReportSchedulerTests()
+    {
+        _timeProvider = Substitute.For<ITimeProvider>();
+
+        _sut = new MoodReportScheduler(_timeProvider);
+    }
+
+    [Fact]
+    public async Task Schedule_WhenScheduler_ThenCreateJobWithCorrectIdentityAndData()
+    {
+        var scheduler = Substitute.For<IScheduler>();
+        var options = new MoodReportSchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
+
+        var currentTime = DateTime.UtcNow;
+
+        _timeProvider.Now.Returns(currentTime);
+
+        var expectedJobKey = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var expectedData = JsonConvert.SerializeObject(new MoodReportJobData(options.UserId));
+
+        await _sut.Schedule(scheduler, options);
+
+        await scheduler.Received().ScheduleJob(
+            Arg.Is<IJobDetail>(job =>
+                job.Key.Equals(expectedJobKey) &&
+                job.JobDataMap.GetString("data") == expectedData
+            ),
+            Arg.Is<ITrigger>(trigger => trigger.JobKey.Equals(expectedJobKey))
+        );
+    }
+}

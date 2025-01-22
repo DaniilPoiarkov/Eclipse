@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Reminders.Core;
+using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
 
@@ -6,7 +7,7 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.MoodReport;
 
-internal sealed class MoodReportScheduler : IJobScheduler<SendMoodReportJob, MoodReportSchedulerOptions>
+internal sealed class MoodReportScheduler : IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -17,11 +18,11 @@ internal sealed class MoodReportScheduler : IJobScheduler<SendMoodReportJob, Moo
 
     public async Task Schedule(IScheduler scheduler, MoodReportSchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(SendMoodReportJob)}-{options.UserId}");
+        var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<SendMoodReportJob>()
+        var job = JobBuilder.Create<RegularJob<MoodReportJob, MoodReportJobData>>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new SendMoodReportJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new MoodReportJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)

@@ -1,19 +1,20 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Reminders.Core;
+using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class RescheduleForNewTimeFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
-    public RescheduleForNewTimeRemindToFinishTodoItemsHandler(
+    public RescheduleForNewTimeFinishTodoItemsHandler(
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
+        IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -23,7 +24,7 @@ internal sealed class RescheduleForNewTimeRemindToFinishTodoItemsHandler : IEven
     {
         var scheduler = await _schedulerFactory.GetScheduler();
 
-        var key = JobKey.Create($"{nameof(RemindToFinishTodoItemsJob)}-{@event.UserId}");
+        var key = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{@event.UserId}");
 
         await scheduler.DeleteJob(key, cancellationToken);
 

@@ -3,24 +3,29 @@ using Eclipse.Domain.Users;
 
 using Quartz;
 
-namespace Eclipse.Application.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Reminders.Core;
 
-internal sealed class RescheduleRemindToFinishTodoItemsJob : IBackgroundJob
+internal sealed class Rescheduler<TJob, TSchedulerOptions> : IBackgroundJob
+    where TJob : IJob
 {
     private readonly IUserRepository _userRepository;
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<TJob, TSchedulerOptions> _jobScheduler;
 
-    public RescheduleRemindToFinishTodoItemsJob(
+    private readonly IOptionsConvertor<User, TSchedulerOptions> _convertor;
+
+    public Rescheduler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<RemindToFinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
+        IJobScheduler<TJob, TSchedulerOptions> jobScheduler,
+        IOptionsConvertor<User, TSchedulerOptions> convertor)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
+        _convertor = convertor;
     }
 
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
@@ -29,9 +34,9 @@ internal sealed class RescheduleRemindToFinishTodoItemsJob : IBackgroundJob
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        foreach (var options in users.Select(u => new FinishTodoItemsSchedulerOptions(u.Id, u.Gmt)))
+        foreach (var user in users)
         {
-            await _jobScheduler.Schedule(scheduler, options, cancellationToken);
+            await _jobScheduler.Schedule(scheduler, _convertor.Convert(user), cancellationToken);
         }
     }
 }

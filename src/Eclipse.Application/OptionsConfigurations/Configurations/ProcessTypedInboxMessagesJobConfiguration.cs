@@ -1,5 +1,7 @@
 ﻿using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.Core;
+using Eclipse.Application.Reminders.Core.Handlers;
 using Eclipse.Application.Reminders.FinishTodoItems;
 using Eclipse.Application.Reminders.GoodMorning;
 using Eclipse.Application.Reminders.MoodReport;
@@ -26,9 +28,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewUserJoinedDomainEvent"/>
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleRemindToFinishTodoItemsEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleSendGoodMorningJobHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleSendMoodReportHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions>>(options);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
@@ -43,8 +45,8 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<TodoItemFinishedDomainEvent, TodoItemFinishedEventHandler>(options);
 
         /// <see cref="GmtChangedDomainEvent"/>
-        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeRemindToFinishTodoItemsHandler>(options);
-        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeSendGoodMorningHandler>(options);
+        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeFinishTodoItemsHandler>(options);
+        AddJob<GmtChangedDomainEvent, RescheduleForNewTimeGoodMorningHandler>(options);
         AddJob<GmtChangedDomainEvent, RescheduleForNewTimeMoodReportHandler>(options);
     }
 
