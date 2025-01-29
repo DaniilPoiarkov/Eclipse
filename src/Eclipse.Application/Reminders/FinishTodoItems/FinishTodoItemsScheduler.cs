@@ -7,7 +7,7 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class FinishTodoItemsScheduler : IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>
+internal sealed class FinishTodoItemsScheduler : IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -20,13 +20,18 @@ internal sealed class FinishTodoItemsScheduler : IJobScheduler<RegularJob<Finish
     {
         var key = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>>()
+        var job = JobBuilder.Create<FinishTodoItemsJob>()
             .WithIdentity(key)
             .UsingJobData("data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(RemindersConsts.Evening6PM)
             .Add(-options.Gmt);
+
+        if (time < _timeProvider.Now)
+        {
+            time = time.NextDay();
+        }
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)

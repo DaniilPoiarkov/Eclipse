@@ -67,7 +67,7 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddQuartzIntegration(this IServiceCollection services)
     {
-        LogProvider.IsDisabled = false;
+        LogProvider.IsDisabled = true;
 
         services.AddQuartz(configurator =>
         {

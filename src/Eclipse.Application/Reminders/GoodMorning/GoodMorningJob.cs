@@ -1,15 +1,18 @@
-﻿using Eclipse.Application.Reminders.Core;
-using Eclipse.Domain.Users;
+﻿using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Newtonsoft.Json;
+
+using Quartz;
+
 using Telegram.Bot;
 
 namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class GoodMorningJob : INotificationJob<GoodMorningJobData>
+internal sealed class GoodMorningJob : IJob
 {
     private readonly ICurrentCulture _currentCulture;
 
@@ -35,9 +38,25 @@ internal sealed class GoodMorningJob : INotificationJob<GoodMorningJobData>
         _logger = logger;
     }
 
-    public async Task Handle(GoodMorningJobData args, CancellationToken cancellationToken = default)
+    public async Task Execute(IJobExecutionContext context)
     {
-        var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
+        var data = context.MergedJobDataMap.GetString("data");
+
+        if (data.IsNullOrEmpty())
+        {
+            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
+            return;
+        }
+
+        var args = JsonConvert.DeserializeObject<GoodMorningJobData>(data);
+
+        if (args is null)
+        {
+            _logger.LogError("Cannot deserialize event with data {Data}", data);
+            return;
+        }
+
+        var user = await _userRepository.FindAsync(args.UserId, context.CancellationToken);
 
         if (user is null)
         {
@@ -50,7 +69,7 @@ internal sealed class GoodMorningJob : INotificationJob<GoodMorningJobData>
         await _client.SendMessage(
             chatId: user.ChatId,
             text: _localizer["Jobs:Morning:SendGoodMorning"],
-            cancellationToken: cancellationToken
+            cancellationToken: context.CancellationToken
         );
     }
 }

@@ -16,14 +16,14 @@ public sealed class RescheduleForNewTimeGoodMorningHandlerTests
 
     private readonly IJobScheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions> _jobScheduler;
 
-    private readonly RescheduleForNewTimeGoodMorningHandler _sut;
+    private readonly ScheduleNewTimeGoodMorningHandler _sut;
 
     public RescheduleForNewTimeGoodMorningHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
         _jobScheduler = Substitute.For<IJobScheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions>>();
 
-        _sut = new RescheduleForNewTimeGoodMorningHandler(_schedulerFactory, _jobScheduler);
+        _sut = new ScheduleNewTimeGoodMorningHandler(_schedulerFactory, _jobScheduler);
     }
 
     [Fact]

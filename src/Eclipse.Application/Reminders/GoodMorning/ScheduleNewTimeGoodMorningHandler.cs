@@ -6,15 +6,15 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.GoodMorning;
 
-internal sealed class RescheduleForNewTimeGoodMorningHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class ScheduleNewTimeGoodMorningHandler : IEventHandler<GmtChangedDomainEvent>
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<GoodMorningJob, GoodMorningSchedulerOptions> _jobScheduler;
 
-    public RescheduleForNewTimeGoodMorningHandler(
+    public ScheduleNewTimeGoodMorningHandler(
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions> jobScheduler)
+        IJobScheduler<GoodMorningJob, GoodMorningSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;

@@ -7,7 +7,7 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.MoodReport;
 
-internal sealed class MoodReportScheduler : IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions>
+internal sealed class MoodReportScheduler : IJobScheduler<MoodReportJob, MoodReportSchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -20,7 +20,7 @@ internal sealed class MoodReportScheduler : IJobScheduler<RegularJob<MoodReportJ
     {
         var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<RegularJob<MoodReportJob, MoodReportJobData>>()
+        var job = JobBuilder.Create<MoodReportJob>()
             .WithIdentity(key)
             .UsingJobData("data", JsonConvert.SerializeObject(new MoodReportJobData(options.UserId)))
             .Build();

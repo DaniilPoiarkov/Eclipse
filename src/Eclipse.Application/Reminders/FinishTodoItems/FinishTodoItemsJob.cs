@@ -1,15 +1,18 @@
-﻿using Eclipse.Application.Reminders.Core;
-using Eclipse.Domain.Users;
+﻿using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Newtonsoft.Json;
+
+using Quartz;
+
 using Telegram.Bot;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class FinishTodoItemsJob : INotificationJob<FinishTodoItemsJobData>
+internal sealed class FinishTodoItemsJob : IJob
 {
     private readonly IStringLocalizer<FinishTodoItemsJob> _localizer;
 
@@ -35,9 +38,25 @@ internal sealed class FinishTodoItemsJob : INotificationJob<FinishTodoItemsJobDa
         _logger = logger;
     }
 
-    public async Task Handle(FinishTodoItemsJobData args, CancellationToken cancellationToken = default)
+    public async Task Execute(IJobExecutionContext context)
     {
-        var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
+        var data = context.MergedJobDataMap.GetString("data");
+
+        if (data.IsNullOrEmpty())
+        {
+            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
+            return;
+        }
+
+        var args = JsonConvert.DeserializeObject<FinishTodoItemsJobData>(data);
+
+        if (args is null)
+        {
+            _logger.LogError("Cannot deserialize event with data {Data}", data);
+            return;
+        }
+
+        var user = await _userRepository.FindAsync(args.UserId, context.CancellationToken);
 
         if (user is null)
         {
@@ -53,6 +72,6 @@ internal sealed class FinishTodoItemsJob : INotificationJob<FinishTodoItemsJobDa
             user.TodoItems.Count
         ];
 
-        await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
+        await _client.SendMessage(user.ChatId, message, cancellationToken: context.CancellationToken);
     }
 }

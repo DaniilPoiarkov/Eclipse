@@ -122,16 +122,6 @@ public static class EclipseApplicationModule
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
 
-        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IOptionsConvertor<,>)), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithSingletonLifetime());
-
-        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(INotificationJob<>)), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
-
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 
         return services;
@@ -142,18 +132,18 @@ public static class EclipseApplicationModule
         using var scope = app.Services.CreateAsyncScope();
 
         var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<RescheduleRemindersBackgroundJob>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<IBackgroundJobManager>>();
 
         await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
         logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
 
-        await manager.EnqueueAsync<Rescheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(Rescheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>));
+        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(FinishTodoItemsJobRescheduler));
 
-        await manager.EnqueueAsync<Rescheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions>>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(Rescheduler<RegularJob<GoodMorningJob, GoodMorningJobData>, GoodMorningSchedulerOptions>));
+        await manager.EnqueueAsync<GoodMorningJobRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(GoodMorningJobRescheduler));
 
-        await manager.EnqueueAsync<Rescheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions>>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(Rescheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions>));
+        await manager.EnqueueAsync<MoodReportJobRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(MoodReportJobRescheduler));
     }
 }
