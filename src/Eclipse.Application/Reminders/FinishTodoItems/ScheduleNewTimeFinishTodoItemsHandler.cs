@@ -6,15 +6,15 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.FinishTodoItems;
 
-internal sealed class RescheduleForNewTimeFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class ScheduleNewTimeFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
-    public RescheduleForNewTimeFinishTodoItemsHandler(
+    public ScheduleNewTimeFinishTodoItemsHandler(
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> jobScheduler)
+        IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;

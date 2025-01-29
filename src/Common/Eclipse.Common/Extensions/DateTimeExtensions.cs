@@ -92,4 +92,14 @@ public static class DateTimeExtensions
         return new DateTime(dateTime.Year, dateTime.Month, 1)
             .WithTime(0, 0);
     }
+
+    /// <summary>
+    /// Nexts the day.
+    /// </summary>
+    /// <param name="dateTime">The date time.</param>
+    /// <returns></returns>
+    public static DateTime NextDay(this DateTime dateTime)
+    {
+        return dateTime.AddDays(1);
+    }
 }

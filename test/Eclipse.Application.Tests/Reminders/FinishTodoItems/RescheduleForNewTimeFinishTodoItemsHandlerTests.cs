@@ -14,16 +14,16 @@ public sealed class RescheduleForNewTimeFinishTodoItemsHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
-    private readonly RescheduleForNewTimeFinishTodoItemsHandler _sut;
+    private readonly ScheduleNewTimeFinishTodoItemsHandler _sut;
 
     public RescheduleForNewTimeFinishTodoItemsHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<RegularJob<FinishTodoItemsJob, FinishTodoItemsJobData>, FinishTodoItemsSchedulerOptions>>();
+        _jobScheduler = Substitute.For<IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
 
-        _sut = new RescheduleForNewTimeFinishTodoItemsHandler(_schedulerFactory, _jobScheduler);
+        _sut = new ScheduleNewTimeFinishTodoItemsHandler(_schedulerFactory, _jobScheduler);
     }
 
     [Fact]

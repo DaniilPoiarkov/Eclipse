@@ -8,7 +8,11 @@ using Eclipse.Tests.Generators;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Newtonsoft.Json;
+
 using NSubstitute;
+
+using Quartz;
 
 using Telegram.Bot;
 using Telegram.Bot.Requests;
@@ -55,9 +59,16 @@ public sealed class MoodReportJobTests
         _repository.FindAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<User?>(null));
 
-        var args = new MoodReportJobData(Guid.NewGuid());
+        var context = Substitute.For<IJobExecutionContext>();
 
-        await _sut.Handle(args);
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new MoodReportJobData(Guid.NewGuid())) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        await _sut.Execute(context);
 
         _logger.Received().Log(
             LogLevel.Error,
@@ -85,9 +96,16 @@ public sealed class MoodReportJobTests
         using var stream = new MemoryStream();
         _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
-        var args = new MoodReportJobData(user.Id);
+        var context = Substitute.For<IJobExecutionContext>();
 
-        await _sut.Handle(args);
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new MoodReportJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        await _sut.Execute(context);
 
         _currentCulture.Received().UsingCulture(user.Culture);
 

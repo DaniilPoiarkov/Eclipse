@@ -75,4 +75,14 @@ internal sealed class CacheService : ICacheService
 
         await SetAsync(key, keys, CacheConsts.ThreeDays, cancellationToken);
     }
+
+    public async Task PruneAsync(CancellationToken cancellationToken = default)
+    {
+        var keys = await GetAsync<List<string>>("cache-keys") ?? [];
+
+        foreach (var key in keys)
+        {
+            await DeleteAsync(key, cancellationToken);
+        }
+    }
 }

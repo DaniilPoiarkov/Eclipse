@@ -6,15 +6,15 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.MoodReport;
 
-internal sealed class RescheduleForNewTimeMoodReportHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class ScheduleNewTimeMoodReportHandler : IEventHandler<GmtChangedDomainEvent>
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
 
-    public RescheduleForNewTimeMoodReportHandler(
+    public ScheduleNewTimeMoodReportHandler(
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions> jobScheduler)
+        IJobScheduler<MoodReportJob, MoodReportSchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;

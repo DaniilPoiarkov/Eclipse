@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Contracts.Reports;
-using Eclipse.Application.Reminders.Core;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
@@ -7,12 +6,16 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Newtonsoft.Json;
+
+using Quartz;
+
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Eclipse.Application.Reminders.MoodReport;
 
-internal sealed class MoodReportJob : INotificationJob<MoodReportJobData>
+internal sealed class MoodReportJob : IJob
 {
     private readonly IUserRepository _userRepository;
 
@@ -46,9 +49,25 @@ internal sealed class MoodReportJob : INotificationJob<MoodReportJobData>
         _logger = logger;
     }
 
-    public async Task Handle(MoodReportJobData args, CancellationToken cancellationToken = default)
+    public async Task Execute(IJobExecutionContext context)
     {
-        var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
+        var data = context.MergedJobDataMap.GetString("data");
+
+        if (data.IsNullOrEmpty())
+        {
+            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
+            return;
+        }
+
+        var args = JsonConvert.DeserializeObject<MoodReportJobData>(data);
+
+        if (args is null)
+        {
+            _logger.LogError("Cannot deserialize event with data {Data}", data);
+            return;
+        }
+
+        var user = await _userRepository.FindAsync(args.UserId, context.CancellationToken);
 
         if (user is null)
         {
@@ -66,12 +85,12 @@ internal sealed class MoodReportJob : INotificationJob<MoodReportJobData>
 
         var message = _localizer["Jobs:SendMoodReport:Caption"];
 
-        using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, cancellationToken);
+        using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, context.CancellationToken);
 
         await _client.SendPhoto(user.ChatId,
             InputFile.FromStream(stream, $"mood-report.png"),
             caption: message,
-            cancellationToken: cancellationToken
+            cancellationToken: context.CancellationToken
         );
     }
 }
