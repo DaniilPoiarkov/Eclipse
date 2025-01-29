@@ -1,10 +1,12 @@
 ﻿using Eclipse.Common.Caching;
+using Eclipse.WebAPI.Filters.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
+[ApiKeyAuthorize]
 [Route("api/cache")]
 public sealed class CacheController : ControllerBase
 {

@@ -14,14 +14,14 @@ public sealed class RescheduleForNewTimeMoodReportHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly IJobScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeMoodReportHandler _sut;
 
     public RescheduleForNewTimeMoodReportHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<RegularJob<MoodReportJob, MoodReportJobData>, MoodReportSchedulerOptions>>();
+        _jobScheduler = Substitute.For<IJobScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
 
         _sut = new ScheduleNewTimeMoodReportHandler(_schedulerFactory, _jobScheduler);
     }

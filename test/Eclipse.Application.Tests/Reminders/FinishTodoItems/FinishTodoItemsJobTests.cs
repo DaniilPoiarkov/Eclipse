@@ -6,7 +6,11 @@ using Eclipse.Tests.Generators;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Newtonsoft.Json;
+
 using NSubstitute;
+
+using Quartz;
 
 using Telegram.Bot;
 using Telegram.Bot.Requests;
@@ -46,9 +50,16 @@ public sealed class FinishTodoItemsJobTests
         _repository.FindAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<User?>(null));
 
-        var args = new FinishTodoItemsJobData(Guid.NewGuid());
+        var context = Substitute.For<IJobExecutionContext>();
 
-        await _sut.Handle(args);
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(Guid.NewGuid())) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        await _sut.Execute(context);
 
         _logger.Received().Log(
             LogLevel.Error,
@@ -69,9 +80,16 @@ public sealed class FinishTodoItemsJobTests
         _localizer["Jobs:Evening:Empty", user.Name, 0]
             .Returns(new LocalizedString("", "No pending tasks"));
 
-        var args = new FinishTodoItemsJobData(user.Id);
+        var context = Substitute.For<IJobExecutionContext>();
 
-        await _sut.Handle(args);
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        await _sut.Execute(context);
 
         await _client.Received().SendRequest(
             Arg.Is<SendMessageRequest>(r => r.ChatId == user.ChatId && r.Text == "No pending tasks")
@@ -86,14 +104,21 @@ public sealed class FinishTodoItemsJobTests
         user.AddTodoItem("test", DateTime.UtcNow);
         user.AddTodoItem("test", DateTime.UtcNow);
 
-        var args = new FinishTodoItemsJobData(user.Id);
-
         _repository.FindAsync(user.Id).Returns(user);
 
         _localizer["Jobs:Evening:RemindMarkAsFinished", user.Name, user.TodoItems.Count]
             .Returns(new LocalizedString("", "You have 2 pending tasks"));
 
-        await _sut.Handle(args);
+        var context = Substitute.For<IJobExecutionContext>();
+
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        await _sut.Execute(context);
 
         await _client.Received().SendRequest(
             Arg.Is<SendMessageRequest>(r => r.ChatId == user.ChatId && r.Text == "You have 2 pending tasks")
