@@ -5,7 +5,6 @@ using System.Reflection;
 
 namespace Eclipse.Infrastructure.Caching;
 
-// TODO: Probably irrelevant
 internal sealed class PrivateMembersContractResolver : DefaultContractResolver
 {
     private static readonly Lazy<PrivateMembersContractResolver> _instance = new(() => new());
