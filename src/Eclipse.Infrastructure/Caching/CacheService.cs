@@ -15,12 +15,6 @@ internal sealed class CacheService : ICacheService
         _cache = cache;
     }
 
-    [Obsolete("Use GetOrCreateAsync instead")]
-    public ValueTask<T> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default)
-    {
-        return _cache.GetOrCreateAsync<T>(key.Key, factory: _ => default, cancellationToken: cancellationToken);
-    }
-
     public async Task<T> GetOrCreateAsync<T>(CacheKey key, Func<Task<T>> factory, CacheOptions? cacheOptions = null, CancellationToken cancellationToken = default)
     {
         var options = new HybridCacheEntryOptions

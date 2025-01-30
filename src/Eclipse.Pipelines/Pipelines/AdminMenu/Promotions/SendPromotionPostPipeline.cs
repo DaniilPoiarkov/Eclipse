@@ -109,14 +109,27 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private async Task<IResult> SendPromotionPostAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        var confirmationCode = await _cacheService.GetAsync<string>($"promotions-post-confiramtion-code-{context.ChatId}", cancellationToken);
+        var confirmationCode = await _cacheService.GetOrCreateAsync(
+            $"promotions-post-confiramtion-code-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
 
         if (!context.Value.Equals(confirmationCode))
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:ConfirmationFailed"]);
         }
 
-        var messageId = await _cacheService.GetAsync<int>($"promotions-post-message-{context.ChatId}", cancellationToken);
+        var messageId = await _cacheService.GetOrCreateAsync(
+            $"promotions-post-message-{context.ChatId}",
+            () => Task.FromResult<int>(default),
+            cancellationToken: cancellationToken
+        );
+
+        if (messageId == default)
+        {
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:MessageNotFound"]);
+        }
 
         await _backgroundJobManager.EnqueueAsync<SendPromotionBackgroundJob, SendPromotionBackgroundJobArgs>(
             new SendPromotionBackgroundJobArgs

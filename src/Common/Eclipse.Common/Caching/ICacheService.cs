@@ -9,9 +9,6 @@ public interface ICacheService
 
     Task SetAsync<T>(CacheKey key, T value, CacheOptions options, CancellationToken cancellationToken = default);
 
-    [Obsolete("Use GetOrCreateAsync instead")]
-    ValueTask<T> GetAsync<T>(CacheKey key, CancellationToken cancellationToken = default);
-
     Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default);
 
     Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default);

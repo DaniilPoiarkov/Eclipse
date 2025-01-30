@@ -20,7 +20,7 @@
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" />
     <PackageReference Include="Serilog.Sinks.Async" />
     <PackageReference Include="ZiggyCreatures.FusionCache" />
-    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.NewtonsoftJson" />
   </ItemGroup>
 
   <ItemGroup>

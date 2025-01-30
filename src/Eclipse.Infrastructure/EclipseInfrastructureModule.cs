@@ -15,13 +15,15 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using Newtonsoft.Json;
+
 using Quartz;
 using Quartz.Logging;
 
 using Serilog;
 
 using ZiggyCreatures.Caching.Fusion;
-using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
+using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
 
 namespace Eclipse.Infrastructure;
 
@@ -90,6 +92,13 @@ public static class EclipseInfrastructureModule
     {
         var configuration = services.GetConfiguration();
 
+        var options = new JsonSerializerSettings()
+        {
+            ContractResolver = PrivateMembersContractResolver.Instance
+        };
+
+        var serializer = new FusionCacheNewtonsoftJsonSerializer(options);
+
         if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
         {
             var connectionString = configuration.GetConnectionString("Redis")
@@ -101,14 +110,14 @@ public static class EclipseInfrastructureModule
             });
 
             services.AddFusionCache()
-                .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                .WithSerializer(serializer)
                 .WithDistributedCache(sp => sp.GetRequiredService<IDistributedCache>())
                 .AsHybridCache();
         }
         else
         {
             services.AddFusionCache()
-                .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                .WithSerializer(serializer)
                 .AsHybridCache();
         }
 

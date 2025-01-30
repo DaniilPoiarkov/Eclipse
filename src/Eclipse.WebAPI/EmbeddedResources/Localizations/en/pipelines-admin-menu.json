@@ -29,6 +29,7 @@
     "Pipelines:Admin:Promotions:Post:Cancelled": "Cancelled promotion preparation.",
     "Pipelines:Admin:Promotions:Post:Confirm{0}": "Send this code {0} to confirm post",
     "Pipelines:Admin:Promotions:Post:Confirmed": "Successfully confirmed, post is now sending to the users",
-    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Invalid code, post not sent."
+    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Invalid code, post not sent.",
+    "Pipelines:Admin:Promotions:Post:MessageNotFound": "Message not found, post not sent."
   }
 }
