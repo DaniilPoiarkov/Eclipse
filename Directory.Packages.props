@@ -74,6 +74,5 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.1" />
     <PackageVersion Include="ZiggyCreatures.FusionCache" Version="2.0.0" />
     <PackageVersion Include="ZiggyCreatures.FusionCache.Serialization.NewtonsoftJson" Version="2.0.0" />
-    <PackageVersion Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.0.0" />
   </ItemGroup>
 </Project>
