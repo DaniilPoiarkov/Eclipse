@@ -93,4 +93,26 @@ public sealed class ReportServiceTests
                     && options.Height == 300)
         );
     }
+
+    [Fact]
+    public async Task GetMoodReportAsync_WhenNoRecordsExists_ThenSetsDefaultEmptyOptions()
+    {
+        _moodRecordRepository.GetByExpressionAsync(
+            Arg.Any<Expression<Func<MoodRecord, bool>>>()
+        ).Returns([]);
+
+        var userId = Guid.NewGuid();
+
+        var from = new DateTime(2024, 10, 1);
+        var to = new DateTime(2024, 10, 7);
+
+        await _sut.GetMoodReportAsync(userId, new MoodReportOptions { From = from, To = to });
+
+        _plotGenerator.Received().Create(
+            Arg.Is<PlotOptions<DateTime, int>>(o => o.Left != null
+                && o.Left.Values.SequenceEqual(new int[2])
+                && o.Bottom != null
+                && o.Bottom.Values.SequenceEqual(new DateTime[] { from, to })
+        ));
+    }
 }

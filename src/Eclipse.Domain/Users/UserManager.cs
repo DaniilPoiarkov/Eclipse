@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Results;
+﻿using Eclipse.Common.Clock;
+using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Repositories;
 
 namespace Eclipse.Domain.Users;
@@ -7,9 +8,12 @@ public sealed class UserManager
 {
     private readonly IUserRepository _repository;
 
-    public UserManager(IUserRepository repository)
+    private readonly ITimeProvider _timeProvider;
+
+    public UserManager(IUserRepository repository, ITimeProvider timeProvider)
     {
         _repository = repository;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>Creates the user asynchronous.</summary>
@@ -26,7 +30,7 @@ public sealed class UserManager
     {
         var request = new CreateUserRequest
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             Name = name,
             Surname = surname,
             UserName = userName,
@@ -59,7 +63,7 @@ public sealed class UserManager
             return UserDomainErrors.DuplicateData(nameof(request.ChatId), request.ChatId);
         }
 
-        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, request.NewRegistered);
+        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, _timeProvider.Now, request.NewRegistered);
         user.NotificationsEnabled = request.NotificationsEnabled;
 
         user.SetGmt(request.Gmt);

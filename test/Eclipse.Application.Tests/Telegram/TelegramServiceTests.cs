@@ -65,10 +65,7 @@ public sealed class TelegramServiceTests
 
         result.IsSuccess.Should().BeFalse();
 
-        var error = result.Error;
-        error.Code.Should().Be(expectedError.Code);
-        error.Description.Should().Be(expectedError.Description);
-        error.Args.Should().BeEquivalentTo(expectedError.Args);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 
     [Theory]

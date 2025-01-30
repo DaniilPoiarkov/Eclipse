@@ -11,13 +11,15 @@ internal sealed class ReportsService : IReportsService
 
     private readonly IPlotGenerator _plotGenerator;
 
-    private static readonly int _width = 550;
+    private const int _width = 550;
 
-    private static readonly int _height = 300;
+    private const int _height = 300;
 
-    private static readonly string _yAxisTitle = "Score";
+    private const string _yAxisTitle = "Score";
 
-    private static readonly double _margin = 0.5d;
+    private const double _margin = 0.5d;
+
+    private const int _emptyChartArray = 2;
 
     public ReportsService(
         IMoodRecordRepository moodRecordRepository,
@@ -49,9 +51,13 @@ internal sealed class ReportsService : IReportsService
             index++;
         }
 
-        var title = days.IsNullOrEmpty()
-            ? $"{options.From:dd.MM}-{options.To:dd.MM}"
-            : $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
+        if (days.IsNullOrEmpty())
+        {
+            days = [options.From, options.To];
+            states = new int[_emptyChartArray];
+        }
+
+        var title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}";
 
         var option = new PlotOptions<DateTime, int>
         {

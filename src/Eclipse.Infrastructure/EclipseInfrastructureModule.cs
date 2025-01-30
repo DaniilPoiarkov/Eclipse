@@ -28,21 +28,17 @@ public static class EclipseInfrastructureModule
 {
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services)
     {
-#pragma warning disable EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         services
             .AddSerilogIntegration()
             .AddCache()
             .AddQuartzIntegration()
-            .AddGoogleIntegration()
-            .AddHybridCache();
-#pragma warning restore EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            .AddGoogleIntegration();
 
         services
             .AddSingleton<IExcelManager, ExcelManager>()
             .AddSingleton<IBackgroundJobManager, BackgroundJobManager>()
-            .AddSingleton<IPlotGenerator, PlotGenerator>();
-
-        services.AddSingleton<ITimeProvider, UtcNowTimeProvider>();
+            .AddSingleton<IPlotGenerator, PlotGenerator>()
+            .AddSingleton<ITimeProvider, UtcNowTimeProvider>();
 
         return services;
     }

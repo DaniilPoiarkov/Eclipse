@@ -36,6 +36,9 @@ public abstract class Pipeline
     protected static IResult Menu(IEnumerable<InlineKeyboardButton> buttons, string message) =>
         Menu([buttons], message);
 
+    protected static IResult Menu(IReplyMarkup menu, string message) =>
+        new MenuResult(message, menu);
+
     protected static IResult Menu(IEnumerable<IEnumerable<KeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
     {
         var hasButtons = buttons.SelectMany(x => x)

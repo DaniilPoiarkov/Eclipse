@@ -1,6 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
+
+using System.Globalization;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
 
@@ -9,9 +12,12 @@ internal sealed class RemindersListPipeline : RemindersPipelineBase
 {
     private readonly IUserService _userService;
 
-    public RemindersListPipeline(IUserService userService)
+    private readonly ITimeProvider _timeProvider;
+
+    public RemindersListPipeline(IUserService userService, ITimeProvider timeProvider)
     {
         _userService = userService;
+        _timeProvider = timeProvider;
     }
 
     protected override void Initialize()
@@ -35,12 +41,17 @@ internal sealed class RemindersListPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders:List:Empty"]);
         }
 
-        var message = Localizer[
-            "Pipelines:Reminders:List:Pending{0}",
-            user.Reminders
-                .Select(r => $"🕑 {r.NotifyAt.Add(user.Gmt)} {r.Text}")
-                .Join("\n\r")
-        ];
+        var ordered = user.Reminders.OrderBy(r => r.NotifyAt);
+
+        var current = TimeOnly.FromDateTime(_timeProvider.Now);
+        var culture = CultureInfo.GetCultureInfo(user.Culture);
+
+        var reminders = ordered.Where(r => r.NotifyAt >= current)
+            .Concat(ordered.Where(r => r.NotifyAt < current))
+            .Select(r => $"🕑 {r.NotifyAt.Add(user.Gmt).ToString(culture)} {r.Text}")
+            .Join("\n\r");
+
+        var message = Localizer["Pipelines:Reminders:List:Pending{0}", reminders];
 
         return Menu(RemindersMenuButtons, message);
     }

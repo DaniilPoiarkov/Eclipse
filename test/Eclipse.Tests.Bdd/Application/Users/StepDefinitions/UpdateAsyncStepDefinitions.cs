@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users.Services;
+using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 
 using NSubstitute;
@@ -10,6 +11,8 @@ namespace Eclipse.Tests.Bdd.Application.Users.StepDefinitions;
 internal sealed class UpdateAsyncStepDefinitions
 {
     private readonly IUserRepository _repository;
+
+    private readonly ITimeProvider _timeProvider;
 
     private readonly UserUpdateDto _updateDto = new();
 
@@ -22,8 +25,9 @@ internal sealed class UpdateAsyncStepDefinitions
     public UpdateAsyncStepDefinitions()
     {
         _repository = Substitute.For<IUserRepository>();
+        _timeProvider = Substitute.For<ITimeProvider>();
 
-        var manager = new UserManager(_repository);
+        var manager = new UserManager(_repository, _timeProvider);
 
         _sut = new UserCreateUpdateService(manager, _repository);
     }
@@ -39,6 +43,7 @@ internal sealed class UpdateAsyncStepDefinitions
             row["Surname"],
             row["Username"],
             long.Parse(row["ChatId"]),
+            DateTime.UtcNow,
             bool.Parse(row["NewRegistered"]));
 
         _repository.FindAsync(_user.Id).ReturnsForAnyArgs(Task.FromResult<User?>(_user));

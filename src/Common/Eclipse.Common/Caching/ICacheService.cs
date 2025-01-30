@@ -15,4 +15,6 @@ public interface ICacheService
     Task DeleteAsync(CacheKey key, CancellationToken cancellationToken = default);
 
     Task DeleteByPrefixAsync(string prefix, CancellationToken cancellationToken = default);
+
+    Task PruneAsync(CancellationToken cancellationToken = default);
 }

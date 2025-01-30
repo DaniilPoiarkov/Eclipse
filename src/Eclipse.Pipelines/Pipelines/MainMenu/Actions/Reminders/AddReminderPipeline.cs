@@ -3,6 +3,8 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
+using Telegram.Bot.Types.ReplyMarkups;
+
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
 
 [Route("Menu:Reminders:Add", "/reminders_add")]
@@ -22,7 +24,7 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
 
     protected override void Initialize()
     {
-        RegisterStage(_ => Text(Localizer[$"{_pipelinePrefix}:AskForText"]));
+        RegisterStage(_ => Menu(new ReplyKeyboardRemove(), Localizer[$"{_pipelinePrefix}:AskForText"]));
         RegisterStage(AskForTime);
         RegisterStage(SaveReminder);
     }
@@ -56,7 +58,7 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
             cancellationToken
         );
 
-        return Text(Localizer[$"{_pipelinePrefix}:AskForTime"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer[$"{_pipelinePrefix}:AskForTime"]);
     }
 
     private async Task<IResult> SaveReminder(MessageContext context, CancellationToken cancellationToken = default)

@@ -38,8 +38,12 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
             }))
             .Build();
 
-        var time = _timeProvider.Now
-            .WithTime(notification.NotifyAt);
+        var time = _timeProvider.Now.WithTime(notification.NotifyAt);
+
+        if (time < _timeProvider.Now)
+        {
+            time = time.AddDays(1);
+        }
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)

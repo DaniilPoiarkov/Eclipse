@@ -2,6 +2,8 @@
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 
+using Telegram.Bot.Types.ReplyMarkups;
+
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
 [Route("Menu:MainMenu:Suggest", "/suggest")]
@@ -26,7 +28,7 @@ public sealed class SuggestPipeline : EclipsePipelineBase
             .Split(';', StringSplitOptions.RemoveEmptyEntries)
             .GetRandomItem();
 
-        return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Suggest", greeting]);
     }
 
     private async Task<IResult> ReceiveIdea(MessageContext context, CancellationToken cancellationToken = default)

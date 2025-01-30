@@ -42,6 +42,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
+    private readonly IUpdateProvider _updateProvider;
+
     private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
     private static readonly UpdateType[] _allowedUpdateTypes =
@@ -57,6 +59,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
+        IUpdateProvider updateProvider,
         IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
@@ -66,6 +69,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         _currentUser = currentUser;
         _updateParser = updateParser;
         _messageStore = messageStore;
+        _updateProvider = updateProvider;
         _localizer = localizer;
     }
 
@@ -86,6 +90,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         _currentUser.SetCurrentUser(context.User);
+        _updateProvider.Set(update);
 
         var result = await HandleAndGetResultAsync(botClient, context.Value, context, cancellationToken);
 

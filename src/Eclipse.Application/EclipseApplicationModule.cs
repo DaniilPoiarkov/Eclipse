@@ -24,6 +24,10 @@ using Eclipse.Application.MoodRecords;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.Core;
+using Eclipse.Application.Reminders.FinishTodoItems;
+using Eclipse.Application.Reminders.GoodMorning;
+using Eclipse.Application.Reminders.MoodReport;
 using Eclipse.Application.Reports;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
@@ -70,7 +74,8 @@ public static class EclipseApplicationModule
                 .AddTransient<IInboxMessageService, InboxMessageService>()
                 .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
                 .AddTransient<IReportsService, ReportsService>()
-                .AddTransient<IUserStatisticsService, UserStatisticsService>();
+                .AddTransient<IUserStatisticsService, UserStatisticsService>()
+            .AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services
             .AddTransient<IUserCreateUpdateService, UserCreateUpdateService>()
@@ -107,12 +112,15 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
-        services.AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
-
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)), publicOnly: false)
             .AsSelfWithInterfaces()
             .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IJobScheduler<,>)), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime());
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
 
@@ -124,9 +132,18 @@ public static class EclipseApplicationModule
         using var scope = app.Services.CreateAsyncScope();
 
         var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<RescheduleRemindersBackgroundJob>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<IBackgroundJobManager>>();
 
         await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
         logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
+
+        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(FinishTodoItemsJobRescheduler));
+
+        await manager.EnqueueAsync<GoodMorningJobRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(GoodMorningJobRescheduler));
+
+        await manager.EnqueueAsync<MoodReportJobRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(MoodReportJobRescheduler));
     }
 }

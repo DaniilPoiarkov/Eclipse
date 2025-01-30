@@ -2,6 +2,7 @@
 using Eclipse.Application.Tests.Users.TestData;
 using Eclipse.Application.Users;
 using Eclipse.Application.Users.Services;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
@@ -19,13 +20,16 @@ public sealed class UserCreateUpdateServiceTests
 {
     private readonly IUserRepository _repository;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly UserCreateUpdateService _sut;
 
     public UserCreateUpdateServiceTests()
     {
         _repository = Substitute.For<IUserRepository>();
+        _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new UserCreateUpdateService(new UserManager(_repository), _repository);
+        _sut = new UserCreateUpdateService(new UserManager(_repository, _timeProvider), _repository);
     }
 
     [Fact]
@@ -228,7 +232,7 @@ public sealed class UserCreateUpdateServiceTests
             UserName = string.Empty
         };
 
-        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId, true);
+        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId, DateTime.UtcNow, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 
