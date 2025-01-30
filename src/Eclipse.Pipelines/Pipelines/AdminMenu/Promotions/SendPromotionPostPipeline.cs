@@ -57,10 +57,15 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
         }
 
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes
+        };
+
         await _cacheService.SetAsync(
             $"promotions-post-message-{context.ChatId}",
             update.Message.Id,
-            CacheConsts.FiveMinutes,
+            options,
             cancellationToken
         );
 
@@ -87,10 +92,15 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
             .Select(_ => Random.Shared.Next(0, 10))
             .Aggregate(string.Empty, (s, i) => $"{s}{i}");
 
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes
+        };
+
         await _cacheService.SetAsync(
             $"promotions-post-confiramtion-code-{context.ChatId}",
             confirmationCode,
-            CacheConsts.FiveMinutes,
+            options,
             cancellationToken
         );
 

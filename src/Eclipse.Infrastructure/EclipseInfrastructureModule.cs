@@ -11,6 +11,7 @@ using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Plots;
 
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,9 @@ using Quartz;
 using Quartz.Logging;
 
 using Serilog;
+
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace Eclipse.Infrastructure;
 
@@ -95,10 +99,17 @@ public static class EclipseInfrastructureModule
             {
                 options.Configuration = connectionString;
             });
+
+            services.AddFusionCache()
+                .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                .WithDistributedCache(sp => sp.GetRequiredService<IDistributedCache>())
+                .AsHybridCache();
         }
         else
         {
-            services.AddDistributedMemoryCache();
+            services.AddFusionCache()
+                .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+                .AsHybridCache();
         }
 
         services.AddSingleton<ICacheService, CacheService>();
