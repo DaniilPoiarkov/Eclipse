@@ -55,15 +55,16 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
-        var messageKey = $"send-all-{context.ChatId}";
-
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
-            await _cacheService.DeleteAsync(messageKey, cancellationToken);
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        var message = await _cacheService.GetAndDeleteAsync<string>(messageKey, cancellationToken);
+        var message = await _cacheService.GetOrCreateAsync(
+            $"send-all-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
 
         if (message.IsNullOrEmpty())
         {
