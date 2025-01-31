@@ -17,10 +17,16 @@ internal sealed class CachedOutboxMessageRepository : CachedRepositoryBase<Outbo
 
     public Task<List<OutboxMessage>> GetNotProcessedAsync(int count, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-not-processed-{count}",
             () => Repository.GetNotProcessedAsync(count, cancellationToken),
-            CacheConsts.FiveMinutes,
+            options,
             cancellationToken
         );
     }

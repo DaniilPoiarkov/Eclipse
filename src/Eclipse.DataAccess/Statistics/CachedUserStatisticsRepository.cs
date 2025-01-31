@@ -12,10 +12,16 @@ internal sealed class CachedUserStatisticsRepository : CachedRepositoryBase<User
 
     public Task<UserStatistics?> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.OneDay,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-{userId}",
             () => Repository.FindByUserIdAsync(userId, cancellationToken),
-            CacheConsts.OneDay,
+            options,
             cancellationToken
         );
     }

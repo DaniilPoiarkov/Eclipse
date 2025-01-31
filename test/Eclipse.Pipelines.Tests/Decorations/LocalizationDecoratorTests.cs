@@ -1,11 +1,9 @@
 ﻿using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Core.Results;
-using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Decorations;
-using Eclipse.Tests.Generators;
 
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -18,11 +16,9 @@ namespace Eclipse.Pipelines.Tests.Decorations;
 
 public sealed class LocalizationDecoratorTests
 {
-    private readonly IUserRepository _repository;
+    private readonly ICurrentCulture _currentCulture;
 
     private readonly ICultureTracker _cultureTracker;
-
-    private readonly ICurrentCulture _currentCulture;
 
     private readonly Func<MessageContext, CancellationToken, Task<IResult>> _execution;
 
@@ -30,36 +26,43 @@ public sealed class LocalizationDecoratorTests
 
     public LocalizationDecoratorTests()
     {
-        _repository = Substitute.For<IUserRepository>();
-        _cultureTracker = Substitute.For<ICultureTracker>();
         _currentCulture = Substitute.For<ICurrentCulture>();
+        _cultureTracker = Substitute.For<ICultureTracker>();
 
         _execution = (_, _) => Task.FromResult<IResult>(new EmptyResult());
 
-        _sut = new LocalizationDecorator(_repository, _cultureTracker, _currentCulture);
+        _sut = new LocalizationDecorator(_currentCulture, _cultureTracker);
     }
 
-    [Fact]
-    public async Task Decorate_WhenLocalizationNotSpecified_ThenFetchingUserCulture()
+    [Theory]
+    [InlineData(1)]
+    public async Task Decorate_WhenCultureNotSpecified_ThenUsesDefaultCulture(long chatId)
     {
-        var user = UserGenerator.Get();
-        var services = Substitute.For<IServiceProvider>();
+        var context = new MessageContext(chatId, string.Empty, new TelegramUser(), Substitute.For<IServiceProvider>());
 
-        var context = new MessageContext(user.ChatId, string.Empty, new TelegramUser(), services);
+        _cultureTracker.GetAsync(chatId).ReturnsNull();
 
-        _cultureTracker.GetAsync(user.ChatId).ReturnsNull();
+        await _sut.Decorate(_execution, context);
 
-        _repository.FindByChatIdAsync(user.ChatId).Returns(user);
+        _currentCulture.Received().UsingCulture(null);
+
+        await _cultureTracker.Received().GetAsync(chatId);
+    }
+
+    [Theory]
+    [InlineData(1, "en")]
+    public async Task Decorate_WhenCultureSpecified_ThenUsesIt(long chatId, string culture)
+    {
+        var context = new MessageContext(chatId, string.Empty, new TelegramUser(), Substitute.For<IServiceProvider>());
+
+        _cultureTracker.GetAsync(chatId).Returns(culture);
 
         await _sut.Decorate(_execution, context);
 
         _currentCulture.Received().UsingCulture(
-            Arg.Is<CultureInfo>(x => x.Name == user.Culture)
+            Arg.Is<CultureInfo>(c => c.Name == culture)
         );
 
-        await _repository.Received().FindByChatIdAsync(user.ChatId);
-
-        await _cultureTracker.Received().GetAsync(user.ChatId);
-        await _cultureTracker.Received().ResetAsync(user.ChatId, user.Culture);
+        await _cultureTracker.Received().GetAsync(chatId);
     }
 }

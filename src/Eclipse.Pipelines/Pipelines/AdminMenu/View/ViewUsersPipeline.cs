@@ -24,6 +24,6 @@ internal sealed class ViewUsersPipeline : AdminPipelineBase
         var usersInfo = (await _userService.GetAllAsync(cancellationToken))
             .Select((user, index) => $"{++index} | {user.ChatId} | {user.Name} {user.UserName.FormattedOrEmpty(s => $"| @{s}")}");
 
-        return Text(string.Join(Environment.NewLine, usersInfo));
+        return Text($"{usersInfo.Join(Environment.NewLine)}");
     }
 }

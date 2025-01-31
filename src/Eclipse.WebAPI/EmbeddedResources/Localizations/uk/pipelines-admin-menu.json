@@ -29,6 +29,7 @@
     "Pipelines:Admin:Promotions:Post:Cancelled": "Скасовано підготовку посту.",
     "Pipelines:Admin:Promotions:Post:Confirm{0}": "Відправте цей код {0} аби підтвердити надсилання.",
     "Pipelines:Admin:Promotions:Post:Confirmed": "Успішно підтверджено, пост відправляється користувачам",
-    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Неправильний код, пост не відправляється."
+    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Неправильний код, пост не відправляється.",
+    "Pipelines:Admin:Promotions:Post:MessageNotFound": "Повідомлення не знайдено, пост не відправляється."
   }
 }

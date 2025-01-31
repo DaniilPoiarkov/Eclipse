@@ -9,27 +9,24 @@ internal sealed class CachedInboxMessageRepository : CachedRepositoryBase<InboxM
     public CachedInboxMessageRepository(IInboxMessageRepository repository, ICacheService cacheService)
         : base(repository, cacheService) { }
 
-    public Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
+    public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {
-        return Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
-    }
-
-    public Task<List<InboxMessage>> GetPendingAsync(int count, CancellationToken cancellationToken = default)
-    {
-        return CacheService.GetOrCreateAsync(
-            $"{GetPrefix()}-pending-{count}",
-            () => Repository.GetPendingAsync(count, cancellationToken),
-            CacheConsts.FiveMinutes,
-            cancellationToken
-        );
+        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
+        await Repository.DeleteSuccessfullyProcessedAsync(cancellationToken);
     }
 
     public Task<List<InboxMessage>> GetPendingAsync(int count, string? handlerName, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
+
         return CacheService.GetOrCreateAsync(
             $"{GetPrefix()}-pending-{handlerName}-{count}",
             () => Repository.GetPendingAsync(count, handlerName, cancellationToken),
-            CacheConsts.FiveMinutes,
+            options,
             cancellationToken
         );
     }

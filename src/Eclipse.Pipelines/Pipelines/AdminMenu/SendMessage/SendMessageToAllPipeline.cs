@@ -43,7 +43,12 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, CacheConsts.ThreeDays, cancellationToken);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+        };
+
+        await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, options, cancellationToken);
 
         return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
