@@ -75,21 +75,24 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
     private async Task<IResult> SendMessage(MessageContext context, CancellationToken cancellationToken)
     {
-        var chatIdKey = $"send-chat-{context.ChatId}";
-        var messageKey = $"send-message-{context.ChatId}";
-
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
-            await _cacheService.DeleteAsync(chatIdKey, cancellationToken);
-            await _cacheService.DeleteAsync(messageKey, cancellationToken);
-
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        var chatId = await _cacheService.GetAndDeleteAsync<long>(chatIdKey, cancellationToken);
-        var message = await _cacheService.GetAndDeleteAsync<string>(messageKey, cancellationToken);
+        var chatId = await _cacheService.GetOrCreateAsync<long>(
+            $"send-chat-{context.ChatId}",
+            () => Task.FromResult<long>(default),
+            cancellationToken: cancellationToken
+        );
 
-        if (message.IsNullOrEmpty())
+        var message = await _cacheService.GetOrCreateAsync<string>(
+            $"send-message-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
+
+        if (message.IsNullOrEmpty() || chatId == default)
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }

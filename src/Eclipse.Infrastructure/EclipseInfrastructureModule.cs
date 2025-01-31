@@ -101,12 +101,10 @@ public static class EclipseInfrastructureModule
 
         if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
         {
-            var connectionString = configuration.GetConnectionString("Redis")
-                ?? throw new InvalidOperationException("Redis connection string is not provided");
-
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = connectionString;
+                options.Configuration = configuration.GetConnectionString("Redis")
+                    ?? throw new InvalidOperationException("Redis connection string is not provided");
             });
 
             services.AddFusionCache()
