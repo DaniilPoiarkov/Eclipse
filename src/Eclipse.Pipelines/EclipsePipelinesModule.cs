@@ -106,10 +106,12 @@ public static class EclipsePipelinesModule
     {
         var options = serviceProvider.GetRequiredService<IOptions<PipelinesOptions>>();
         var appUrlProvider = serviceProvider.GetRequiredService<IAppUrlProvider>();
+        var logger = serviceProvider.GetRequiredService<ILogger<IAppUrlProvider>>();
 
         var webhookInfo = await client.GetWebhookInfo();
 
         var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{options.Value.ActiveEndpoint}";
+        logger.LogInformation("Attempt to set webhook {Webhook}", webhook);
 
         if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {
