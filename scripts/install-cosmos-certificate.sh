@@ -23,6 +23,3 @@ echo "Adding CosmosDB Cert to Trusted Certs..."
 chmod o+r /usr/share/ca-certificates/cosmos/emulator.crt
 echo "cosmos/emulator.crt" >> /etc/ca-certificates.conf
 update-ca-certificates
-
-echo "Running Eclipse.WebAPI"
-dotnet ./Eclipse.WebAPI.dll

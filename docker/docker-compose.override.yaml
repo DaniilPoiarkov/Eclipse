@@ -19,9 +19,7 @@ version: '3.9'
 
 # Specify your own telegram bot token (create one using botfather telegram bot)
 # Specify your telegram id to obtain access to admin menu
-# It is required to set App__SelfUrl
-# Download ngrok and use 'ngrok http http://localhost:8080' command to obtain temporary url
-# See ngrok documentation for more.
+# Download ngrok and paste your token as NGROK_AUTHTOKEN for ngrok service.
 
 # Now you can run .\build.ps1 command to up this project.
 
@@ -29,10 +27,13 @@ services:
   backend:
     environment:
       - Authorization__EclipseApiKey=my_sup3r_s3cr3t_ap1_k3y
-      - App__SelfUrl=<expose api with ngrok and paste it here>
       - Telegram__Token=<your bot token>
       - Telegram__Chat=<your telegram chat id>
       - Application__Chat=<your telegram chat id>
       - 'Google__Credentials=<json file>'
       - Sheets__SheetId=<your sheet id>
       - Settings__IsGoogleEnabled=false
+
+  ngrok:
+    environment:
+      NGROK_AUTHTOKEN: <your-token>

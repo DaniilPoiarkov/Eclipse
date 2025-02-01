@@ -3,10 +3,15 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 
-# Install curl for cosmos cert retrieval and fonts for reports
+# Install
+# curl for cosmos cert retrieval
+# fonts for reports 
+# jq for webhook configuration
 RUN apt-get update && \
     apt-get install -y curl && \ 
-    apt-get install -y fontconfig
+    apt-get install -y fontconfig && \
+    apt-get install -y jq && \
+    apt-get install -y dos2unix
 
 EXPOSE 80
 EXPOSE 443
@@ -28,10 +33,8 @@ RUN dotnet publish "Eclipse.WebAPI/Eclipse.WebAPI.csproj" -c Release -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ./entrypoint.sh ./entrypoint.sh
+COPY ./scripts .
 
-RUN apt-get update && \
-    apt-get install -y dos2unix && \
-    dos2unix ./entrypoint.sh
+RUN find *.sh -type f | xargs dos2unix
 
 ENTRYPOINT ["./entrypoint.sh", "cosmos.domain", "8081"]
