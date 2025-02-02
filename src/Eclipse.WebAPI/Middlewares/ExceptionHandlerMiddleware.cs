@@ -36,7 +36,7 @@ public sealed class ExceptionHandlerMiddleware : IExceptionHandler
             Detail = stringLocalizer["InternalError_Details"],
         };
 
-        _logger.LogError("Unhandled exception: {Error}", exception);
+        _logger.LogError(exception, "Unhandled exception: {Error}", exception.Message);
 
         return _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
