@@ -16,19 +16,19 @@ internal sealed class ScheduleNewUserCollectMoodRecordHandler : IEventHandler<Ne
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobOptions;
+    private readonly IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
 
     private readonly ILogger<ScheduleNewUserCollectMoodRecordHandler> _logger;
 
     public ScheduleNewUserCollectMoodRecordHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobOptions,
+        IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler,
         ILogger<ScheduleNewUserCollectMoodRecordHandler> logger)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
-        _jobOptions = jobOptions;
+        _jobScheduler = jobScheduler;
         _logger = logger;
     }
 
@@ -44,6 +44,6 @@ internal sealed class ScheduleNewUserCollectMoodRecordHandler : IEventHandler<Ne
 
         var scheduler = await _schedulerFactory.GetScheduler();
 
-        await _jobOptions.Schedule(scheduler, new CollectMoodRecordSchedulerOptions(user.Id, user.Gmt), cancellationToken);
+        await _jobScheduler.Schedule(scheduler, new CollectMoodRecordSchedulerOptions(user.Id, user.Gmt), cancellationToken);
     }
 }
