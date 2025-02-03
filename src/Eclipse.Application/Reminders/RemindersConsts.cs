@@ -10,5 +10,7 @@ internal static class RemindersConsts
 
     internal static TimeOnly Evening6PM = new(18, 0);
 
+    internal static TimeOnly Evening7PM = new(19, 0);
+
     internal static TimeOnly Evening730PM = new(19, 30);
 }

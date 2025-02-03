@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Url;
+using Eclipse.Application.Reminders.Core;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
-using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
@@ -61,11 +61,11 @@ public static class EclipsePipelinesModule
             .AsSelf()
             .WithTransientLifetime());
 
-        services.ConfigureOptions<QuatzOptionsConfiguration>();
-
         services
             .AddPipelinesHealthChecks()
             .AddTelegramIntegration();
+
+        services.AddTransient<IMoodRecordCollector, MoodRecordCollector>();
 
         return services;
     }
