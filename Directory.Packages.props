@@ -14,7 +14,7 @@
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
     <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
-    <PackageVersion Include="Polly" Version="8.5.1" />
+    <PackageVersion Include="Polly" Version="8.5.2" />
     <PackageVersion Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
     <PackageVersion Include="MediatR" Version="12.4.1" />
     <PackageVersion Include="MediatR.Contracts" Version="2.0.1" />
@@ -72,7 +72,7 @@
     <PackageVersion Include="Testcontainers.CosmosDb" Version="4.1.0" />
     <PackageVersion Include="Testcontainers.Redis" Version="4.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.1" />
-    <PackageVersion Include="ZiggyCreatures.FusionCache" Version="2.0.0" />
-    <PackageVersion Include="ZiggyCreatures.FusionCache.Serialization.NewtonsoftJson" Version="2.0.0" />
+    <PackageVersion Include="ZiggyCreatures.FusionCache" Version="2.1.0" />
+    <PackageVersion Include="ZiggyCreatures.FusionCache.Serialization.NewtonsoftJson" Version="2.1.0" />
   </ItemGroup>
 </Project>

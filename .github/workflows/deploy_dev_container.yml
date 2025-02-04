@@ -10,6 +10,12 @@ env:
 on:
   push:
     branches: develop
+    paths-ignore:
+      - 'scripts/**'
+      - 'docker/**'
+      - 'test/**'
+      - '*.md'
+      - 'LICENSE'
   workflow_dispatch:
 
 permissions:
