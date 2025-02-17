@@ -17,7 +17,7 @@ public class AuthorizationConfiguration : IConfigureOptions<AuthorizationOptions
             )
         );
 
-        options.DefaultPolicy = new AuthorizationPolicyBuilder(EclipseDefaults.AuthenticationScheme)//, JwtBearerDefaults.AuthenticationScheme
+        options.DefaultPolicy = new AuthorizationPolicyBuilder(EclipseDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser()
             .Build();
     }
