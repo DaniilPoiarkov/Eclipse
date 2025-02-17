@@ -5,12 +5,14 @@ using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
+using Eclipse.WebAPI.Options;
 using Eclipse.WebAPI.Session;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 using System.Text.Json.Serialization;
 
@@ -32,7 +34,8 @@ public static class EclipseWebApiModule
         var configuration = services.GetConfiguration();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(new JwtBearerOptionsConfiguration(configuration).Configure);
+            .AddJwtBearer(EclipseDefaults.AuthenticationScheme, new JwtBearerOptionsConfiguration(configuration).Configure)
+            .AddMicrosoftIdentityWebApi(configuration);
 
         services.AddAuthorization();
 
@@ -49,7 +52,6 @@ public static class EclipseWebApiModule
             .AddEndpointsApiExplorer();
 
         services
-            .AddScoped<ApiKeyAuthorizeAttribute>()
             .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
             .AddScoped<CurrentSessionResolverMiddleware>()
             .AddScoped<CurrentSession>()
@@ -89,8 +91,8 @@ public static class EclipseWebApiModule
                 .AddIpAddressFiveMinutesWindow();
         });
 
-        services.Configure<ApiKeyAuthorizationOptions>(
-            configuration.GetSection("Authorization")
+        services.Configure<AzureOAuthOptions>(
+            configuration.GetSection("AzureAd")
         );
 
         services.Configure<CultureList>(

@@ -1,5 +1,7 @@
 ﻿using Asp.Versioning.ApiExplorer;
 
+using Eclipse.WebAPI.Options;
+
 using Microsoft.Extensions.Options;
 
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -10,9 +12,12 @@ public sealed class SwaggerUIConfiguration : IConfigureOptions<SwaggerUIOptions>
 {
     private readonly IApiVersionDescriptionProvider _provider;
 
-    public SwaggerUIConfiguration(IApiVersionDescriptionProvider provider)
+    private readonly IOptions<AzureOAuthOptions> _options;
+
+    public SwaggerUIConfiguration(IApiVersionDescriptionProvider provider, IOptions<AzureOAuthOptions> options)
     {
         _provider = provider;
+        _options = options;
     }
 
     public void Configure(SwaggerUIOptions options)
@@ -24,5 +29,9 @@ public sealed class SwaggerUIConfiguration : IConfigureOptions<SwaggerUIOptions>
                 $"Eclipse API {description.GroupName.ToUpperInvariant()}. {(description.IsDeprecated ? "[Deprecated]" : "")}"
             );
         }
+
+        options.OAuthAppName("Eclipse");
+        options.OAuthClientId(_options.Value.ClientId);
+        options.OAuthUsePkce();
     }
 }

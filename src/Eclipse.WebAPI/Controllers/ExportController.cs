@@ -1,16 +1,16 @@
 ﻿using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Common.ContentTypes;
 using Eclipse.WebAPI.Constants;
-using Eclipse.WebAPI.Filters.Authorization;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[ApiKeyAuthorize]
 [Route("api/export")]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 [EnableRateLimiting(RateLimiterPolicies.IpAddress)]
 public sealed class ExportController : ControllerBase
 {

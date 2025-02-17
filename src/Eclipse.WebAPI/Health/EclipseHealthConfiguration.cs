@@ -1,4 +1,4 @@
-﻿using Eclipse.WebAPI.Filters.Endpoints;
+﻿using Eclipse.WebAPI.Constants;
 
 using HealthChecks.UI.Client;
 
@@ -17,7 +17,7 @@ public static class EclipseHealthConfiguration
         };
 
         app.MapHealthChecks("/_health-checks", options)
-            .AddEndpointFilter(new ApiKeyAuthorizeEndpointFilter())
+            .RequireAuthorization(AuthorizationPolicies.Admin)
             .WithOpenApi();
 
         return app;

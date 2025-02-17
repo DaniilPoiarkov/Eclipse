@@ -1,5 +1,5 @@
 ﻿using Eclipse.Pipelines.UpdateHandler;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Filters;
 
 using Microsoft.AspNetCore.Mvc;
 

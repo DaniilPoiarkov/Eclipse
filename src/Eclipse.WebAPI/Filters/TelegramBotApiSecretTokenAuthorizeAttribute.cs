@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Eclipse.WebAPI.Filters.Authorization;
+namespace Eclipse.WebAPI.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class TelegramBotApiSecretTokenAuthorizeAttribute : ApiKeyAuthorizeBaseAttribute

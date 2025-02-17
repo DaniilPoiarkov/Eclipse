@@ -1,17 +1,18 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Common.Results;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[ApiKeyAuthorize]
 [Route("api/telegram")]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 public sealed class TelegramController : ControllerBase
 {
     private readonly ITelegramService _service;

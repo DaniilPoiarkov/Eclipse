@@ -1,15 +1,16 @@
 ﻿using Eclipse.Application.Contracts.Telegram.Commands;
 using Eclipse.Common.Results;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Constants;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[ApiKeyAuthorize]
 [Route("api/commands")]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 public sealed class CommandsController : ControllerBase
 {
     private readonly ICommandService _commandService;
@@ -23,6 +24,7 @@ public sealed class CommandsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         return Ok(await _commandService.GetList(cancellationToken));

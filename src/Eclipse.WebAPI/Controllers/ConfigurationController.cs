@@ -2,6 +2,7 @@
 using Eclipse.WebAPI.Constants;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Eclipse.WebAPI.Controllers;
@@ -17,6 +18,7 @@ public sealed class ConfigurationController : ControllerBase
         _configurationService = configurationService;
     }
 
+    [OutputCache]
     [HttpGet("cultures")]
     [EnableRateLimiting(RateLimiterPolicies.IpAddressFiveMinutes)]
     public IActionResult GetCultures()
