@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Reminders.CollectMoodRecords;
 using Eclipse.Application.Reminders.Core;
-using Eclipse.Application.Reminders.FinishTodoItems;
 
 using Microsoft.Extensions.Logging;
 

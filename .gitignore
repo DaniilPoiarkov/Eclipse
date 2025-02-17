@@ -291,3 +291,6 @@ __pycache__/
 *.xsd.cs
 
 appsettings.Local.json
+
+.terraform
+*.tfvars

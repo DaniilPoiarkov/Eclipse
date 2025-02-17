@@ -2,8 +2,6 @@
 using Eclipse.Application.Reminders.Core;
 using Eclipse.Domain.Users.Events;
 
-using Microsoft.Extensions.Logging;
-
 using NSubstitute;
 
 using Quartz;
