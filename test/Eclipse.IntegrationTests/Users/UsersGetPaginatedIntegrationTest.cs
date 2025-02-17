@@ -16,10 +16,7 @@ namespace Eclipse.IntegrationTests.Users;
 public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
 {
     public UsersGetPaginatedIntegrationTest(WebAppFactoryWithTestcontainers factory)
-        : base(factory)
-    {
-        AddAppAuthorizationHeader();
-    }
+        : base(factory) { }
 
     //[Fact]
     public async Task GetPaginated_WhenFiltrationApplied_ThenProperRecordsReturned()
@@ -98,9 +95,7 @@ public sealed class UsersGetPaginatedIntegrationTest : IntegrationTestBase
             );
         }
 
-        return (await Task.WhenAll(insertings))
-            .Select(r => r.Value)
-            .ToArray();
+        return [.. (await Task.WhenAll(insertings)).Select(r => r.Value)];
     }
 
     private record ExpectedValues(int TotalCount, int Count, int Pages);

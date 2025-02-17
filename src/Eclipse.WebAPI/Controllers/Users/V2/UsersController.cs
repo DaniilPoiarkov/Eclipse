@@ -3,14 +3,14 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Linq;
 using Eclipse.WebAPI.Constants;
-using Eclipse.WebAPI.Filters.Authorization;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eclipse.WebAPI.Controllers.Users.V2;
 
 [ApiController]
-[ApiKeyAuthorize]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 [Route("api/v{version:apiVersion}/users")]
 [ApiVersion(ApiVersions.V2.Version, Deprecated = ApiVersions.V2.Deprecated)]
 public sealed class UsersController : ControllerBase

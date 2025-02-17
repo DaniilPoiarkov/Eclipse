@@ -2,16 +2,16 @@
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
-using Eclipse.WebAPI.Filters.Authorization;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[ApiKeyAuthorize]
 [Route("api/import")]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 [EnableRateLimiting(RateLimiterPolicies.IpAddress)]
 public sealed class ImportController : ControllerBase
 {
