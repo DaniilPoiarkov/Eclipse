@@ -8,7 +8,7 @@ resource "azurerm_resource_group" "resource_group_main" {
 }
 
 locals {
-  resource_group_name = azurerm_resource_group.resource_group_main.name
+  resource_group_name   = azurerm_resource_group.resource_group_main.name
   resource_group_id   = azurerm_resource_group.resource_group_main.id
   location            = azurerm_resource_group.resource_group_main.location
 }
