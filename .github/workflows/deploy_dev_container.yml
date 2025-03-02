@@ -10,14 +10,11 @@ env:
 on:
   push:
     branches: develop
-    paths-ignore:
-      - 'scripts/**'
-      - 'docker/**'
-      - 'infrastructure/**'
-      - '.github/**'
-      - 'test/**'
-      - '*.md'
-      - 'LICENSE'
+    paths:
+      - 'src/**'
+      - '**.props'
+      - '**.sln'
+      - '**.dockerfile'
   workflow_dispatch:
 
 permissions:
