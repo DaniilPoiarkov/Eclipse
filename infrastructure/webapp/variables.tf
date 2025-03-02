@@ -9,8 +9,8 @@ variable "environment" {
 }
 
 variable "app_name" {
-  description   = "Application name"
-  type          = string
+  description = "Application name"
+  type        = string
 }
 
 variable "location" {

@@ -44,11 +44,11 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
   detector_type       = "FailureAnomaliesDetector"
   frequency           = "PT1M"
   description         = "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls."
-  
+
   scope_resource_ids = [
     azurerm_application_insights.app_insights.id
   ]
-  
+
   action_group {
     ids = [
       azurerm_monitor_action_group.monitor_action_group.id
@@ -56,9 +56,9 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
   }
 
   tags = {
-    environment                               = var.environment
-    source                                    = "terraform"
-    "hidden-link: /app-insights-resource-id"  = azurerm_application_insights.app_insights.id
+    environment                              = var.environment
+    source                                   = "terraform"
+    "hidden-link: /app-insights-resource-id" = azurerm_application_insights.app_insights.id
   }
 
   depends_on = [

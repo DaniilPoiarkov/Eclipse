@@ -24,40 +24,34 @@ resource "azurerm_linux_web_app" "app" {
     )
 
     application_stack {
-      docker_registry_url       = var.docker_url
-      docker_registry_username  = var.docker_username
-      docker_registry_password  = var.docker_password
-      docker_image_name         = var.app_name
+      docker_registry_url      = var.docker_url
+      docker_registry_username = var.docker_username
+      docker_registry_password = var.docker_password
+      docker_image_name        = var.app_name
     }
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT                      = var.environment
-    APPLICATIONINSIGHTS_CONNECTION_STRING       = var.app_insights_connection_string
-    ApplicationInsightsAgent_EXTENSION_VERSION  = "~3"
-    XDT_MicrosoftApplicationInsights_Mode       = "Recommended"
-
-    App__SelfUrl                                = "https://${var.app_name}-${var.environment}-app.azurewebsites.com"
-    ConnectionStrings__ApplicationInsights      = var.app_insights_connection_string
-    
-    Application__Chat                           = var.chat_id
-    Telegram__ChatId                            = var.chat_id
-    Telegram__Token                             = var.bot_token
-    Telegram__SecretToken                       = var.secret_token
-
-    Authorization__JwtBearer__Key               = var.authorization_key
-    Authorization__JwtBearer__Audience          = var.app_name
-    Authorization__JwtBearer__Issuer            = var.app_name
-
-    Google__Credentials                         = var.google_credentials
-    Sheets__SheetsId                            = var.sheets_id
-    Sheets__SuggestionsRange                    = var.sheets_range
-
-    Settings__IsRedisEnabled                    = var.settings_use_redis
-
-    Azure__CosmosOptions__Endpoint              = var.cosmos_endpoint
-    Azure__CosmosOptions__DatabaseId            = var.cosmos_database_id
-    Azure__CosmosOptions__Container             = var.cosmos_database_container
+    ASPNETCORE_ENVIRONMENT                     = var.environment
+    APPLICATIONINSIGHTS_CONNECTION_STRING      = var.app_insights_connection_string
+    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
+    XDT_MicrosoftApplicationInsights_Mode      = "Recommended"
+    App__SelfUrl                               = "https://${var.app_name}-${var.environment}-app.azurewebsites.com"
+    ConnectionStrings__ApplicationInsights     = var.app_insights_connection_string
+    Application__Chat                          = var.chat_id
+    Telegram__ChatId                           = var.chat_id
+    Telegram__Token                            = var.bot_token
+    Telegram__SecretToken                      = var.secret_token
+    Authorization__JwtBearer__Key              = var.authorization_key
+    Authorization__JwtBearer__Audience         = var.app_name
+    Authorization__JwtBearer__Issuer           = var.app_name
+    Google__Credentials                        = var.google_credentials
+    Sheets__SheetsId                           = var.sheets_id
+    Sheets__SuggestionsRange                   = var.sheets_range
+    Settings__IsRedisEnabled                   = var.settings_use_redis
+    Azure__CosmosOptions__Endpoint             = var.cosmos_endpoint
+    Azure__CosmosOptions__DatabaseId           = var.cosmos_database_id
+    Azure__CosmosOptions__Container            = var.cosmos_database_container
   }
 
   sticky_settings {
@@ -70,7 +64,7 @@ resource "azurerm_linux_web_app" "app" {
   }
 
   identity {
-    type = "UserAssigned"
+    type         = "UserAssigned"
     identity_ids = var.identities
   }
 
