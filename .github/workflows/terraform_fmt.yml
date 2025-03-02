@@ -2,8 +2,9 @@ name: "Terraform formatting check"
 
 on:
   pull_request:
+    branches: develop
     paths:
-      - 'infrastructure/'
+      - 'infrastructure/**'
 
 jobs:
   fmt:
