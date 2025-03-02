@@ -1,0 +1,147 @@
+variable "location" {
+  description = "Azure location for all resources"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment"
+  type        = string
+}
+
+variable "app_name" {
+  description = "Application name"
+  type        = string
+}
+
+variable "service_plan_sku_name" {
+  description = "App service plan"
+  type        = string
+}
+
+variable "os_type" {
+  description = "App service plan os"
+  type        = string
+  default     = "Linux"
+}
+
+variable "bot_token" {
+  description = "Bot token"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "chat_id" {
+  description = "Administrator chat id"
+  type        = number
+  sensitive   = true
+}
+
+variable "authorization_key" {
+  description = "Secret key"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "secret_token" {
+  description = "Secret token"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "sheets_id" {
+  description = "Sheets id"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "sheets_range" {
+  description = "Suggestions sheets range"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "settings_use_redis" {
+  description = "Create and use redis cache"
+  type        = bool
+}
+
+variable "google_credentials_path" {
+  description = "Google credentials path"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "docker_url" {
+  description = "Docker url"
+  type        = string
+  default     = "SHOULD_BE_SET"
+}
+
+variable "docker_username" {
+  description = "Docker username"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "docker_password" {
+  description = "Docker passwork"
+  type        = string
+  sensitive   = true
+  default     = "SHOULD_BE_SET"
+}
+
+variable "cosmos_offer_type" {
+  description = "Cosmos db offer type"
+  type        = string
+  default     = "Standard"
+}
+
+variable "cosmos_kind" {
+  description = "Cosmos db kind. Allowed: GlobalDocumentDB, MongoDB, Parse. Default: GlobalDocumentDB"
+  type        = string
+  default     = "GlobalDocumentDB"
+}
+
+variable "cosmos_consistency" {
+  description = "Cosmos db consistency"
+  type        = string
+  default     = "Session"
+}
+
+variable "cosmos_free_tier" {
+  description = "Cosmos db free tier"
+  type        = bool
+  default     = true
+}
+
+variable "failover_priority" {
+  description = "Failover priority for cosmosdb account"
+  type        = number
+}
+
+variable "cosmos_container" {
+  description = "Cosmos container"
+  type        = string
+}
+
+variable "partiton_paths" {
+  description = "Cosmos container partition paths"
+  type        = list(string)
+}
+
+variable "database_throughput" {
+  description = "Database throughput"
+  type        = number
+}
+
+variable "container_throughput" {
+  description = "Container throughput"
+  type        = number
+}
