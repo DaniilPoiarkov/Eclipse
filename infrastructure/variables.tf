@@ -1,3 +1,9 @@
+variable "subscription_id" {
+  description = "subscription id"
+  type        = string
+  sensitive   = true
+}
+
 variable "location" {
   description = "Azure location for all resources"
   type        = string
