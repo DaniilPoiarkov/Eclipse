@@ -26,4 +26,4 @@ jobs:
     
       - name: check
         if: steps.fmt.outcome != ''
-        run: echo 'Formatting and styling failed!' && exit 1
+        run: exit 1
