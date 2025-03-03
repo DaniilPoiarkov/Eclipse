@@ -23,7 +23,3 @@ jobs:
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check -recursive
-    
-      - name: check
-        if: steps.fmt.outcome != ''
-        run: exit 1
