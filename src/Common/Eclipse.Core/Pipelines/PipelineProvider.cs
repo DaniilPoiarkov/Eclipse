@@ -93,7 +93,7 @@ internal sealed class PipelineProvider : IPipelineProvider
 
         var context = new ValidationContext(scope.ServiceProvider, _currentUser.GetCurrentUser());
 
-        results = validationAttributes.Select(a => a.Validate(context)).ToArray();
+        results = [.. validationAttributes.Select(a => a.Validate(context))];
 
         return results.All(result => result.IsSucceded);
     }

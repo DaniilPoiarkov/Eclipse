@@ -24,9 +24,7 @@ internal sealed class UserReadService : IUserReadService
     {
         var users = await _repository.GetAllAsync(cancellationToken);
 
-        return users
-            .Select(u => u.ToDto())
-            .ToList();
+        return [.. users.Select(u => u.ToDto())];
     }
 
     public async Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)

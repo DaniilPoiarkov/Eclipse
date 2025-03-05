@@ -41,7 +41,7 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
             .ToString();
     }
 
-    protected List<InlineKeyboardButton[]> BuildButtons(IEnumerable<TodoItemDto> items)
+    protected InlineKeyboardButton[][] BuildButtons(IEnumerable<TodoItemDto> items)
     {
         var buttons = items
             .Select(item => InlineKeyboardButton.WithCallbackData(
@@ -49,9 +49,8 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
                     ? item.Text
                     : $"{item.Text[..23]}..", $"{item.Id}"))
             .Select(button => new InlineKeyboardButton[] { button })
-            .ToList();
-
-        buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
+            .Append([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")])
+            .ToArray();
 
         return buttons;
     }
