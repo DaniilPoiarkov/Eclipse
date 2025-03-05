@@ -99,12 +99,6 @@ variable "app_insights_connection_string" {
   sensitive   = true
 }
 
-variable "identities" {
-  description = "Identity ids"
-  type        = list(string)
-  default     = []
-}
-
 variable "cosmos_endpoint" {
   description = "CosmosDb endpoint"
   type        = string
@@ -117,5 +111,10 @@ variable "cosmos_database_id" {
 
 variable "cosmos_database_container" {
   description = "Cosmos container"
+  type        = string
+}
+
+variable "image_name" {
+  description = "Image name"
   type        = string
 }

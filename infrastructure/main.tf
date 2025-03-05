@@ -27,15 +27,6 @@ module "alerts" {
   ]
 }
 
-module "identity" {
-  source              = "./identity"
-  app_name            = var.app_name
-  environment         = var.environment
-  resource_group_id   = local.resource_group_id
-  resource_group_name = local.resource_group_name
-  location            = var.location
-}
-
 module "database" {
   source               = "./database"
   resource_group_name  = local.resource_group_name
@@ -53,8 +44,7 @@ module "database" {
   failover_priority    = var.failover_priority
 
   depends_on = [
-    azurerm_resource_group.resource_group_main,
-    module.identity
+    azurerm_resource_group.resource_group_main
   ]
 }
 
@@ -79,16 +69,29 @@ module "web-app" {
   cosmos_database_container      = var.cosmos_container
   cosmos_database_id             = module.database.database_name
   cosmos_endpoint                = module.database.cosmos_endpoint
+  image_name                     = var.image_name
   google_credentials             = file(var.google_credentials_path)
-
-  identities = [
-    module.identity.cosmos_identity.id
-  ]
 
   depends_on = [
     azurerm_resource_group.resource_group_main,
     module.alerts,
-    module.identity,
     module.database
+  ]
+}
+
+module "roles" {
+  source = "./roles"
+  resource_group_name = local.resource_group_name
+  cosmos_principal    = module.web-app.app_principal_id
+  account_name        = module.database.account_name
+  scope               = module.database.account_id
+  
+  assignable_scopes   = [
+    module.database.account_id
+  ]
+
+  depends_on = [
+    module.database,
+    module.web-app
   ]
 }

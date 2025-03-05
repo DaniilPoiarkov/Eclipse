@@ -151,3 +151,8 @@ variable "container_throughput" {
   description = "Container throughput"
   type        = number
 }
+
+variable "image_name" {
+  description = "Image name"
+  type        = string
+}

@@ -27,7 +27,7 @@ resource "azurerm_linux_web_app" "app" {
       docker_registry_url      = var.docker_url
       docker_registry_username = var.docker_username
       docker_registry_password = var.docker_password
-      docker_image_name        = var.app_name
+      docker_image_name        = var.image_name
     }
   }
 
@@ -36,10 +36,10 @@ resource "azurerm_linux_web_app" "app" {
     APPLICATIONINSIGHTS_CONNECTION_STRING      = var.app_insights_connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
     XDT_MicrosoftApplicationInsights_Mode      = "Recommended"
-    App__SelfUrl                               = "https://${var.app_name}-${var.environment}-app.azurewebsites.com"
+    App__SelfUrl                               = "https://${var.app_name}-${var.environment}-app.azurewebsites.net"
     ConnectionStrings__ApplicationInsights     = var.app_insights_connection_string
     Application__Chat                          = var.chat_id
-    Telegram__ChatId                           = var.chat_id
+    Telegram__Chat                             = var.chat_id
     Telegram__Token                            = var.bot_token
     Telegram__SecretToken                      = var.secret_token
     Authorization__JwtBearer__Key              = var.authorization_key
@@ -64,8 +64,7 @@ resource "azurerm_linux_web_app" "app" {
   }
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = var.identities
+    type = "SystemAssigned"
   }
 
   depends_on = [
