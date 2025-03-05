@@ -80,13 +80,13 @@ module "web-app" {
 }
 
 module "roles" {
-  source = "./roles"
+  source              = "./roles"
   resource_group_name = local.resource_group_name
   cosmos_principal    = module.web-app.app_principal_id
   account_name        = module.database.account_name
   scope               = module.database.account_id
-  
-  assignable_scopes   = [
+
+  assignable_scopes = [
     module.database.account_id
   ]
 
