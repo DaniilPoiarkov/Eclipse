@@ -21,13 +21,8 @@ internal static class UserExtensions
             Gmt = value.Gmt,
             CreatedAt = value.CreatedAt,
 
-            Reminders = value.Reminders
-                .Select(r => r.ToDto())
-                .ToList(),
-
-            TodoItems = value.TodoItems
-                .Select(i => i.ToDto())
-                .ToList(),
+            Reminders = [.. value.Reminders.Select(r => r.ToDto())],
+            TodoItems = [.. value.TodoItems.Select(i => i.ToDto())],
         };
     }
 

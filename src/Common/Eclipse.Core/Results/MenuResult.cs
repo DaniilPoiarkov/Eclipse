@@ -8,9 +8,9 @@ public sealed class MenuResult : ResultBase
 {
     public string Message { get; }
 
-    public IReplyMarkup Menu { get; }
+    public ReplyMarkup Menu { get; }
 
-    public MenuResult(string message, IReplyMarkup menu)
+    public MenuResult(string message, ReplyMarkup menu)
     {
         Message = message;
         Menu = menu;

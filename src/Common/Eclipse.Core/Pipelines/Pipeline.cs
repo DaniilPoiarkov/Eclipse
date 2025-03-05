@@ -30,13 +30,7 @@ public abstract class Pipeline
     protected static IResult Multiple(params IResult[] results) =>
         new MultipleActionsResult(results);
 
-    protected static IResult Menu(IEnumerable<KeyboardButton> buttons, string message, string inputPlaceholder = "", bool resize = true) =>
-        Menu([buttons], message, inputPlaceholder, resize);
-
-    protected static IResult Menu(IEnumerable<InlineKeyboardButton> buttons, string message) =>
-        Menu([buttons], message);
-
-    protected static IResult Menu(IReplyMarkup menu, string message) =>
+    protected static IResult Menu(ReplyMarkup menu, string message) =>
         new MenuResult(message, menu);
 
     protected static IResult Menu(IEnumerable<IEnumerable<KeyboardButton>> buttons, string message, string inputPlaceholder = "", bool resize = true)
@@ -54,21 +48,6 @@ public abstract class Pipeline
             InputFieldPlaceholder = inputPlaceholder,
             ResizeKeyboard = resize
         };
-
-        return new MenuResult(message, menu);
-    }
-
-    protected static IResult Menu(IEnumerable<IEnumerable<InlineKeyboardButton>> buttons, string message)
-    {
-        var hasButtons = buttons.SelectMany(x => x)
-            .Any();
-
-        if (!hasButtons)
-        {
-            return Text(message);
-        }
-
-        var menu = new InlineKeyboardMarkup(buttons);
 
         return new MenuResult(message, menu);
     }
