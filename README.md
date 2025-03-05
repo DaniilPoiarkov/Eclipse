@@ -122,6 +122,7 @@ Integration tests also isolated in separate assembly called **Eclipse.Integratio
 * MiniExcel
 * ScottPlot
 * Docker
+* Terraform
 
 ### Testing
 * NSubstitute
@@ -135,6 +136,9 @@ Integration tests also isolated in separate assembly called **Eclipse.Integratio
 ## Deployment and CICD
 * GitHub actions
 * Azure App Service
+* Terraform
+
+Terraform used for cloud provisioning.
 
 ### PR policy
 Includes build, test, and generate result and coverage reports steps, which will be attached as a comments by _github-actions bot_.
