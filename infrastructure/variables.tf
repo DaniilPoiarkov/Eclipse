@@ -97,7 +97,7 @@ variable "docker_username" {
 }
 
 variable "docker_password" {
-  description = "Docker passwork"
+  description = "Docker password"
   type        = string
   sensitive   = true
   default     = "SHOULD_BE_SET"
@@ -154,5 +154,10 @@ variable "container_throughput" {
 
 variable "image_name" {
   description = "Image name"
+  type        = string
+}
+
+variable "email_receiver" {
+  description = "Email receiver"
   type        = string
 }

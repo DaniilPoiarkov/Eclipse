@@ -21,6 +21,7 @@ module "alerts" {
   environment         = var.environment
   app_name            = var.app_name
   application_type    = "web"
+  email_receiver      = var.email_receiver
 
   depends_on = [
     azurerm_resource_group.resource_group_main

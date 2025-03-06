@@ -14,6 +14,16 @@ resource "azurerm_monitor_action_group" "monitor_action_group" {
   name                = "${var.app_name}-${var.environment}-ag"
   short_name          = "${var.app_name}-ag"
 
+  email_receiver {
+    name          = "Send email"
+    email_address = var.email_receiver
+  }
+
+  azure_app_push_receiver {
+    name          = "Push notification"
+    email_address = var.email_receiver
+  }
+
   tags = {
     environment = var.environment
     source      = "terraform"
