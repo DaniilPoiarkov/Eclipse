@@ -15,10 +15,10 @@ locals {
 }
 
 module "entraid" {
-  source = "./entraid"
-  app_name = var.app_name
-  environment = var.environment
-  spa_redirect_uris = [ "https://localhost:7236/swagger/oauth2-redirect.html" ]
+  source            = "./entraid"
+  app_name          = var.app_name
+  environment       = var.environment
+  spa_redirect_uris = ["https://localhost:7236/swagger/oauth2-redirect.html"]
 }
 
 # module "alerts" {
