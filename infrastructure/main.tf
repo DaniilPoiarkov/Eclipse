@@ -114,7 +114,7 @@ module "roles" {
 module "redirection" {
   source              = "./redirection"
   app_registration_id = module.entraid.app_registration_id
-  
+
   spa_redirect_uris = [
     "https://${module.web-app.app_hostname}/swagger/oauth2-redirect.html"
   ]
