@@ -52,6 +52,11 @@ resource "azurerm_linux_web_app" "app" {
     Azure__CosmosOptions__Endpoint             = var.cosmos_endpoint
     Azure__CosmosOptions__DatabaseId           = var.cosmos_database_id
     Azure__CosmosOptions__Container            = var.cosmos_database_container
+    AzureAd__ClientId                          = var.azuread_client_id
+    AzureAd__TenantId                          = var.tenant_id
+    AzureAd__Urls__Authorization               = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/authorize"
+    AzureAd__Urls__Token                       = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
+    AzureAd__Urls__Refresh                     = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
   }
 
   sticky_settings {

@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_resource_group" "resource_group_main" {
   location = var.location
   name     = "rg-${var.app_name}-${var.environment}"
@@ -9,6 +11,8 @@ resource "azurerm_resource_group" "resource_group_main" {
 }
 
 locals {
+  user_object_id      = data.azurerm_client_config.current.object_id
+  tenant_id           = data.azurerm_client_config.current.tenant_id
   resource_group_name = azurerm_resource_group.resource_group_main.name
   resource_group_id   = azurerm_resource_group.resource_group_main.id
   location            = azurerm_resource_group.resource_group_main.location
@@ -21,6 +25,7 @@ module "alerts" {
   environment         = var.environment
   app_name            = var.app_name
   application_type    = "web"
+  email_receiver      = var.email_receiver
 
   depends_on = [
     azurerm_resource_group.resource_group_main
@@ -48,6 +53,13 @@ module "database" {
   ]
 }
 
+module "entraid" {
+  source          = "./entraid"
+  app_name        = var.app_name
+  environment     = var.environment
+  owner_object_id = local.user_object_id
+}
+
 module "web-app" {
   source                         = "./webapp"
   resource_group_name            = local.resource_group_name
@@ -71,11 +83,14 @@ module "web-app" {
   cosmos_endpoint                = module.database.cosmos_endpoint
   image_name                     = var.image_name
   google_credentials             = file(var.google_credentials_path)
+  azuread_client_id              = module.entraid.app_client_id
+  tenant_id                      = local.tenant_id
 
   depends_on = [
     azurerm_resource_group.resource_group_main,
     module.alerts,
-    module.database
+    module.database,
+    module.entraid
   ]
 }
 
@@ -92,6 +107,20 @@ module "roles" {
 
   depends_on = [
     module.database,
+    module.web-app
+  ]
+}
+
+module "redirection" {
+  source              = "./redirection"
+  app_registration_id = module.entraid.app_registration_id
+
+  spa_redirect_uris = [
+    "https://${module.web-app.app_hostname}/swagger/oauth2-redirect.html"
+  ]
+
+  depends_on = [
+    module.entraid,
     module.web-app
   ]
 }
