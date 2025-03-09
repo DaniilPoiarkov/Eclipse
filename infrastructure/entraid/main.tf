@@ -1,5 +1,3 @@
-data "azuread_client_config" "current" {}
-
 resource "azuread_application_registration" "app" {
   display_name     = "${var.app_name} ${var.environment}"
   sign_in_audience = "AzureADMyOrg"
@@ -7,13 +5,7 @@ resource "azuread_application_registration" "app" {
 
 resource "azuread_application_owner" "owner" {
   application_id  = azuread_application_registration.app.id
-  owner_object_id = data.azuread_client_config.current.object_id
-}
-
-resource "azuread_application_redirect_uris" "spa" {
-  application_id = azuread_application_registration.app.id
-  type           = "SPA"
-  redirect_uris  = var.spa_redirect_uris
+  owner_object_id = var.owner_object_id
 }
 
 resource "random_uuid" "role_admin" {}
@@ -42,12 +34,12 @@ resource "azuread_application_permission_scope" "default" {
 data "azuread_application_published_app_ids" "well_known" {}
 
 data "azuread_service_principal" "msgraph" {
-  client_id    = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
+  client_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 }
 
 resource "azuread_application_api_access" "api_access" {
   application_id = azuread_application_registration.app.id
-  api_client_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
+  api_client_id  = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 
   scope_ids = [
     data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.Read"]

@@ -8,7 +8,7 @@ variable "environment" {
   type        = string
 }
 
-variable "spa_redirect_uris" {
-  description = "SPA app redirect uris"
-  type        = list(string)
+variable "owner_object_id" {
+  description = "Owner of the app registration"
+  type        = string
 }

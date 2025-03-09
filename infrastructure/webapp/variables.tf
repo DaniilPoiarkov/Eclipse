@@ -118,3 +118,13 @@ variable "image_name" {
   description = "Image name"
   type        = string
 }
+
+variable "azuread_client_id" {
+  description = "AzureAd Client Id"
+  type        = string
+}
+
+variable "tenant_id" {
+  description = "Tenant id"
+  type        = string
+}
