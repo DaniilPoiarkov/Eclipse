@@ -1,6 +1,6 @@
 ﻿using Azure.Identity;
 
-using Eclipse.DataAccess.CosmosDb;
+using Eclipse.DataAccess.Cosmos;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;

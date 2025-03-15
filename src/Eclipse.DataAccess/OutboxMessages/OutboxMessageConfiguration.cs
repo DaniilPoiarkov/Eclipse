@@ -1,28 +1,28 @@
-﻿using Eclipse.DataAccess.CosmosDb;
-using Eclipse.Domain.InboxMessages;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.OutboxMessages;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.DataAccess.Configurations;
+namespace Eclipse.DataAccess.OutboxMessages;
 
-internal sealed class InboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
+internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
     private readonly IOptions<CosmosDbContextOptions> _options;
 
-    public InboxMessageConfiguration(IOptions<CosmosDbContextOptions> options)
+    public OutboxMessageConfiguration(IOptions<CosmosDbContextOptions> options)
     {
         _options = options;
     }
 
-    public void Configure(EntityTypeBuilder<InboxMessage> builder)
+    public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
         builder.ToContainer(_options.Value.Container)
             .HasPartitionKey(m => m.Id);
 
         builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(InboxMessage));
+            .HasValue(nameof(OutboxMessage));
 
         builder.HasDiscriminatorInJsonId();
     }
