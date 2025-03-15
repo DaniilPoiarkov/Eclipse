@@ -1,4 +1,4 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Eclipse.DataAccess.Cosmos;
 using Eclipse.DataAccess.Repositories;
 using Eclipse.Domain.OutboxMessages;
 
@@ -8,9 +8,8 @@ namespace Eclipse.DataAccess.OutboxMessages;
 
 internal sealed class OutboxMessageRepository : RepositoryBase<OutboxMessage>, IOutboxMessageRepository
 {
-    public OutboxMessageRepository(EclipseDbContext context) : base(context)
-    {
-    }
+    public OutboxMessageRepository(EclipseDbContext context)
+        : base(context) { }
 
     public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {

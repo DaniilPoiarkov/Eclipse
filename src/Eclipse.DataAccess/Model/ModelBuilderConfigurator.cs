@@ -1,4 +1,4 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Eclipse.DataAccess.Cosmos;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;

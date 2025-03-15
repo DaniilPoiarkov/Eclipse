@@ -1,11 +1,11 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Eclipse.DataAccess.Cosmos;
 using Eclipse.Domain.MoodRecords;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.DataAccess.Configurations;
+namespace Eclipse.DataAccess.MoodRecords;
 
 internal class MoodRecordConfiguration : IEntityTypeConfiguration<MoodRecord>
 {

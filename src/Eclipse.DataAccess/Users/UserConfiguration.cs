@@ -1,11 +1,11 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Eclipse.DataAccess.Cosmos;
 using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.DataAccess.Configurations;
+namespace Eclipse.DataAccess.Users;
 
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {

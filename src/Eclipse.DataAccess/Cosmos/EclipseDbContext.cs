@@ -5,18 +5,15 @@ using Eclipse.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Eclipse.DataAccess.CosmosDb;
+namespace Eclipse.DataAccess.Cosmos;
 
-#pragma warning disable CS8618
-
-public sealed class EclipseDbContext : DbContext
+internal sealed class EclipseDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
 
     public DbSet<MoodRecord> MoodRecords { get; set; }
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
-
 
     private readonly IModelBuilderConfigurator _modelBuilderConfigurator;
 

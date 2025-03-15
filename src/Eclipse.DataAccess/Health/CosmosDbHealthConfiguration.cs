@@ -1,4 +1,4 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Eclipse.DataAccess.Cosmos;
 
 using HealthChecks.CosmosDb;
 
