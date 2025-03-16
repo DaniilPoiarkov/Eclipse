@@ -1,5 +1,6 @@
 ﻿namespace Eclipse.DataAccess.Migrations;
 
+[AttributeUsage(AttributeTargets.Class)]
 internal sealed class MigrationAttribute : Attribute
 {
     public long Version { get; }

@@ -1,4 +1,5 @@
 ﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.DataAccess.Migrations;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
@@ -24,13 +25,16 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
 
     private readonly IEntityTypeConfiguration<InboxMessage> _inboxMessageConfiguration;
 
+    private readonly IEntityTypeConfiguration<VersionInfo> _versionInfoConfiguration;
+
     public ModelBuilderConfigurator(
         IOptions<CosmosDbContextOptions> options,
         IEntityTypeConfiguration<User> userConfiguration,
         IEntityTypeConfiguration<OutboxMessage> outboundMessageConfiguration,
         IEntityTypeConfiguration<MoodRecord> moodRecordConfiguration,
         IEntityTypeConfiguration<UserStatistics> userStatisticsConfiguration,
-        IEntityTypeConfiguration<InboxMessage> inboxMessageConfiguration)
+        IEntityTypeConfiguration<InboxMessage> inboxMessageConfiguration,
+        IEntityTypeConfiguration<VersionInfo> versionInfoConfiguration)
     {
         _options = options;
 
@@ -39,6 +43,7 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
         _moodRecordConfiguration = moodRecordConfiguration;
         _userStatisticsConfiguration = userStatisticsConfiguration;
         _inboxMessageConfiguration = inboxMessageConfiguration;
+        _versionInfoConfiguration = versionInfoConfiguration;
     }
 
     public void Configure(ModelBuilder modelBuilder)
@@ -48,6 +53,7 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
         modelBuilder.ApplyConfiguration(_moodRecordConfiguration);
         modelBuilder.ApplyConfiguration(_userStatisticsConfiguration);
         modelBuilder.ApplyConfiguration(_inboxMessageConfiguration);
+        modelBuilder.ApplyConfiguration(_versionInfoConfiguration);
 
         modelBuilder.HasDefaultContainer(_options.Value.Container);
     }

@@ -24,7 +24,7 @@ builder.Services
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
-    .ApplyMigrations()
+    .ApplyMigrations(typeof(EclipseDataAccessModule).Assembly)
     .AddInfrastructureModule();
 
 builder.Services.AddLocalization(localization =>
