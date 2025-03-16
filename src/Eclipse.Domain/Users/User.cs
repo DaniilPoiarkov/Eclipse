@@ -47,7 +47,6 @@ public sealed class User : AggregateRoot
 
     public bool NotificationsEnabled { get; set; }
 
-
     public TimeSpan Gmt { get; private set; }
 
     public DateTime? CreatedAt { get; private set; }

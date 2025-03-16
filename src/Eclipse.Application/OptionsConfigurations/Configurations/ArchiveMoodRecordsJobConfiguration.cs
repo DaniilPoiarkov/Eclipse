@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.MoodRecords.Jobs;
+﻿using Eclipse.Application.MoodRecords.Archiving;
 
 using Quartz;
 

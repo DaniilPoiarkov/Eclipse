@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Url;
-using Eclipse.Application.Reminders.Core;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Culture;

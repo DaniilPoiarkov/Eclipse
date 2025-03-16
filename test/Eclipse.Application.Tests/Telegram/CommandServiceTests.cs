@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
-using Eclipse.Application.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Telegram;
 using Eclipse.Common.Results;
 
 using FluentAssertions;
@@ -48,7 +48,7 @@ public sealed class CommandServiceTests
     {
         var expectedError = Error.Validation("Command.Add", $"{_descriptionPrefix}:{errorCode}");
 
-        var request = new AddCommandRequest
+        var request = new AddCommandRequest(null, null)
         {
             Command = command,
             Description = description
@@ -70,7 +70,7 @@ public sealed class CommandServiceTests
     [InlineData("123123", "description 123")]
     public async Task Add_WhenRequestIsValid_ThenSuccessResultReturned(string command, string description)
     {
-        var request = new AddCommandRequest
+        var request = new AddCommandRequest(null, null)
         {
             Command = command,
             Description = description

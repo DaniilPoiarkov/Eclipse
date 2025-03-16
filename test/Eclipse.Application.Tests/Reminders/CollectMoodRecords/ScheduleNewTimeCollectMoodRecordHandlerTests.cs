@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Reminders.CollectMoodRecords;
-using Eclipse.Application.Reminders.Core;
+﻿using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
 using NSubstitute;
@@ -14,34 +14,32 @@ public sealed class ScheduleNewTimeCollectMoodRecordHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeCollectMoodRecordHandler _sut;
 
     public ScheduleNewTimeCollectMoodRecordHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
         _sut = new ScheduleNewTimeCollectMoodRecordHandler(_schedulerFactory, _jobScheduler);
     }
 
     [Fact]
     public async Task Handle_WhenCalled_ThenReschedulesJob()
     {
-        var userId = Guid.NewGuid();
         var scheduler = Substitute.For<IScheduler>();
         _schedulerFactory.GetScheduler().Returns(scheduler);
 
-        var key = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{userId}");
-
-        var @event = new GmtChangedDomainEvent(userId, TimeSpan.FromHours(2));
+        var @event = new GmtChangedDomainEvent(Guid.NewGuid(), TimeSpan.FromHours(2));
 
         await _sut.Handle(@event);
 
-        await _jobScheduler.Received().Schedule(scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == userId && o.Gmt == @event.Gmt)
+        await _jobScheduler.Received().Unschedule(scheduler,
+            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
-
-        await scheduler.Received().DeleteJob(key);
+        await _jobScheduler.Received().Schedule(scheduler,
+            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+        );
     }
 }

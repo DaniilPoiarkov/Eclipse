@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Users.Services;
+using Eclipse.Application.Users;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 

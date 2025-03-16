@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Reminders.Core;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Core.Core;
 using Eclipse.Core.Models;
 using Eclipse.Localization.Culture;
