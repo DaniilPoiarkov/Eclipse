@@ -36,8 +36,9 @@ public sealed class RescheduleForNewTimeMoodReportHandlerTests
 
         await _sut.Handle(@event);
 
-        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(key => key.Name == $"{nameof(MoodReportJob)}-{@event.UserId}"));
-
+        await _jobScheduler.Received().Unschedule(scheduler,
+            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+        );
         await _jobScheduler.Received().Schedule(scheduler,
             Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
