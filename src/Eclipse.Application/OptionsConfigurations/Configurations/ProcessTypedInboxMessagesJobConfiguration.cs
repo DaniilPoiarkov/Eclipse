@@ -7,6 +7,7 @@ using Eclipse.Application.Reminders.MoodReport;
 using Eclipse.Application.Statistics.EventHandlers;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Users.EventHandlers;
+using Eclipse.Application.Users.TestEvents;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.Users.Events;

@@ -4,7 +4,7 @@ using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 
-namespace Eclipse.Application.Users.Services;
+namespace Eclipse.Application.Users;
 
 internal sealed class UserCreateUpdateService : IUserCreateUpdateService
 {

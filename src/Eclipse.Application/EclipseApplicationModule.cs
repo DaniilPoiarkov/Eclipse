@@ -37,7 +37,6 @@ using Eclipse.Application.Telegram.Commands;
 using Eclipse.Application.TodoItems;
 using Eclipse.Application.Url;
 using Eclipse.Application.Users;
-using Eclipse.Application.Users.Services;
 using Eclipse.Common.Background;
 using Eclipse.Common.Events;
 

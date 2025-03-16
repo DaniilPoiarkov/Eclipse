@@ -3,11 +3,11 @@ using Eclipse.Common.Specifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Specifications;
 
-namespace Eclipse.Application.Users.Extensions;
+namespace Eclipse.Application.Users;
 
 internal static class GetUsersRequestExtensions
 {
-    public static Specification<User> GetSpecification(this GetUsersRequest request)
+    public static Specification<User> ToSpecification(this GetUsersRequest request)
     {
         var specification = Specification<User>.Empty;
 

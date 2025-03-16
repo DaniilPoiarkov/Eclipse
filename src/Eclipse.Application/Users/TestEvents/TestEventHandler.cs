@@ -2,7 +2,7 @@
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
 
-namespace Eclipse.Application.Users.EventHandlers;
+namespace Eclipse.Application.Users.TestEvents;
 
 internal sealed class TestEventHandler : IEventHandler<TestDomainEvent>
 {

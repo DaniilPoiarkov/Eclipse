@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
-using Eclipse.Application.Users.Services;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Domain.Shared.Errors;

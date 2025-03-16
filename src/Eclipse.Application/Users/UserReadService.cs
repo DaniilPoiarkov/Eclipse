@@ -1,12 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Application.Users.Extensions;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 
-namespace Eclipse.Application.Users.Services;
+namespace Eclipse.Application.Users;
 
 internal sealed class UserReadService : IUserReadService
 {
@@ -29,7 +28,7 @@ internal sealed class UserReadService : IUserReadService
 
     public async Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
-        var specification = request.Options.GetSpecification();
+        var specification = request.Options.ToSpecification();
         var skip = (request.Page - 1) * request.PageSize;
 
         var count = await _repository.CountAsync(specification, cancellationToken);

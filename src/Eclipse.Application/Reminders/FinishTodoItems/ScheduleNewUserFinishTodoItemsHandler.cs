@@ -19,7 +19,11 @@ internal sealed class ScheduleNewUserFinishTodoItemsHandler : IEventHandler<NewU
 
     private readonly ILogger<ScheduleNewUserFinishTodoItemsHandler> _logger;
 
-    public ScheduleNewUserFinishTodoItemsHandler(IUserRepository userRepository, ISchedulerFactory schedulerFactory, IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler, ILogger<ScheduleNewUserFinishTodoItemsHandler> logger)
+    public ScheduleNewUserFinishTodoItemsHandler(
+        IUserRepository userRepository,
+        ISchedulerFactory schedulerFactory,
+        IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler,
+        ILogger<ScheduleNewUserFinishTodoItemsHandler> logger)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
