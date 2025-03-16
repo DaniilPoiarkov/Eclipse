@@ -4,7 +4,7 @@ using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 
-namespace Eclipse.Application.Account.Background;
+namespace Eclipse.Application.Account.SendSignInCode;
 
 internal sealed class SendSignInCodeBackgroundJob : IBackgroundJob<SendSignInCodeArgs>
 {

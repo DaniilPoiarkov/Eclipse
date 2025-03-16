@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Account.Background;
+﻿namespace Eclipse.Application.Account.SendSignInCode;
 
 internal sealed class SendSignInCodeArgs
 {
