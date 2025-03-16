@@ -37,4 +37,10 @@ internal sealed class MoodReportScheduler : IJobScheduler<MoodReportJob, MoodRep
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
+
+    public Task Unschedule(IScheduler scheduler, MoodReportSchedulerOptions options, CancellationToken cancellationToken = default)
+    {
+        var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        return scheduler.DeleteJob(key, cancellationToken);
+    }
 }

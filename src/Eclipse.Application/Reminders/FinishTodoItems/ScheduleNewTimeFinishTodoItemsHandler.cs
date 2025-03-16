@@ -23,13 +23,9 @@ internal sealed class ScheduleNewTimeFinishTodoItemsHandler : IEventHandler<GmtC
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
         var scheduler = await _schedulerFactory.GetScheduler();
-
-        var key = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{@event.UserId}");
-
-        await scheduler.DeleteJob(key, cancellationToken);
-
         var options = new FinishTodoItemsSchedulerOptions(@event.UserId, @event.Gmt);
 
+        await _jobScheduler.Unschedule(scheduler, options, cancellationToken);
         await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }
 }

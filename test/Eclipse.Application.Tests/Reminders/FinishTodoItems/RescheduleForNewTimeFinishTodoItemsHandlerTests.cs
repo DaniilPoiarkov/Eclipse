@@ -35,9 +35,10 @@ public sealed class RescheduleForNewTimeFinishTodoItemsHandlerTests
         var @event = new GmtChangedDomainEvent(Guid.NewGuid(), new TimeSpan());
 
         await _sut.Handle(@event);
-
-        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(key => key.Name == $"{nameof(FinishTodoItemsJob)}-{@event.UserId}"));
-
+        
+        await _jobScheduler.Received().Unschedule(scheduler,
+            Arg.Is<FinishTodoItemsSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+        );
         await _jobScheduler.Received().Schedule(scheduler,
             Arg.Is<FinishTodoItemsSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );

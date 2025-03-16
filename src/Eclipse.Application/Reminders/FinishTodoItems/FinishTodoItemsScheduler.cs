@@ -44,4 +44,10 @@ internal sealed class FinishTodoItemsScheduler : IJobScheduler<FinishTodoItemsJo
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
+
+    public Task Unschedule(IScheduler scheduler, FinishTodoItemsSchedulerOptions options, CancellationToken cancellationToken = default)
+    {
+        var key = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{options.UserId}");
+        return scheduler.DeleteJob(key, cancellationToken);
+    }
 }

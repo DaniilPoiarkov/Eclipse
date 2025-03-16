@@ -44,4 +44,10 @@ internal sealed class CollectMoodRecordScheduler : IJobScheduler<CollectMoodReco
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
+
+    public Task Unschedule(IScheduler scheduler, CollectMoodRecordSchedulerOptions options, CancellationToken cancellationToken = default)
+    {
+        var key = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
+        return scheduler.DeleteJob(key, cancellationToken);
+    }
 }

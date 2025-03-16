@@ -36,8 +36,9 @@ public sealed class RescheduleForNewTimeGoodMorningHandlerTests
 
         await _sut.Handle(@event);
 
-        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(key => key.Name == $"{nameof(GoodMorningJob)}-{@event.UserId}"));
-
+        await _jobScheduler.Received().Unschedule(scheduler,
+            Arg.Is<GoodMorningSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+        );
         await _jobScheduler.Received().Schedule(scheduler,
             Arg.Is<GoodMorningSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );

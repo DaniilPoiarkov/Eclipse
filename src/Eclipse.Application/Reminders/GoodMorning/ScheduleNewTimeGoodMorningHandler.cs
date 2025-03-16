@@ -22,12 +22,10 @@ internal sealed class ScheduleNewTimeGoodMorningHandler : IEventHandler<GmtChang
 
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(GoodMorningJob)}-{@event.UserId}");
-
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+        var options = new GoodMorningSchedulerOptions(@event.UserId, @event.Gmt);
 
-        await scheduler.DeleteJob(key, cancellationToken);
-
-        await _jobScheduler.Schedule(scheduler, new GoodMorningSchedulerOptions(@event.UserId, @event.Gmt), cancellationToken);
+        await _jobScheduler.Unschedule(scheduler, options, cancellationToken);
+        await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }
 }
