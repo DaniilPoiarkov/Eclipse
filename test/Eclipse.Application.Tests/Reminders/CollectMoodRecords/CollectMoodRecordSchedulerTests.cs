@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Reminders.CollectMoodRecords;
+﻿using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;

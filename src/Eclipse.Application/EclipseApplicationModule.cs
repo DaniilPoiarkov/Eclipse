@@ -21,14 +21,13 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords;
+using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.Notifications.FinishTodoItems;
+using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
-using Eclipse.Application.Reminders.CollectMoodRecords;
-using Eclipse.Application.Reminders.Core;
-using Eclipse.Application.Reminders.FinishTodoItems;
-using Eclipse.Application.Reminders.GoodMorning;
-using Eclipse.Application.Reminders.MoodReport;
 using Eclipse.Application.Reports;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
@@ -39,6 +38,7 @@ using Eclipse.Application.Url;
 using Eclipse.Application.Users;
 using Eclipse.Common.Background;
 using Eclipse.Common.Events;
+using Eclipse.Common.Notifications;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -118,7 +118,7 @@ public static class EclipseApplicationModule
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IJobScheduler<,>)), publicOnly: false)
+            .AddClasses(c => c.AssignableTo(typeof(INotificationScheduler<,>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
 

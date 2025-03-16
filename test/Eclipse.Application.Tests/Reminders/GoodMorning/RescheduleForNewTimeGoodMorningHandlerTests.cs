@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Reminders.Core;
-using Eclipse.Application.Reminders.GoodMorning;
+﻿using Eclipse.Application.Notifications.GoodMorning;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
 using NSubstitute;
@@ -14,14 +14,14 @@ public sealed class RescheduleForNewTimeGoodMorningHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<GoodMorningJob, GoodMorningSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeGoodMorningHandler _sut;
 
     public RescheduleForNewTimeGoodMorningHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<GoodMorningJob, GoodMorningSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions>>();
 
         _sut = new ScheduleNewTimeGoodMorningHandler(_schedulerFactory, _jobScheduler);
     }

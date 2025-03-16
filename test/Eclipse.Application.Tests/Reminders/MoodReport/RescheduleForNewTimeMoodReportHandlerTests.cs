@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Reminders.Core;
-using Eclipse.Application.Reminders.MoodReport;
+﻿using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
 using NSubstitute;
@@ -14,14 +14,14 @@ public sealed class RescheduleForNewTimeMoodReportHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeMoodReportHandler _sut;
 
     public RescheduleForNewTimeMoodReportHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
 
         _sut = new ScheduleNewTimeMoodReportHandler(_schedulerFactory, _jobScheduler);
     }

@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Reminders.CollectMoodRecords;
-using Eclipse.Application.Reminders.Core;
+﻿using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
 
@@ -17,7 +17,7 @@ public sealed class CollectMoodRecordJobReschedulerTests
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
 
     private readonly CollectMoodRecordJobRescheduler _sut;
 
@@ -25,7 +25,7 @@ public sealed class CollectMoodRecordJobReschedulerTests
     {
         _userRepository = Substitute.For<IUserRepository>();
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
 
         _sut = new CollectMoodRecordJobRescheduler(_userRepository, _schedulerFactory, _jobScheduler);
     }

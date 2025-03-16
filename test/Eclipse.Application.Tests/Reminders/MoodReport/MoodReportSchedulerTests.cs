@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Reminders.MoodReport;
+﻿using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
