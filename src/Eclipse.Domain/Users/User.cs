@@ -49,7 +49,7 @@ public sealed class User : AggregateRoot
 
     public TimeSpan Gmt { get; private set; }
 
-    public DateTime CreatedAt { get; private set; }
+    public DateTime? CreatedAt { get; private set; }
 
     [JsonIgnore]
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
@@ -226,10 +226,7 @@ public sealed class User : AggregateRoot
 
     public void SetCreatedAtIfNull(DateTime createdAt)
     {
-        if (CreatedAt == default)
-        {
-            CreatedAt = createdAt;
-        }
+        CreatedAt ??= createdAt;
     }
 
     public override string ToString()
