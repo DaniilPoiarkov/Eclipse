@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Account.Background;
+﻿using Eclipse.Application.Account.SendSignInCode;
 using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Results;
 using Eclipse.Localization.Culture;

@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Reminders.CollectMoodRecords;
-using Eclipse.Application.Reminders.Core;
+﻿using Eclipse.Application.MoodRecords.Collection;
 
 using Microsoft.Extensions.Logging;
 

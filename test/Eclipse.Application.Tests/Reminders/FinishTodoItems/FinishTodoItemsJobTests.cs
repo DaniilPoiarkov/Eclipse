@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Reminders.FinishTodoItems;
+﻿using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Tests.Generators;

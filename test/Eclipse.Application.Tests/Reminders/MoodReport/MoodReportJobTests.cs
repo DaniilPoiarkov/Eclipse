@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reports;
-using Eclipse.Application.Reminders.MoodReport;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;

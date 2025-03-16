@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Reminders.Core;
-using Eclipse.Application.Reminders.FinishTodoItems;
+﻿using Eclipse.Application.Notifications.FinishTodoItems;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
 using NSubstitute;
@@ -14,14 +14,14 @@ public sealed class RescheduleForNewTimeFinishTodoItemsHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeFinishTodoItemsHandler _sut;
 
     public RescheduleForNewTimeFinishTodoItemsHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<IJobScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
 
         _sut = new ScheduleNewTimeFinishTodoItemsHandler(_schedulerFactory, _jobScheduler);
     }
@@ -35,7 +35,7 @@ public sealed class RescheduleForNewTimeFinishTodoItemsHandlerTests
         var @event = new GmtChangedDomainEvent(Guid.NewGuid(), new TimeSpan());
 
         await _sut.Handle(@event);
-        
+
         await _jobScheduler.Received().Unschedule(scheduler,
             Arg.Is<FinishTodoItemsSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );

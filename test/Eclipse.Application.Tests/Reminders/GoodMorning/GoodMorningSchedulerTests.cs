@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Reminders.GoodMorning;
+﻿using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;

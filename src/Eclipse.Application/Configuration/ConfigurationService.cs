@@ -21,12 +21,8 @@ internal sealed class ConfigurationService : IConfigurationService
 
     public List<CultureInfo> GetCultures()
     {
-        return _cultureOptions.Value
-            .Select(info => new CultureInfo
-            {
-                Code = info.Code,
-                Culture = _stringLocalizer[info.Culture]
-            })
-            .ToList();
+        return [.. _cultureOptions.Value.Select(info =>
+            new CultureInfo(_stringLocalizer[info.Culture], info.Code)
+        )];
     }
 }
