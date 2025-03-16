@@ -1,7 +1,5 @@
-﻿using Eclipse.DataAccess.Model;
-using Eclipse.Domain.MoodRecords;
-using Eclipse.Domain.OutboxMessages;
-using Eclipse.Domain.Users;
+﻿using Eclipse.DataAccess.Migrations;
+using Eclipse.DataAccess.Model;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -9,11 +7,7 @@ namespace Eclipse.DataAccess.Cosmos;
 
 internal sealed class EclipseDbContext : DbContext
 {
-    public DbSet<User> Users { get; set; }
-
-    public DbSet<MoodRecord> MoodRecords { get; set; }
-
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public DbSet<VersionInfo> VersionInfos { get; set; }
 
     private readonly IModelBuilderConfigurator _modelBuilderConfigurator;
 

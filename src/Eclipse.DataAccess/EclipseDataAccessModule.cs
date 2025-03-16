@@ -1,9 +1,9 @@
 ﻿using Azure.Identity;
 
 using Eclipse.DataAccess.Cosmos;
-using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
+using Eclipse.DataAccess.Migrations;
 using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
@@ -23,6 +23,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
+using System.Reflection;
 
 namespace Eclipse.DataAccess;
 
@@ -57,6 +59,20 @@ public static class EclipseDataAccessModule
             .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        return services;
+    }
+
+    public static IServiceCollection ApplyMigrations(this IServiceCollection services, Assembly assembly)
+    {
+        services.AddScoped<IMigrationRunner, MigrationRunner<EclipseDbContext>>();
+
+        services.Scan(tss => tss.FromAssemblies(assembly)
+            .AddClasses(c => c.AssignableTo<IMigration>(), false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        services.AddHostedService<MigrationHostedService>();
 
         return services;
     }
@@ -97,7 +113,7 @@ public static class EclipseDataAccessModule
                 .AddInterceptors(interceptors);
         });
 
-        services.AddSingleton(sp => new CosmosClient(
+        services.AddScoped(sp => new CosmosClient(
             sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value.Endpoint,
             new DefaultAzureCredential())
         );
