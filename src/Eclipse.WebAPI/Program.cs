@@ -24,6 +24,7 @@ builder.Services
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
+    .ApplyMigrations()
     .AddInfrastructureModule();
 
 builder.Services.AddLocalization(localization =>

@@ -4,6 +4,7 @@ using Eclipse.DataAccess.Cosmos;
 using Eclipse.DataAccess.Health;
 using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
+using Eclipse.DataAccess.Migrations;
 using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
@@ -57,6 +58,18 @@ public static class EclipseDataAccessModule
             .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        return services;
+    }
+
+    public static IServiceCollection ApplyMigrations(this IServiceCollection services)
+    {
+        services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
+            .AddClasses(c => c.AssignableTo<IMigration>(), false)
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime());
+
+        services.AddHostedService<MigrationHostedService>();
 
         return services;
     }
