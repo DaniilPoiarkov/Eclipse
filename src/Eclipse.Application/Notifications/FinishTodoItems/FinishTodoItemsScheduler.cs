@@ -26,7 +26,7 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
             .UsingJobData("data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.WithTime(RemindersConsts.Evening6PM)
+        var time = _timeProvider.Now.WithTime(NotificationConsts.Evening6PM)
             .Add(-options.Gmt);
 
         if (time < _timeProvider.Now)
@@ -37,7 +37,7 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(RemindersConsts.OneDayInHours)
+                .WithIntervalInHours(NotificationConsts.OneDayInHours)
                 .RepeatForever()
             )
             .StartAt(time)

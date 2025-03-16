@@ -42,12 +42,12 @@ internal sealed class SuggestionsService : ISuggestionsService
         var suggestions = suggestionsRequest.Result;
         var users = usersRequest.Result;
 
-        return suggestions.Join(users, s => s.TelegramUserId, u => u.ChatId, (suggestion, user) => new SuggestionAndUserDto
+        return [.. suggestions.Join(users, s => s.TelegramUserId, u => u.ChatId, (suggestion, user) => new SuggestionAndUserDto
         {
             Id = suggestion.Id,
             Text = suggestion.Text,
             CreatedAt = suggestion.CreatedAt,
             User = user.ToSlimDto()
-        }).ToList();
+        })];
     }
 }

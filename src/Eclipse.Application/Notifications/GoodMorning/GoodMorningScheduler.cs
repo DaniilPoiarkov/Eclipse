@@ -26,7 +26,7 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
             .UsingJobData("data", JsonConvert.SerializeObject(new GoodMorningJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.WithTime(RemindersConsts.Morning9AM)
+        var time = _timeProvider.Now.WithTime(NotificationConsts.Morning9AM)
             .Add(-options.Gmt);
 
         if (time < _timeProvider.Now)
@@ -37,7 +37,7 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(RemindersConsts.OneDayInHours)
+                .WithIntervalInHours(NotificationConsts.OneDayInHours)
                 .RepeatForever()
             )
             .StartAt(time)

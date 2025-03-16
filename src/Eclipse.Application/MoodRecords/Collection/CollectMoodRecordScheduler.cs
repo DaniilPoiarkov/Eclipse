@@ -26,7 +26,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
             .UsingJobData("data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.WithTime(RemindersConsts.Evening7PM)
+        var time = _timeProvider.Now.WithTime(NotificationConsts.Evening7PM)
             .Add(-options.Gmt);
 
         if (time < _timeProvider.Now)
@@ -37,7 +37,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(RemindersConsts.OneDayInHours)
+                .WithIntervalInHours(NotificationConsts.OneDayInHours)
                 .RepeatForever()
             )
             .StartAt(time)

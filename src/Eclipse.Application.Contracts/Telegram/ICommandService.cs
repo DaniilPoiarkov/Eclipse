@@ -1,6 +1,6 @@
 ﻿using Eclipse.Common.Results;
 
-namespace Eclipse.Application.Contracts.Telegram.Commands;
+namespace Eclipse.Application.Contracts.Telegram;
 
 public interface ICommandService
 {

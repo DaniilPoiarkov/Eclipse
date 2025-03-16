@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Core.Results;
 using Eclipse.Pipelines.Pipelines.Common;
 using Eclipse.Pipelines.Tests.Fixture;
@@ -37,11 +37,7 @@ public class HelpPipelineTests : PipelineTestFixture<HelpPipeline>
     {
         var commands = new List<CommandDto>()
         {
-            new()
-            {
-                Command = "test",
-                Description = "test",
-            }
+            new("test", "test")
         };
 
         _commandService.GetList().Returns(Task.FromResult<IReadOnlyList<CommandDto>>(commands));

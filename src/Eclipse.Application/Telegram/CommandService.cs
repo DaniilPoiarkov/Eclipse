@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Results;
 
 using System.Text.RegularExpressions;
@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Application.Telegram.Commands;
+namespace Eclipse.Application.Telegram;
 
 internal sealed partial class CommandService : ICommandService
 {
@@ -73,8 +73,7 @@ internal sealed partial class CommandService : ICommandService
     {
         var commands = await GetMyCommands(cancellationToken: cancellationToken);
 
-        return commands.Select(c => c.ToDto())
-            .ToArray();
+        return [.. commands.Select(c => c.ToDto())];
     }
 
     public async Task Remove(string command, CancellationToken cancellationToken = default)

@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Statistics.EventHandlers;
+﻿using Eclipse.Application.Statistics.ReminderReceived;
 using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users.Events;
 

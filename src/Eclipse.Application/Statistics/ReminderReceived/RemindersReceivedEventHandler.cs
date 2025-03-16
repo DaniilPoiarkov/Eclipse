@@ -2,7 +2,7 @@
 using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users.Events;
 
-namespace Eclipse.Application.Statistics.EventHandlers;
+namespace Eclipse.Application.Statistics.ReminderReceived;
 
 internal sealed class RemindersReceivedEventHandler : IEventHandler<RemindersReceivedDomainEvent>
 {

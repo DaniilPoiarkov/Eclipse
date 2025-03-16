@@ -2,7 +2,7 @@
 using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users.Events;
 
-namespace Eclipse.Application.Statistics.EventHandlers;
+namespace Eclipse.Application.Statistics.TodoItemFinished;
 
 internal sealed class TodoItemFinishedEventHandler : IEventHandler<TodoItemFinishedDomainEvent>
 {

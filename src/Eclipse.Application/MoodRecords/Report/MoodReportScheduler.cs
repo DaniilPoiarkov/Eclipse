@@ -27,12 +27,12 @@ internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob
             .Build();
 
         var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)
-            .WithTime(RemindersConsts.Evening730PM)
+            .WithTime(NotificationConsts.Evening730PM)
             .Add(-options.Gmt);
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
-            .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInWeeks(RemindersConsts.OneWeek))
+            .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInWeeks(NotificationConsts.OneWeek))
             .StartAt(time)
             .Build();
 

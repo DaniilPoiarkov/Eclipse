@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Core.Attributes;
 using Eclipse.Core.Core;
 

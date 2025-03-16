@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Telegram.Commands;
+﻿namespace Eclipse.Application.Contracts.Telegram;
 
 public static class CommandConstants
 {
