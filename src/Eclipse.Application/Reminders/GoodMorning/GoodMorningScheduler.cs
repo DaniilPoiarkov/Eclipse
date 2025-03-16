@@ -44,4 +44,10 @@ internal sealed class GoodMorningScheduler : IJobScheduler<GoodMorningJob, GoodM
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
+
+    public Task Unschedule(IScheduler scheduler, GoodMorningSchedulerOptions options, CancellationToken cancellationToken = default)
+    {
+        var key = JobKey.Create($"{nameof(GoodMorningJob)}-{options.UserId}");
+        return scheduler.DeleteJob(key, cancellationToken);
+    }
 }

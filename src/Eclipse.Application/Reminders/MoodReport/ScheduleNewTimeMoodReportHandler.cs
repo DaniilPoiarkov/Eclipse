@@ -23,13 +23,9 @@ internal sealed class ScheduleNewTimeMoodReportHandler : IEventHandler<GmtChange
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-
-        var key = JobKey.Create($"{nameof(MoodReportJob)}-{@event.UserId}");
-
-        await scheduler.DeleteJob(key, cancellationToken);
-
         var options = new MoodReportSchedulerOptions(@event.UserId, @event.Gmt);
 
+        await _jobScheduler.Unschedule(scheduler, options, cancellationToken);
         await _jobScheduler.Schedule(scheduler, options, cancellationToken);
     }
 }
