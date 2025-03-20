@@ -238,7 +238,7 @@ public sealed class User : AggregateRoot
 
         IsEnabled = isEnabled;
 
-        if (IsEnabled == true)
+        if (IsEnabled)
         {
             AddEvent(new UserEnabledDomainEvent(Id));
         }
