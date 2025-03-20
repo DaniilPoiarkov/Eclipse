@@ -17,6 +17,8 @@ public sealed class UserSlimDto : AggregateRootDto
 
     public bool NotificationsEnabled { get; init; }
 
+    public bool IsEnabled { get; init; }
+
     public TimeSpan Gmt { get; init; }
 
     public DateTime? CreatedAt { get; init; }
