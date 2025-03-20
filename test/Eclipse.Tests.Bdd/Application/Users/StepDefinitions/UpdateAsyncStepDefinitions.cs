@@ -44,6 +44,7 @@ internal sealed class UpdateAsyncStepDefinitions
             row["Username"],
             long.Parse(row["ChatId"]),
             DateTime.UtcNow,
+            true,
             bool.Parse(row["NewRegistered"]));
 
         _repository.FindAsync(_user.Id).ReturnsForAnyArgs(Task.FromResult<User?>(_user));

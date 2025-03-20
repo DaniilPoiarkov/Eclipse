@@ -53,11 +53,11 @@ internal sealed class ImportUsersStrategy : IImportStrategy
 
         _validator.Set(options);
 
-        foreach (var entity in _validator.ValidateAndSetErrors(rows))
+        foreach (var row in _validator.ValidateAndSetErrors(rows))
         {
-            if (!entity.CanBeImported())
+            if (!row.CanBeImported())
             {
-                failed.Add(entity);
+                failed.Add(row);
                 continue;
             }
 
@@ -65,22 +65,23 @@ internal sealed class ImportUsersStrategy : IImportStrategy
             {
                 var request = new CreateUserRequest
                 {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    Surname = entity.Surname,
-                    UserName = entity.UserName,
-                    ChatId = entity.ChatId,
-                    NotificationsEnabled = entity.NotificationsEnabled,
-                    Gmt = TimeSpan.Parse(entity.Gmt),
-                    NewRegistered = false
+                    Id = row.Id,
+                    Name = row.Name,
+                    Surname = row.Surname,
+                    UserName = row.UserName,
+                    ChatId = row.ChatId,
+                    NotificationsEnabled = row.NotificationsEnabled,
+                    Gmt = TimeSpan.Parse(row.Gmt),
+                    IsEnabled = row.IsEnabled,
+                    NewRegistered = false,
                 };
 
                 await _userManager.CreateAsync(request, cancellationToken);
             }
             catch (Exception ex)
             {
-                entity.Exception = ex.Message;
-                failed.Add(entity);
+                row.Exception = ex.Message;
+                failed.Add(row);
             }
         }
 

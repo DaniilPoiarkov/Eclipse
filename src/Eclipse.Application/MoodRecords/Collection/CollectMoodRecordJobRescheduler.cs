@@ -26,7 +26,7 @@ internal sealed class CollectMoodRecordJobRescheduler : IBackgroundJob
 
     public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository.GetAllAsync(cancellationToken);
+        var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
 
         var scheduelr = await _schedulerFactory.GetScheduler(cancellationToken);
 

@@ -2,16 +2,17 @@
 
 public sealed class CreateUserRequest
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
-    public string? Name { get; set; }
-    public string Surname { get; set; } = string.Empty;
-    public string UserName { get; set; } = string.Empty;
+    public string? Name { get; init; }
+    public string Surname { get; init; } = string.Empty;
+    public string UserName { get; init; } = string.Empty;
 
-    public long ChatId { get; set; }
+    public long ChatId { get; init; }
 
-    public TimeSpan Gmt { get; set; }
+    public TimeSpan Gmt { get; init; }
 
-    public bool NotificationsEnabled { get; set; }
-    public bool NewRegistered { get; set; }
+    public bool NotificationsEnabled { get; init; }
+    public bool NewRegistered { get; init; }
+    public required bool IsEnabled { get; init; }
 }

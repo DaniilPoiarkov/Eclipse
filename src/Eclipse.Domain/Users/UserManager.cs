@@ -36,6 +36,7 @@ public sealed class UserManager
             UserName = userName,
             ChatId = chatId,
             NewRegistered = true,
+            IsEnabled = true
         };
 
         return CreateAsync(request, cancellationToken);
@@ -63,7 +64,7 @@ public sealed class UserManager
             return UserDomainErrors.DuplicateData(nameof(request.ChatId), request.ChatId);
         }
 
-        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, _timeProvider.Now, request.NewRegistered);
+        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, _timeProvider.Now, request.IsEnabled, request.NewRegistered);
         user.NotificationsEnabled = request.NotificationsEnabled;
 
         user.SetGmt(request.Gmt);

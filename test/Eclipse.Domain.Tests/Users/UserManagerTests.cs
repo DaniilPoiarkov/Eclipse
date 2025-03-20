@@ -34,7 +34,7 @@ public class UserManagerTests
         var utcNow = DateTime.UtcNow;
         _timeProvider.Now.Returns(utcNow);
 
-        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, utcNow, true);
+        var user = User.Create(Guid.NewGuid(), name, surname, userName, chatId, utcNow, true, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 
