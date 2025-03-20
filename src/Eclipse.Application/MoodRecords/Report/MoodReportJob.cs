@@ -77,7 +77,6 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
             );
         }
         catch (ApiRequestException e)
-            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
         {
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);

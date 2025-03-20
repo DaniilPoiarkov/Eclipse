@@ -57,12 +57,14 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<UserDisabledDomainEvent, UnscheduleMoodReportHandler>(options);
         AddJob<UserDisabledDomainEvent, UnscheduleFinishTodoItemsHandler>(options);
         AddJob<UserDisabledDomainEvent, UnscheduleGoodMorningHandler>(options);
+        AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(options);
 
         /// <see cref="UserEnabledDomainEvent"/>
         AddJob<UserEnabledDomainEvent, ScheduleNewUserFinishTodoItemsHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleNewUserGoodMorningHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleNewUserMoodReportHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleNewUserCollectMoodRecordHandler>(options);
+        AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)

@@ -30,13 +30,13 @@ internal sealed class CollectMoodRecordJob : JobWithArgs<CollectMoodRecordJobDat
             await _collector.CollectAsync(args.UserId, cancellationToken);
         }
         catch (ApiRequestException e)
-            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
         {
+            Logger.LogError(e, "Failed to run {Job} job.", nameof(CollectMoodRecordJob));
+
             var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
             if (user is null)
             {
-                Logger.LogError("Failed to run {Job} job. Reason: {Reason}", nameof(CollectMoodRecordJob), "User not found.");
                 return;
             }
 

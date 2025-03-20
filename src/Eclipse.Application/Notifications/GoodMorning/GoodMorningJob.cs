@@ -56,7 +56,6 @@ internal sealed class GoodMorningJob : JobWithArgs<GoodMorningJobData>
             );
         }
         catch (ApiRequestException e)
-            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
         {
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);

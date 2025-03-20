@@ -58,7 +58,6 @@ internal sealed class FinishTodoItemsJob : JobWithArgs<FinishTodoItemsJobData>
             await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
         }
         catch (ApiRequestException e)
-            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
         {
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
