@@ -53,7 +53,7 @@ public sealed class GoodMorningSchedulerTests
         var scheduler = Substitute.For<IScheduler>();
         var options = new GoodMorningSchedulerOptions(Guid.NewGuid(), default);
 
-        await _sut.Schedule(scheduler, options);
+        await _sut.Unschedule(scheduler, options);
         await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(GoodMorningJob)}-{options.UserId}"));
     }
 }

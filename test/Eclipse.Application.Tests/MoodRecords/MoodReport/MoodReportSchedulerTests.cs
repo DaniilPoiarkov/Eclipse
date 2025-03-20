@@ -54,7 +54,7 @@ public sealed class MoodReportSchedulerTests
         var scheduler = Substitute.For<IScheduler>();
         var options = new MoodReportSchedulerOptions(Guid.NewGuid(), default);
 
-        await _sut.Schedule(scheduler, options);
+        await _sut.Unschedule(scheduler, options);
         await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(MoodReportJob)}-{options.UserId}"));
     }
 }
