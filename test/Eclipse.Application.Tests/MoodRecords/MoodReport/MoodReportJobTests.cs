@@ -20,7 +20,7 @@ using Telegram.Bot.Types.Enums;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.MoodReport;
+namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
 
 public sealed class MoodReportJobTests
 {

@@ -1,6 +1,9 @@
 ﻿using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Extensions;
+using Eclipse.Tests.Generators;
+
+using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
 
@@ -12,11 +15,12 @@ using NSubstitute.ExceptionExtensions;
 using Quartz;
 
 using Telegram.Bot.Exceptions;
-using Telegram.Bot.Types;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.CollectMoodRecords;
+using User = Eclipse.Domain.Users.User;
+
+namespace Eclipse.Application.Tests.MoodRecords.CollectMoodRecords;
 
 public sealed class CollectMoodRecordJobTests
 {
@@ -54,13 +58,7 @@ public sealed class CollectMoodRecordJobTests
 
         await _sut.Execute(context);
 
-        _logger.Received().Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception>(),
-            Arg.Any<Func<object, Exception?, string>>()
-        );
+        _logger.ShouldReceiveLog(LogLevel.Error);
     }
 
     [Fact]
@@ -87,6 +85,30 @@ public sealed class CollectMoodRecordJobTests
     {
         var context = Substitute.For<IJobExecutionContext>();
 
+        var user = UserGenerator.Get();
+        _userRepository.FindAsync(user.Id).Returns(user);
+
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        _collector.CollectAsync(user.Id).ThrowsAsync(new ApiRequestException("message", 400));
+
+        await _sut.Execute(context);
+
+        _logger.ShouldReceiveLog(LogLevel.Error);
+        await _userRepository.Received().UpdateAsync(user);
+        user.IsEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Execute_WhenApiThrowsExceptionAndUserNotFound_ThenOnlyLogsException()
+    {
+        var context = Substitute.For<IJobExecutionContext>();
+
         var userId = Guid.NewGuid();
 
         var map = new JobDataMap
@@ -101,5 +123,6 @@ public sealed class CollectMoodRecordJobTests
         await _sut.Execute(context);
 
         _logger.ShouldReceiveLog(LogLevel.Error);
+        await _userRepository.DidNotReceive().UpdateAsync(Arg.Any<User>());
     }
 }

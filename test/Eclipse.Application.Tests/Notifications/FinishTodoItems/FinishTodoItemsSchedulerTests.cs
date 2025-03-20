@@ -9,7 +9,7 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Tests.Notifications.FinishTodoItems;
 
 public sealed class FinishTodoItemsSchedulerTests
 {
@@ -46,5 +46,15 @@ public sealed class FinishTodoItemsSchedulerTests
             ),
             Arg.Is<ITrigger>(trigger => trigger.JobKey.Equals(expectedJobKey))
         );
+    }
+
+    [Fact]
+    public async Task Unschedule_WhenCalled_ThenDeletesJob()
+    {
+        var scheduler = Substitute.For<IScheduler>();
+        var options = new FinishTodoItemsSchedulerOptions(Guid.NewGuid(), default);
+
+        await _sut.Schedule(scheduler, options);
+        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(FinishTodoItemsJob)}-{options.UserId}"));
     }
 }

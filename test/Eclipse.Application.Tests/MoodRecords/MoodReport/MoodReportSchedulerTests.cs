@@ -9,7 +9,7 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.MoodReport;
+namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
 
 public sealed class MoodReportSchedulerTests
 {
@@ -46,5 +46,15 @@ public sealed class MoodReportSchedulerTests
             ),
             Arg.Is<ITrigger>(trigger => trigger.JobKey.Equals(expectedJobKey))
         );
+    }
+
+    [Fact]
+    public async Task Unschedule_WhenCalled_ThenDeletesJob()
+    {
+        var scheduler = Substitute.For<IScheduler>();
+        var options = new MoodReportSchedulerOptions(Guid.NewGuid(), default);
+
+        await _sut.Schedule(scheduler, options);
+        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(MoodReportJob)}-{options.UserId}"));
     }
 }
