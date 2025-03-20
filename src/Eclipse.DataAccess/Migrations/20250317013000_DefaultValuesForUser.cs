@@ -2,6 +2,7 @@
 
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
+
 using User = Eclipse.Domain.Users.User;
 
 namespace Eclipse.DataAccess.Migrations;

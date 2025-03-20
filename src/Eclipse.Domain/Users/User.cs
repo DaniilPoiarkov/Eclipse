@@ -40,7 +40,7 @@ public sealed class User : AggregateRoot
 
     public bool NotificationsEnabled { get; set; }
 
-    public bool IsEnabled { get; private set; } = true;
+    public bool IsEnabled { get; private set; }
 
     public TimeSpan Gmt { get; private set; }
 

@@ -7,6 +7,8 @@ using NSubstitute;
 
 using Quartz;
 
+using System.Linq.Expressions;
+
 using Xunit;
 
 namespace Eclipse.Application.Tests.Reminders.CollectMoodRecords;
@@ -35,7 +37,7 @@ public sealed class CollectMoodRecordJobReschedulerTests
     {
         var users = UserGenerator.Generate(5);
 
-        _userRepository.GetAllAsync().Returns(users);
+        _userRepository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns(users);
 
         var scheduler = Substitute.For<IScheduler>();
         _schedulerFactory.GetScheduler().Returns(scheduler);
