@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reports;
+using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
@@ -6,16 +7,12 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
-using Quartz;
-
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Eclipse.Application.MoodRecords.Report;
 
-internal sealed class MoodReportJob : IJob
+internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
 {
     private readonly IUserRepository _userRepository;
 
@@ -29,8 +26,6 @@ internal sealed class MoodReportJob : IJob
 
     private readonly IStringLocalizer<MoodReportJob> _localizer;
 
-    private readonly ILogger<MoodReportJob> _logger;
-
     public MoodReportJob(
         IUserRepository userRepository,
         ICurrentCulture currentCulture,
@@ -38,7 +33,7 @@ internal sealed class MoodReportJob : IJob
         ITelegramBotClient client,
         ITimeProvider timeProvider,
         IStringLocalizer<MoodReportJob> localizer,
-        ILogger<MoodReportJob> logger)
+        ILogger<MoodReportJob> logger) : base(logger)
     {
         _userRepository = userRepository;
         _currentCulture = currentCulture;
@@ -46,32 +41,15 @@ internal sealed class MoodReportJob : IJob
         _client = client;
         _timeProvider = timeProvider;
         _localizer = localizer;
-        _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    protected override async Task Execute(MoodReportJobData args, CancellationToken cancellationToken)
     {
-        var data = context.MergedJobDataMap.GetString("data");
-
-        if (data.IsNullOrEmpty())
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
-            return;
-        }
-
-        var args = JsonConvert.DeserializeObject<MoodReportJobData>(data);
-
-        if (args is null)
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", data);
-            return;
-        }
-
-        var user = await _userRepository.FindAsync(args.UserId, context.CancellationToken);
+        var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
         if (user is null)
         {
-            _logger.LogError("User with id {UserId} not found", args.UserId);
+            Logger.LogError("User with id {UserId} not found", args.UserId);
             return;
         }
 
@@ -85,12 +63,12 @@ internal sealed class MoodReportJob : IJob
 
         var message = _localizer["Jobs:SendMoodReport:Caption"];
 
-        using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, context.CancellationToken);
+        using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, cancellationToken);
 
         await _client.SendPhoto(user.ChatId,
             InputFile.FromStream(stream, $"mood-report.png"),
             caption: message,
-            cancellationToken: context.CancellationToken
+            cancellationToken: cancellationToken
         );
     }
 }

@@ -1,41 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Eclipse.Common.Background;
 
-using Newtonsoft.Json;
-
-using Quartz;
+using Microsoft.Extensions.Logging;
 
 namespace Eclipse.Application.MoodRecords.Collection;
 
-internal sealed class CollectMoodRecordJob : IJob
+internal sealed class CollectMoodRecordJob : JobWithArgs<CollectMoodRecordJobData>
 {
     private readonly IMoodRecordCollector _collector;
 
-    private readonly ILogger<CollectMoodRecordJob> _logger;
-
-    public CollectMoodRecordJob(IMoodRecordCollector collector, ILogger<CollectMoodRecordJob> logger)
+    public CollectMoodRecordJob(IMoodRecordCollector collector, ILogger<CollectMoodRecordJob> logger) : base(logger)
     {
         _collector = collector;
-        _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    protected override Task Execute(CollectMoodRecordJobData args, CancellationToken cancellationToken)
     {
-        var data = context.MergedJobDataMap.GetString("data");
-
-        if (data.IsNullOrEmpty())
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
-            return;
-        }
-
-        var args = JsonConvert.DeserializeObject<CollectMoodRecordJobData>(data);
-
-        if (args is null)
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", data);
-            return;
-        }
-
-        await _collector.CollectAsync(args.UserId, context.CancellationToken);
+        return _collector.CollectAsync(args.UserId, cancellationToken);
     }
 }

@@ -1,18 +1,15 @@
-﻿using Eclipse.Domain.Users;
+﻿using Eclipse.Common.Background;
+using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
-using Quartz;
-
 using Telegram.Bot;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems;
 
-internal sealed class FinishTodoItemsJob : IJob
+internal sealed class FinishTodoItemsJob : JobWithArgs<FinishTodoItemsJobData>
 {
     private readonly IStringLocalizer<FinishTodoItemsJob> _localizer;
 
@@ -22,45 +19,26 @@ internal sealed class FinishTodoItemsJob : IJob
 
     private readonly IUserRepository _userRepository;
 
-    private readonly ILogger<FinishTodoItemsJob> _logger;
-
     public FinishTodoItemsJob(
         IStringLocalizer<FinishTodoItemsJob> localizer,
         ICurrentCulture currentCulture,
         ITelegramBotClient client,
         IUserRepository userRepository,
-        ILogger<FinishTodoItemsJob> logger)
+        ILogger<FinishTodoItemsJob> logger) : base(logger)
     {
         _localizer = localizer;
         _currentCulture = currentCulture;
         _client = client;
         _userRepository = userRepository;
-        _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    protected override async Task Execute(FinishTodoItemsJobData args, CancellationToken cancellationToken)
     {
-        var data = context.MergedJobDataMap.GetString("data");
-
-        if (data.IsNullOrEmpty())
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
-            return;
-        }
-
-        var args = JsonConvert.DeserializeObject<FinishTodoItemsJobData>(data);
-
-        if (args is null)
-        {
-            _logger.LogError("Cannot deserialize event with data {Data}", data);
-            return;
-        }
-
-        var user = await _userRepository.FindAsync(args.UserId, context.CancellationToken);
+        var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
         if (user is null)
         {
-            _logger.LogError("User with id {UserId} not found", args.UserId);
+            Logger.LogError("User with id {UserId} not found", args.UserId);
             return;
         }
 
@@ -72,6 +50,6 @@ internal sealed class FinishTodoItemsJob : IJob
             user.TodoItems.Count
         ];
 
-        await _client.SendMessage(user.ChatId, message, cancellationToken: context.CancellationToken);
+        await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
     }
 }
