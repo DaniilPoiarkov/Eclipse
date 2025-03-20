@@ -221,14 +221,6 @@ public sealed class User : AggregateRoot
         return reminder;
     }
 
-    public void SetCreatedAtIfNull(DateTime createdAt)
-    {
-        if (CreatedAt == default)
-        {
-            CreatedAt = createdAt;
-        }
-    }
-
     public void SetIsEnabled(bool isEnabled)
     {
         if (IsEnabled == isEnabled)
