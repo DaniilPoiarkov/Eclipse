@@ -9,7 +9,7 @@ using Quartz;
 
 namespace Eclipse.Application.MoodRecords.Report;
 
-internal sealed class ScheduleNewUserMoodReportHandler : IEventHandler<NewUserJoinedDomainEvent>
+internal sealed class ScheduleNewUserMoodReportHandler : IEventHandler<NewUserJoinedDomainEvent>, IEventHandler<UserEnabledDomainEvent>
 {
     private readonly IUserRepository _userRepository;
 
@@ -31,13 +31,23 @@ internal sealed class ScheduleNewUserMoodReportHandler : IEventHandler<NewUserJo
         _jobScheduler = jobScheduler;
     }
 
-    public async Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
+    public Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.FindAsync(@event.UserId, cancellationToken);
+        return Handle(@event.UserId, cancellationToken);
+    }
+
+    public Task Handle(UserEnabledDomainEvent @event, CancellationToken cancellationToken = default)
+    {
+        return Handle(@event.UserId, cancellationToken);
+    }
+
+    private async Task Handle(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserMoodReportHandler), @event.UserId, "User not found");
+            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserMoodReportHandler), userId, "User not found");
             return;
         }
 

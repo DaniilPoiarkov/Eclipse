@@ -65,9 +65,14 @@ public sealed class UserServiceTests
     public async Task UpdateAsync_WhenCalled_ThenDelegatesToProperService()
     {
         var userId = Guid.NewGuid();
-        var dto = new UserUpdateDto();
-        await _sut.UpdateAsync(userId, dto);
-        await _createUpdateService.Received().UpdateAsync(userId, dto);
+        var model = new UserUpdateDto()
+        {
+            Name = "John",
+            UserName = "john.doe"
+        };
+
+        await _sut.UpdateAsync(userId, model);
+        await _createUpdateService.Received().UpdateAsync(userId, model);
     }
 
     [Fact]
