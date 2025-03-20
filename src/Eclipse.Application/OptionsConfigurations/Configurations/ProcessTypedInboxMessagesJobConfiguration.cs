@@ -51,6 +51,12 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<GmtChangedDomainEvent, ScheduleNewTimeGoodMorningHandler>(options);
         AddJob<GmtChangedDomainEvent, ScheduleNewTimeMoodReportHandler>(options);
         AddJob<GmtChangedDomainEvent, ScheduleNewTimeCollectMoodRecordHandler>(options);
+
+        /// <see cref="UserDisabledDomainEvent"/>
+        AddJob<UserDisabledDomainEvent, UnscheduleCollectMoodRecordHandler>(options);
+        AddJob<UserDisabledDomainEvent, UnscheduleMoodReportHandler>(options);
+        AddJob<UserDisabledDomainEvent, UnscheduleFinishTodoItemsHandler>(options);
+        AddJob<UserDisabledDomainEvent, UnscheduleGoodMorningHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
