@@ -5,7 +5,10 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using System.Net;
+
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems;
 
@@ -50,6 +53,15 @@ internal sealed class FinishTodoItemsJob : JobWithArgs<FinishTodoItemsJobData>
             user.TodoItems.Count
         ];
 
-        await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
+        try
+        {
+            await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
+        }
+        catch (ApiRequestException e)
+            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
+        {
+            user.SetIsEnabled(false);
+            await _userRepository.UpdateAsync(user, cancellationToken);
+        }
     }
 }

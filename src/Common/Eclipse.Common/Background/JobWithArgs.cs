@@ -33,7 +33,14 @@ public abstract class JobWithArgs<TArgs> : IJob
             return;
         }
 
-        await Execute(args, context.CancellationToken);
+        try
+        {
+            await Execute(args, context.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Job {JobKey} execution failed.", context.JobDetail.Key);
+        }
     }
 
     protected abstract Task Execute(TArgs args, CancellationToken cancellationToken);

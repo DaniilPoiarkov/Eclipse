@@ -1,12 +1,18 @@
 ﻿using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Domain.Users;
+using Eclipse.Tests.Extensions;
 
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using Quartz;
+
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Types;
 
 using Xunit;
 
@@ -16,6 +22,8 @@ public sealed class CollectMoodRecordJobTests
 {
     private readonly IMoodRecordCollector _collector;
 
+    private readonly IUserRepository _userRepository;
+
     private readonly ILogger<CollectMoodRecordJob> _logger;
 
     private readonly CollectMoodRecordJob _sut;
@@ -23,9 +31,10 @@ public sealed class CollectMoodRecordJobTests
     public CollectMoodRecordJobTests()
     {
         _collector = Substitute.For<IMoodRecordCollector>();
+        _userRepository = Substitute.For<IUserRepository>();
         _logger = Substitute.For<ILogger<CollectMoodRecordJob>>();
 
-        _sut = new CollectMoodRecordJob(_collector, _logger);
+        _sut = new CollectMoodRecordJob(_collector, _userRepository, _logger);
     }
 
     [Theory]
@@ -71,5 +80,26 @@ public sealed class CollectMoodRecordJobTests
         await _sut.Execute(context);
 
         await _collector.Received().CollectAsync(userId);
+    }
+
+    [Fact]
+    public async Task Execute_WhenApiThrowsException_ThenDisablesUser()
+    {
+        var context = Substitute.For<IJobExecutionContext>();
+
+        var userId = Guid.NewGuid();
+
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(userId)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        _collector.CollectAsync(userId).ThrowsAsync(new ApiRequestException("message", 400));
+
+        await _sut.Execute(context);
+
+        _logger.ShouldReceiveLog(LogLevel.Error);
     }
 }

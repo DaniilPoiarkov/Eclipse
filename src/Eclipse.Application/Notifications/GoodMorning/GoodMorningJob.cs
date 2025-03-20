@@ -5,7 +5,10 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using System.Net;
+
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Notifications.GoodMorning;
 
@@ -44,10 +47,19 @@ internal sealed class GoodMorningJob : JobWithArgs<GoodMorningJobData>
 
         using var _ = _currentCulture.UsingCulture(user.Culture);
 
-        await _client.SendMessage(
-            chatId: user.ChatId,
-            text: _localizer["Jobs:Morning:SendGoodMorning"],
-            cancellationToken: cancellationToken
-        );
+        try
+        {
+            await _client.SendMessage(
+                chatId: user.ChatId,
+                text: _localizer["Jobs:Morning:SendGoodMorning"],
+                cancellationToken: cancellationToken
+            );
+        }
+        catch (ApiRequestException e)
+            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
+        {
+            user.SetIsEnabled(false);
+            await _userRepository.UpdateAsync(user, cancellationToken);
+        }
     }
 }

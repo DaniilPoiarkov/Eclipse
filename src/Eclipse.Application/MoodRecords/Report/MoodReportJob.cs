@@ -7,7 +7,10 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using System.Net;
+
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 
 namespace Eclipse.Application.MoodRecords.Report;
@@ -65,10 +68,19 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
 
         using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, cancellationToken);
 
-        await _client.SendPhoto(user.ChatId,
-            InputFile.FromStream(stream, $"mood-report.png"),
-            caption: message,
-            cancellationToken: cancellationToken
-        );
+        try
+        {
+            await _client.SendPhoto(user.ChatId,
+                InputFile.FromStream(stream, $"mood-report.png"),
+                caption: message,
+                cancellationToken: cancellationToken
+            );
+        }
+        catch (ApiRequestException e)
+            when (e.HttpStatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest)
+        {
+            user.SetIsEnabled(false);
+            await _userRepository.UpdateAsync(user, cancellationToken);
+        }
     }
 }
