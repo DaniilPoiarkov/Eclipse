@@ -20,6 +20,7 @@ internal static class UserExtensions
             NotificationsEnabled = value.NotificationsEnabled,
             Gmt = value.Gmt,
             CreatedAt = value.CreatedAt,
+            IsEnabled = value.IsEnabled,
 
             Reminders = [.. value.Reminders.Select(r => r.ToDto())],
             TodoItems = [.. value.TodoItems.Select(i => i.ToDto())],
@@ -39,6 +40,7 @@ internal static class UserExtensions
             NotificationsEnabled = value.NotificationsEnabled,
             Gmt = value.Gmt,
             CreatedAt = value.CreatedAt,
+            IsEnabled = value.IsEnabled,
         };
     }
 }

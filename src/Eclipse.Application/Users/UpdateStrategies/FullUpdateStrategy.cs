@@ -39,6 +39,7 @@ internal sealed class FullUpdateStrategy : IUserUpdateStrategy
         user.NotificationsEnabled = _model.NotificationsEnabled;
         user.Surname = _model.Surname ?? string.Empty;
         user.Culture = _model.Culture ?? string.Empty;
+        user.SetIsEnabled(_model.IsEnabled);
 
         return user;
     }

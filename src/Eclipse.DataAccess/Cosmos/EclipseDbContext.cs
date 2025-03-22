@@ -1,5 +1,4 @@
-﻿using Eclipse.DataAccess.Migrations;
-using Eclipse.DataAccess.Model;
+﻿using Eclipse.DataAccess.Model;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -7,8 +6,6 @@ namespace Eclipse.DataAccess.Cosmos;
 
 internal sealed class EclipseDbContext : DbContext
 {
-    public DbSet<VersionInfo> VersionInfos { get; set; }
-
     private readonly IModelBuilderConfigurator _modelBuilderConfigurator;
 
     public EclipseDbContext(DbContextOptions<EclipseDbContext> options, IModelBuilderConfigurator modelBuilderConfigurator)

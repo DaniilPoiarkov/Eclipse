@@ -4,9 +4,9 @@ namespace Eclipse.Domain.OutboxMessages;
 
 public sealed class OutboxMessage : Entity
 {
-    public string Type { get; private set; }
+    public string Type { get; init; }
 
-    public string JsonContent { get; private set; }
+    public string JsonContent { get; init; }
 
     public string? Error { get; private set; }
 

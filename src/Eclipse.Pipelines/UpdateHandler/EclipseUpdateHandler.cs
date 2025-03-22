@@ -167,14 +167,18 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             UserName = telegramUser.UserName,
 
             SurnameChanged = true,
-            Surname = telegramUser.Surname
+            Surname = telegramUser.Surname,
+
+            IsEnabledChanged = true,
+            IsEnabled = true
         };
 
         return await _userService.UpdatePartialAsync(user.Id, update, cancellationToken);
 
         static bool HaveSameValues(UserDto user, TelegramUser telegramUser)
         {
-            return user.Name == telegramUser.Name
+            return user.IsEnabled
+                && user.Name == telegramUser.Name
                 && user.UserName == telegramUser.UserName
                 && user.Surname == telegramUser.Surname;
         }

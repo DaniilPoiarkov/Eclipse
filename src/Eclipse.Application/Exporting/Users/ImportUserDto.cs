@@ -15,6 +15,7 @@ public sealed class ImportUserDto : ImportEntityBase
     public string Culture { get; set; } = string.Empty;
 
     public bool NotificationsEnabled { get; set; }
+    public bool IsEnabled { get; set; }
 
     public string Gmt { get; set; } = string.Empty;
 }

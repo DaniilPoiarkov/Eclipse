@@ -14,7 +14,7 @@ public sealed class AddReminderStepDefinitions
     public AddReminderStepDefinitions(ScenarioContext scenarioContext)
     {
         _scenarioContext = scenarioContext;
-        _user = User.Create(Guid.NewGuid(), "Name", "Surname", "Username", 1, DateTime.UtcNow, true);
+        _user = User.Create(Guid.NewGuid(), "Name", "Surname", "Username", 1, DateTime.UtcNow, true, true);
     }
 
     [Given("Existing user with (.*) reminders")]

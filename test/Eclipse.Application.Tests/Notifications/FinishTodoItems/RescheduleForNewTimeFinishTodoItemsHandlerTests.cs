@@ -8,7 +8,7 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.FinishTodoItems;
+namespace Eclipse.Application.Tests.Notifications.FinishTodoItems;
 
 public sealed class RescheduleForNewTimeFinishTodoItemsHandlerTests
 {

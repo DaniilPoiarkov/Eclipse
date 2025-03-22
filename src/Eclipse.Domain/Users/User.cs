@@ -8,13 +8,11 @@ using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
 
-using Newtonsoft.Json;
-
 namespace Eclipse.Domain.Users;
 
 public sealed class User : AggregateRoot
 {
-    private User(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt)
+    private User(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool isEnabled)
         : base(id)
     {
         Name = name;
@@ -22,15 +20,10 @@ public sealed class User : AggregateRoot
         UserName = userName;
         ChatId = chatId;
         CreatedAt = createdAt;
+        IsEnabled = isEnabled;
     }
 
     private User() { }
-
-    [JsonProperty(nameof(Reminders))]
-    private readonly List<Reminder> _reminders = [];
-
-    [JsonProperty(nameof(TodoItems))]
-    private readonly List<TodoItem> _todoItems = [];
 
     public string Name { get; set; } = string.Empty;
 
@@ -47,23 +40,27 @@ public sealed class User : AggregateRoot
 
     public bool NotificationsEnabled { get; set; }
 
+    public bool IsEnabled { get; private set; }
+
     public TimeSpan Gmt { get; private set; }
 
-    public DateTime? CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    [JsonIgnore]
+
+    private readonly List<Reminder> _reminders = [];
+
+    private readonly List<TodoItem> _todoItems = [];
+
     public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
-
-    [JsonIgnore]
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static User Create(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool newRegistered)
+    internal static User Create(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool isEnabled, bool newRegistered)
     {
-        var user = new User(id, name, surname, userName, chatId, createdAt);
+        var user = new User(id, name, surname, userName, chatId, createdAt, isEnabled);
 
         if (newRegistered)
         {
@@ -224,9 +221,23 @@ public sealed class User : AggregateRoot
         return reminder;
     }
 
-    public void SetCreatedAtIfNull(DateTime createdAt)
+    public void SetIsEnabled(bool isEnabled)
     {
-        CreatedAt ??= createdAt;
+        if (IsEnabled == isEnabled)
+        {
+            return;
+        }
+
+        IsEnabled = isEnabled;
+
+        if (IsEnabled)
+        {
+            AddEvent(new UserEnabledDomainEvent(Id));
+        }
+        else
+        {
+            AddEvent(new UserDisabledDomainEvent(Id));
+        }
     }
 
     public override string ToString()

@@ -14,8 +14,6 @@ internal sealed class UpdateAsyncStepDefinitions
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly UserUpdateDto _updateDto = new();
-
     private readonly UserCreateUpdateService _sut;
 
     private UserDto _result = new();
@@ -44,6 +42,7 @@ internal sealed class UpdateAsyncStepDefinitions
             row["Username"],
             long.Parse(row["ChatId"]),
             DateTime.UtcNow,
+            true,
             bool.Parse(row["NewRegistered"]));
 
         _repository.FindAsync(_user.Id).ReturnsForAnyArgs(Task.FromResult<User?>(_user));
@@ -55,13 +54,16 @@ internal sealed class UpdateAsyncStepDefinitions
     {
         var row = table.Rows[0];
 
-        _updateDto.Name = row["Name"];
-        _updateDto.Surname = row["Surname"];
-        _updateDto.UserName = row["Username"];
-        _updateDto.Culture = row["Culture"];
-        _updateDto.NotificationsEnabled = bool.Parse(row["NotificationsEnabled"]);
+        var model = new UserUpdateDto
+        {
+            Name = row["Name"],
+            Surname = row["Surname"],
+            UserName = row["Username"],
+            Culture = row["Culture"],
+            NotificationsEnabled = bool.Parse(row["NotificationsEnabled"])
+        };
 
-        _result = await _sut.UpdateAsync(_user.Id, _updateDto);
+        _result = await _sut.UpdateAsync(_user.Id, model);
     }
 
     [Then("The user details should be updated successfully")]

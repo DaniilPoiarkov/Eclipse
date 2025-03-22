@@ -8,7 +8,7 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.GoodMorning;
+namespace Eclipse.Application.Tests.Notifications.GoodMorning;
 
 public sealed class RescheduleForNewTimeGoodMorningHandlerTests
 {

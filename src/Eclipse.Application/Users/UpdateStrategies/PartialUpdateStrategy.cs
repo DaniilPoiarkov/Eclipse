@@ -52,6 +52,11 @@ internal sealed class PartialUpdateStrategy : IUserUpdateStrategy
             user.SetGmt(_model.Gmt);
         }
 
+        if (_model.IsEnabledChanged)
+        {
+            user.SetIsEnabled(_model.IsEnabled);
+        }
+
         return user;
     }
 

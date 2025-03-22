@@ -8,7 +8,7 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.CollectMoodRecords;
+namespace Eclipse.Application.Tests.MoodRecords.CollectMoodRecords;
 
 public sealed class ScheduleNewTimeCollectMoodRecordHandlerTests
 {

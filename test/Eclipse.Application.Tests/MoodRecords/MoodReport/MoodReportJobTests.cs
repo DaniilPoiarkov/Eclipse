@@ -3,7 +3,10 @@ using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
+using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
+
+using FluentAssertions;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -11,16 +14,18 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using Quartz;
 
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Requests;
 using Telegram.Bot.Types.Enums;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reminders.MoodReport;
+namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
 
 public sealed class MoodReportJobTests
 {
@@ -56,9 +61,6 @@ public sealed class MoodReportJobTests
     [Fact]
     public async Task Execute_WhenUserNotFound_ThenLogsError()
     {
-        _repository.FindAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<User?>(null));
-
         var context = Substitute.For<IJobExecutionContext>();
 
         var map = new JobDataMap
@@ -70,13 +72,8 @@ public sealed class MoodReportJobTests
 
         await _sut.Execute(context);
 
-        _logger.Received().Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception>(),
-            Arg.Any<Func<object, Exception?, string>>()
-        );
+        _logger.ShouldReceiveLog(LogLevel.Error);
+        await _repository.DidNotReceive().UpdateAsync(Arg.Any<User>());
     }
 
     [Fact]
@@ -118,5 +115,35 @@ public sealed class MoodReportJobTests
                 && r.Caption == "mood report"
                 && r.Photo.FileType == FileType.Stream)
         );
+    }
+
+    [Fact]
+    public async Task Execute_WhenApiThrowsException_ThenLogsErrorAndDisablesUser()
+    {
+        var user = UserGenerator.Get();
+        _repository.FindAsync(user.Id).Returns(user);
+
+        _timeProvider.Now.Returns(DateTime.UtcNow);
+
+        var exception = new ApiRequestException("test");
+        _client.SendRequest(Arg.Any<SendPhotoRequest>()).ThrowsAsync(exception);
+
+        using var stream = new MemoryStream();
+        _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
+
+        var context = Substitute.For<IJobExecutionContext>();
+
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new MoodReportJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        await _sut.Execute(context);
+
+        _logger.ShouldReceiveLog(LogLevel.Error);
+        user.IsEnabled.Should().BeFalse();
+        await _repository.Received().UpdateAsync(user);
     }
 }

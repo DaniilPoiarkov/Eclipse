@@ -1,41 +1,46 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Eclipse.Common.Background;
+using Eclipse.Domain.Users;
 
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
-using Quartz;
+using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.MoodRecords.Collection;
 
-internal sealed class CollectMoodRecordJob : IJob
+internal sealed class CollectMoodRecordJob : JobWithArgs<CollectMoodRecordJobData>
 {
     private readonly IMoodRecordCollector _collector;
 
-    private readonly ILogger<CollectMoodRecordJob> _logger;
+    private readonly IUserRepository _userRepository;
 
-    public CollectMoodRecordJob(IMoodRecordCollector collector, ILogger<CollectMoodRecordJob> logger)
+    public CollectMoodRecordJob(
+        IMoodRecordCollector collector,
+        IUserRepository userRepository,
+        ILogger<CollectMoodRecordJob> logger) : base(logger)
     {
         _collector = collector;
-        _logger = logger;
+        _userRepository = userRepository;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    protected override async Task Execute(CollectMoodRecordJobData args, CancellationToken cancellationToken)
     {
-        var data = context.MergedJobDataMap.GetString("data");
-
-        if (data.IsNullOrEmpty())
+        try
         {
-            _logger.LogError("Cannot deserialize event with data {Data}", "{null}");
-            return;
+            await _collector.CollectAsync(args.UserId, cancellationToken);
         }
-
-        var args = JsonConvert.DeserializeObject<CollectMoodRecordJobData>(data);
-
-        if (args is null)
+        catch (ApiRequestException e)
         {
-            _logger.LogError("Cannot deserialize event with data {Data}", data);
-            return;
-        }
+            Logger.LogError(e, "Failed to send collect mood record job for user {UserId}. Disabling user.", args.UserId);
 
-        await _collector.CollectAsync(args.UserId, context.CancellationToken);
+            var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
+
+            if (user is null)
+            {
+                return;
+            }
+
+            user.SetIsEnabled(false);
+            await _userRepository.UpdateAsync(user, cancellationToken);
+        }
     }
 }

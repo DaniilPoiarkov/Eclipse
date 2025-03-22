@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Reminders;
-using Eclipse.Common.Clock;
+﻿using Eclipse.Common.Clock;
 using Eclipse.Common.Notifications;
 
 using Newtonsoft.Json;

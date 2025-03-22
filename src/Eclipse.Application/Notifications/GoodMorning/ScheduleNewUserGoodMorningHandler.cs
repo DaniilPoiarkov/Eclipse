@@ -9,7 +9,7 @@ using Quartz;
 
 namespace Eclipse.Application.Notifications.GoodMorning;
 
-internal sealed class ScheduleNewUserGoodMorningHandler : IEventHandler<NewUserJoinedDomainEvent>
+internal sealed class ScheduleNewUserGoodMorningHandler : IEventHandler<NewUserJoinedDomainEvent>, IEventHandler<UserEnabledDomainEvent>
 {
     private readonly IUserRepository _userRepository;
 
@@ -31,13 +31,23 @@ internal sealed class ScheduleNewUserGoodMorningHandler : IEventHandler<NewUserJ
         _jobScheduler = jobScheduler;
     }
 
-    public async Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
+    public Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.FindAsync(@event.UserId, cancellationToken);
+        return Handle(@event.UserId, cancellationToken);
+    }
+
+    public Task Handle(UserEnabledDomainEvent @event, CancellationToken cancellationToken = default)
+    {
+        return Handle(@event.UserId, cancellationToken);
+    }
+
+    private async Task Handle(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserGoodMorningHandler), @event.UserId, "User not found");
+            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserGoodMorningHandler), userId, "User not found");
             return;
         }
 

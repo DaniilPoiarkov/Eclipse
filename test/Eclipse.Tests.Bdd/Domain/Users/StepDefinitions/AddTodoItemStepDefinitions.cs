@@ -7,7 +7,7 @@ namespace Eclipse.Tests.Bdd.Domain.Users.StepDefinitions;
 [Binding]
 public sealed class AddTodoItemStepDefinitions
 {
-    private readonly User _user = User.Create(Guid.NewGuid(), "Name", "Surname", "Username", 1, DateTime.UtcNow, true);
+    private readonly User _user = User.Create(Guid.NewGuid(), "Name", "Surname", "Username", 1, DateTime.UtcNow, true, true);
 
     [Given("User with todo items")]
     public void GivenUserWithTodoItems(Table table)

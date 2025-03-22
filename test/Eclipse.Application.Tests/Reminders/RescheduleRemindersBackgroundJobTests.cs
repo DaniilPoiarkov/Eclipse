@@ -7,6 +7,8 @@ using NSubstitute;
 
 using Quartz;
 
+using System.Linq.Expressions;
+
 using Xunit;
 
 namespace Eclipse.Application.Tests.Reminders;
@@ -39,7 +41,7 @@ public sealed class RescheduleRemindersBackgroundJobTests
         user.AddReminder(text, new TimeOnly(hour, minute));
         user.AddReminder(text, new TimeOnly(hour, minute));
 
-        _userRepository.GetAllAsync().Returns([user]);
+        _userRepository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
 
         var scheduler = Substitute.For<IScheduler>();
 

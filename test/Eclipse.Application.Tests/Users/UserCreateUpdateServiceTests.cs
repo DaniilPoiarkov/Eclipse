@@ -45,7 +45,11 @@ public sealed class UserCreateUpdateServiceTests
     public async Task UpdateAsync_WhenUserWithSpecifiedIdNotExist_ThenExceptionThrown()
     {
         var expected = DefaultErrors.EntityNotFound<User>();
-        var result = await _sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto());
+        var result = await _sut.UpdateAsync(Guid.NewGuid(), new UserUpdateDto
+        {
+            Name = "John",
+            UserName = "john.doe"
+        });
 
         result.Error.Should().BeEquivalentTo(expected);
 
@@ -231,7 +235,7 @@ public sealed class UserCreateUpdateServiceTests
             UserName = string.Empty
         };
 
-        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId, DateTime.UtcNow, true);
+        var user = User.Create(Guid.NewGuid(), model.Name, model.Surname, model.UserName, model.ChatId, DateTime.UtcNow, true, true);
 
         _repository.CreateAsync(user).ReturnsForAnyArgs(user);
 
