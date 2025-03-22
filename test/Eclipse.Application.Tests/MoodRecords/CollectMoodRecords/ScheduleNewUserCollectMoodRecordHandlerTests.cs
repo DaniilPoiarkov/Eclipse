@@ -1,9 +1,8 @@
 ﻿using Eclipse.Application.MoodRecords.Collection;
-using Eclipse.Application.Notifications.NewUserJoined;
-using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
+using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
 
 using Microsoft.Extensions.Logging;
@@ -62,13 +61,7 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests
 
         await _sut.Handle(@event);
 
-        _logger.Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception>(),
-            Arg.Any<Func<object, Exception?, string>>()
-        );
+        _logger.ShouldReceiveLog(LogLevel.Error);
     }
 
     [Fact]
