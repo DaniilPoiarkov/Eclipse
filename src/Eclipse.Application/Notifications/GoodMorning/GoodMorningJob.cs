@@ -5,8 +5,6 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using System.Net;
-
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
@@ -55,8 +53,10 @@ internal sealed class GoodMorningJob : JobWithArgs<GoodMorningJobData>
                 cancellationToken: cancellationToken
             );
         }
-        catch (ApiRequestException e)
+        catch (ApiRequestException ex)
         {
+            Logger.LogError(ex, "Failed to run good morning job for user {UserId}. Disabling user.", args.UserId);
+
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
         }

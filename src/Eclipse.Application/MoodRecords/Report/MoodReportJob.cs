@@ -7,8 +7,6 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using System.Net;
-
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -76,8 +74,10 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
                 cancellationToken: cancellationToken
             );
         }
-        catch (ApiRequestException e)
+        catch (ApiRequestException ex)
         {
+            Logger.LogError(ex, "Failed to send mood report for user {UserId}. Disabling user.", user.Id);
+
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
         }

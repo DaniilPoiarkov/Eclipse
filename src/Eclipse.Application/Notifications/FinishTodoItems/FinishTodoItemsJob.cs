@@ -5,8 +5,6 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using System.Net;
-
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
@@ -57,8 +55,10 @@ internal sealed class FinishTodoItemsJob : JobWithArgs<FinishTodoItemsJobData>
         {
             await _client.SendMessage(user.ChatId, message, cancellationToken: cancellationToken);
         }
-        catch (ApiRequestException e)
+        catch (ApiRequestException ex)
         {
+            Logger.LogError(ex, "Failed to run finish todo items reminder for user {UserId}. Disabling user.", args.UserId);
+
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
         }

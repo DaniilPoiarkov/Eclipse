@@ -2,7 +2,6 @@
 using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
-using System.Net;
 
 using Telegram.Bot.Exceptions;
 
@@ -31,7 +30,7 @@ internal sealed class CollectMoodRecordJob : JobWithArgs<CollectMoodRecordJobDat
         }
         catch (ApiRequestException e)
         {
-            Logger.LogError(e, "Failed to run {Job} job.", nameof(CollectMoodRecordJob));
+            Logger.LogError(e, "Failed to send collect mood record job for user {UserId}. Disabling user.", args.UserId);
 
             var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
