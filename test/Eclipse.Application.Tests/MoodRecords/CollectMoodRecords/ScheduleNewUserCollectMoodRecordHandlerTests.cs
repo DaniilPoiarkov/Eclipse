@@ -1,4 +1,6 @@
 ﻿using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Application.Notifications.NewUserJoined;
+using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
@@ -38,11 +40,9 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests
 
     [Theory]
     [InlineData("test", "test", "test")]
-    public async Task Handle_WhenUserNotFound_ThenErrorLogged(string userName, string name, string surname)
+    public async Task Handle_WhenJoinedUserNotFound_ThenErrorLogged(string userName, string name, string surname)
     {
-        var userId = Guid.NewGuid();
-
-        var @event = new NewUserJoinedDomainEvent(userId, userName, name, surname);
+        var @event = new NewUserJoinedDomainEvent(Guid.NewGuid(), userName, name, surname);
 
         await _sut.Handle(@event);
 
@@ -56,11 +56,47 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenUserFound_ThenSchedulesJob()
+    public async Task Handle_WhenEnabledUserNotFound_ThenErrorLogged()
+    {
+        var @event = new UserEnabledDomainEvent(Guid.NewGuid());
+
+        await _sut.Handle(@event);
+
+        _logger.Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception>(),
+            Arg.Any<Func<object, Exception?, string>>()
+        );
+    }
+
+    [Fact]
+    public async Task Handle_WhenUserJoined_ThenSchedulesJob()
     {
         var user = UserGenerator.Get();
 
         var @event = new NewUserJoinedDomainEvent(user.Id, user.UserName, user.Name, user.Surname);
+
+        _userRepository.FindAsync(user.Id).Returns(user);
+
+        var scheduler = Substitute.For<IScheduler>();
+        _schedulerFactory.GetScheduler().Returns(scheduler);
+
+        await _sut.Handle(@event);
+
+        await _schedulerFactory.Received().GetScheduler();
+        await _jobScheduler.Received().Schedule(scheduler,
+            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
+        );
+    }
+
+    [Fact]
+    public async Task Handle_WhenUserEnabled_ThenSchedulesJob()
+    {
+        var user = UserGenerator.Get();
+
+        var @event = new UserEnabledDomainEvent(user.Id);
 
         _userRepository.FindAsync(user.Id).Returns(user);
 
