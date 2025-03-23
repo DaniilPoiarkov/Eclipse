@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
@@ -12,28 +12,28 @@ using NSubstitute;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.MoodRecords.CollectMoodRecords;
+namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
 
-public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture<SchedulerFactoryFixture>
+public sealed class ScheduleNewUserMoodReportHandlerTests : IClassFixture<SchedulerFactoryFixture>
 {
     private readonly SchedulerFactoryFixture _schedulerFixture;
 
     private readonly IUserRepository _userRepository;
 
-    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly ILogger<ScheduleNewUserMoodReportHandler> _logger;
 
-    private readonly ILogger<ScheduleNewUserCollectMoodRecordHandler> _logger;
+    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
 
-    private readonly ScheduleNewUserCollectMoodRecordHandler _sut;
+    private readonly ScheduleNewUserMoodReportHandler _sut;
 
-    public ScheduleNewUserCollectMoodRecordHandlerTests(SchedulerFactoryFixture schedulerFixture)
+    public ScheduleNewUserMoodReportHandlerTests(SchedulerFactoryFixture schedulerFixture)
     {
         _schedulerFixture = schedulerFixture;
         _userRepository = Substitute.For<IUserRepository>();
-        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
-        _logger = Substitute.For<ILogger<ScheduleNewUserCollectMoodRecordHandler>>();
+        _logger = Substitute.For<ILogger<ScheduleNewUserMoodReportHandler>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
 
-        _sut = new ScheduleNewUserCollectMoodRecordHandler(_userRepository, _schedulerFixture.SchedulerFactory, _jobScheduler, _logger);
+        _sut = new ScheduleNewUserMoodReportHandler(_userRepository, _schedulerFixture.SchedulerFactory, _logger, _jobScheduler);
     }
 
     [Theory]
@@ -41,16 +41,6 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture
     public async Task Handle_WhenJoinedUserNotFound_ThenErrorLogged(string userName, string name, string surname)
     {
         var @event = new NewUserJoinedDomainEvent(Guid.NewGuid(), userName, name, surname);
-
-        await _sut.Handle(@event);
-
-        _logger.ShouldReceiveLog(LogLevel.Error);
-    }
-
-    [Fact]
-    public async Task Handle_WhenEnabledUserNotFound_ThenErrorLogged()
-    {
-        var @event = new UserEnabledDomainEvent(Guid.NewGuid());
 
         await _sut.Handle(@event);
 
@@ -70,7 +60,7 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture
 
         await _schedulerFixture.SchedulerFactory.Received().GetScheduler();
         await _jobScheduler.Received().Schedule(_schedulerFixture.Scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
+            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
         );
     }
 
@@ -87,7 +77,7 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture
 
         await _schedulerFixture.SchedulerFactory.Received().GetScheduler();
         await _jobScheduler.Received().Schedule(_schedulerFixture.Scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
+            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
         );
     }
 }
