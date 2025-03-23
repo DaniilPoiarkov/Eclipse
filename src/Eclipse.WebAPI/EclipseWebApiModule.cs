@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Common.Background;
-using Eclipse.Common.Session;
 using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
@@ -9,7 +8,6 @@ using Eclipse.WebAPI.Filters;
 using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Options;
-using Eclipse.WebAPI.Session;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -52,10 +50,7 @@ public static class EclipseWebApiModule
             .AddEndpointsApiExplorer();
 
         services
-            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
-            .AddScoped<CurrentSessionResolverMiddleware>()
-            .AddScoped<CurrentSession>()
-            .AddScoped<ICurrentSession>(sp => sp.GetRequiredService<CurrentSession>());
+            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>();
 
         services.AddSwaggerGen();
 
@@ -123,8 +118,6 @@ public static class EclipseWebApiModule
             .UseAuthorization();
 
         app.UseLocalization();
-
-        app.UseMiddleware<CurrentSessionResolverMiddleware>();
 
         app.MapControllers();
 
