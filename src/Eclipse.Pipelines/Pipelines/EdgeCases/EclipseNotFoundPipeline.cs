@@ -1,5 +1,5 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Pipelines;
+using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.EdgeCases;
 

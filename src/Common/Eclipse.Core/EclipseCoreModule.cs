@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
 using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 

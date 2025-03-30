@@ -1,12 +1,13 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.CurrentUser;
+using Eclipse.Core.Pipelines;
+using Eclipse.Core.Routing;
 using Eclipse.Core.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using System.Reflection;
 
-namespace Eclipse.Core.Pipelines;
+namespace Eclipse.Core.Provider;
 
 internal sealed class PipelineProvider : IPipelineProvider
 {

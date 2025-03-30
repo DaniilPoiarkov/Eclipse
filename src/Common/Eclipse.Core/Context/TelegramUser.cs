@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Core.Models;
+﻿namespace Eclipse.Core.Context;
 
 [Serializable]
 public sealed class TelegramUser

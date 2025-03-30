@@ -1,4 +1,5 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
+using Eclipse.Core.CurrentUser;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Tests.Generators;
 

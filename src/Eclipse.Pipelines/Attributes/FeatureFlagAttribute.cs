@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Validation;
+﻿using Eclipse.Core.Validation;
 
 namespace Eclipse.Pipelines.Attributes;
 

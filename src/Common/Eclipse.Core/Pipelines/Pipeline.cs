@@ -1,5 +1,4 @@
 ﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
 using Eclipse.Core.Results;
 
 using Telegram.Bot.Types.ReplyMarkups;

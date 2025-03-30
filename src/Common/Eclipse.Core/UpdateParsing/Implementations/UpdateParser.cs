@@ -1,4 +1,4 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
 
 using Telegram.Bot.Types;
 

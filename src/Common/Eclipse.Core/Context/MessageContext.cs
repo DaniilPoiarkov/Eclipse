@@ -1,6 +1,4 @@
-﻿using Eclipse.Core.Models;
-
-namespace Eclipse.Core.Core;
+﻿namespace Eclipse.Core.Context;
 
 /// <summary>
 /// Contains information scoped to current request
@@ -13,7 +11,7 @@ public sealed class MessageContext
 
     public TelegramUser User { get; }
 
-    internal IServiceProvider Services { get; set; } = null!;
+    internal IServiceProvider Services { get; }
 
     public MessageContext(long chatId, string value, TelegramUser user, IServiceProvider serviceProvider)
     {

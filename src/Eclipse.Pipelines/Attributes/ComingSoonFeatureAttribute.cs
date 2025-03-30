@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Validation;
+﻿using Eclipse.Core.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

@@ -1,8 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Statistics;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Reports;
 

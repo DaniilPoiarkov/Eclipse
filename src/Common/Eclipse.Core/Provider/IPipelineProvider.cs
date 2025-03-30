@@ -1,6 +1,6 @@
 ﻿using Eclipse.Core.Pipelines;
 
-namespace Eclipse.Core.Core;
+namespace Eclipse.Core.Provider;
 
 /// <summary>
 /// Returns <a cref="PipelineBase"></a> which match specified <![CDATA[route]]>

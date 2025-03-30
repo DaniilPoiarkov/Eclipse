@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.MoodRecords.Collection;
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
+using Eclipse.Core.Provider;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;

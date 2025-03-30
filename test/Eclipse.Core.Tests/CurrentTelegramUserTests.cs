@@ -1,6 +1,5 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
 using Eclipse.Core.CurrentUser;
-using Eclipse.Core.Models;
 
 using FluentAssertions;
 

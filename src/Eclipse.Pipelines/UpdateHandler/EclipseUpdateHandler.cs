@@ -1,10 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
+using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
@@ -48,7 +49,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private static readonly UpdateType[] _allowedUpdateTypes =
     [
-        UpdateType.Message, UpdateType.CallbackQuery
+        UpdateType.Message,
+        UpdateType.CallbackQuery,
+        UpdateType.MyChatMember
     ];
 
     public EclipseUpdateHandler(

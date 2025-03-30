@@ -1,6 +1,5 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Tests.Decorations;
 using Eclipse.Core.Tests.Pipelines;

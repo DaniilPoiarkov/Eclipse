@@ -1,7 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Core.Core;
+namespace Eclipse.Core.Results;
 
 /// <summary>
 /// Represents result of pipeline execution which need to be send to the user

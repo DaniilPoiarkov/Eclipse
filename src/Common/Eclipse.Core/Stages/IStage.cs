@@ -1,4 +1,7 @@
-﻿namespace Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+
+namespace Eclipse.Core.Stages;
 
 /// <summary>
 /// Defines one step of specific <a cref="Pipelines.PipelineBase"></a>

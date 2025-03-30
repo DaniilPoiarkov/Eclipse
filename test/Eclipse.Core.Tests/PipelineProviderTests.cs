@@ -1,6 +1,7 @@
-﻿using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+﻿using Eclipse.Core.Context;
+using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
 using Eclipse.Core.Tests.Pipelines;
 
 using FluentAssertions;

@@ -1,5 +1,6 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Core.Validation;
 
 namespace Eclipse.Core.Pipelines;
@@ -11,7 +12,7 @@ public class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
 
     public virtual void SetResults(IEnumerable<ValidationResult> results)
     {
-        Errors = results.Where(r => r.IsFailed).ToList();
+        Errors = [.. results.Where(r => r.IsFailed)];
     }
 
     protected override void Initialize()
@@ -21,7 +22,7 @@ public class AccessDeniedPipeline : PipelineBase, IAccessDeniedPipeline
 
     protected virtual IResult SendErrors(MessageContext context)
     {
-        var infos = Errors.Select(e => e.ErrorMessage);
-        return Text(string.Join(Environment.NewLine, infos));
+        var errorMessages = Errors.Select(e => e.ErrorMessage);
+        return Text(string.Join(Environment.NewLine, errorMessages));
     }
 }

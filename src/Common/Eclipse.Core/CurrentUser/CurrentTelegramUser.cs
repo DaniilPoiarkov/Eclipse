@@ -1,8 +1,8 @@
-﻿using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+﻿using Eclipse.Core.Context;
 
 namespace Eclipse.Core.CurrentUser;
 
+// TODO: Drop
 internal sealed class CurrentTelegramUser : ICurrentTelegramUser
 {
     private TelegramUser? _user;

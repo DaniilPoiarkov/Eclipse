@@ -1,6 +1,4 @@
-﻿using Eclipse.Core.Validation;
-
-namespace Eclipse.Core.Attributes;
+﻿namespace Eclipse.Core.Validation;
 
 public abstract class ContextValidationAttribute : Attribute
 {
