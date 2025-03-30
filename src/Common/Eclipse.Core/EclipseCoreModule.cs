@@ -21,7 +21,6 @@ public static class EclipseCoreModule
         builder?.Invoke(coreBuilder);
 
         services
-            .AddTransient<ILegacyPipelineProvider, LegacyPipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
                 .AddScoped<IPipelineProvider, PipelineProvider>()

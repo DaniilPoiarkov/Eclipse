@@ -10,6 +10,7 @@ using Eclipse.Pipelines.Stores.Pipelines;
 using Microsoft.Extensions.Localization;
 
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Eclipse.Pipelines.Jobs;
 
@@ -17,8 +18,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
 {
     private readonly IPipelineStore _pipelineStore;
 
-    // TODO: Replace
-    private readonly ILegacyPipelineProvider _pipelineProvider;
+    private readonly IPipelineProvider _pipelineProvider;
 
     private readonly ITelegramBotClient _botClient;
 
@@ -34,7 +34,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
 
     public MoodRecordCollector(
         IPipelineStore pipelineStore,
-        ILegacyPipelineProvider pipelineProvider,
+        IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IServiceProvider serviceProvider,
         IStringLocalizer<MoodRecordCollector> localizer,
@@ -66,7 +66,15 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
         var key = new PipelineKey(user.ChatId);
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
-        var pipeline = (_pipelineProvider.Get("/href_mood_records_add") as EclipsePipelineBase)!;
+        var update = new Update
+        {
+            Message = new Message
+            {
+                Text = "/href_mood_records_add"
+            }
+        };
+
+        var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
         using var _ = _currentCulture.UsingCulture(user.Culture);
 
