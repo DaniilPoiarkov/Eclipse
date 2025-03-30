@@ -6,7 +6,7 @@ using Eclipse.Pipelines.Culture;
 
 using System.Globalization;
 
-namespace Eclipse.Pipelines.Decorations;
+namespace Eclipse.Pipelines.Localization;
 
 public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {

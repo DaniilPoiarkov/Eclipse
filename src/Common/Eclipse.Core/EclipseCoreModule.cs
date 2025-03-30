@@ -1,11 +1,11 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Eclipse.Core;
 
@@ -21,12 +21,11 @@ public static class EclipseCoreModule
         builder?.Invoke(coreBuilder);
 
         services
-            .AddTransient<IPipelineProvider, PipelineProvider>()
+            .AddTransient<IPipelineProvider, LegacyPipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
-                .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>()
-                .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>()
-                .AddScoped<IUpdateProvider, UpdateProvider>();
+                .AddScoped<IPipelineProviderV2, PipelineProvider>()
+                .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
 
         services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
             .AddClasses(c => c.AssignableTo<IParseStrategy>(), publicOnly: false)
@@ -39,6 +38,13 @@ public static class EclipseCoreModule
             .As<PipelineBase>()
             .AsImplementedInterfaces()
             .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblyOf<IProviderHandler>()
+            .AddClasses(c => c.AssignableTo<IProviderHandler>(), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
 
         return services;
     }

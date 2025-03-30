@@ -5,7 +5,7 @@ using Eclipse.Domain;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
-using Eclipse.Pipelines.Decorations;
+using Eclipse.Pipelines.Localization;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
 
@@ -20,7 +20,9 @@ var configuration = builder.Configuration;
 builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
-    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
+    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>()
+        .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
+    )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()

@@ -1,4 +1,4 @@
-﻿using Eclipse.Core.Context;
+﻿using Telegram.Bot.Types;
 
 namespace Eclipse.Core.Validation;
 
@@ -6,11 +6,11 @@ public sealed class ValidationContext
 {
     public IServiceProvider ServiceProvider { get; }
 
-    public TelegramUser? TelegramUser { get; }
+    public Update Update { get; }
 
-    public ValidationContext(IServiceProvider serviceProvider, TelegramUser? telegramUser)
+    public ValidationContext(IServiceProvider serviceProvider, Update update)
     {
         ServiceProvider = serviceProvider;
-        TelegramUser = telegramUser;
+        Update = update;
     }
 }

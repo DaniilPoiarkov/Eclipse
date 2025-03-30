@@ -7,6 +7,6 @@ public class NotFoundPipeline : PipelineBase, INotFoundPipeline
 {
     protected override void Initialize()
     {
-        RegisterStage(_ => Text("Pipeline not found"));
+        RegisterStage(_ => Empty());
     }
 }

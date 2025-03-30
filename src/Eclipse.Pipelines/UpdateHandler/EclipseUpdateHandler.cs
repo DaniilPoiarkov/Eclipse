@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
 using Eclipse.Core.Context;
-using Eclipse.Core.CurrentUser;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
@@ -39,11 +38,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IPipelineProvider _pipelineProvider;
 
-    private readonly ICurrentTelegramUser _currentUser;
-
     private readonly IUpdateParser _updateParser;
-
-    private readonly IUpdateProvider _updateProvider;
 
     private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
@@ -59,20 +54,16 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserService userService,
-        ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
-        IUpdateProvider updateProvider,
         IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _userService = userService;
-        _currentUser = currentUser;
         _updateParser = updateParser;
         _messageStore = messageStore;
-        _updateProvider = updateProvider;
         _localizer = localizer;
     }
 
@@ -91,9 +82,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             _logger.LogWarning("Context is null after parsing update of type {updateType}", update.Type);
             return;
         }
-
-        _currentUser.SetCurrentUser(context.User);
-        _updateProvider.Set(update);
 
         var result = await HandleAndGetResultAsync(botClient, context.Value, context, cancellationToken);
 

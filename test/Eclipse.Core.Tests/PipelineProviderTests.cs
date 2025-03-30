@@ -1,6 +1,4 @@
-﻿using Eclipse.Core.Context;
-using Eclipse.Core.CurrentUser;
-using Eclipse.Core.Pipelines;
+﻿using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Tests.Pipelines;
 
@@ -8,15 +6,13 @@ using FluentAssertions;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using NSubstitute;
-
 using Xunit;
 
 namespace Eclipse.Core.Tests;
 
 public class PipelineProviderTests
 {
-    private readonly PipelineProvider _pipelineProvider;
+    private readonly LegacyPipelineProvider _pipelineProvider;
 
     public PipelineProviderTests()
     {
@@ -28,12 +24,9 @@ public class PipelineProviderTests
             .AddSingleton<PipelineBase, TestAccessPassedPipeline>()
             .BuildServiceProvider();
 
-        var currentUser = Substitute.For<ICurrentTelegramUser>();
-        currentUser.GetCurrentUser().Returns(new TelegramUser());
-
         var pipelines = serviceProvider.GetServices<PipelineBase>();
 
-        _pipelineProvider = new PipelineProvider(pipelines, serviceProvider, currentUser);
+        _pipelineProvider = new LegacyPipelineProvider(pipelines, serviceProvider);
     }
 
     [Fact]

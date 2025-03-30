@@ -1,84 +1,70 @@
-﻿using Eclipse.Core.CurrentUser;
-using Eclipse.Core.Pipelines;
-using Eclipse.Core.Routing;
+﻿using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider.Handlers;
 using Eclipse.Core.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using System.Reflection;
 
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+
 namespace Eclipse.Core.Provider;
 
-internal sealed class PipelineProvider : IPipelineProvider
+internal sealed class PipelineProvider : IPipelineProviderV2
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly Dictionary<RouteAttribute, PipelineBase> _pipelines;
+    private readonly IEnumerable<PipelineBase> _pipelines;
 
-    private readonly ICurrentTelegramUser _currentUser;
+    private readonly Dictionary<UpdateType, IProviderHandler> _handlers;
 
-    public PipelineProvider(IEnumerable<PipelineBase> pipelines, IServiceProvider serviceProvider, ICurrentTelegramUser currentUser)
+    public PipelineProvider(IServiceProvider serviceProvider, IEnumerable<PipelineBase> pipelines, IEnumerable<IProviderHandler> handlers)
     {
-        _pipelines = pipelines
-            .Select(p => (Pipeline: p, Attribute: p.GetType().GetCustomAttribute<RouteAttribute>()))
-            .Where(tuple => tuple.Attribute is not null)
-            .ToDictionary(tuple => tuple.Attribute!, tuple => tuple.Pipeline);
-
         _serviceProvider = serviceProvider;
-        _currentUser = currentUser;
+        _pipelines = pipelines;
+        _handlers = handlers.ToDictionary(h => h.Type);
     }
 
-    public PipelineBase Get(string route)
+    public PipelineBase Get(Update update)
     {
-        if (string.IsNullOrEmpty(route))
+        if (!_handlers.TryGetValue(update.Type, out var handler))
         {
-            return GetNotFoundPipeline();
+            handler = new UnknownHandler();
         }
 
-        if (route.StartsWith('/'))
-        {
-            return GetByCommand(route);
-        }
-
-        return GetByRoute(route);
-    }
-
-    private PipelineBase GetByRoute(string route)
-    {
-        var pipeline = _pipelines.FirstOrDefault(p => p.Key.Route.Equals(route)).Value
+        var pipeline = handler.Get(update)
             ?? GetNotFoundPipeline();
 
-        return ValidOrAccessDenied(pipeline);
-    }
+        pipeline.Update = update;
 
-    private PipelineBase GetByCommand(string command)
-    {
-        var pipeline = _pipelines.FirstOrDefault(kv => kv.Key.Command is not null && kv.Key.Command.Equals(command)).Value
-            ?? GetNotFoundPipeline();
-
-        return ValidOrAccessDenied(pipeline);
+        return ValidOrAccessDenied(pipeline, update);
     }
 
     private PipelineBase GetNotFoundPipeline()
     {
-        return _pipelines.First(kv => kv.Value is INotFoundPipeline).Value;
+        return _pipelines.FirstOrDefault(p => p is INotFoundPipeline)
+            ?? new NotFoundPipeline();
     }
 
-    private PipelineBase ValidOrAccessDenied(PipelineBase pipeline)
+    private PipelineBase ValidOrAccessDenied(PipelineBase pipeline, Update update)
     {
-        if (Validate(pipeline, out var results))
+        if (IsContextValid(pipeline, update, out var results))
         {
             return pipeline;
         }
 
-        var accessDeniedPipeline = _pipelines.First(kv => kv.Value is IAccessDeniedPipeline).Value as IAccessDeniedPipeline;
+        if (_pipelines.FirstOrDefault(p => p is IAccessDeniedPipeline) is not IAccessDeniedPipeline accessDeniedPipeline)
+        {
+            return GetNotFoundPipeline();
+        }
 
-        accessDeniedPipeline!.SetResults(results);
+        accessDeniedPipeline.SetResults(results);
 
-        return (accessDeniedPipeline as PipelineBase)!;
+        return (PipelineBase)accessDeniedPipeline;
     }
 
-    private bool Validate(PipelineBase pipeline, out ValidationResult[] results)
+    private bool IsContextValid(PipelineBase pipeline, Update update, out ValidationResult[] results)
     {
         var validationAttributes = pipeline.GetType()
             .GetCustomAttributes<ContextValidationAttribute>()
@@ -92,7 +78,7 @@ internal sealed class PipelineProvider : IPipelineProvider
 
         using var scope = _serviceProvider.CreateAsyncScope();
 
-        var context = new ValidationContext(scope.ServiceProvider, _currentUser.GetCurrentUser());
+        var context = new ValidationContext(scope.ServiceProvider, update);
 
         results = [.. validationAttributes.Select(a => a.Validate(context))];
 

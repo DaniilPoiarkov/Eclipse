@@ -2,7 +2,7 @@
 using Eclipse.Core.Results;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
-using Eclipse.Pipelines.Decorations;
+using Eclipse.Pipelines.Localization;
 
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
