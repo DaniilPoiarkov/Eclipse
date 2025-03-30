@@ -11,7 +11,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Core.Provider;
 
-internal sealed class PipelineProvider : IPipelineProviderV2
+internal sealed class PipelineProvider : IPipelineProvider
 {
     private readonly IServiceProvider _serviceProvider;
 

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Eclipse.Core.Provider;
 
-internal sealed class LegacyPipelineProvider : IPipelineProvider
+internal sealed class LegacyPipelineProvider : ILegacyPipelineProvider
 {
     private readonly IServiceProvider _serviceProvider;
 

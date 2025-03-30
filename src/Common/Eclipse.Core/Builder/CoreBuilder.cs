@@ -27,7 +27,12 @@ public sealed class CoreBuilder
     }
 
     /// <summary>
+    /// <para>
     /// Allows you to map keywords before attempting to retrieve pipeline when the update type is <a cref="Telegram.Bot.Types.Enums.UpdateType.Message"></a>.
+    /// </para>
+    /// <para>
+    /// Registers only first implementation, if no provided uses default.
+    /// </para>
     /// </summary>
     /// <typeparam name="TKeywordMapper">The type of the keyword mapper.</typeparam>
     /// <param name="lifetime">The lifetime.</param>

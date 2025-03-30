@@ -6,8 +6,6 @@ using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
@@ -83,22 +81,32 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return;
         }
 
-        var result = await HandleAndGetResultAsync(botClient, context.Value, context, cancellationToken);
+        var result = await HandleAndGetResultAsync(botClient, update, context, cancellationToken);
 
         if (result is RedirectResult redirect)
         {
             var command = redirect.PipelineType.GetCustomAttribute<RouteAttribute>()?.Command ?? string.Empty;
-            await HandleAndGetResultAsync(botClient, command, context, cancellationToken);
+
+            var redirectUpdate = new Update
+            {
+                Message = new Message
+                {
+                    Text = command,
+                    From = update.Message?.From,
+                }
+            };
+
+            await HandleAndGetResultAsync(botClient, redirectUpdate, context, cancellationToken);
         }
 
         await AddOrUpdateAsync(context.User, cancellationToken);
     }
 
-    private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, string route, MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)
     {
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = await GetEclipsePipelineAsync(route, key);
+        var pipeline = await GetEclipsePipelineAsync(update, key);
 
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
@@ -175,13 +183,13 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         }
     }
 
-    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(string route, PipelineKey key)
+    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(Update update, PipelineKey key)
     {
-        return await GetPipelineAsync(route, key) as EclipsePipelineBase
+        return await GetPipelineAsync(update, key) as EclipsePipelineBase
             ?? new EclipseNotFoundPipeline();
     }
 
-    private async Task<PipelineBase> GetPipelineAsync(string route, PipelineKey key)
+    private async Task<PipelineBase> GetPipelineAsync(Update update, PipelineKey key)
     {
         var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
 
@@ -190,21 +198,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return pipeline;
         }
 
-        if (route.StartsWith('/'))
-        {
-            return _pipelineProvider.Get(route);
-        }
-
-        try
-        {
-            return _pipelineProvider.Get(
-                _localizer.ToLocalizableString(route)
-            );
-        }
-        catch (LocalizationNotFoundException)
-        {
-            // Retrieve INotFoundPipeline
-            return _pipelineProvider.Get(string.Empty);
-        }
+        return _pipelineProvider.Get(update);
     }
 }

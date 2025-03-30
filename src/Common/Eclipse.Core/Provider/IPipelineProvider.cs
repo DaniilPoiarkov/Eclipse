@@ -1,11 +1,18 @@
 ﻿using Eclipse.Core.Pipelines;
 
+using Telegram.Bot.Types;
+
 namespace Eclipse.Core.Provider;
 
 /// <summary>
-/// Returns <a cref="PipelineBase"></a> which match specified <![CDATA[route]]>
+/// Retrieves proper <a cref="PipelineBase"></a> for current <a cref="Update"></a>
 /// </summary>
 public interface IPipelineProvider
 {
-    PipelineBase Get(string route);
+    /// <summary>
+    /// Gets the <a cref="PipelineBase"></a> for provided <a cref="Update"></a>.
+    /// </summary>
+    /// <param name="update">The update.</param>
+    /// <returns></returns>
+    PipelineBase Get(Update update);
 }

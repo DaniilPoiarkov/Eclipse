@@ -17,7 +17,8 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
 {
     private readonly IPipelineStore _pipelineStore;
 
-    private readonly IPipelineProvider _pipelineProvider;
+    // TODO: Replace
+    private readonly ILegacyPipelineProvider _pipelineProvider;
 
     private readonly ITelegramBotClient _botClient;
 
@@ -33,7 +34,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
 
     public MoodRecordCollector(
         IPipelineStore pipelineStore,
-        IPipelineProvider pipelineProvider,
+        ILegacyPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IServiceProvider serviceProvider,
         IStringLocalizer<MoodRecordCollector> localizer,

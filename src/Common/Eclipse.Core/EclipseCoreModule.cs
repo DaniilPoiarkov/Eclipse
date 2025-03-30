@@ -21,10 +21,10 @@ public static class EclipseCoreModule
         builder?.Invoke(coreBuilder);
 
         services
-            .AddTransient<IPipelineProvider, LegacyPipelineProvider>()
+            .AddTransient<ILegacyPipelineProvider, LegacyPipelineProvider>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
-                .AddScoped<IPipelineProviderV2, PipelineProvider>()
+                .AddScoped<IPipelineProvider, PipelineProvider>()
                 .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
 
         services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()

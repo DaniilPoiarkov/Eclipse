@@ -1,4 +1,5 @@
 ﻿using Eclipse.Core.Provider;
+using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 
 using Microsoft.Extensions.Localization;
@@ -16,6 +17,13 @@ public sealed class LocalizedKeywordMapper : IKeywordMapper
 
     public string Map(string keyword)
     {
-        return _stringLocalizer.ToLocalizableString(keyword);
+        try
+        {
+            return _stringLocalizer.ToLocalizableString(keyword);
+        }
+        catch (LocalizationNotFoundException)
+        {
+            return keyword;
+        }
     }
 }
