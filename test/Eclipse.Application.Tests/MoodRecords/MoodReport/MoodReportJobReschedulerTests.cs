@@ -38,7 +38,7 @@ public sealed class MoodReportJobReschedulerTests : IClassFixture<SchedulerFacto
 
         _userRepository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns(users);
 
-        await _sut.ExecuteAsync();
+        await _sut.Execute();
         await _jobScheduler.Received(users.Count).Schedule(
             _schedulerFixture.Scheduler,
             Arg.Is<MoodReportSchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))

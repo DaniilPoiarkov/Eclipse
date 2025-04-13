@@ -42,7 +42,7 @@ public sealed class CollectMoodRecordJobReschedulerTests
         var scheduler = Substitute.For<IScheduler>();
         _schedulerFactory.GetScheduler().Returns(scheduler);
 
-        await _sut.ExecuteAsync();
+        await _sut.Execute();
 
         await _jobScheduler.Received(users.Count).Schedule(scheduler,
             Arg.Is<CollectMoodRecordSchedulerOptions>(o =>

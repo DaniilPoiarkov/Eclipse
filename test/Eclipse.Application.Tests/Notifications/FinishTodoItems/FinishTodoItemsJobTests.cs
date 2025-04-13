@@ -1,7 +1,10 @@
 ﻿using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
+using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
+
+using FluentAssertions;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -9,10 +12,12 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using Quartz;
 
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Requests;
 
 using Xunit;
@@ -123,5 +128,34 @@ public sealed class FinishTodoItemsJobTests
         await _client.Received().SendRequest(
             Arg.Is<SendMessageRequest>(r => r.ChatId == user.ChatId && r.Text == "You have 2 pending tasks")
         );
+    }
+
+    [Fact]
+    public async Task Execute_WhenClientThrowsException_ThenLogsExceptionEndDisablesUser()
+    {
+        var user = UserGenerator.Get();
+
+        _repository.FindAsync(user.Id).Returns(user);
+
+        _localizer["Jobs:Evening:RemindMarkAsFinished", user.Name, user.TodoItems.Count]
+            .Returns(new LocalizedString("", "You have 2 pending tasks"));
+
+        var context = Substitute.For<IJobExecutionContext>();
+
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        _client.SendRequest(Arg.Any<SendMessageRequest>())
+            .ThrowsAsync(new ApiRequestException("test"));
+
+        await _sut.Execute(context);
+
+        _logger.ShouldReceiveLog(LogLevel.Error);
+        user.IsEnabled.Should().BeFalse();
+        await _repository.Received().UpdateAsync(user);
     }
 }
