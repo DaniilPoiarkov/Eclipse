@@ -1,4 +1,5 @@
-﻿using Eclipse.Core.Pipelines;
+﻿using Eclipse.Core.Keywords;
+using Eclipse.Core.Pipelines;
 using Eclipse.Core.Routing;
 
 using System.Reflection;
@@ -8,7 +9,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Core.Provider.Handlers;
 
-internal sealed class MessageHandler : IProviderHandler
+internal sealed class MessageHandler : IRouteHandler
 {
     public UpdateType Type => UpdateType.Message;
 

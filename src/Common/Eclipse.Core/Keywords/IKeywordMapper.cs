@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Core.Provider;
+﻿namespace Eclipse.Core.Keywords;
 
 public interface IKeywordMapper
 {

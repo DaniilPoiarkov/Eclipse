@@ -27,7 +27,7 @@ public class PipelineProviderTests
             .BuildServiceProvider();
 
         var pipelines = serviceProvider.GetServices<PipelineBase>();
-        var handlers = serviceProvider.GetServices<IProviderHandler>();
+        var handlers = serviceProvider.GetServices<IRouteHandler>();
 
         _pipelineProvider = new PipelineProvider(serviceProvider, pipelines, handlers);
     }

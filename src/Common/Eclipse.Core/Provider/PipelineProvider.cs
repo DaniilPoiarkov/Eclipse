@@ -15,14 +15,21 @@ internal sealed class PipelineProvider : IPipelineProvider
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IEnumerable<PipelineBase> _pipelines;
+    private readonly IAccessDeniedPipeline _accessDeniedPipeline;
 
-    private readonly Dictionary<UpdateType, IProviderHandler> _handlers;
+    private readonly INotFoundPipeline _notFoundPipeline;
 
-    public PipelineProvider(IServiceProvider serviceProvider, IEnumerable<PipelineBase> pipelines, IEnumerable<IProviderHandler> handlers)
+    private readonly Dictionary<UpdateType, IRouteHandler> _handlers;
+
+    public PipelineProvider(
+        IServiceProvider serviceProvider,
+        IAccessDeniedPipeline accessDeniedPipeline,
+        INotFoundPipeline notFoundPipeline,
+        IEnumerable<IRouteHandler> handlers)
     {
         _serviceProvider = serviceProvider;
-        _pipelines = pipelines;
+        _accessDeniedPipeline = accessDeniedPipeline;
+        _notFoundPipeline = notFoundPipeline;
         _handlers = handlers.ToDictionary(h => h.Type);
     }
 
@@ -34,17 +41,11 @@ internal sealed class PipelineProvider : IPipelineProvider
         }
 
         var pipeline = handler.Get(update)
-            ?? GetNotFoundPipeline();
+            ?? (PipelineBase)_notFoundPipeline;
 
         pipeline.Update = update;
 
         return ValidOrAccessDenied(pipeline, update);
-    }
-
-    private PipelineBase GetNotFoundPipeline()
-    {
-        return _pipelines.FirstOrDefault(p => p is INotFoundPipeline)
-            ?? new NotFoundPipeline();
     }
 
     private PipelineBase ValidOrAccessDenied(PipelineBase pipeline, Update update)
@@ -54,14 +55,9 @@ internal sealed class PipelineProvider : IPipelineProvider
             return pipeline;
         }
 
-        if (_pipelines.FirstOrDefault(p => p is IAccessDeniedPipeline) is not IAccessDeniedPipeline accessDeniedPipeline)
-        {
-            return GetNotFoundPipeline();
-        }
+        _accessDeniedPipeline.SetResults(results);
 
-        accessDeniedPipeline.SetResults(results);
-
-        return (PipelineBase)accessDeniedPipeline;
+        return (PipelineBase)_accessDeniedPipeline;
     }
 
     private bool IsContextValid(PipelineBase pipeline, Update update, out ValidationResult[] results)

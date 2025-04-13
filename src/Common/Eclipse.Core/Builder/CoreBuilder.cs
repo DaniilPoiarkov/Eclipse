@@ -1,4 +1,4 @@
-﻿using Eclipse.Core.Provider;
+﻿using Eclipse.Core.Keywords;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

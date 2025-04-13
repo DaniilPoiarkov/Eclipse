@@ -1,8 +1,11 @@
 ﻿using Eclipse.Core.Builder;
+using Eclipse.Core.Keywords;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
+using Eclipse.Core.Provider.Handlers;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
+using Eclipse.Core.UpdateParsing.Strategies;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -21,29 +24,24 @@ public static class EclipseCoreModule
         builder?.Invoke(coreBuilder);
 
         services
+            .AddScoped<IPipelineProvider, PipelineProvider>()
+            .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
+
+        services
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
-                .AddScoped<IPipelineProvider, PipelineProvider>()
-                .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
+            .AddTransient<IParseStrategy, CallbackQueryParseStrategy>()
+            .AddTransient<IParseStrategy, MessageParseStrategy>()
+            .AddTransient<IParseStrategy, UnknownParseStrategy>()
+            .AddTransient<IParseStrategy, MyChatMemberParseStrategy>();
 
-        services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
-            .AddClasses(c => c.AssignableTo<IParseStrategy>(), publicOnly: false)
-            .AsSelf()
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
-
-        services.Scan(tss => tss.FromAssemblyOf<PipelineBase>()
-            .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
-            .As<PipelineBase>()
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
-
-        services.Scan(tss => tss.FromAssemblyOf<IProviderHandler>()
-            .AddClasses(c => c.AssignableTo<IProviderHandler>(), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
+        services
+            .AddScoped<IRouteHandler, MessageHandler>()
+            .AddScoped<IRouteHandler, UnknownHandler>();
 
         services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
+        services.TryAddSingleton<INotFoundPipeline, NotFoundPipeline>();
+        services.TryAddScoped<IAccessDeniedPipeline, AccessDeniedPipeline>();
 
         return services;
     }

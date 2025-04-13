@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Core.Provider;
+﻿namespace Eclipse.Core.Keywords;
 
 internal sealed class NullKeywordMapper : IKeywordMapper
 {

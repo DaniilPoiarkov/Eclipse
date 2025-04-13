@@ -49,7 +49,7 @@ public static class EclipsePipelinesModule
             .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
             .As<PipelineBase>()
             .AsSelf()
-            .WithTransientLifetime());
+            .WithScopedLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
             .AddClasses(c => c.AssignableTo<EclipseJobBase>(), publicOnly: false)

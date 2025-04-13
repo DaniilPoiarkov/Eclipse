@@ -5,7 +5,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Core.Provider.Handlers;
 
-internal sealed class UnknownHandler : IProviderHandler
+internal sealed class UnknownHandler : IRouteHandler
 {
     public UpdateType Type => UpdateType.Unknown;
 

@@ -1,4 +1,4 @@
-﻿using Eclipse.Core.Provider;
+﻿using Eclipse.Core.Keywords;
 using Eclipse.Localization.Exceptions;
 using Eclipse.Localization.Localizers;
 
