@@ -27,7 +27,7 @@ internal sealed class MessageHandler : IRouteHandler
     {
         var message = update.Message
             ?? throw new InvalidOperationException("Message is null.");
-        
+
         var text = message.Text;
 
         if (string.IsNullOrEmpty(text))
