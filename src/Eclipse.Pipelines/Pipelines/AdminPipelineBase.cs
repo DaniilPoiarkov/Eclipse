@@ -1,4 +1,4 @@
-﻿using Eclipse.Pipelines.Attributes;
+﻿using Eclipse.Pipelines.Validation;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

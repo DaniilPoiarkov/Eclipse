@@ -2,7 +2,7 @@
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Domain.Users;
-using Eclipse.Pipelines.Attributes;
+using Eclipse.Pipelines.Validation;
 
 using System.Reflection;
 

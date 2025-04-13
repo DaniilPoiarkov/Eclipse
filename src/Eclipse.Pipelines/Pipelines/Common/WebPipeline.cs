@@ -2,7 +2,7 @@
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Pipelines.Attributes;
+using Eclipse.Pipelines.Validation;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

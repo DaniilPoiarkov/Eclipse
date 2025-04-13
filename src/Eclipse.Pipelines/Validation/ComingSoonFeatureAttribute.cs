@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Attributes;
+namespace Eclipse.Pipelines.Validation;
 
 internal sealed class ComingSoonFeatureAttribute : ContextValidationAttribute
 {

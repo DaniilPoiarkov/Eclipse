@@ -1,6 +1,6 @@
 ﻿using Eclipse.Core.Validation;
 
-namespace Eclipse.Pipelines.Attributes;
+namespace Eclipse.Pipelines.Validation;
 
 internal sealed class FeatureFlagAttribute : ContextValidationAttribute
 {

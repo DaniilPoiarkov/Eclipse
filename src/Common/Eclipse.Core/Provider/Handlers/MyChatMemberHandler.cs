@@ -21,8 +21,10 @@ internal sealed class MyChatMemberHandler : IRouteHandler
 
     public PipelineBase? Get(Update update)
     {
-        return _pipelines
-            .FirstOrDefault(p => p.GetType().GetCustomAttribute<MyChatMemberPipelineAttribute>() is MyChatMemberPipelineAttribute attribute
-                && attribute.CanHandle(update));
+        return _pipelines.FirstOrDefault(p =>
+            p.GetType()
+            .GetCustomAttributes<MyChatMemberPipelineAttribute>()
+            .Any(a => a.CanHandle(update))
+        );
     }
 }

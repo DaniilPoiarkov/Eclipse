@@ -24,7 +24,7 @@ internal sealed class ChatMemberChangedPipeline : EclipsePipelineBase
 
     private async Task<IResult> UpdateUserAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        var chatMember = Update.ChatMember;
+        var chatMember = Update.MyChatMember;
 
         if (chatMember is null)
         {

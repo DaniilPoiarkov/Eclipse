@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Eclipse.Pipelines.Attributes;
+namespace Eclipse.Pipelines.Validation;
 
 internal sealed class AdminOnlyAttribute : ContextValidationAttribute
 {
