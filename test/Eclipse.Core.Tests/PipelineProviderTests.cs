@@ -1,13 +1,12 @@
-﻿using Eclipse.Core.Core;
-using Eclipse.Core.Models;
-using Eclipse.Core.Pipelines;
+﻿using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
 using Eclipse.Core.Tests.Pipelines;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using NSubstitute;
+using Telegram.Bot.Types;
 
 using Xunit;
 
@@ -25,55 +24,56 @@ public class PipelineProviderTests
             .AddSingleton<PipelineBase, Test2Pipeline>()
             .AddSingleton<PipelineBase, TestAccessFailsPipeline>()
             .AddSingleton<PipelineBase, TestAccessPassedPipeline>()
+            .AddSingleton<IAccessDeniedPipeline, AccessDeniedPipeline>()
+            .AddSingleton<INotFoundPipeline, NotFoundPipeline>()
             .BuildServiceProvider();
 
-        var currentUser = Substitute.For<ICurrentTelegramUser>();
-        currentUser.GetCurrentUser().Returns(new TelegramUser());
+        var handlers = serviceProvider.GetServices<IRouteHandler>();
+        var accessDeniedPipeline = serviceProvider.GetRequiredService<IAccessDeniedPipeline>();
+        var notFoundPipeline = serviceProvider.GetRequiredService<INotFoundPipeline>();
 
-        var pipelines = serviceProvider.GetServices<PipelineBase>();
-
-        _pipelineProvider = new PipelineProvider(pipelines, serviceProvider, currentUser);
+        _pipelineProvider = new PipelineProvider(serviceProvider, accessDeniedPipeline, notFoundPipeline, handlers);
     }
 
     [Fact]
     public void Get_WhenPipelineCanBeRetrieved_ThenPipelineReturned()
     {
-        var pipeline = _pipelineProvider.Get("Test1");
+        var pipeline = _pipelineProvider.Get(new Update { Message = new Message { Text = "Test1" } });
         pipeline.As<Test1Pipeline>().Should().NotBeNull();
     }
 
     [Fact]
     public void Get_WhenPipelineCannotBeRetrieved_ThenNotFoundPipelineReturnes()
     {
-        var pipeline = _pipelineProvider.Get("Test3");
+        var pipeline = _pipelineProvider.Get(new Update { Message = new Message { Text = "Test3" } });
         pipeline.As<INotFoundPipeline>().Should().NotBeNull();
     }
 
     [Fact]
     public void Get_WhenRouteIsNull_ThenNotFoundPipelineReturned()
     {
-        var pipeline = _pipelineProvider.Get(string.Empty);
+        var pipeline = _pipelineProvider.Get(new Update { Message = new Message { Text = string.Empty } });
         pipeline.As<INotFoundPipeline>().Should().NotBeNull();
     }
 
     [Fact]
     public void Get_WhenPipelineHasValidationAttribute_AndValidationFailes_ThenAccessDeniedPipelineReturned()
     {
-        var pipeline = _pipelineProvider.Get("TestAccessFails");
+        var pipeline = _pipelineProvider.Get(new Update { Message = new Message { Text = "TestAccessFails" } });
         pipeline.As<IAccessDeniedPipeline>().Should().NotBeNull();
     }
 
     [Fact]
     public void Get_WhenSpecifiedByCommand_ThenPipelineReturned()
     {
-        var pipeline = _pipelineProvider.Get("/test1");
+        var pipeline = _pipelineProvider.Get(new Update { Message = new Message { Text = "/test1" } });
         pipeline.As<Test1Pipeline>().Should().NotBeNull();
     }
 
     [Fact]
     public void Get_WhenPipelineHasValidationAttribute_AndValidationPasses_ThenPipelineReturned()
     {
-        var pipeline = _pipelineProvider.Get("TestAccessPassed");
+        var pipeline = _pipelineProvider.Get(new Update { Message = new Message { Text = "TestAccessPassed" } });
         pipeline.As<TestAccessPassedPipeline>().Should().NotBeNull();
     }
 }

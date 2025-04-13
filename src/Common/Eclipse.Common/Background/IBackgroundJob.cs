@@ -7,5 +7,5 @@ public interface IBackgroundJob<TArgs>
 
 public interface IBackgroundJob
 {
-    Task ExecuteAsync(CancellationToken cancellationToken = default);
+    Task Execute(CancellationToken cancellationToken = default);
 }

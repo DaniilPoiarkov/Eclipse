@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Core.Attributes;
+﻿namespace Eclipse.Core.Routing;
 
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class RouteAttribute : Attribute

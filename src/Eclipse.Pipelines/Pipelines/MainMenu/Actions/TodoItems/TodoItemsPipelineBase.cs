@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Core.Core;
+using Eclipse.Core.Results;
 
 using System.Globalization;
 using System.Text;

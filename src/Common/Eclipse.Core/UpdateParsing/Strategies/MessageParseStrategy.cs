@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+﻿using Eclipse.Core.Context;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

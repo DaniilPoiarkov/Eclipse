@@ -26,7 +26,7 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
         _timeProvider = timeProvider;
     }
 
-    public async Task ExecuteAsync(CancellationToken cancellationToken = default)
+    public async Task Execute(CancellationToken cancellationToken = default)
     {
         var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);

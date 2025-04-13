@@ -1,8 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Stores.Messages;

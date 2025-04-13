@@ -1,11 +1,12 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
 
 using System.Globalization;
 
-namespace Eclipse.Pipelines.Decorations;
+namespace Eclipse.Pipelines.Localization;
 
 public sealed class LocalizationDecorator : IPipelineExecutionDecorator
 {

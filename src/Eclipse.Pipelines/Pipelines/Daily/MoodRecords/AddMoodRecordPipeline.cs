@@ -1,7 +1,8 @@
 ﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.Users;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Pipelines.Stores.Messages;
 

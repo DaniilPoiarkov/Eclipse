@@ -1,10 +1,12 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Validation;
+﻿using Eclipse.Core.Validation;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.Pipelines.Attributes;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+
+namespace Eclipse.Pipelines.Validation;
 
 internal sealed class AdminOnlyAttribute : ContextValidationAttribute
 {
@@ -12,19 +14,14 @@ internal sealed class AdminOnlyAttribute : ContextValidationAttribute
     {
         // Just ignore. We don't let users know that this is existing command
 
-        if (context.TelegramUser is null)
+        if (context.Update.Type != UpdateType.Message || context.Update.Message is not Message message)
         {
             return ValidationResult.Failure("Pipelines:NotFound");
         }
 
         var options = context.ServiceProvider.GetRequiredService<IOptions<PipelinesOptions>>().Value;
 
-        if (options is null)
-        {
-            return ValidationResult.Failure("Pipelines:NotFound");
-        }
-
-        if (options.Chat != context.TelegramUser.Id)
+        if (options.Chat != message.From?.Id)
         {
             return ValidationResult.Failure("Pipelines:NotFound");
         }

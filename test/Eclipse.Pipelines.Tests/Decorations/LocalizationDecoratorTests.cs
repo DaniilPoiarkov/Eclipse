@@ -1,9 +1,8 @@
-﻿using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+﻿using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
-using Eclipse.Pipelines.Decorations;
+using Eclipse.Pipelines.Localization;
 
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -38,7 +37,7 @@ public sealed class LocalizationDecoratorTests
     [InlineData(1)]
     public async Task Decorate_WhenCultureNotSpecified_ThenUsesDefaultCulture(long chatId)
     {
-        var context = new MessageContext(chatId, string.Empty, new TelegramUser(), Substitute.For<IServiceProvider>());
+        var context = new MessageContext(chatId, string.Empty, new TelegramUser(chatId, "name", "surname", "username"), Substitute.For<IServiceProvider>());
 
         _cultureTracker.GetAsync(chatId).ReturnsNull();
 
@@ -53,7 +52,7 @@ public sealed class LocalizationDecoratorTests
     [InlineData(1, "en")]
     public async Task Decorate_WhenCultureSpecified_ThenUsesIt(long chatId, string culture)
     {
-        var context = new MessageContext(chatId, string.Empty, new TelegramUser(), Substitute.For<IServiceProvider>());
+        var context = new MessageContext(chatId, string.Empty, new TelegramUser(chatId, "name", "surname", "username"), Substitute.For<IServiceProvider>());
 
         _cultureTracker.GetAsync(chatId).Returns(culture);
 

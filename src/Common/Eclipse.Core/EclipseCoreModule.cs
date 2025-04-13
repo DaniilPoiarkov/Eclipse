@@ -1,11 +1,14 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
-using Eclipse.Core.CurrentUser;
+using Eclipse.Core.Keywords;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
+using Eclipse.Core.Provider.Handlers;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
+using Eclipse.Core.UpdateParsing.Strategies;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Eclipse.Core;
 
@@ -21,24 +24,25 @@ public static class EclipseCoreModule
         builder?.Invoke(coreBuilder);
 
         services
-            .AddTransient<IPipelineProvider, PipelineProvider>()
+            .AddScoped<IPipelineProvider, PipelineProvider>()
+            .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
+
+        services
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
-                .AddScoped<ICurrentTelegramUser, CurrentTelegramUser>()
-                .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>()
-                .AddScoped<IUpdateProvider, UpdateProvider>();
+            .AddTransient<IParseStrategy, CallbackQueryParseStrategy>()
+            .AddTransient<IParseStrategy, MessageParseStrategy>()
+            .AddTransient<IParseStrategy, UnknownParseStrategy>()
+            .AddTransient<IParseStrategy, MyChatMemberParseStrategy>();
 
-        services.Scan(tss => tss.FromAssemblyOf<IUpdateParser>()
-            .AddClasses(c => c.AssignableTo<IParseStrategy>(), publicOnly: false)
-            .AsSelf()
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
+        services
+            .AddScoped<IRouteHandler, MessageHandler>()
+            .AddScoped<IRouteHandler, MyChatMemberHandler>()
+            .AddScoped<IRouteHandler, UnknownHandler>();
 
-        services.Scan(tss => tss.FromAssemblyOf<PipelineBase>()
-            .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
-            .As<PipelineBase>()
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
+        services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
+        services.TryAddSingleton<INotFoundPipeline, NotFoundPipeline>();
+        services.TryAddScoped<IAccessDeniedPipeline, AccessDeniedPipeline>();
 
         return services;
     }

@@ -47,7 +47,7 @@ public sealed class RescheduleRemindersBackgroundJobTests
 
         _schedulerFactory.GetScheduler().Returns(scheduler);
 
-        await _sut.ExecuteAsync();
+        await _sut.Execute();
 
         await scheduler.Received(2).ScheduleJob(Arg.Any<IJobDetail>(), Arg.Any<ITrigger>());
     }

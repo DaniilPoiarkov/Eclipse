@@ -1,4 +1,7 @@
-﻿namespace Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+
+namespace Eclipse.Core.Stages;
 
 internal sealed class Stage : IStage
 {

@@ -1,9 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
-using Eclipse.Pipelines.Attributes;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Validation;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

@@ -1,7 +1,6 @@
 ﻿using Bogus;
 
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
 
 namespace Eclipse.Tests.Generators;
 

@@ -1,8 +1,8 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.Common.Caching;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
-using Eclipse.Core.UpdateParsing;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
 
 using Telegram.Bot;
@@ -17,19 +17,15 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IUpdateProvider _updateProvider;
-
     private readonly IBackgroundJobManager _backgroundJobManager;
 
     public SendPromotionPostPipeline(
         ICacheService cacheService,
         ITelegramBotClient botClient,
-        IUpdateProvider updateProvider,
         IBackgroundJobManager backgroundJobManager)
     {
         _cacheService = cacheService;
         _botClient = botClient;
-        _updateProvider = updateProvider;
         _backgroundJobManager = backgroundJobManager;
     }
 
@@ -48,9 +44,7 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private async Task<IResult> ReviewPostMessageAsync(MessageContext context, CancellationToken cancellationToken)
     {
-        var update = _updateProvider.Get();
-
-        if (update.Message is not { })
+        if (Update.Message is not { })
         {
             FinishPipeline();
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Invalid"]);
@@ -64,12 +58,12 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
         await _cacheService.SetAsync(
             $"promotions-post-message-{context.ChatId}",
-            update.Message.Id,
+            Update.Message.Id,
             options,
             cancellationToken
         );
 
-        await _botClient.CopyMessage(context.ChatId, context.ChatId, update.Message.Id, cancellationToken: cancellationToken);
+        await _botClient.CopyMessage(context.ChatId, context.ChatId, Update.Message.Id, cancellationToken: cancellationToken);
 
         return Menu(
             [

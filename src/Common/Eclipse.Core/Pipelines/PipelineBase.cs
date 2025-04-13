@@ -1,6 +1,7 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
 using Eclipse.Core.Results;
+using Eclipse.Core.Stages;
 
 using Microsoft.Extensions.DependencyInjection;
 

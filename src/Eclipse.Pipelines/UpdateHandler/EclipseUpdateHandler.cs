@@ -1,13 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
@@ -38,17 +36,15 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IPipelineProvider _pipelineProvider;
 
-    private readonly ICurrentTelegramUser _currentUser;
-
     private readonly IUpdateParser _updateParser;
-
-    private readonly IUpdateProvider _updateProvider;
 
     private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
     private static readonly UpdateType[] _allowedUpdateTypes =
     [
-        UpdateType.Message, UpdateType.CallbackQuery
+        UpdateType.Message,
+        UpdateType.CallbackQuery,
+        UpdateType.MyChatMember
     ];
 
     public EclipseUpdateHandler(
@@ -56,20 +52,16 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserService userService,
-        ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
-        IUpdateProvider updateProvider,
         IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _userService = userService;
-        _currentUser = currentUser;
         _updateParser = updateParser;
         _messageStore = messageStore;
-        _updateProvider = updateProvider;
         _localizer = localizer;
     }
 
@@ -89,25 +81,32 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return;
         }
 
-        _currentUser.SetCurrentUser(context.User);
-        _updateProvider.Set(update);
-
-        var result = await HandleAndGetResultAsync(botClient, context.Value, context, cancellationToken);
+        var result = await HandleAndGetResultAsync(botClient, update, context, cancellationToken);
 
         if (result is RedirectResult redirect)
         {
             var command = redirect.PipelineType.GetCustomAttribute<RouteAttribute>()?.Command ?? string.Empty;
-            await HandleAndGetResultAsync(botClient, command, context, cancellationToken);
+
+            var redirectUpdate = new Update
+            {
+                Message = new Message
+                {
+                    Text = command,
+                    From = update.Message?.From,
+                }
+            };
+
+            await HandleAndGetResultAsync(botClient, redirectUpdate, context, cancellationToken);
         }
 
         await AddOrUpdateAsync(context.User, cancellationToken);
     }
 
-    private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, string route, MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)
     {
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = await GetEclipsePipelineAsync(route, key);
+        var pipeline = await GetEclipsePipelineAsync(update, key);
 
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
@@ -184,13 +183,13 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         }
     }
 
-    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(string route, PipelineKey key)
+    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(Update update, PipelineKey key)
     {
-        return await GetPipelineAsync(route, key) as EclipsePipelineBase
+        return await GetPipelineAsync(update, key) as EclipsePipelineBase
             ?? new EclipseNotFoundPipeline();
     }
 
-    private async Task<PipelineBase> GetPipelineAsync(string route, PipelineKey key)
+    private async Task<PipelineBase> GetPipelineAsync(Update update, PipelineKey key)
     {
         var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
 
@@ -199,21 +198,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return pipeline;
         }
 
-        if (route.StartsWith('/'))
-        {
-            return _pipelineProvider.Get(route);
-        }
-
-        try
-        {
-            return _pipelineProvider.Get(
-                _localizer.ToLocalizableString(route)
-            );
-        }
-        catch (LocalizationNotFoundException)
-        {
-            // Retrieve INotFoundPipeline
-            return _pipelineProvider.Get(string.Empty);
-        }
+        return _pipelineProvider.Get(update);
     }
 }

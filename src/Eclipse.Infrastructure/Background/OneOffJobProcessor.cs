@@ -79,7 +79,7 @@ internal sealed class OneOffJobProcessor<TBackgroundJob> : IJob
 
         try
         {
-            await _job.ExecuteAsync(context.CancellationToken);
+            await _job.Execute(context.CancellationToken);
 
             await context.Scheduler.UnscheduleJob(context.Trigger.Key, context.CancellationToken);
         }
