@@ -1,12 +1,10 @@
-﻿using Eclipse.Core.Attributes;
-using Eclipse.Core.Results;
+﻿using Eclipse.Core.Results;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Core.Pipelines;
 
-[Pipeline]
 public abstract class Pipeline
 {
     private Update? _update;

@@ -39,11 +39,11 @@ internal sealed class MessageHandler : IRouteHandler
 
         if (route.StartsWith('/'))
         {
-            return _pipelines.FirstOrDefault(p => p.GetType().GetCustomAttribute<RouteAttribute>() is RouteAttribute routeAttribute
-                && routeAttribute.Command == route);
+            return _pipelines.FirstOrDefault(p => p.GetType().GetCustomAttribute<RouteAttribute>() is RouteAttribute attribute
+                && attribute.Command == route);
         }
 
-        return _pipelines.FirstOrDefault(p => p.GetType().GetCustomAttribute<RouteAttribute>() is RouteAttribute routeAttribute
-            && routeAttribute.Route == route);
+        return _pipelines.FirstOrDefault(p => p.GetType().GetCustomAttribute<RouteAttribute>() is RouteAttribute attribute
+            && attribute.Route == route);
     }
 }

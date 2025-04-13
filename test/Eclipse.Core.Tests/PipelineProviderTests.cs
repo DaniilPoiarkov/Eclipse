@@ -24,12 +24,15 @@ public class PipelineProviderTests
             .AddSingleton<PipelineBase, Test2Pipeline>()
             .AddSingleton<PipelineBase, TestAccessFailsPipeline>()
             .AddSingleton<PipelineBase, TestAccessPassedPipeline>()
+            .AddSingleton<IAccessDeniedPipeline, AccessDeniedPipeline>()
+            .AddSingleton<INotFoundPipeline, NotFoundPipeline>()
             .BuildServiceProvider();
 
-        var pipelines = serviceProvider.GetServices<PipelineBase>();
         var handlers = serviceProvider.GetServices<IRouteHandler>();
+        var accessDeniedPipeline = serviceProvider.GetRequiredService<IAccessDeniedPipeline>();
+        var notFoundPipeline = serviceProvider.GetRequiredService<INotFoundPipeline>();
 
-        _pipelineProvider = new PipelineProvider(serviceProvider, pipelines, handlers);
+        _pipelineProvider = new PipelineProvider(serviceProvider, accessDeniedPipeline, notFoundPipeline, handlers);
     }
 
     [Fact]

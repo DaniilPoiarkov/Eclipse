@@ -37,6 +37,7 @@ public static class EclipseCoreModule
 
         services
             .AddScoped<IRouteHandler, MessageHandler>()
+            .AddScoped<IRouteHandler, MyChatMemberHandler>()
             .AddScoped<IRouteHandler, UnknownHandler>();
 
         services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
