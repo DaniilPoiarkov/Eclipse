@@ -74,7 +74,6 @@ internal sealed class MoodRecordsService : IMoodRecordsService
     {
         var records = await _repository.GetByExpressionAsync(mr => mr.UserId == userId, cancellationToken);
 
-        return records.Select(r => r.ToDto())
-            .ToList();
+        return [.. records.Select(r => r.ToDto())];
     }
 }
