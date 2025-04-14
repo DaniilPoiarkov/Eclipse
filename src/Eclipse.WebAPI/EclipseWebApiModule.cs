@@ -5,10 +5,10 @@ using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Formatters;
 using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Options;
-using Eclipse.WebAPI.Formatters;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
