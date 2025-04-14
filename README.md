@@ -96,9 +96,7 @@ Additionally provides an api which allows you to use another culture in disposab
 ## Tests
 Each Test project reference base **Eclipse.Tests** assembly, that provides helpers which used through all tests.
 
-Each module has own test project.
-
-BDD tests written with SpecFlow are all in the single tests assembly.
+Each layer has own test project.
 
 Integration tests also isolated in separate assembly called **Eclipse.IntegrationTests**.
 
@@ -130,7 +128,6 @@ Integration tests also isolated in separate assembly called **Eclipse.Integratio
 * FluentAssertions (version 7.0.0, planned switching to _Shouldly_)
 * Bogus
 * Meziantou
-* SpecFlow
 * Testcontainers
 
 ## Deployment and CICD
