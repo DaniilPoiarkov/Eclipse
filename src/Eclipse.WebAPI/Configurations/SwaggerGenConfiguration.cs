@@ -29,6 +29,7 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
         ConfigureAzureEntraIdAuthentication(options);
 
         options.AddOperationFilterInstance(new ContentLanguageHeaderFilter());
+        options.AddOperationFilterInstance(new DescriptionFilter());
     }
 
     private void ConfigureAzureEntraIdAuthentication(SwaggerGenOptions options)
