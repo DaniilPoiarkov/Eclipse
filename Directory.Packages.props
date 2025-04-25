@@ -39,25 +39,25 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.4" />
     <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.2" />
-    <PackageVersion Include="Microsoft.Identity.Web" Version="3.8.3" />
-    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.8.0" />
+    <PackageVersion Include="Microsoft.Identity.Web" Version="3.8.4" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.9.0" />
     <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.49.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.4" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.8.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
     <PackageVersion Include="Quartz" Version="3.14.0" />
     <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.14.0" />
     <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.14.0" />
     <PackageVersion Include="Telegram.Bot" Version="22.5.1" />
     <PackageVersion Include="Scrutor" Version="6.0.1" />
-    <PackageVersion Include="MiniExcel" Version="1.41.0" />
+    <PackageVersion Include="MiniExcel" Version="1.41.1" />
     <PackageVersion Include="ScottPlot" Version="5.0.55" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.116.1" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageVersion Include="Google.Apis.Auth" Version="1.69.0" />
-    <PackageVersion Include="Google.Apis.Sheets.v4" Version="1.69.0.3743" />
+    <PackageVersion Include="Google.Apis.Sheets.v4" Version="1.69.0.3757" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
