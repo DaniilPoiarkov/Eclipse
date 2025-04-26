@@ -1,13 +1,17 @@
 ﻿using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Common.Notifications;
-using Eclipse.Domain.Users.Events;
 using Eclipse.Domain.Users;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
-using Quartz;
-using Xunit;
+using Eclipse.Domain.Users.Events;
 using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
+
+using Microsoft.Extensions.Logging;
+
+using NSubstitute;
+
+using Quartz;
+
+using Xunit;
 
 namespace Eclipse.Application.Tests.Notifications.FinishTodoItems;
 

@@ -40,7 +40,7 @@ public sealed class GoodMorningJobReschedulerTests : IClassFixture<SchedulerFact
     public async Task Execute_WhenCalled_ThenReschedulesJob()
     {
         var users = UserGenerator.Generate(5);
-        
+
         _userRepository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>())
             .Returns(users);
 

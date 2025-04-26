@@ -7,8 +7,6 @@ using NSubstitute;
 
 using Quartz;
 
-using System.Collections;
-
 using Xunit;
 
 namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
