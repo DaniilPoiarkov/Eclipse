@@ -9,7 +9,7 @@ public interface ITodoItemService
 
     Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default);
 
-    Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default);
+    Task<Result<UserDto>> FinishAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default);
 
     Task<Result<List<TodoItemDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default);
 

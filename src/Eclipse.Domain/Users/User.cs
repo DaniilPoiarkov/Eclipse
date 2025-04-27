@@ -153,8 +153,9 @@ public sealed class User : AggregateRoot
 
     /// <summary>Finishes the item.</summary>
     /// <param name="todoItemId">The todo item identifier.</param>
+    /// <param name="finsihedAt">When todo item was finished.</param>
     /// <returns>Removed <a cref="TodoItem"></a></returns>
-    public Result<TodoItem> FinishItem(Guid todoItemId)
+    public Result<TodoItem> FinishItem(Guid todoItemId, DateTime finsihedAt)
     {
         var item = _todoItems.FirstOrDefault(e => e.Id == todoItemId);
 
@@ -165,7 +166,7 @@ public sealed class User : AggregateRoot
 
         _todoItems.Remove(item);
 
-        var result = item.MarkAsFinished();
+        var result = item.MarkAsFinished(finsihedAt);
 
         if (!result.IsSuccess)
         {

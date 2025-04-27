@@ -133,12 +133,14 @@ public class UserTests
     {
         var item = _sut.AddTodoItem("test", DateTime.UtcNow);
 
-        var result = _sut.FinishItem(item.Value.Id);
+        var finishedAt = DateTime.UtcNow.AddDays(1);
+        var result = _sut.FinishItem(item.Value.Id, finishedAt);
 
         result.IsSuccess.Should().BeTrue();
 
         _sut.TodoItems.Should().BeEmpty();
         result.Value.Id.Should().Be(item.Value.Id);
+        result.Value.FinishedAt.Should().Be(finishedAt);
     }
 
     [Fact]
@@ -146,7 +148,7 @@ public class UserTests
     {
         var expectedError = DefaultErrors.EntityNotFound<TodoItem>();
 
-        var result = _sut.FinishItem(Guid.NewGuid());
+        var result = _sut.FinishItem(Guid.NewGuid(), DateTime.UtcNow);
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().NotBeNull();
@@ -290,8 +292,9 @@ public class UserTests
         var user = UserGenerator.Get(newRegistered: false);
 
         var todoItem = user.AddTodoItem("test", DateTime.UtcNow);
+        var finishedAt = DateTime.UtcNow.AddDays(1);
 
-        user.FinishItem(todoItem.Value.Id);
+        user.FinishItem(todoItem.Value.Id, finishedAt);
 
         var events = user.GetEvents();
 
