@@ -1,7 +1,10 @@
 ﻿using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
+using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
+
+using FluentAssertions;
 
 using Microsoft.Extensions.Localization;
 
@@ -10,10 +13,12 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 using Quartz;
 
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Requests;
 
 using Xunit;
@@ -96,5 +101,33 @@ public sealed class GoodMorningJobTests
         await _client.Received().SendRequest(
             Arg.Is<SendMessageRequest>(r => r.ChatId == user.ChatId && r.Text == "good morning")
         );
+    }
+
+    [Fact]
+    public async Task Execute_WhenClientThrowsException_ThenDisablesUser()
+    {
+        var user = UserGenerator.Get();
+
+        _repository.FindAsync(user.Id).Returns(user);
+
+        _localizer[Arg.Any<string>()].Returns(new LocalizedString("", "good morning"));
+
+        var context = Substitute.For<IJobExecutionContext>();
+
+        var map = new JobDataMap
+        {
+            { "data", JsonConvert.SerializeObject(new GoodMorningJobData(user.Id)) }
+        };
+
+        context.MergedJobDataMap.Returns(map);
+
+        _client.SendRequest(Arg.Any<SendMessageRequest>())
+            .Throws(new ApiRequestException("test"));
+
+        await _sut.Execute(context);
+
+        user.IsEnabled.Should().BeFalse();
+        await _repository.Received().UpdateAsync(user);
+        _logger.ShouldReceiveLog(LogLevel.Error);
     }
 }

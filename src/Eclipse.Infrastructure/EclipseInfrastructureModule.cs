@@ -1,5 +1,4 @@
 ﻿using Eclipse.Common.Background;
-using Eclipse.Common.Caching;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Excel;
 using Eclipse.Common.Plots;
@@ -11,19 +10,13 @@ using Eclipse.Infrastructure.Google;
 using Eclipse.Infrastructure.Plots;
 
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using Newtonsoft.Json;
 
 using Quartz;
 using Quartz.Logging;
 
 using Serilog;
-
-using ZiggyCreatures.Caching.Fusion;
-using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
 
 namespace Eclipse.Infrastructure;
 
@@ -55,20 +48,10 @@ public static class EclipseInfrastructureModule
 
         if (!configuration.GetValue<bool>("Settings:IsGoogleEnabled"))
         {
-            return services
-                .AddSingleton<ISheetsService, NullSheetsService>();
+            return services.AddSingleton<ISheetsService, NullSheetsService>();
         }
 
-        services.AddOptions<GoogleOptions>()
-            .BindConfiguration("Google")
-            .ValidateOnStart();
-
-        services
-            .AddSingleton<IGoogleClient, GoogleClient>()
-            .AddSingleton(sp => sp.GetRequiredService<IGoogleClient>().GetSheetsService())
-                .AddScoped<ISheetsService, GoogleSheetsService>();
-
-        return services;
+        return services.UseGoogleSheets();
     }
 
     private static IServiceCollection AddQuartzIntegration(this IServiceCollection services)
@@ -92,36 +75,12 @@ public static class EclipseInfrastructureModule
     {
         var configuration = services.GetConfiguration();
 
-        var options = new JsonSerializerSettings()
-        {
-            ContractResolver = PrivateMembersContractResolver.Instance
-        };
-
-        var serializer = new FusionCacheNewtonsoftJsonSerializer(options);
-
         if (configuration.GetValue<bool>("Settings:IsRedisEnabled"))
         {
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = configuration.GetConnectionString("Redis")
-                    ?? throw new InvalidOperationException("Redis connection string is not provided");
-            });
-
-            services.AddFusionCache()
-                .WithSerializer(serializer)
-                .WithDistributedCache(sp => sp.GetRequiredService<IDistributedCache>())
-                .AsHybridCache();
-        }
-        else
-        {
-            services.AddFusionCache()
-                .WithSerializer(serializer)
-                .AsHybridCache();
+            return services.UseDistributedCache();
         }
 
-        services.AddSingleton<ICacheService, CacheService>();
-
-        return services;
+        return services.UseDefaultCache();
     }
 
     private static IServiceCollection AddSerilogIntegration(this IServiceCollection services)

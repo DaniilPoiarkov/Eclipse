@@ -49,7 +49,7 @@ internal sealed class TodoItemService : ITodoItemService
             .BindAsync(todoItem => todoItem.ToDto());
     }
 
-    public async Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
+    public async Task<Result<UserDto>> FinishAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
@@ -58,7 +58,7 @@ internal sealed class TodoItemService : ITodoItemService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        return await user.FinishItem(itemId)
+        return await user.FinishItem(itemId, _timeProvider.Now)
             .TapAsync(_ => _userRepository.UpdateAsync(user, cancellationToken))
             .BindAsync(_ => user.ToDto());
     }

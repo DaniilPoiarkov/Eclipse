@@ -64,7 +64,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
-        var result = await _sut.FinishItemAsync(user.ChatId, todoItem.Value.Id);
+        var result = await _sut.FinishAsync(user.ChatId, todoItem.Value.Id);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.TodoItems.Should().BeEmpty();
@@ -75,7 +75,7 @@ public sealed class TodoItemsServiceTests
     {
         var expected = DefaultErrors.EntityNotFound<User>();
 
-        var result = await _sut.FinishItemAsync(1, Guid.NewGuid());
+        var result = await _sut.FinishAsync(1, Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(expected);
@@ -90,7 +90,7 @@ public sealed class TodoItemsServiceTests
 
         var expected = UserDomainErrors.TodoItemNotFound();
 
-        var result = await _sut.FinishItemAsync(user.ChatId, Guid.NewGuid());
+        var result = await _sut.FinishAsync(user.ChatId, Guid.NewGuid());
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(expected);

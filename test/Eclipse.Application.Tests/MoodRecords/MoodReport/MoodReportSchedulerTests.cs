@@ -30,7 +30,7 @@ public sealed class MoodReportSchedulerTests
         var scheduler = Substitute.For<IScheduler>();
         var options = new MoodReportSchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
 
-        var currentTime = DateTime.UtcNow;
+        var currentTime = new DateTime(2025, 4, 27, 19, 30, 0);
 
         _timeProvider.Now.Returns(currentTime);
 

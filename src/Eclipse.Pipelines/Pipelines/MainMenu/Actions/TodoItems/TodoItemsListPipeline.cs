@@ -80,7 +80,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             return InvalidActionOrRedirect(context, message);
         }
 
-        var result = await _todoItemService.FinishItemAsync(context.ChatId, id, cancellationToken);
+        var result = await _todoItemService.FinishAsync(context.ChatId, id, cancellationToken);
 
         if (!result.IsSuccess)
         {

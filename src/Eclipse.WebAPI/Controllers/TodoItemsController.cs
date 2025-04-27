@@ -53,7 +53,7 @@ public sealed class TodoItemsController : ControllerBase
     [HttpPost("{todoItemId:guid}/finish")]
     public async Task<IActionResult> FinishAsync(Guid todoItemId, CancellationToken cancellationToken)
     {
-        var result = await _todoItemService.FinishItemAsync(User.GetChatId(), todoItemId, cancellationToken);
+        var result = await _todoItemService.FinishAsync(User.GetChatId(), todoItemId, cancellationToken);
 
         return result.Match(NoContent, error => error.ToProblems(_stringLocalizer));
     }
