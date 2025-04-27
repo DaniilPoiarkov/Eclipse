@@ -53,7 +53,7 @@ public sealed class TodoItem : Entity
     public DateTime? FinishedAt { get; private set; }
 
     /// <summary>Marks item as finished.</summary>
-    public Result MarkAsFinished(DateTime finishedAt)
+    internal Result MarkAsFinished(DateTime finishedAt)
     {
         if (IsFinished)
         {
