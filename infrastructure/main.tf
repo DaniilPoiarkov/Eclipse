@@ -54,7 +54,7 @@ module "database" {
 }
 
 module "entraid" {
-  source          = "./entraid"
+  source          = "./modules/entraid"
   app_name        = var.app_name
   environment     = var.environment
   owner_object_id = local.user_object_id
