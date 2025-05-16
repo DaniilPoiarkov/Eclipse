@@ -29,10 +29,11 @@ resource "azurerm_cosmosdb_sql_database" "database" {
 }
 
 resource "azurerm_cosmosdb_sql_container" "container" {
-  name                = var.container_name
-  resource_group_name = var.resource_group_name
-  account_name        = azurerm_cosmosdb_account.cosmosdb.name
-  database_name       = azurerm_cosmosdb_sql_database.database.name
-  partition_key_paths = var.partition_paths
-  throughput          = var.container_throughput
+  name                  = var.container_name
+  resource_group_name   = var.resource_group_name
+  account_name          = azurerm_cosmosdb_account.cosmosdb.name
+  database_name         = azurerm_cosmosdb_sql_database.database.name
+  partition_key_paths   = var.partition_paths
+  partition_key_version = var.partition_key_version
+  throughput            = var.container_throughput
 }

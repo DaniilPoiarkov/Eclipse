@@ -12,6 +12,7 @@ resource "random_uuid" "role_admin" {}
 
 resource "azuread_application_app_role" "admin" {
   display_name   = "Admin"
+  value          = "Admin"
   description    = "Super admin priveleged role"
   application_id = azuread_application_registration.app.id
   role_id        = random_uuid.role_admin.id
@@ -42,6 +43,10 @@ resource "azuread_application_api_access" "api_access" {
   api_client_id  = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 
   scope_ids = [
-    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.Read"]
+    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.Read"],
+    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["email"],
+    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["offline_access"],
+    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["openid"],
+    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["profile"]
   ]
 }

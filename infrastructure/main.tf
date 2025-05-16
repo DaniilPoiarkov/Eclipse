@@ -2,7 +2,7 @@ data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "resource_group_main" {
   location = var.location
-  name     = "rg-${var.app_name}-${var.environment}"
+  name     = "rg-${var.app_name}"
 
   tags = {
     environment = var.environment
@@ -33,20 +33,21 @@ module "alerts" {
 }
 
 module "database" {
-  source               = "./modules/database"
-  resource_group_name  = local.resource_group_name
-  location             = local.location
-  cosmos_consistency   = var.cosmos_consistency
-  cosmos_kind          = var.cosmos_kind
-  environment          = var.environment
-  app_name             = var.app_name
-  cosmos_free_tier     = var.cosmos_free_tier
-  cosmos_offer_type    = var.cosmos_offer_type
-  container_name       = var.cosmos_container
-  partition_paths      = var.partiton_paths
-  database_throughput  = var.database_throughput
-  container_throughput = var.container_throughput
-  failover_priority    = var.failover_priority
+  source                = "./modules/database"
+  resource_group_name   = local.resource_group_name
+  location              = local.location
+  cosmos_consistency    = var.cosmos_consistency
+  cosmos_kind           = var.cosmos_kind
+  environment           = var.environment
+  app_name              = var.app_name
+  cosmos_free_tier      = var.cosmos_free_tier
+  cosmos_offer_type     = var.cosmos_offer_type
+  container_name        = var.cosmos_container
+  partition_paths       = var.partiton_paths
+  partition_key_version = var.partition_key_version
+  database_throughput   = var.database_throughput
+  container_throughput  = var.container_throughput
+  failover_priority     = var.failover_priority
 
   depends_on = [
     azurerm_resource_group.resource_group_main
