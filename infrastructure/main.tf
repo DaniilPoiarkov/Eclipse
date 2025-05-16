@@ -19,7 +19,7 @@ locals {
 }
 
 module "alerts" {
-  source              = "./alerts"
+  source              = "./modules/alerts"
   resource_group_name = local.resource_group_name
   location            = local.location
   environment         = var.environment
@@ -33,7 +33,7 @@ module "alerts" {
 }
 
 module "database" {
-  source               = "./database"
+  source               = "./modules/database"
   resource_group_name  = local.resource_group_name
   location             = local.location
   cosmos_consistency   = var.cosmos_consistency
@@ -61,7 +61,7 @@ module "entraid" {
 }
 
 module "web-app" {
-  source                         = "./webapp"
+  source                         = "./modules/webapp"
   resource_group_name            = local.resource_group_name
   location                       = local.location
   environment                    = var.environment
@@ -95,7 +95,7 @@ module "web-app" {
 }
 
 module "roles" {
-  source              = "./roles"
+  source              = "./modules/roles"
   resource_group_name = local.resource_group_name
   cosmos_principal    = module.web-app.app_principal_id
   account_name        = module.database.account_name
@@ -112,7 +112,7 @@ module "roles" {
 }
 
 module "redirection" {
-  source              = "./redirection"
+  source              = "./modules/redirection"
   app_registration_id = module.entraid.app_registration_id
 
   spa_redirect_uris = [
