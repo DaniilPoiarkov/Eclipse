@@ -197,11 +197,11 @@ public sealed class User : AggregateRoot
         AddEvent(new TestDomainEvent(ChatId));
     }
 
-    public bool IsValidSignInCode(DateTime utcNow, string signInCode)
+    public bool IsValidSignInCode(DateTime providedAt, string signInCode)
     {
         return !SignInCode.IsNullOrEmpty()
             && SignInCode == signInCode
-            && utcNow < SignInCodeExpiresAt;
+            && providedAt < SignInCodeExpiresAt;
     }
 
     public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
