@@ -7,7 +7,7 @@ resource "azurerm_service_plan" "service_plan_api" {
 
   tags = {
     environment = var.environment
-    management      = "terraform"
+    management  = "terraform"
   }
 }
 
@@ -31,14 +31,14 @@ resource "azurerm_linux_web_app" "app" {
     }
 
     api_definition_url = "https://${var.app_name}-${var.environment}-app.azurewebsites.net/swagger/index.html"
-    ftps_state = "FtpsOnly"
+    ftps_state         = "FtpsOnly"
   }
 
   logs {
     http_logs {
       file_system {
         retention_in_days = 7
-        retention_in_mb = 35
+        retention_in_mb   = 35
       }
     }
   }
@@ -89,8 +89,8 @@ resource "azurerm_linux_web_app" "app" {
   ]
 
   tags = {
-    environment = var.environment
-    management  = "terraform"
+    environment                              = var.environment
+    management                               = "terraform"
     "hidden-link: /app-insights-conn-string" = var.app_insights_connection_string
   }
 }

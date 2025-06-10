@@ -166,3 +166,9 @@ variable "email_receiver" {
   description = "Email receiver"
   type        = string
 }
+
+variable "alert_severity" {
+  type        = number
+  description = "Severity level for custom alerts"
+  default     = 1
+}

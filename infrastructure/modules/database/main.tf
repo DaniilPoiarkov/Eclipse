@@ -16,9 +16,9 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
   }
 
   tags = {
-    environment = var.environment
-    management  = "terraform"
-    defaultExperience = "Core (SQL)"
+    environment               = var.environment
+    management                = "terraform"
+    defaultExperience         = "Core (SQL)"
     "hidden-cosmos-mmspecial" = null
   }
 }

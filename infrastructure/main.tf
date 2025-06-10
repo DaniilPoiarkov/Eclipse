@@ -32,10 +32,13 @@ module "monitoring" {
 }
 
 module "alerts" {
-  source         = "./modules/alerts"
-  location       = local.location
-  environment    = var.environment
-  email_receiver = var.email_receiver
+  source            = "./modules/alerts"
+  dependency_target = "api.telegram.org"
+  data_source_id    = module.monitoring.app_insights_id
+  location          = local.location
+  environment       = var.environment
+  email_receiver    = var.email_receiver
+  severity          = var.alert_severity
 
   scope_resource_ids = [
     module.monitoring.app_insights_id

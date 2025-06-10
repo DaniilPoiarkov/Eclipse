@@ -2,13 +2,18 @@ resource "azurerm_resource_group" "rg_alerts" {
   name     = "rg-common-alerts"
   location = var.location
 
-  tags = {
-    management = "terraform"
-  }
+  tags = local.tags
 }
 
 locals {
-  rg_name = azurerm_resource_group.rg_alerts.name
+  rg_name     = azurerm_resource_group.rg_alerts.name
+  threashold  = 1
+  time_window = 15
+  frequency   = 15
+
+  tags = {
+    management = "terraform"
+  }
 }
 
 resource "azurerm_monitor_action_group" "monitor_action_group" {
@@ -26,9 +31,7 @@ resource "azurerm_monitor_action_group" "monitor_action_group" {
     email_address = var.email_receiver
   }
 
-  tags = {
-    management = "terraform"
-  }
+  tags = local.tags
 }
 
 resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
@@ -46,12 +49,37 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
     ]
   }
 
-  tags = {
-    environment = var.environment
-    management  = "terraform"
-  }
-
   depends_on = [
     azurerm_monitor_action_group.monitor_action_group
   ]
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependencies_count_query" {
+  name                = "Failed calls: ${var.dependency_target}"
+  location            = var.location
+  data_source_id      = var.data_source_id
+  severity            = var.severity
+  resource_group_name = local.rg_name
+  frequency           = local.frequency
+  time_window         = local.time_window
+
+  query = <<-QUERY
+    dependencies
+    | where success == false and target == '${var.dependency_target}'
+    QUERY
+
+  action {
+    action_group = [
+      azurerm_monitor_action_group.monitor_action_group
+    ]
+  }
+
+  trigger {
+    operator  = "GreaterThanOrEqual"
+    threshold = local.threashold
+  }
+
+  tags = local.tags
 }
