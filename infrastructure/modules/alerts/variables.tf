@@ -1,15 +1,5 @@
-variable "resource_group_name" {
-  type        = string
-  description = "Resource group"
-}
-
 variable "environment" {
   description = "Environment"
-  type        = string
-}
-
-variable "app_name" {
-  description = "Application name"
   type        = string
 }
 
@@ -18,12 +8,12 @@ variable "location" {
   type        = string
 }
 
-variable "application_type" {
-  description = "App Insights application type"
-  type        = string
-}
-
 variable "email_receiver" {
   description = "Email receiver"
   type        = string
+}
+
+variable "scope_resource_ids" {
+  type        = list(string)
+  description = "Resources for which alert tules should be applied."
 }

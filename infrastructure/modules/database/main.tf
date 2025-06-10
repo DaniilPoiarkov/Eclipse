@@ -17,7 +17,9 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
 
   tags = {
     environment = var.environment
-    source      = "terraform"
+    management  = "terraform"
+    defaultExperience = "Core (SQL)"
+    "hidden-cosmos-mmspecial" = null
   }
 }
 
@@ -35,5 +37,5 @@ resource "azurerm_cosmosdb_sql_container" "container" {
   database_name         = azurerm_cosmosdb_sql_database.database.name
   partition_key_paths   = var.partition_paths
   partition_key_version = var.partition_key_version
-  throughput            = var.container_throughput
+  # throughput            = var.container_throughput
 }

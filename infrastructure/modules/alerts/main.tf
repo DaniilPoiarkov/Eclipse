@@ -1,18 +1,20 @@
-resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  name                = "${var.app_name}-${var.environment}-log"
+resource "azurerm_resource_group" "rg_alerts" {
+  name     = "rg-common-alerts"
+  location = var.location
 
   tags = {
-    environment = var.environment
-    source      = "terraform"
+    management = "terraform"
   }
 }
 
+locals {
+  rg_name = azurerm_resource_group.rg_alerts.name
+}
+
 resource "azurerm_monitor_action_group" "monitor_action_group" {
-  resource_group_name = var.resource_group_name
-  name                = "${var.app_name}-${var.environment}-ag"
-  short_name          = "${var.app_name}-ag"
+  resource_group_name = local.rg_name
+  name                = "common-alerts-ag"
+  short_name          = "Notify all"
 
   email_receiver {
     name          = "Send email"
@@ -25,39 +27,18 @@ resource "azurerm_monitor_action_group" "monitor_action_group" {
   }
 
   tags = {
-    environment = var.environment
-    source      = "terraform"
+    management = "terraform"
   }
-}
-
-resource "azurerm_application_insights" "app_insights" {
-  workspace_id        = azurerm_log_analytics_workspace.log_analytics_workspace.id
-  name                = "${var.app_name}-${var.environment}-appi"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  application_type    = var.application_type
-
-  tags = {
-    environment = var.environment
-    source      = "terraform"
-  }
-
-  depends_on = [
-    azurerm_log_analytics_workspace.log_analytics_workspace
-  ]
 }
 
 resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.rg_name
   name                = "Failure Anomalies"
   severity            = "Sev3"
   detector_type       = "FailureAnomaliesDetector"
   frequency           = "PT1M"
   description         = "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls."
-
-  scope_resource_ids = [
-    azurerm_application_insights.app_insights.id
-  ]
+  scope_resource_ids  = var.scope_resource_ids
 
   action_group {
     ids = [
@@ -66,13 +47,11 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
   }
 
   tags = {
-    environment                              = var.environment
-    source                                   = "terraform"
-    "hidden-link: /app-insights-resource-id" = azurerm_application_insights.app_insights.id
+    environment = var.environment
+    management  = "terraform"
   }
 
   depends_on = [
-    azurerm_application_insights.app_insights,
     azurerm_monitor_action_group.monitor_action_group
   ]
 }

@@ -18,17 +18,32 @@ locals {
   location            = azurerm_resource_group.resource_group_main.location
 }
 
-module "alerts" {
-  source              = "./modules/alerts"
+module "monitoring" {
+  source              = "./modules/monitoring"
   resource_group_name = local.resource_group_name
   location            = local.location
   environment         = var.environment
-  app_name            = var.app_name
   application_type    = "web"
-  email_receiver      = var.email_receiver
+  app_name            = var.app_name
 
   depends_on = [
     azurerm_resource_group.resource_group_main
+  ]
+}
+
+module "alerts" {
+  source         = "./modules/alerts"
+  location       = local.location
+  environment    = var.environment
+  email_receiver = var.email_receiver
+
+  scope_resource_ids = [
+    module.monitoring.app_insights_id
+  ]
+
+  depends_on = [
+    azurerm_resource_group.resource_group_main,
+    module.monitoring
   ]
 }
 
@@ -67,7 +82,7 @@ module "web-app" {
   location                       = local.location
   environment                    = var.environment
   app_name                       = var.app_name
-  app_insights_connection_string = module.alerts.app_insights_connection_string
+  app_insights_connection_string = module.monitoring.app_insights_connection_string
   secret_token                   = var.secret_token
   service_plan_sku_name          = var.service_plan_sku_name
   settings_use_redis             = var.settings_use_redis
