@@ -28,7 +28,7 @@ variable "severity" {
   description = "Severity level for log-based alerts"
 }
 
-variable "dependency_target" {
-  type        = string
-  description = "Dependency target which will be used for log-based alert"
+variable "dependency_targets" {
+  type        = list(string)
+  description = "Dependency targets which will be used for log-based alert"
 }

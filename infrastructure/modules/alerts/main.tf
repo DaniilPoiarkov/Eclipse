@@ -1,8 +1,7 @@
 resource "azurerm_resource_group" "rg_alerts" {
   name     = "rg-common-alerts"
   location = var.location
-
-  tags = local.tags
+  tags     = local.tags
 }
 
 locals {
@@ -57,7 +56,9 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependencies_count_query" {
-  name                = "Failed calls: ${var.dependency_target}"
+  for_each = var.dependency_targets
+
+  name                = "Failed calls: ${each.key}"
   location            = var.location
   data_source_id      = var.data_source_id
   severity            = var.severity
@@ -67,7 +68,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependencies_coun
 
   query = <<-QUERY
     dependencies
-    | where success == false and target == '${var.dependency_target}'
+    | where success == false and target == '${each.key}'
     QUERY
 
   action {
