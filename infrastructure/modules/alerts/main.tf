@@ -55,7 +55,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
   tags = local.tags
 }
 
-resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependencies_count_query" {
+resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_query" {
   for_each = var.dependency_targets
 
   name                = "Failed calls: ${each.key}"
