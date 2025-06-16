@@ -53,6 +53,11 @@ variable "partition_paths" {
   type        = list(string)
 }
 
+variable "partition_key_version" {
+  description = "Partition key version"
+  type        = number
+}
+
 variable "database_throughput" {
   description = "Database throughput"
   type        = number

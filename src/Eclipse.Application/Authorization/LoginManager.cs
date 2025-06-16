@@ -53,10 +53,10 @@ internal sealed class LoginManager : ILoginManager
 
         var claimsPrincipal = await _userClaimsPrincipalFactory.CreateAsync(user);
 
-        return GenerateToken(claimsPrincipal);
+        return GenerateToken((ClaimsIdentity)claimsPrincipal.Identity!);
     }
 
-    private LoginResult GenerateToken(ClaimsPrincipal claimsPrincipal)
+    private LoginResult GenerateToken(ClaimsIdentity subject)
     {
         var configuration = _configuration.GetSection("Authorization:JwtBearer");
 
@@ -65,7 +65,7 @@ internal sealed class LoginManager : ILoginManager
 
         var descriptor = new SecurityTokenDescriptor
         {
-            Subject = claimsPrincipal.Identity as ClaimsIdentity,
+            Subject = subject,
             Expires = expires,
             IssuedAt = _timeProvider.Now,
             Issuer = configuration["Issuer"],

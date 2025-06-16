@@ -22,8 +22,3 @@ variable "application_type" {
   description = "App Insights application type"
   type        = string
 }
-
-variable "email_receiver" {
-  description = "Email receiver"
-  type        = string
-}

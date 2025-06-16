@@ -142,6 +142,11 @@ variable "partiton_paths" {
   type        = list(string)
 }
 
+variable "partition_key_version" {
+  description = "Partition key version"
+  type        = number
+}
+
 variable "database_throughput" {
   description = "Database throughput"
   type        = number
@@ -160,4 +165,22 @@ variable "image_name" {
 variable "email_receiver" {
   description = "Email receiver"
   type        = string
+}
+
+variable "alert_severity" {
+  type        = number
+  description = "Severity level for custom alerts"
+  default     = 1
+}
+
+variable "tg_alerts_chat" {
+  type        = number
+  description = "Telegram chat where alerts shold be sent"
+  sensitive   = true
+}
+
+variable "tg_alert_bot_token" {
+  type        = string
+  description = "Telegram bot which should sent alerts"
+  sensitive   = true
 }
