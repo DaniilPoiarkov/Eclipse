@@ -15,6 +15,100 @@ locals {
   }
 }
 
+resource "azurerm_logic_app_workflow" "logic_app" {
+  name                = "logic-send-tg-alert"
+  location            = var.environment
+  resource_group_name = local.rg_name
+  tags                = local.tags
+}
+
+resource "azurerm_logic_app_trigger_http_request" "http_trigger" {
+  name         = "When HTTP request is received"
+  logic_app_id = azurerm_logic_app_workflow.logic_app.id
+  schema       = <<SCHEMA
+  {
+    "type": "object",
+    "properties": {
+      "schemaId": {
+        "type": "string"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "essentials": {
+            "type": "object",
+            "properties": {
+              "alertId": {
+                "type": "string"
+              },
+              "alertRule": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
+              "signalType": {
+                "type": "string"
+              },
+              "monitorCondition": {
+                "type": "string"
+              },
+              "monitoringService": {
+                "type": "string"
+              },
+              "alertTargetIDs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "originAlertId": {
+                "type": "string"
+              },
+              "firedDateTime": {
+                "type": "string"
+              },
+              "resolvedDateTime": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "essentialsVersion": {
+                "type": "string"
+              },
+              "alertContextVersion": {
+                "type": "string"
+              }
+            }
+          },
+          "alertContext": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      }
+    }
+  }
+  SCHEMA
+}
+
+resource "azurerm_logic_app_action_http" "http_call" {
+  name         = "Send telegram alert"
+  logic_app_id = azurerm_logic_app_workflow.logic_app.id
+  method       = "POST"
+  uri          = "https://api.telegram.org/bot${var.tg_allert_bot_token}/sendMessage"
+  body         = <<EOT
+    { 
+      "chat_id": "${var.tg_alerts_chat}",
+      "text": "⚠️@{triggerBody()?['data']?['essentials']?['alertRule']}\n
+        🕑Triggered at: @{triggerBody()?['data']?['essentials']?['firedDateTime']}\n
+        Metric value: @{triggerBody()?['data']?['alertContext']?['condition']?['allOf'][0]?['metricValue']}
+      "
+    }
+    EOT
+}
+
 resource "azurerm_monitor_action_group" "monitor_action_group" {
   resource_group_name = local.rg_name
   name                = "common-alerts-ag"
@@ -28,6 +122,13 @@ resource "azurerm_monitor_action_group" "monitor_action_group" {
   azure_app_push_receiver {
     name          = "Push notification"
     email_address = var.email_receiver
+  }
+
+  logic_app_receiver {
+    name                    = azurerm_logic_app_workflow.logic_app.name
+    resource_id             = azurerm_logic_app_workflow.logic_app.id
+    callback_url            = azurerm_logic_app_trigger_http_request.http_trigger.callback_url
+    use_common_alert_schema = true
   }
 
   tags = local.tags

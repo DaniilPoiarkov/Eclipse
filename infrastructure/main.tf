@@ -32,12 +32,14 @@ module "monitoring" {
 }
 
 module "alerts" {
-  source         = "./modules/alerts"
-  data_source_id = module.monitoring.app_insights_id
-  location       = local.location
-  environment    = var.environment
-  email_receiver = var.email_receiver
-  severity       = var.alert_severity
+  source              = "./modules/alerts"
+  data_source_id      = module.monitoring.app_insights_id
+  location            = local.location
+  environment         = var.environment
+  email_receiver      = var.email_receiver
+  severity            = var.alert_severity
+  tg_alerts_chat      = var.tg_alerts_chat
+  tg_allert_bot_token = var.tg_alert_bot_token
 
   scope_resource_ids = [
     module.monitoring.app_insights_id

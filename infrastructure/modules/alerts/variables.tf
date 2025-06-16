@@ -29,6 +29,18 @@ variable "severity" {
 }
 
 variable "dependency_targets" {
-  type        = list(string)
+  type        = set(string)
   description = "Dependency targets which will be used for log-based alert"
+}
+
+variable "tg_allert_bot_token" {
+  type        = string
+  description = "Bot token to sent alerts"
+  sensitive   = true
+}
+
+variable "tg_alerts_chat" {
+  type        = number
+  description = "Chat where tg alerts should be sent"
+  sensitive   = true
 }

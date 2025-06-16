@@ -172,3 +172,15 @@ variable "alert_severity" {
   description = "Severity level for custom alerts"
   default     = 1
 }
+
+variable "tg_alerts_chat" {
+  type        = number
+  description = "Telegram chat where alerts shold be sent"
+  sensitive   = true
+}
+
+variable "tg_alert_bot_token" {
+  type        = string
+  description = "Telegram bot which should sent alerts"
+  sensitive   = true
+}
