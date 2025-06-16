@@ -17,7 +17,7 @@ locals {
 
 resource "azurerm_logic_app_workflow" "logic_app" {
   name                = "logic-send-tg-alert"
-  location            = var.environment
+  location            = var.location
   resource_group_name = local.rg_name
   tags                = local.tags
 }
@@ -101,10 +101,7 @@ resource "azurerm_logic_app_action_http" "http_call" {
   body         = <<EOT
     { 
       "chat_id": "${var.tg_alerts_chat}",
-      "text": "⚠️@{triggerBody()?['data']?['essentials']?['alertRule']}\n
-        🕑Triggered at: @{triggerBody()?['data']?['essentials']?['firedDateTime']}\n
-        Metric value: @{triggerBody()?['data']?['alertContext']?['condition']?['allOf'][0]?['metricValue']}
-      "
+      "text": "⚠️@{triggerBody()?['data']?['essentials']?['alertRule']}\n🕑Triggered at: @{triggerBody()?['data']?['essentials']?['firedDateTime']}\nMetric value: @{triggerBody()?['data']?['alertContext']?['condition']?['allOf'][0]?['metricValue']}"
     }
     EOT
 }
@@ -159,7 +156,7 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
 resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_query" {
   for_each = var.dependency_targets
 
-  name                = "Failed calls: ${each.key}"
+  name                = "Failed calls to ${each.key}"
   location            = var.location
   data_source_id      = var.data_source_id
   severity            = var.severity
@@ -174,7 +171,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_
 
   action {
     action_group = [
-      azurerm_monitor_action_group.monitor_action_group
+      azurerm_monitor_action_group.monitor_action_group.id
     ]
   }
 
