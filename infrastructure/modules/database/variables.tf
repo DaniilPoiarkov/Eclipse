@@ -43,9 +43,9 @@ variable "failover_priority" {
   type        = number
 }
 
-variable "container_name" {
-  description = "Container name"
-  type        = string
+variable "container_names" {
+  description = "Container names"
+  type        = set(string)
 }
 
 variable "partition_paths" {

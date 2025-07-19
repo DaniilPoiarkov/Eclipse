@@ -298,3 +298,4 @@ appsettings.Local.json
 infrastructure/states
 infrastructure/tfvars
 infrastructure/env
+infrastructure/apps
