@@ -25,7 +25,7 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
   lifecycle {
     ignore_changes = [
       restore
-     ]
+    ]
   }
 }
 
@@ -36,10 +36,10 @@ resource "azurerm_cosmosdb_sql_database" "database" {
   throughput          = var.database_throughput
 
   lifecycle {
-    ignore_changes = [ 
+    ignore_changes = [
       throughput,
       autoscale_settings
-     ]
+    ]
   }
 }
 

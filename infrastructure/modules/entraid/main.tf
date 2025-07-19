@@ -43,7 +43,7 @@ resource "azuread_application_permission_scope" "default" {
   value                      = "Default"
   admin_consent_description  = "Default"
   admin_consent_display_name = "Default"
-  
+
   lifecycle {
     ignore_changes = [
       scope_id,

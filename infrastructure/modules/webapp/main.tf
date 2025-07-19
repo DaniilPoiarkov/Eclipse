@@ -95,7 +95,7 @@ resource "azurerm_linux_web_app" "app" {
   }
 
   lifecycle {
-    ignore_changes = [ 
+    ignore_changes = [
       app_settings["Google__Credentials"]
     ]
   }
