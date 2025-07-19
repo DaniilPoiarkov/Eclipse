@@ -92,11 +92,13 @@ resource "azurerm_linux_web_app" "app" {
     environment                              = var.environment
     management                               = "terraform"
     "hidden-link: /app-insights-conn-string" = var.app_insights_connection_string
+    "hidden-link: /app-insights-resource-id" = var.app_insights_id
   }
 
   lifecycle {
     ignore_changes = [
-      app_settings["Google__Credentials"]
+      app_settings["Google__Credentials"],
+      app_settings["Telegram__Token"]
     ]
   }
 }

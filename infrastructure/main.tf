@@ -92,6 +92,7 @@ module "web-app" {
   environment                    = var.environment
   app_name                       = var.app_name
   app_insights_connection_string = module.monitoring.app_insights_connection_string
+  app_insights_id                = module.monitoring.app_insights_id
   secret_token                   = var.secret_token
   service_plan_sku_name          = var.service_plan_sku_name
   settings_use_redis             = var.settings_use_redis

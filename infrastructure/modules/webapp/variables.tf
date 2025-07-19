@@ -99,6 +99,12 @@ variable "app_insights_connection_string" {
   sensitive   = true
 }
 
+variable "app_insights_id" {
+  description = "AppInsights Id"
+  type        = string
+  sensitive   = true
+}
+
 variable "cosmos_endpoint" {
   description = "CosmosDb endpoint"
   type        = string
