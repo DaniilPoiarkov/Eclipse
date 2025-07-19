@@ -1,5 +1,6 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
 
 namespace Eclipse.Core.Tests.Decorations;
 

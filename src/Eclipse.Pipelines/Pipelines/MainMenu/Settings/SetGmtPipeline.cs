@@ -1,7 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
+
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
@@ -40,7 +43,7 @@ internal sealed class SetGmtPipeline : SettingsPipelineBase
             ? time
             : time.Add(user.Gmt);
 
-        return Text(Localizer[$"{_pipelinePrefix}:Info", $"{time:HH:mm}"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer[$"{_pipelinePrefix}:Info", $"{time:HH:mm}"]);
     }
 
     private async Task<IResult> UpdateUserGmt(MessageContext context, CancellationToken cancellationToken)

@@ -1,16 +1,20 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Common.Background;
-using Eclipse.Common.Session;
 using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Filters;
+using Eclipse.WebAPI.Formatters;
 using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
-using Eclipse.WebAPI.Session;
+using Eclipse.WebAPI.Options;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
+
+using System.Text.Json.Serialization;
 
 namespace Eclipse.WebAPI;
 
@@ -30,23 +34,25 @@ public static class EclipseWebApiModule
         var configuration = services.GetConfiguration();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(new JwtBearerOptionsConfiguration(configuration).Configure);
+            .AddJwtBearer(EclipseDefaults.AuthenticationScheme, new JwtBearerOptionsConfiguration(configuration).Configure)
+            .AddMicrosoftIdentityWebApi(configuration);
 
         services.AddAuthorization();
 
         services
             .AddControllers()
-            .AddNewtonsoftJson();
+            .AddJsonOptions(jsonOptions =>
+            {
+                jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
+        services.ConfigureTelegramBotMvc();
 
         services
             .AddEndpointsApiExplorer();
 
         services
-            .AddScoped<ApiKeyAuthorizeAttribute>()
-            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>()
-            .AddScoped<CurrentSessionResolverMiddleware>()
-            .AddScoped<CurrentSession>()
-            .AddScoped<ICurrentSession>(sp => sp.GetRequiredService<CurrentSession>());
+            .AddScoped<TelegramBotApiSecretTokenAuthorizeAttribute>();
 
         services.AddSwaggerGen();
 
@@ -69,7 +75,7 @@ public static class EclipseWebApiModule
             .ConfigureOptions<AuthorizationConfiguration>();
 
         services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
-            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 
@@ -82,8 +88,8 @@ public static class EclipseWebApiModule
                 .AddIpAddressFiveMinutesWindow();
         });
 
-        services.Configure<ApiKeyAuthorizationOptions>(
-            configuration.GetSection("Authorization")
+        services.Configure<AzureOAuthOptions>(
+            configuration.GetSection("AzureAd")
         );
 
         services.Configure<CultureList>(
@@ -115,10 +121,18 @@ public static class EclipseWebApiModule
 
         app.UseLocalization();
 
-        app.UseMiddleware<CurrentSessionResolverMiddleware>();
-
         app.MapControllers();
 
         return app;
     }
+
+    // TODO: Drop this when fix for Telegram.Bot package will be ready. (version 22.5.*)
+    //       Issue lies in message enum deserialization.
+    //       The code below taken from official fix used in deprecated lib.
+    private static IServiceCollection ConfigureTelegramBotMvc(this IServiceCollection services)
+            => services.Configure<MvcOptions>(options =>
+            {
+                options.InputFormatters.Insert(0, new TelegramBotInputFormatter());
+                options.OutputFormatters.Insert(0, new TelegramBotOutputFormatter());
+            });
 }

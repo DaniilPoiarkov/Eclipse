@@ -8,6 +8,8 @@ using FluentAssertions;
 
 using NSubstitute;
 
+using System.Linq.Expressions;
+
 using Xunit;
 
 namespace Eclipse.Application.Tests.Exporting.TodoItems;
@@ -31,7 +33,52 @@ public sealed class ImportTodoItemsStrategyTests
     }
 
     [Fact]
-    public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSeccessfully()
+    public void Type_WhenChecked_ThenReturnsTodoItemSpecification()
+    {
+        _sut.Type.Should().Be(ImportType.TodoItems);
+    }
+
+    [Fact]
+    public async Task ImportAsync_WhenRowCannotBeImported_ThenReturnedWithinFailedResult()
+    {
+        var user = UserGenerator.Get();
+
+        for (int i = 0; i < 6; i++)
+        {
+            user.AddTodoItem($"Todo item #{i + 1}", DateTime.UtcNow.AddMinutes(-i));
+        }
+
+        var todoItem1 = ImportEntityRowGenerator.TodoItem();
+        var todoItem2 = ImportEntityRowGenerator.TodoItem();
+        var todoItem3 = ImportEntityRowGenerator.TodoItem();
+
+        todoItem1.Exception = "exception";
+
+        todoItem1.UserId = user.Id;
+        todoItem2.UserId = user.Id;
+        todoItem3.UserId = user.Id;
+
+        using var ms = new MemoryStream();
+
+        _excelManager.Read<ImportTodoItemDto>(ms).Returns([todoItem1, todoItem2, todoItem3]);
+
+        _validator.ValidateAndSetErrors(
+            Arg.Any<IEnumerable<ImportTodoItemDto>>()
+        ).Returns([todoItem1, todoItem2, todoItem3]);
+
+        _userRepository.GetByExpressionAsync(
+            Arg.Any<Expression<Func<User, bool>>>()
+        ).Returns([user]);
+
+        var result = await _sut.ImportAsync(ms);
+
+        result.IsSuccess.Should().BeFalse();
+        result.FailedRows.Count.Should().Be(2);
+        result.FailedRows[1].Exception.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task ImportAsync_WhenRowsAreValid_ThenProcessedSuccessfully()
     {
         using var stream = new MemoryStream();
 
@@ -61,7 +108,7 @@ public sealed class ImportTodoItemsStrategyTests
     }
 
     [Fact]
-    public async Task ImportAsyncs_WhenUserNotExist_ThenFailureResultReturned()
+    public async Task ImportAsync_WhenUserNotExist_ThenFailureResultReturned()
     {
         using var stream = new MemoryStream();
 

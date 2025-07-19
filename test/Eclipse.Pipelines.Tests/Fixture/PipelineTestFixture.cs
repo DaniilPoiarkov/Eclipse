@@ -1,4 +1,4 @@
-﻿using Eclipse.Core.Core;
+﻿using Eclipse.Core.Context;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Tests.Generators;
 
@@ -16,8 +16,6 @@ public abstract class PipelineTestFixture<TPipeline>
 {
     protected readonly ITelegramBotClient BotClient;
 
-    protected readonly ICurrentTelegramUser CurrentTelegramUser;
-
     protected readonly IStringLocalizer Localizer;
 
     protected readonly IServiceProvider ServiceProvider;
@@ -27,12 +25,10 @@ public abstract class PipelineTestFixture<TPipeline>
     public PipelineTestFixture()
     {
         BotClient = Substitute.For<ITelegramBotClient>();
-        CurrentTelegramUser = Substitute.For<ICurrentTelegramUser>();
         Localizer = Substitute.For<IStringLocalizer>();
 
         var services = new ServiceCollection()
             .AddSingleton<TPipeline>()
-            .AddSingleton(CurrentTelegramUser)
             .AddSingleton(Localizer)
             .AddSingleton(BotClient);
 
@@ -51,5 +47,11 @@ public abstract class PipelineTestFixture<TPipeline>
     protected MessageContext GetContext(string value)
     {
         return MessageContextGenerator.Generate(value, ServiceProvider);
+    }
+
+    protected TService GetService<TService>()
+        where TService : notnull
+    {
+        return ServiceProvider.GetRequiredService<TService>();
     }
 }

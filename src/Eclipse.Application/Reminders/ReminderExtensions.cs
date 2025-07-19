@@ -5,14 +5,14 @@ namespace Eclipse.Application.Reminders;
 
 internal static class ReminderExtensions
 {
-    public static ReminderDto ToDto(this Reminder reminer)
+    public static ReminderDto ToDto(this Reminder reminder)
     {
         return new ReminderDto
         {
-            Id = reminer.Id,
-            UserId = reminer.UserId,
-            Text = reminer.Text,
-            NotifyAt = reminer.NotifyAt
+            Id = reminder.Id,
+            UserId = reminder.UserId,
+            Text = reminder.Text,
+            NotifyAt = reminder.NotifyAt
         };
     }
 }

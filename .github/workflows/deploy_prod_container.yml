@@ -3,8 +3,9 @@ name: Production Container-based Build and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-prod-app
-  DOTNET_VERSION: '8.0.*'
+  DOTNET_VERSION: '9.0.*'
   DOTNET_CONFIGURATION: 'Release'
+  REPO:
 
 on:
   push:
@@ -81,10 +82,18 @@ jobs:
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SP_ECLIPSE_PROD_CICD }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: 'ghcr.io/${{ env.REPO }}:prod.${{ github.sha }}'
+
+      - name: Logout from Azure
+        run: |
+          az logout

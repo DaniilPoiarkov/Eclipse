@@ -12,17 +12,6 @@ internal sealed class ExcelManager : IExcelManager
         return stream.Query<T>();
     }
 
-    public MemoryStream Write(IEnumerable<Dictionary<string, object>> values)
-    {
-        var stream = new MemoryStream();
-
-        stream.SaveAs(values);
-
-        stream.Position = 0;
-
-        return stream;
-    }
-
     public MemoryStream Write<T>(IEnumerable<T> values)
     {
         var stream = new MemoryStream();

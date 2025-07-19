@@ -1,8 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Caching;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
@@ -34,14 +35,20 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
     private async Task<IResult> AskForMessage(MessageContext context, CancellationToken cancellationToken)
     {
-        if (long.TryParse(context.Value, out var chatId))
+        if (!long.TryParse(context.Value, out var chatId))
         {
-            await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, CacheConsts.ThreeDays, cancellationToken);
-            return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
+            FinishPipeline();
+            return Text(Localizer["Pipelines:AdminMenu:SendToUser:UnableToParse"]);
         }
 
-        FinishPipeline();
-        return Text(Localizer["Pipelines:AdminMenu:SendToUser:UnableToParse"]);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays
+        };
+
+        await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, options, cancellationToken);
+
+        return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
     }
 
     private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
@@ -52,28 +59,41 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        await _cacheService.SetAsync($"send-message-{context.ChatId}", context.Value, CacheConsts.ThreeDays, cancellationToken);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+        };
+
+        await _cacheService.SetAsync(
+            $"send-message-{context.ChatId}",
+            context.Value,
+            options,
+            cancellationToken
+        );
 
         return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> SendMessage(MessageContext context, CancellationToken cancellationToken)
     {
-        var chatIdKey = $"send-chat-{context.ChatId}";
-        var messageKey = $"send-message-{context.ChatId}";
-
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
-            await _cacheService.DeleteAsync(chatIdKey, cancellationToken);
-            await _cacheService.DeleteAsync(messageKey, cancellationToken);
-
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        var chatId = await _cacheService.GetAndDeleteAsync<long>(chatIdKey, cancellationToken);
-        var message = await _cacheService.GetAndDeleteAsync<string>(messageKey, cancellationToken);
+        var chatId = await _cacheService.GetOrCreateAsync<long>(
+            $"send-chat-{context.ChatId}",
+            () => Task.FromResult<long>(default),
+            cancellationToken: cancellationToken
+        );
 
-        if (message.IsNullOrEmpty())
+        var message = await _cacheService.GetOrCreateAsync<string>(
+            $"send-message-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
+
+        if (message.IsNullOrEmpty() || chatId == default)
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }

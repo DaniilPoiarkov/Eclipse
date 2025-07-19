@@ -1,6 +1,7 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 
 using System.Text;
 

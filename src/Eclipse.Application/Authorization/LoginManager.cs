@@ -17,7 +17,7 @@ namespace Eclipse.Application.Authorization;
 
 internal sealed class LoginManager : ILoginManager
 {
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
     private readonly IConfiguration _configuration;
 
@@ -26,12 +26,12 @@ internal sealed class LoginManager : ILoginManager
     private readonly ITimeProvider _timeProvider;
 
     public LoginManager(
-        UserManager userManager,
+        IUserRepository userRepository,
         IConfiguration configuration,
         IUserClaimsPrincipalFactory<User> userClaimsPrincipalFactory,
         ITimeProvider timeProvider)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
         _configuration = configuration;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
         _timeProvider = timeProvider;
@@ -39,11 +39,11 @@ internal sealed class LoginManager : ILoginManager
 
     public async Task<Result<LoginResult>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByUserNameAsync(request.UserName, cancellationToken);
+        var user = await _userRepository.FindByUserNameAsync(request.UserName, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         if (!user.IsValidSignInCode(_timeProvider.Now, request.SignInCode))
@@ -53,10 +53,10 @@ internal sealed class LoginManager : ILoginManager
 
         var claimsPrincipal = await _userClaimsPrincipalFactory.CreateAsync(user);
 
-        return GenerateToken(claimsPrincipal);
+        return GenerateToken((ClaimsIdentity)claimsPrincipal.Identity!);
     }
 
-    private LoginResult GenerateToken(ClaimsPrincipal claimsPrincipal)
+    private LoginResult GenerateToken(ClaimsIdentity subject)
     {
         var configuration = _configuration.GetSection("Authorization:JwtBearer");
 
@@ -65,7 +65,7 @@ internal sealed class LoginManager : ILoginManager
 
         var descriptor = new SecurityTokenDescriptor
         {
-            Subject = claimsPrincipal.Identity as ClaimsIdentity,
+            Subject = subject,
             Expires = expires,
             IssuedAt = _timeProvider.Now,
             Issuer = configuration["Issuer"],

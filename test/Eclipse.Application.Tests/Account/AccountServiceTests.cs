@@ -1,12 +1,11 @@
 ﻿using Eclipse.Application.Account;
-using Eclipse.Application.Account.Background;
+using Eclipse.Application.Account.SendSignInCode;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Generators;
-using Eclipse.Tests.Utils;
 
 using FluentAssertions;
 
@@ -31,7 +30,8 @@ public sealed class AccountServiceTests
         _userRepository = Substitute.For<IUserRepository>();
         _timeProvider = Substitute.For<ITimeProvider>();
         _backgroundJobManager = Substitute.For<IBackgroundJobManager>();
-        _sut = new AccountService(new UserManager(_userRepository), _timeProvider, _backgroundJobManager);
+
+        _sut = new AccountService(_userRepository, _timeProvider, _backgroundJobManager);
     }
 
     [Fact]
@@ -44,10 +44,7 @@ public sealed class AccountServiceTests
 
         var expiredSignInCode = user.SignInCode;
 
-        _userRepository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs(
-                Task.FromResult<IReadOnlyList<User>>([user])
-            );
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         var now = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(15, 0));
 
@@ -73,13 +70,13 @@ public sealed class AccountServiceTests
     public async Task SendSignInCodeAsync_ShouldReturnEntityNotFound_WhenUserIsNull()
     {
         var userName = "nonexistentUser";
-        var expected = DefaultErrors.EntityNotFound(typeof(User));
+        var expected = DefaultErrors.EntityNotFound<User>();
         _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([]);
 
         var result = await _sut.SendSignInCodeAsync(userName);
 
         result.IsSuccess.Should().BeFalse();
-        ErrorComparer.AreEqual(result.Error, expected);
+        result.Error.Should().BeEquivalentTo(expected);
     }
 
     [Fact]
@@ -88,7 +85,7 @@ public sealed class AccountServiceTests
         var user = UserGenerator.Get();
         user.SetSignInCode(DateTime.UtcNow.AddMinutes(-10));
 
-        _userRepository.GetByExpressionAsync(_ => true).ReturnsForAnyArgs([user]);
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         var utcNow = DateTime.UtcNow;
         _timeProvider.Now.Returns(utcNow);
@@ -122,8 +119,7 @@ public sealed class AccountServiceTests
         var code = user.SignInCode;
         var expiration = user.SignInCodeExpiresAt;
 
-        _userRepository.GetByExpressionAsync(_ => true)
-            .ReturnsForAnyArgs([user]);
+        _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
         _timeProvider.Now.Returns(utcNow);
 

@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Users;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.TodoItems;
@@ -10,91 +11,65 @@ namespace Eclipse.Application.TodoItems;
 
 internal sealed class TodoItemService : ITodoItemService
 {
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
-    public TodoItemService(UserManager userManager)
+    private readonly ITimeProvider _timeProvider;
+
+    public TodoItemService(IUserRepository userRepository, ITimeProvider timeProvider)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+        var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await CreateAsync(user, model, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        return user.ToDto();
+        return await user.AddTodoItem(model.Text, _timeProvider.Now)
+            .TapAsync(_ => _userRepository.UpdateAsync(user, cancellationToken))
+            .BindAsync(_ => user.ToDto());
     }
 
     public async Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await CreateAsync(user, model, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        return result.Value.ToDto();
+        return await user.AddTodoItem(model.Text, _timeProvider.Now)
+            .TapAsync(_ => _userRepository.UpdateAsync(user, cancellationToken))
+            .BindAsync(todoItem => todoItem.ToDto());
     }
 
-    private async Task<Result<TodoItem>> CreateAsync(User user, CreateTodoItemDto model, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> FinishAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
     {
-        var result = user.AddTodoItem(model.Text);
-
-        if (result.IsSuccess)
-        {
-            await _userManager.UpdateAsync(user, cancellationToken);
-        }
-
-        return result;
-    }
-
-    public async Task<Result<UserDto>> FinishItemAsync(long chatId, Guid itemId, CancellationToken cancellationToken = default)
-    {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+        var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = user.FinishItem(itemId);
-
-        if (!result.IsSuccess)
-        {
-            return result.Error;
-        }
-
-        await _userManager.UpdateAsync(user, cancellationToken);
-
-        return user.ToDto();
+        return await user.FinishItem(itemId, _timeProvider.Now)
+            .TapAsync(_ => _userRepository.UpdateAsync(user, cancellationToken))
+            .BindAsync(_ => user.ToDto());
     }
 
     public async Task<Result<List<TodoItemDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         return user.TodoItems.Select(item => item.ToDto()).ToList();
@@ -102,18 +77,18 @@ internal sealed class TodoItemService : ITodoItemService
 
     public async Task<Result<TodoItemDto>> GetAsync(Guid userId, Guid todoItemId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        var item = user.GetTodoItem(todoItemId);
+        var item = user.TodoItems.FirstOrDefault(item => item.Id == todoItemId);
 
         if (item is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(TodoItem));
+            return DefaultErrors.EntityNotFound<TodoItem>();
         }
 
         return item.ToDto();

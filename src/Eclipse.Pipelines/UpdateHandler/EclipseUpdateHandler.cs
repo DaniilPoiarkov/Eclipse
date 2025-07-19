@@ -1,11 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Results;
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Localization.Exceptions;
-using Eclipse.Localization.Extensions;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Stores.Messages;
@@ -13,6 +13,8 @@ using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+
+using System.Reflection;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -34,15 +36,15 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IPipelineProvider _pipelineProvider;
 
-    private readonly ICurrentTelegramUser _currentUser;
-
     private readonly IUpdateParser _updateParser;
 
     private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
     private static readonly UpdateType[] _allowedUpdateTypes =
     [
-        UpdateType.Message, UpdateType.CallbackQuery
+        UpdateType.Message,
+        UpdateType.CallbackQuery,
+        UpdateType.MyChatMember
     ];
 
     public EclipseUpdateHandler(
@@ -50,7 +52,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserService userService,
-        ICurrentTelegramUser currentUser,
         IUpdateParser updateParser,
         IMessageStore messageStore,
         IStringLocalizer<EclipseUpdateHandler> localizer)
@@ -59,7 +60,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _userService = userService;
-        _currentUser = currentUser;
         _updateParser = updateParser;
         _messageStore = messageStore;
         _localizer = localizer;
@@ -81,12 +81,32 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return;
         }
 
-        _currentUser.SetCurrentUser(context.User);
+        var result = await HandleAndGetResultAsync(botClient, update, context, cancellationToken);
 
+        if (result is RedirectResult redirect)
+        {
+            var command = redirect.PipelineType.GetCustomAttribute<RouteAttribute>()?.Command ?? string.Empty;
+
+            var redirectUpdate = new Update
+            {
+                Message = new Message
+                {
+                    Text = command,
+                    From = update.Message?.From,
+                }
+            };
+
+            await HandleAndGetResultAsync(botClient, redirectUpdate, context, cancellationToken);
+        }
+
+        await AddOrUpdateAsync(context.User, cancellationToken);
+    }
+
+    private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)
+    {
         var key = new PipelineKey(context.ChatId);
 
-        var pipeline = await GetPipelineAsync(context, key) as EclipsePipelineBase
-            ?? new EclipseNotFoundPipeline();
+        var pipeline = await GetEclipsePipelineAsync(update, key);
 
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
@@ -106,7 +126,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
         }
 
-        await AddOrUpdateAsync(context.User, cancellationToken);
+        return result;
     }
 
     private async Task<Result<UserDto>> AddOrUpdateAsync(TelegramUser user, CancellationToken cancellationToken)
@@ -146,20 +166,30 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             UserName = telegramUser.UserName,
 
             SurnameChanged = true,
-            Surname = telegramUser.Surname
+            Surname = telegramUser.Surname,
+
+            IsEnabledChanged = true,
+            IsEnabled = true
         };
 
         return await _userService.UpdatePartialAsync(user.Id, update, cancellationToken);
 
         static bool HaveSameValues(UserDto user, TelegramUser telegramUser)
         {
-            return user.Name == telegramUser.Name
+            return user.IsEnabled
+                && user.Name == telegramUser.Name
                 && user.UserName == telegramUser.UserName
                 && user.Surname == telegramUser.Surname;
         }
     }
 
-    private async Task<PipelineBase> GetPipelineAsync(MessageContext context, PipelineKey key)
+    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(Update update, PipelineKey key)
+    {
+        return await GetPipelineAsync(update, key) as EclipsePipelineBase
+            ?? new EclipseNotFoundPipeline();
+    }
+
+    private async Task<PipelineBase> GetPipelineAsync(Update update, PipelineKey key)
     {
         var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
 
@@ -168,21 +198,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return pipeline;
         }
 
-        if (context.Value.StartsWith('/'))
-        {
-            return _pipelineProvider.Get(context.Value);
-        }
-
-        try
-        {
-            return _pipelineProvider.Get(
-                _localizer.ToLocalizableString(context.Value)
-            );
-        }
-        catch (LocalizationNotFoundException)
-        {
-            // Retrieve INotFoundPipeline
-            return _pipelineProvider.Get(string.Empty);
-        }
+        return _pipelineProvider.Get(update);
     }
 }

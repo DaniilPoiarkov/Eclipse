@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Url;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
-using Eclipse.Pipelines.Configurations;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
@@ -11,10 +11,13 @@ using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.UpdateHandler;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using Polly;
+using Polly.Contrib.WaitAndRetry;
 
 using Telegram.Bot;
 
@@ -25,8 +28,14 @@ namespace Eclipse.Pipelines;
 /// </summary>
 public static class EclipsePipelinesModule
 {
-    public static IServiceCollection AddPipelinesModule(this IServiceCollection services)
+    private static readonly int _retriesCount = 5;
+
+    private static readonly int _baseRetryDelay = 1;
+
+    public static IServiceCollection AddPipelinesModule(this IServiceCollection services, Action<PipelinesOptions> options)
     {
+        services.Configure(options);
+
         services.RemoveAll<PipelineBase>();
 
         services
@@ -37,26 +46,39 @@ public static class EclipsePipelinesModule
             .AddTransient<ICultureTracker, CultureTracker>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
-            .AddClasses(c => c.AssignableTo<PipelineBase>())
+            .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
             .As<PipelineBase>()
             .AsSelf()
-            .WithTransientLifetime());
+            .WithScopedLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
-            .AddClasses(c => c.AssignableTo<EclipseJobBase>())
+            .AddClasses(c => c.AssignableTo<EclipseJobBase>(), publicOnly: false)
             .AsImplementedInterfaces()
             .WithTransientLifetime());
 
         services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
-            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 
-        services.ConfigureOptions<QuatzOptionsConfiguration>();
+        services
+            .AddPipelinesHealthChecks()
+            .AddTelegramIntegration();
 
-        var configuration = services.GetConfiguration();
+        services.AddTransient<IMoodRecordCollector, MoodRecordCollector>();
 
-        services.AddPipelinesHealthChecks();
+        return services;
+    }
+
+    private static IServiceCollection AddTelegramIntegration(this IServiceCollection services)
+    {
+        services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((client, sp) =>
+        {
+            var options = sp.GetRequiredService<IOptions<PipelinesOptions>>().Value;
+            return new TelegramBotClient(options.Token, client);
+        }).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(
+                Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(_baseRetryDelay), _retriesCount)
+            ));
 
         return services;
     }
@@ -74,7 +96,7 @@ public static class EclipsePipelinesModule
 
         await ResetWebhookAsync(serviceProvider, client);
 
-        var me = await client.GetMeAsync();
+        var me = await client.GetMe();
 
         logger.LogInformation("\tBot: {bot}", me?.Username);
         logger.LogInformation("{module} module initialized successfully", nameof(EclipsePipelinesModule));
@@ -82,23 +104,21 @@ public static class EclipsePipelinesModule
 
     private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)
     {
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var options = serviceProvider.GetRequiredService<IOptions<PipelinesOptions>>();
         var appUrlProvider = serviceProvider.GetRequiredService<IAppUrlProvider>();
 
-        var webhookInfo = await client.GetWebhookInfoAsync();
+        var webhookInfo = await client.GetWebhookInfo();
 
-        var endpoint = configuration["Telegram:ActiveEndpoint"]!;
-
-        var webhook = $"{appUrlProvider.AppUrl}/{endpoint}";
+        var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{options.Value.ActiveEndpoint}";
 
         if (webhookInfo is not null && webhookInfo.Url.Equals(webhook))
         {
             return;
         }
 
-        await client.SetWebhookAsync(
+        await client.SetWebhook(
             url: webhook,
-            secretToken: configuration["Telegram:SecretToken"]
+            secretToken: options.Value.SecretToken
         );
     }
 }

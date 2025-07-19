@@ -1,14 +1,26 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
-RUN apt-get update && apt-get install -y curl
+
+# Install
+# curl for cosmos cert retrieval
+# fonts for reports 
+# jq for webhook configuration
+RUN apt-get update && \
+    apt-get install -y curl && \ 
+    apt-get install -y fontconfig && \
+    apt-get install -y jq && \
+    apt-get install -y dos2unix
+
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY /src .
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
 
 RUN dotnet restore "Eclipse.WebAPI/Eclipse.WebAPI.csproj"
 COPY /src .
@@ -21,10 +33,8 @@ RUN dotnet publish "Eclipse.WebAPI/Eclipse.WebAPI.csproj" -c Release -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ./entrypoint.sh ./entrypoint.sh
+COPY ./scripts .
 
-RUN apt-get update && \
-    apt-get install -y dos2unix && \
-    dos2unix ./entrypoint.sh
+RUN find *.sh -type f | xargs dos2unix
 
 ENTRYPOINT ["./entrypoint.sh", "cosmos.domain", "8081"]

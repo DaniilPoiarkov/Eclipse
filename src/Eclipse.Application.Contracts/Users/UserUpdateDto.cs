@@ -1,37 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Eclipse.Application.Contracts.Users;
 
 [Serializable]
-public sealed class UserUpdateDto : IValidatableObject
+public sealed class UserUpdateDto
 {
     [Required]
-    public string? Name { get; set; }
+    public required string Name { get; init; }
 
-    public string Surname { get; set; } = string.Empty;
+    public string Surname { get; init; } = string.Empty;
 
     [Required]
-    public string UserName { get; set; } = string.Empty;
+    public required string UserName { get; init; }
 
-    public string? Culture { get; set; }
+    public string? Culture { get; init; }
 
-    public bool NotificationsEnabled { get; set; }
+    public bool NotificationsEnabled { get; init; }
 
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        var localizer = validationContext.GetRequiredService<IStringLocalizer<UserUpdateDto>>();
-
-        if (Name.IsNullOrEmpty())
-        {
-            yield return new ValidationResult(localizer["{0}IsRequired", localizer[nameof(Name)]]);
-        }
-
-        if (UserName.IsNullOrEmpty())
-        {
-            yield return new ValidationResult(localizer["{0}IsRequired", localizer[nameof(UserName)]]);
-        }
-    }
+    public bool IsEnabled { get; init; }
 }

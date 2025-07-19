@@ -1,9 +1,6 @@
 ﻿using Bogus;
 
-using Eclipse.WebAPI.Filters.Authorization;
-
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace Eclipse.IntegrationTests;
 
@@ -34,18 +31,6 @@ public abstract class IntegrationTestBase : IClassFixture<WebAppFactoryWithTestc
         Scope = factory.Services.CreateScope();
         Client = factory.CreateClient();
         Faker = new Faker();
-    }
-
-    /// <summary>
-    /// Adds defined by application <b>"X-API-KEY"</b> header to access api authorized via api-key.
-    /// <para>Present by default.</para>
-    /// </summary>
-    protected void AddAppAuthorizationHeader()
-    {
-        var apiKeyOptions = Scope.ServiceProvider
-            .GetRequiredService<IOptions<ApiKeyAuthorizationOptions>>();
-
-        Client.DefaultRequestHeaders.Add("X-Api-Key", apiKeyOptions.Value.EclipseApiKey);
     }
 
     /// <inheritdoc/>

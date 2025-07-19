@@ -52,9 +52,9 @@ public sealed class ImportUsersValidatorTests
 
         var rows = new List<ImportUserDto>
         {
-            new() { Id = user.Id, UserName = "newuser", ChatId = 456 },
+            new() { Id = user.Id, UserName = "new_user", ChatId = 456 },
             new() { Id = Guid.NewGuid(), UserName = user.UserName, ChatId = 789 },
-            new() { Id = Guid.NewGuid(), UserName = "anotheruser", ChatId = user.ChatId }
+            new() { Id = Guid.NewGuid(), UserName = "another_user", ChatId = user.ChatId }
         };
 
         var options = new ImportUsersValidationOptions { Users = [user] };

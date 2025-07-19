@@ -17,7 +17,11 @@ internal sealed class PipelineStore : IPipelineStore
 
     public async Task<PipelineBase?> GetOrDefaultAsync(PipelineKey key, CancellationToken cancellationToken = default)
     {
-        var pipelineInfo = await _cacheService.GetAsync<PipelineInfo>(key.ToCacheKey(), cancellationToken);
+        var pipelineInfo = await _cacheService.GetOrCreateAsync(
+            key.ToCacheKey(),
+            () => Task.FromResult<PipelineInfo?>(null),
+            cancellationToken: cancellationToken
+        );
 
         if (pipelineInfo is null)
         {
@@ -44,10 +48,15 @@ internal sealed class PipelineStore : IPipelineStore
 
     public Task SetAsync(PipelineKey key, PipelineBase value, CancellationToken cancellationToken = default)
     {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays
+        };
+
         return _cacheService.SetAsync(
             key.ToCacheKey(),
             new PipelineInfo(value.GetType(), value.StagesLeft),
-            CacheConsts.ThreeDays,
+            options,
             cancellationToken
         );
     }

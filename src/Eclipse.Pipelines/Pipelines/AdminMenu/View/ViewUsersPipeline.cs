@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.View;
 
@@ -24,6 +25,6 @@ internal sealed class ViewUsersPipeline : AdminPipelineBase
         var usersInfo = (await _userService.GetAllAsync(cancellationToken))
             .Select((user, index) => $"{++index} | {user.ChatId} | {user.Name} {user.UserName.FormattedOrEmpty(s => $"| @{s}")}");
 
-        return Text(string.Join(Environment.NewLine, usersInfo));
+        return Text($"{usersInfo.Join(Environment.NewLine)}");
     }
 }

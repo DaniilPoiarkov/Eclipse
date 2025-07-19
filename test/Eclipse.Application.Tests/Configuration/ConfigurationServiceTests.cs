@@ -39,30 +39,14 @@ public sealed class ConfigurationServiceTests
 
         _options.Value.Returns(
         [
-            new()
-            {
-                Code = "en",
-                Culture = english
-            },
-            new()
-            {
-                Code = "fr",
-                Culture = franch
-            }
+            new(english, "en"),
+            new(franch, "fr")
         ]);
 
         var expected = new List<CultureInfo>()
         {
-            new()
-            {
-                Code = "en",
-                Culture = expectedEnglish
-            },
-            new()
-            {
-                Code = "fr",
-                Culture = expectedFranch
-            },
+            new(expectedEnglish, "en"),
+            new(expectedFranch, "fr")
         };
 
         LocalizerBuilder<ConfigurationService>.Configure(_localizer)

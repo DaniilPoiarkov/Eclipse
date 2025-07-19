@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Common.Caching;
+using Eclipse.Common.Clock;
 using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Shared.Entities;
 
@@ -12,9 +13,12 @@ internal sealed class DomainEventsToOutboxMessagesInterceptor : SaveChangesInter
 {
     private readonly ITimeProvider _timeProvider;
 
-    public DomainEventsToOutboxMessagesInterceptor(ITimeProvider timeProvider)
+    private readonly ICacheService _cacheService;
+
+    public DomainEventsToOutboxMessagesInterceptor(ITimeProvider timeProvider, ICacheService cacheService)
     {
         _timeProvider = timeProvider;
+        _cacheService = cacheService;
     }
 
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
@@ -31,8 +35,8 @@ internal sealed class DomainEventsToOutboxMessagesInterceptor : SaveChangesInter
             .Select(entry => entry.Entity)
             .SelectMany(entity => entity.GetEvents())
             .Select(domainEvent => new OutboxMessage(
-                Guid.NewGuid(),
-                domainEvent.GetType().Name,
+                Guid.CreateVersion7(),
+                domainEvent.GetType().AssemblyQualifiedName!,
                 JsonConvert.SerializeObject(domainEvent, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All,
@@ -42,6 +46,11 @@ internal sealed class DomainEventsToOutboxMessagesInterceptor : SaveChangesInter
             .ToList();
 
         await context.Set<OutboxMessage>().AddRangeAsync(outboxMessages, cancellationToken);
+
+        await _cacheService.DeleteByPrefixAsync(
+            typeof(OutboxMessage).AssemblyQualifiedName ?? string.Empty,
+            cancellationToken
+        );
 
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }

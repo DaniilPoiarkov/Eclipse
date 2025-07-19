@@ -16,7 +16,7 @@ services:
       eclipse:
     volumes:
       - eclipse:/data
-    
+
   cache:
     image: redis/redis-stack-server:latest
     container_name: eclipse-cache
@@ -25,6 +25,20 @@ services:
       - 6379:6379
     volumes:
       - eclipse:/cache
+    networks:
+      - eclipse
+  
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: eclipse-ngrok
+    restart: unless-stopped
+    command:
+      - 'http'
+      - 'http://host.docker.internal:8080'
+    environment:
+      NGROK_AUTHTOKEN:
+    ports:
+     - 4040:4040
     networks:
       - eclipse
 
@@ -37,6 +51,8 @@ services:
     environment:
       - ConnectionStrings__Emulator=AccountEndpoint=https://cosmos.domain:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
       - ConnectionStrings__Redis=cache:6379
+      - Azure__CosmosOptions__DatabaseId=eclipse
+      - Azure__CosmosOptions__Container=Aggregates
       - Telegram__SecretToken=my_Sup3r_S3cr3t_T0k3n
       - Sheets__SuggestionsRange=Suggestions!B:E
       - Settings__IsDocker=true
@@ -50,6 +66,7 @@ services:
     depends_on:
       - cosmosdb
       - cache
+      - ngrok
 
 networks:
   eclipse:

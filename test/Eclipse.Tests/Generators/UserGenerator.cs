@@ -20,7 +20,10 @@ public static class UserGenerator
                 faker.Person.LastName,
                 faker.Person.UserName,
                 chatId: i,
-                newRegistered: i % 2 == 0);
+                DateTime.UtcNow,
+                true,
+                newRegistered: i % 2 == 0
+            );
 
             user.Culture = i % 2 == 0 ? "en" : "uk";
 
@@ -30,7 +33,7 @@ public static class UserGenerator
         return result;
     }
 
-    public static User Get(long chatId = default)
+    public static User Get(long chatId = default, bool newRegistered = true)
     {
         var faker = new Faker();
 
@@ -40,7 +43,9 @@ public static class UserGenerator
             faker.Person.LastName,
             faker.Person.UserName,
             chatId,
-            true
+            DateTime.UtcNow,
+            true,
+            newRegistered
         );
 
         user.Culture = Random.Shared.Next(0, 10) % 2 == 0
@@ -60,7 +65,10 @@ public static class UserGenerator
                 faker.Person.LastName,
                 faker.Person.UserName,
                 faker.Random.Long(min: 1),
-                false)
+                DateTime.UtcNow,
+                true,
+                false
+            )
         );
     }
 }

@@ -8,19 +8,6 @@ public static class StringExtensions
 {
     /// <summary>
     /// <code>
-    /// return str.Contains(value, StringComparison.OrdinalIgnoreCase);
-    /// </code>
-    /// </summary>
-    /// <param name="str"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static bool ContainsOrdinalIgnoreCase(this string str, string value)
-    {
-        return str.Contains(value, StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// <code>
     /// return source.Equals(other, StringComparison.CurrentCultureIgnoreCase);
     /// </code>
     /// </summary>
@@ -126,16 +113,6 @@ public static class StringExtensions
     public static string Join(this IEnumerable<string> strings, string separator)
     {
         return string.Join(separator, strings);
-    }
-
-    public static string EnsureEndsWith(this string str, string expected)
-    {
-        if (str.EndsWith(expected))
-        {
-            return str;
-        }
-
-        return $"{str}{expected}";
     }
 
     public static string EnsureEndsWith(this string str, char expected)

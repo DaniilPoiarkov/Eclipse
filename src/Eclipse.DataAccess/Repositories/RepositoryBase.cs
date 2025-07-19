@@ -1,4 +1,4 @@
-﻿using Eclipse.DataAccess.CosmosDb;
+﻿using Eclipse.DataAccess.Cosmos;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
 
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Eclipse.DataAccess.Repositories;
 
-public class RepositoryBase<TEntity> : IRepository<TEntity>
+internal class RepositoryBase<TEntity> : IRepository<TEntity>
     where TEntity : Entity
 {
     protected readonly EclipseDbContext Context;
@@ -81,6 +81,18 @@ public class RepositoryBase<TEntity> : IRepository<TEntity>
     public async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         DbSet.UpdateRange(entities);
+        await Context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        DbSet.RemoveRange(entities);
+        await Context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task CreateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        await DbSet.AddRangeAsync(entities, cancellationToken);
         await Context.SaveChangesAsync(cancellationToken);
     }
 }

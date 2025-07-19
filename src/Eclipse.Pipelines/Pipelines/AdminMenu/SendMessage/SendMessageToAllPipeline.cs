@@ -2,8 +2,9 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Caching;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
@@ -43,22 +44,28 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, CacheConsts.ThreeDays, cancellationToken);
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.ThreeDays,
+        };
+
+        await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, options, cancellationToken);
 
         return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
-        var messageKey = $"send-all-{context.ChatId}";
-
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
-            await _cacheService.DeleteAsync(messageKey, cancellationToken);
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        var message = await _cacheService.GetAndDeleteAsync<string>(messageKey, cancellationToken);
+        var message = await _cacheService.GetOrCreateAsync(
+            $"send-all-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
 
         if (message.IsNullOrEmpty())
         {

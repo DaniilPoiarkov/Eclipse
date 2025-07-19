@@ -1,0 +1,25 @@
+name: "Terraform formatting check"
+
+on:
+  pull_request:
+    branches: develop
+    paths:
+      - 'infrastructure/**'
+
+jobs:
+  fmt:
+    name: "Formatting check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.1
+          terraform_wrapper: false
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive

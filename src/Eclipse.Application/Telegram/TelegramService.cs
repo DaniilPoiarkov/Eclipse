@@ -35,7 +35,7 @@ internal sealed class TelegramService : ITelegramService
             return Error.Validation(_errorSendCode, "Telegram:InvalidChatId");
         }
 
-        await _botClient.SendTextMessageAsync(
+        await _botClient.SendMessage(
             message.ChatId,
             message.Message,
             cancellationToken: cancellationToken);
@@ -54,7 +54,7 @@ internal sealed class TelegramService : ITelegramService
         {
             var secretToken = _configuration["Telegram:SecretToken"];
 
-            await _botClient.SetWebhookAsync(
+            await _botClient.SetWebhook(
                 webhookUrl,
                 secretToken: secretToken,
                 cancellationToken: cancellationToken

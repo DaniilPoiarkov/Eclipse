@@ -1,17 +1,18 @@
 ﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Common.Results;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[ApiKeyAuthorize]
 [Route("api/telegram")]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 public sealed class TelegramController : ControllerBase
 {
     private readonly ITelegramService _service;
@@ -38,16 +39,16 @@ public sealed class TelegramController : ControllerBase
     public async Task<IActionResult> Send([FromBody] SendMessageModel message, CancellationToken cancellationToken)
     {
         var result = await _service.Send(message, cancellationToken);
-        return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
+        return result.Match(NoContent, error => error.ToProblems(_stringLocalizer));
     }
 
     [HttpPost("switch-handler")]
-    public async Task<IActionResult> SwichHandlerType([FromBody] SwichHandlerTypeRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SwitchHandlerType([FromBody] SwitchHandlerTypeRequest request, CancellationToken cancellationToken)
     {
         var endpoint = _configuration[$"Telegram:{Enum.GetName(request.Type)}Endpoint"];
 
-        var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl}/{endpoint}", cancellationToken);
+        var result = await _service.SetWebhookUrlAsync($"{_appUrlProvider.AppUrl.EnsureEndsWith('/')}{endpoint}", cancellationToken);
 
-        return result.Match(Ok, () => result.ToProblems(_stringLocalizer));
+        return result.Match(Ok, error => error.ToProblems(_stringLocalizer));
     }
 }

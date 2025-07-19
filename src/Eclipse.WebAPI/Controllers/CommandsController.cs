@@ -1,15 +1,16 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram;
 using Eclipse.Common.Results;
-using Eclipse.WebAPI.Filters.Authorization;
+using Eclipse.WebAPI.Constants;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 namespace Eclipse.WebAPI.Controllers;
 
 [ApiController]
-[ApiKeyAuthorize]
 [Route("api/commands")]
+[Authorize(Policy = AuthorizationPolicies.Admin)]
 public sealed class CommandsController : ControllerBase
 {
     private readonly ICommandService _commandService;
@@ -22,7 +23,8 @@ public sealed class CommandsController : ControllerBase
         _stringLocalizer = stringLocalizer;
     }
 
-    [HttpGet("list")]
+    [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         return Ok(await _commandService.GetList(cancellationToken));
@@ -32,10 +34,10 @@ public sealed class CommandsController : ControllerBase
     public async Task<IActionResult> Add([FromBody] AddCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await _commandService.Add(request, cancellationToken);
-        return result.Match(NoContent, () => result.ToProblems(_stringLocalizer));
+        return result.Match(NoContent, error => error.ToProblems(_stringLocalizer));
     }
 
-    [HttpDelete("remove/{command}")]
+    [HttpDelete("{command}/remove")]
     public async Task<IActionResult> Remove(string command, CancellationToken cancellationToken)
     {
         await _commandService.Remove(command, cancellationToken);

@@ -1,7 +1,8 @@
 ﻿using Eclipse.Application.Contracts.Url;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
-using Eclipse.Pipelines.Attributes;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
+using Eclipse.Pipelines.Validation;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

@@ -1,12 +1,18 @@
 ﻿using Azure.Identity;
 
-using Eclipse.DataAccess.CosmosDb;
-using Eclipse.DataAccess.Health;
+using Eclipse.DataAccess.Cosmos;
+using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
+using Eclipse.DataAccess.Migrations;
 using Eclipse.DataAccess.Model;
+using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
+using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.InboxMessages;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
+using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users;
 
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +24,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using System.Reflection;
+
 namespace Eclipse.DataAccess;
 
 /// <summary>
@@ -27,24 +35,44 @@ public static class EclipseDataAccessModule
 {
     public static IServiceCollection AddDataAccessModule(this IServiceCollection services)
     {
-        services
-            .AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
-            .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
-
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
 
         services
+            .AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
+            .AddScoped<IInboxMessageRepository, InboxMessageRepository>()
+            .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
+            .AddScoped<IUserStatisticsRepository, UserStatisticsRepository>()
+            .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
+
+        services
             .Decorate<IUserRepository, CachedUserRepository>()
-            .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>();
+            .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
+            .Decorate<IInboxMessageRepository, CachedInboxMessageRepository>()
+            .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>()
+            .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>();
 
         services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)))
+            .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        return services;
+    }
+
+    public static IServiceCollection ApplyMigrations(this IServiceCollection services, Assembly assembly)
+    {
+        services.AddScoped<IMigrationRunner, MigrationRunner<EclipseDbContext>>();
+
+        services.Scan(tss => tss.FromAssemblies(assembly)
+            .AddClasses(c => c.AssignableTo<IMigration>(), false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+        services.AddHostedService<MigrationHostedService>();
 
         return services;
     }
@@ -85,19 +113,29 @@ public static class EclipseDataAccessModule
                 .AddInterceptors(interceptors);
         });
 
+        services.AddScoped(sp => new CosmosClient(
+            sp.GetRequiredService<IOptions<CosmosDbContextOptions>>().Value.Endpoint,
+            new DefaultAzureCredential())
+        );
+
         return services;
     }
 
     private static IServiceCollection AddEmulator(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("Emulator")!;
+        var databaseId = configuration["Azure:CosmosOptions:DatabaseId"]!;
+
         services.AddDbContext<EclipseDbContext>((sp, b) =>
-            b.UseCosmos(configuration.GetConnectionString("Emulator")!, configuration["Azure:CosmosOptions:DatabaseId"]!)
+            b.UseCosmos(connectionString, databaseId)
                 .AddInterceptors(sp.GetServices<IInterceptor>()));
+
+        services.AddSingleton(new CosmosClient(connectionString));
 
         return services;
     }
 
-    public static async Task InitializaDataAccessModuleAsync(this WebApplication app)
+    public static async Task InitializeDataAccessModuleAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 

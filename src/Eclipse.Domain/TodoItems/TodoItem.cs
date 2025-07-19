@@ -53,7 +53,7 @@ public sealed class TodoItem : Entity
     public DateTime? FinishedAt { get; private set; }
 
     /// <summary>Marks item as finished.</summary>
-    public Result MarkAsFinished()
+    internal Result MarkAsFinished(DateTime finishedAt)
     {
         if (IsFinished)
         {
@@ -61,7 +61,7 @@ public sealed class TodoItem : Entity
         }
 
         IsFinished = true;
-        FinishedAt = DateTime.UtcNow;
+        FinishedAt = finishedAt;
 
         return Result.Success();
     }

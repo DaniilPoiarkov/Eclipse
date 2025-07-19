@@ -5,11 +5,10 @@ using Eclipse.Localization.Resources;
 
 using FluentAssertions;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-using NSubstitute;
+using System.Globalization;
 
 using Xunit;
 
@@ -17,7 +16,7 @@ namespace Eclipse.Localization.Tests;
 
 public sealed class CurrentCultureTests
 {
-    private readonly IStringLocalizer<CurrentCultureTests> _localizer;
+    private readonly TypedJsonStringLocalizer<CurrentCultureTests> _localizer;
 
     private readonly CurrentCulture _sut;
 
@@ -30,18 +29,10 @@ public sealed class CurrentCultureTests
 
         builder.AddJsonFiles("Resources");
 
-        var options = Options.Create(builder);
+        _sut = new CurrentCulture();
 
-        var resourceProvider = new ResourceProvider(options);
-        var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
-
-        _sut = new CurrentCulture(options);
-
-        httpContextAccessor.HttpContext?.RequestServices
-            .GetService(typeof(ICurrentCulture))
-            .Returns(_sut);
-
-        var factory = new JsonStringLocalizerFactory(options, resourceProvider, httpContextAccessor);
+        var resourceProvider = new ResourceProvider(Options.Create(builder));
+        var factory = new JsonStringLocalizerFactory(resourceProvider);
 
         _localizer = new TypedJsonStringLocalizer<CurrentCultureTests>(factory);
     }
@@ -53,6 +44,8 @@ public sealed class CurrentCultureTests
     [InlineData("ExceptionMessage", "uk", "Exception {0}", "Помилка {0}")]
     public void UsingCulture_WhenSpecified_ThenLocalizerUsesSpecificCultureInScope(string key, string culture, string expectedWithDefault, string expectedWithUsing)
     {
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+
         var beforeUsing = _localizer[key];
 
         var withUsing = new LocalizedString(string.Empty, string.Empty);
@@ -67,5 +60,27 @@ public sealed class CurrentCultureTests
         beforeUsing.Value.Should().Be(expectedWithDefault);
         withUsing.Value.Should().Be(expectedWithUsing);
         afterUsing.Value.Should().Be(expectedWithDefault);
+    }
+
+    [Theory]
+    [InlineData("en", "Message{0}", "Message {0}", false)]
+    [InlineData("en", "Test", "Test", false)]
+    [InlineData("en", "Test1", "Test 1", false)]
+    [InlineData("en", "Test2", "Test 2", false)]
+    [InlineData("uk", "Message{0}", "Повідомлення {0}", false)]
+    [InlineData("uk", "Test", "Тест", false)]
+    [InlineData("uk", "Test1", "Тест 1", false)]
+    [InlineData("uk", "Test2", "Тест 2", false)]
+    [InlineData("de", "Test", "Test", false)]
+    [InlineData("fr", "Test", "Test", false)]
+    public void UsingCulture_WhenCultureSpecified_ThenUsesItOrDefaultForLocalization(string culture, string key, string expectedValue, bool resourceNotFound)
+    {
+        using var _ = _sut.UsingCulture(culture);
+
+        var value = _localizer[key];
+
+        value.Name.Should().Be(key);
+        value.Value.Should().Be(expectedValue);
+        value.ResourceNotFound.Should().Be(resourceNotFound);
     }
 }

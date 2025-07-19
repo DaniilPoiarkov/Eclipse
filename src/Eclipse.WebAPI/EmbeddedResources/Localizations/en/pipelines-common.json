@@ -2,7 +2,6 @@
   "Culture": "en",
   "Texts": {
     "Pipelines:Common:About": "Hi, {name}!\r\nMy name is Eclipse and I'm your small helper😊\r\n Use /help to get some addition info",
-    "Pipelines:Common:Help": "Here what I can do",
-    "Pipelines:Common:Start": "Hello, {name}, I'm Eclipse. Right now I'm studying different things, so if you don't mind helping me become better you can click the 'Suggest' button and describe your thoughts.\nSee you 🌒"
+    "Pipelines:Common:Help": "Here what I can do"
   }
 }

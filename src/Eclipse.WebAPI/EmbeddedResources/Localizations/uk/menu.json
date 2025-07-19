@@ -7,6 +7,8 @@
     "Menu:MainMenu:MyToDos": "Мої плани 📝",
     "Menu:MainMenu:Settings": "Налаштування ⚙️",
     "Menu:MainMenu:Reminders": "Нагадування 🔈",
+    "Menu:MainMenu:Reports": "Звіти 📑",
+    "Menu:MainMenu:Actions": "Активності 🖋️",
 
     "Menu:Settings:Language": "Змінити мову 🌐",
     "Menu:Settings:Notifications": "Сповіщення 🔈",
@@ -29,9 +31,16 @@
 
     "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
-    "Menu:TodoItemsMenu:AddItem": "Запланувати ✏️",
-    "Menu:TodoItemsMenu:MyList": "Мій список 🗒",
+    "Menu:AdminMenu:Promotions": "Просування",
+    "Menu:AdminMenu:Promotions:Post": "Надіслати пост",
 
-    "Menu:Reminders:Add": "Нагадай мені 💭"
+    "Menu:TodoItems:AddItem": "Запланувати ✏️",
+    "Menu:TodoItems:List": "Мій список 🗒",
+
+    "Menu:Reminders:Add": "Нагадай мені 💭",
+    "Menu:Reminders:List": "Заплановані нагадування 🕑",
+
+    "Menu:Reports:Mood": "Настрій 🤔",
+    "Menu:Reports:Statistics": "Статистика 📈"
   }
 }

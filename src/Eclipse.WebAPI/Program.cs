@@ -1,13 +1,11 @@
 using Eclipse.Application;
-using Eclipse.Application.Contracts;
 using Eclipse.Core;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
-using Eclipse.Domain.Shared;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
-using Eclipse.Pipelines.Decorations;
+using Eclipse.Pipelines.Localization;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
 
@@ -20,14 +18,15 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services
-    .AddApplicationModule()
-    .AddDomainSharedModule()
+    .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
-    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>())
-    .AddApplicationContractsModule()
-    .AddPipelinesModule()
+    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>()
+        .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
+    )
+    .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
     .AddDataAccessModule()
+    .ApplyMigrations(typeof(EclipseDataAccessModule).Assembly)
     .AddInfrastructureModule();
 
 builder.Services.AddLocalization(localization =>
@@ -58,9 +57,11 @@ builder.Host.UseSerilog((context, sp, config) =>
 var app = builder.Build();
 
 app.InitializeWebApiModule();
-await app.InitializaDataAccessModuleAsync();
+
+await app.InitializeApplicationLayerAsync();
+await app.InitializeDataAccessModuleAsync();
 await app.InitializePipelineModuleAsync();
 
-app.Run();
+await app.RunAsync();
 
 public partial class Program;

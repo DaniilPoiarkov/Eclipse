@@ -7,6 +7,8 @@
     "Menu:MainMenu:MyToDos": "My to dos 📝",
     "Menu:MainMenu:Settings": "Settings ⚙️",
     "Menu:MainMenu:Reminders": "Reminders 🔈",
+    "Menu:MainMenu:Reports": "Reports 📑",
+    "Menu:MainMenu:Actions": "Actions 🖋️",
 
     "Menu:Settings:Language": "Change language 🌐",
     "Menu:Settings:Notifications": "Notifications 🔈",
@@ -29,9 +31,16 @@
 
     "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 
-    "Menu:TodoItemsMenu:AddItem": "Add item ✏️",
-    "Menu:TodoItemsMenu:MyList": "My list 🗒",
+    "Menu:AdminMenu:Promotions": "Promotions",
+    "Menu:AdminMenu:Promotions:Post": "Post promotion",
 
-    "Menu:Reminders:Add": "Remind me 💭"
+    "Menu:TodoItems:AddItem": "Add item ✏️",
+    "Menu:TodoItems:List": "My list 🗒",
+
+    "Menu:Reminders:Add": "Remind me 💭",
+    "Menu:Reminders:List": "Pending reminders 🕑",
+
+    "Menu:Reports:Mood": "Mood report 🤔",
+    "Menu:Reports:Statistics": "Statistics 📈"
   }
 }

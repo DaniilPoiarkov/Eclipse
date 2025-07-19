@@ -1,6 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Suggestions;
-using Eclipse.Core.Attributes;
-using Eclipse.Core.Core;
+using Eclipse.Core.Context;
+using Eclipse.Core.Results;
+using Eclipse.Core.Routing;
+
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
@@ -17,7 +20,7 @@ public sealed class SuggestPipeline : EclipsePipelineBase
     protected override void Initialize()
     {
         RegisterStage(SendInfo);
-        RegisterStage(RecieveIdea);
+        RegisterStage(ReceiveIdea);
     }
 
     private IResult SendInfo(MessageContext context)
@@ -26,10 +29,10 @@ public sealed class SuggestPipeline : EclipsePipelineBase
             .Split(';', StringSplitOptions.RemoveEmptyEntries)
             .GetRandomItem();
 
-        return Text(string.Format(Localizer["Pipelines:Suggest"], greeting));
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Suggest", greeting]);
     }
 
-    private async Task<IResult> RecieveIdea(MessageContext context, CancellationToken cancellationToken = default)
+    private async Task<IResult> ReceiveIdea(MessageContext context, CancellationToken cancellationToken = default)
     {
         if (context.Value.IsNullOrEmpty())
         {

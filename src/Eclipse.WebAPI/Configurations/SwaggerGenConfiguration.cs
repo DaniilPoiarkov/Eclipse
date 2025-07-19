@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning.ApiExplorer;
 
+using Eclipse.WebAPI.Options;
 using Eclipse.WebAPI.Swagger;
 
 using Microsoft.Extensions.Options;
@@ -13,61 +14,59 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 {
     private readonly IApiVersionDescriptionProvider _provider;
 
-    public SwaggerGenConfiguration(IApiVersionDescriptionProvider provider)
+    private readonly IOptions<AzureOAuthOptions> _options;
+
+    public SwaggerGenConfiguration(IApiVersionDescriptionProvider provider, IOptions<AzureOAuthOptions> options)
     {
         _provider = provider;
+        _options = options;
     }
 
     public void Configure(SwaggerGenOptions options)
     {
-        foreach (var description in _provider.ApiVersionDescriptions)
-        {
-            var openApiInfo = new OpenApiInfo
-            {
-                Title = $"Eclipse.Api v{description.ApiVersion}",
-                Version = description.ApiVersion.ToString(),
-                Description = "Open API to test an app. Some features might require special access via API-KEY"
-            };
-
-            options.SwaggerDoc(description.GroupName, openApiInfo);
-        }
-
-        ConfigureApiKeySecurityDefinition(options);
+        ConfigureApiVersioning(options);
         ConfigureAuthorizationSecurityDefinition(options);
+        ConfigureAzureEntraIdAuthentication(options);
 
         options.AddOperationFilterInstance(new ContentLanguageHeaderFilter());
+        options.AddOperationFilterInstance(new DescriptionFilter());
     }
 
-    private static void ConfigureApiKeySecurityDefinition(SwaggerGenOptions options)
+    private void ConfigureAzureEntraIdAuthentication(SwaggerGenOptions options)
     {
-        var apiKeySecurity = "X-Api-Key";
-
-        options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
-        {
-            Description = "API-KEY based authorization. Enter your API-KEY to access not public API",
-            Scheme = "ApiKeyScheme",
-            Name = apiKeySecurity,
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
-        });
-
         var scheme = new OpenApiSecurityScheme
         {
             Reference = new OpenApiReference
             {
                 Type = ReferenceType.SecurityScheme,
-                Id = apiKeySecurity
+                Id = "oauth2"
             },
-
+            Scheme = "oauth2",
+            Name = "oauth2",
             In = ParameterLocation.Header
         };
 
-        var requirement = new OpenApiSecurityRequirement
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
-            { scheme, Array.Empty<string>() }
+            { scheme , new List<string>() }
+        });
+
+        var definition = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                AuthorizationCode = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = _options.Value.Urls.Authorization,
+                    TokenUrl = _options.Value.Urls.Token,
+                    RefreshUrl = _options.Value.Urls.Refresh,
+                    Scopes = _options.Value.Scopes.ToDictionary(s => s.Name, s => s.Description)
+                }
+            }
         };
 
-        options.AddSecurityRequirement(requirement);
+        options.AddSecurityDefinition("oauth2", definition);
     }
 
     private static void ConfigureAuthorizationSecurityDefinition(SwaggerGenOptions options)
@@ -100,5 +99,20 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
         };
 
         options.AddSecurityRequirement(requirement);
+    }
+
+    private void ConfigureApiVersioning(SwaggerGenOptions options)
+    {
+        foreach (var description in _provider.ApiVersionDescriptions)
+        {
+            var openApiInfo = new OpenApiInfo
+            {
+                Title = $"Eclipse.Api v{description.ApiVersion}",
+                Version = description.ApiVersion.ToString(),
+                Description = "Open API to test an app. Some features might require special access via API-KEY"
+            };
+
+            options.SwaggerDoc(description.GroupName, openApiInfo);
+        }
     }
 }

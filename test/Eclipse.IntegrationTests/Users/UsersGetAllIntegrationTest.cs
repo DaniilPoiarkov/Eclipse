@@ -12,10 +12,7 @@ namespace Eclipse.IntegrationTests.Users;
 public sealed class UsersGetAllIntegrationTest : IntegrationTestBase
 {
     public UsersGetAllIntegrationTest(WebAppFactoryWithTestcontainers factory)
-        : base(factory)
-    {
-        AddAppAuthorizationHeader();
-    }
+        : base(factory) { }
 
     //[Fact]
     public async Task GetAll_WhenCalled_ThenAllUsersReturned()

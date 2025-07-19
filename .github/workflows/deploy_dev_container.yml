@@ -2,18 +2,26 @@
 name: Development Container-based Build and deploy to an Azure
 
 env:
-  AZURE_WEBAPP_NAME: eclipse-prod-app
-  DOTNET_VERSION: '8.0.*'
+  AZURE_WEBAPP_NAME: eclipse-dev-app
+  DOTNET_VERSION: '9.0.*'
   DOTNET_CONFIGURATION: 'Release'
+  REPO: 
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: develop
+    paths:
+      - 'src/**'
+      - '**.props'
+      - '**.sln'
+      - '**.dockerfile'
   workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
+  checks: write
+  pull-requests: write
 
 jobs:
   build-and-test:
@@ -39,33 +47,19 @@ jobs:
         run: dotnet restore ./Eclipse.WebAPI.sln
 
       - name: Build
-        run: dotnet build ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
-        
+        run: dotnet build ./Eclipse.WebAPI.sln
+          --configuration ${{ env.DOTNET_CONFIGURATION }}
+          --no-restore
+
       - name: Run tests
         run: dotnet test ./Eclipse.WebAPI.sln 
           --configuration ${{ env.DOTNET_CONFIGURATION }}
           --no-build
-          --logger trx
-          --results-directory ${{ github.workspace }}/test-results
-          --collect "XPlat Code Coverage"
-
-      - name: Generate test report
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.8
-        with:
-          reports: ${{ github.workspace }}/test-results/**/*.xml
-          targetdir: ${{ github.workspace }}/test-reports
-          reporttypes: cobertura;Html_Dark
-          tag: ${{ github.run_number }}_${{ github.run_id }}
-      
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: CoverageReports
-          path: ${{ github.workspace }}/test-reports
 
   build-image:
+    if: github.ref_name == 'develop'
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: [ 'build-and-test' ]
     steps:
 
       - name: Set up Docker Buildx
@@ -89,6 +83,7 @@ jobs:
           file: ./web-api.dockerfile
 
   deploy:
+    if: github.ref_name == 'develop'
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -101,10 +96,18 @@ jobs:
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SP_ECLIPSE_DEV_CICD }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PROD_PUBLISH_PROFILE }}
           images: 'ghcr.io/${{ env.REPO }}:dev.${{ github.sha }}'
+
+      - name: Logout from Azure
+        run: |
+          az logout

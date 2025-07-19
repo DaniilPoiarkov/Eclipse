@@ -1,5 +1,6 @@
-﻿using Eclipse.Common.EventBus;
+﻿using Eclipse.Common.Clock;
 using Eclipse.Common.Sheets;
+using Eclipse.Domain.OutboxMessages;
 using Eclipse.Domain.Suggestions;
 
 using Microsoft.Extensions.Configuration;
@@ -12,10 +13,10 @@ internal sealed class SuggestionsSheetsService : EclipseSheetsService<Suggestion
         ISheetsService service,
         IObjectParser<Suggestion> parser,
         IConfiguration configuration,
-        IEventBus eventBus)
-        : base(service, parser, configuration, eventBus)
-    {
-    }
+        IOutboxMessageRepository outboxMessageRepository,
+        ITimeProvider timeProvider)
+        : base(service, parser, configuration, outboxMessageRepository, timeProvider) { }
 
-    protected override string Range => Configuration["Sheets:SuggestionsRange"]!;
+    protected override string Range => Configuration["Sheets:SuggestionsRange"]
+        ?? throw new InvalidDataException("Suggestions range not provided.");
 }

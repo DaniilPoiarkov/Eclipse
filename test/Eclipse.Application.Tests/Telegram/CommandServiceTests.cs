@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Telegram.Commands;
-using Eclipse.Application.Telegram.Commands;
+﻿using Eclipse.Application.Contracts.Telegram;
+using Eclipse.Application.Telegram;
 using Eclipse.Common.Results;
 
 using FluentAssertions;
@@ -7,6 +7,8 @@ using FluentAssertions;
 using NSubstitute;
 
 using Telegram.Bot;
+using Telegram.Bot.Requests;
+using Telegram.Bot.Types;
 
 using Xunit;
 
@@ -16,12 +18,14 @@ public sealed class CommandServiceTests
 {
     private readonly CommandService _sut;
 
+    private readonly ITelegramBotClient _botClient;
+
     private static readonly string _descriptionPrefix = "BotCommand";
 
     public CommandServiceTests()
     {
-        var botClient = Substitute.For<ITelegramBotClient>();
-        _sut = new CommandService(botClient);
+        _botClient = Substitute.For<ITelegramBotClient>();
+        _sut = new CommandService(_botClient);
     }
 
     [Theory]
@@ -44,7 +48,7 @@ public sealed class CommandServiceTests
     {
         var expectedError = Error.Validation("Command.Add", $"{_descriptionPrefix}:{errorCode}");
 
-        var request = new AddCommandRequest
+        var request = new AddCommandRequest(null, null)
         {
             Command = command,
             Description = description
@@ -54,9 +58,7 @@ public sealed class CommandServiceTests
 
         result.IsSuccess.Should().BeFalse();
 
-        var error = result.Error;
-        error.Code.Should().Be(expectedError.Code);
-        error.Description.Should().Be(expectedError.Description);
+        result.Error.Should().BeEquivalentTo(expectedError);
     }
 
     [Theory]
@@ -68,7 +70,7 @@ public sealed class CommandServiceTests
     [InlineData("123123", "description 123")]
     public async Task Add_WhenRequestIsValid_ThenSuccessResultReturned(string command, string description)
     {
-        var request = new AddCommandRequest
+        var request = new AddCommandRequest(null, null)
         {
             Command = command,
             Description = description
@@ -77,5 +79,45 @@ public sealed class CommandServiceTests
         var result = await _sut.Add(request);
 
         result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetList_WhenCalled_ThenAvailableCommandsReturned()
+    {
+        var command = new BotCommand()
+        {
+            Command = "/test",
+            Description = "Test"
+        };
+
+        _botClient.SendRequest(Arg.Any<GetMyCommandsRequest>()).Returns([command]);
+
+        var result = await _sut.GetList();
+
+        result.Count.Should().Be(1);
+        result[0].Command.Should().Be(command.Command);
+        result[0].Description.Should().Be(command.Description);
+    }
+
+    [Theory]
+    [InlineData("/test")]
+    public async Task Remove_WhenCalled_ThenResetsCommandsWithoutSpecified(string command)
+    {
+        var commands = new BotCommand[]
+        {
+            new()
+            {
+                Command = command,
+            }
+        };
+
+        _botClient.SendRequest(Arg.Any<GetMyCommandsRequest>()).Returns(commands);
+
+        await _sut.Remove(command);
+
+        await _botClient.Received().SendRequest(Arg.Any<GetMyCommandsRequest>());
+        await _botClient.Received().SendRequest(
+            Arg.Is<SetMyCommandsRequest>(request => request.Commands.IsNullOrEmpty())
+        );
     }
 }

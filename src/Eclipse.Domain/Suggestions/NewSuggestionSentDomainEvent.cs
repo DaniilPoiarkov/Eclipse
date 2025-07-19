@@ -11,7 +11,7 @@ public sealed record NewSuggestionSentDomainEvent : IDomainEvent
 
     public string Text { get; }
 
-    internal NewSuggestionSentDomainEvent(Guid suggestionId, long chatId, string text)
+    public NewSuggestionSentDomainEvent(Guid suggestionId, long chatId, string text)
     {
         SuggestionId = suggestionId;
         ChatId = chatId;

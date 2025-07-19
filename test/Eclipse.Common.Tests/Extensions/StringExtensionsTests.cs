@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using Eclipse.Common.Tests.Extensions.TestData;
+
+using FluentAssertions;
 
 namespace Eclipse.Common.Tests.Extensions;
 
@@ -30,5 +32,21 @@ public sealed class StringExtensionsTests
 
         parsed.Should().BeFalse();
         time.Should().Be(default);
+    }
+
+    [Theory]
+    [InlineData("test", '1', "test1")]
+    [InlineData("", '1', "1")]
+    [InlineData("test1", '1', "test1")]
+    public void EnsureEndsWith_WhenCalledWithChar_ThenReturnStringWithExpectedEnding(string value, char endsWith, string expected)
+    {
+        value.EnsureEndsWith(endsWith).Should().Be(expected);
+    }
+
+    [Theory]
+    [ClassData(typeof(JoinTestData))]
+    public void Join_WhenCalled_ThenJoinStringsWithSpecifiedSeparator(string[] values, string separator, string expected)
+    {
+        values.Join(separator).Should().Be(expected);
     }
 }

@@ -10,64 +10,62 @@ namespace Eclipse.Application.Reminders;
 
 internal sealed class ReminderService : IReminderService
 {
-    private readonly UserManager _userManager;
+    private readonly IUserRepository _userRepository;
 
-    public ReminderService(UserManager userManager)
+    public ReminderService(IUserRepository userRepository)
     {
-        _userManager = userManager;
+        _userRepository = userRepository;
     }
 
     public async Task<Result<ReminderDto>> CreateAsync(Guid userId, ReminderCreateDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        var result = await CreateAsync(user, model, cancellationToken);
-
-        return result.Value.ToDto();
+        return await CreateAsync(user, model, cancellationToken)
+            .BindAsync(reminder => reminder.ToDto());
     }
 
     public async Task<Result<UserDto>> CreateAsync(long chatId, ReminderCreateDto model, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByChatIdAsync(chatId, cancellationToken);
+        var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        await CreateAsync(user, model, cancellationToken);
-
-        return user.ToDto();
+        return await CreateAsync(user, model, cancellationToken)
+            .BindAsync(_ => user.ToDto());
     }
 
     private async Task<Result<Reminder>> CreateAsync(User user, ReminderCreateDto model, CancellationToken cancellationToken)
     {
         var reminder = user.AddReminder(model.Text, model.NotifyAt);
 
-        await _userManager.UpdateAsync(user, cancellationToken);
+        await _userRepository.UpdateAsync(user, cancellationToken);
 
         return reminder;
     }
 
     public async Task<Result<ReminderDto>> GetAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.GetReminder(reminderId);
+        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
 
         if (reminder is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(Reminder));
+            return DefaultErrors.EntityNotFound<Reminder>();
         }
 
         return reminder.ToDto();
@@ -75,29 +73,34 @@ internal sealed class ReminderService : IReminderService
 
     public async Task<Result<List<ReminderDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
     }
 
-    public async Task<Result<UserDto>> RemoveForTimeAsync(Guid userId, TimeOnly time, CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId, cancellationToken);
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is null)
         {
-            return DefaultErrors.EntityNotFound(typeof(User));
+            return DefaultErrors.EntityNotFound<User>();
         }
 
-        user.RemoveRemindersForTime(time);
+        var reminder = user.ReceiveReminder(reminderId);
 
-        await _userManager.UpdateAsync(user, cancellationToken);
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
+        }
 
-        return user.ToDto();
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return Result.Success();
     }
 }

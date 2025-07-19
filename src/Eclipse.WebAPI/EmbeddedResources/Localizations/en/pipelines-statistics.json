@@ -1,0 +1,6 @@
+{
+  "culture": "en",
+  "texts": {
+    "Pipelines:Statistics:Report{0}{1}": "Sure!\n\r\n\r📌 Finished todo items: {0}\n\r💭 Received reminders: {1}"
+  }
+}

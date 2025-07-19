@@ -1,6 +1,5 @@
 ﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Core;
-using Eclipse.Core.Models;
+using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Tests.Decorations;
 using Eclipse.Core.Tests.Pipelines;
@@ -25,7 +24,7 @@ public class PipelineBaseTests
     {
         get
         {
-            return new MessageContext(0, string.Empty, new TelegramUser(), _services.BuildServiceProvider());
+            return new MessageContext(0, string.Empty, new TelegramUser(1, "name", "surname", "username"), _services.BuildServiceProvider());
         }
     }
 

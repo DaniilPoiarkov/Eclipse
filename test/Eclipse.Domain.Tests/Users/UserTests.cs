@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Errors;
+using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users;
@@ -70,21 +71,24 @@ public class UserTests
         result.UserId.Should().Be(_sut.Id);
     }
 
-    [Fact]
-    public void RemoveRemindersForTime_WhenUserHasReminder_ThenReminderRemoved()
+    [Theory]
+    [InlineData(0, 12)]
+    [InlineData(0, 0)]
+    [InlineData(2, 12)]
+    [InlineData(-2, 14)]
+    [InlineData(-2, 23)]
+    [InlineData(-1, 23)]
+    [InlineData(1, 0)]
+    public void AddReminder_WhenUserSpecifiedTimeZone_ThenSavesReminderNotifyAtAsUtc(int userHour, int notifyAtHour)
     {
-        var time = new TimeOnly(5, 0, 0);
+        var utcNow = DateTime.UtcNow;
 
-        _sut.AddReminder("test", time);
-        _sut.AddReminder("test", time.AddMinutes(1));
-        _sut.AddReminder("test", time.AddMinutes(1));
+        _sut.SetGmt(TimeSpan.FromHours(userHour));
 
-        var result = _sut.RemoveRemindersForTime(time);
+        var notifyAt = new TimeOnly(notifyAtHour, utcNow.Minute);
 
-        _sut.Reminders.Count.Should().Be(2);
-        _sut.Reminders.Any(r => r.NotifyAt == time).Should().BeFalse();
-        result.Count.Should().Be(1);
-        result[0].NotifyAt.Should().Be(time);
+        var reminder = _sut.AddReminder("test", notifyAt);
+        reminder.NotifyAt.Should().Be(notifyAt.AddHours(-userHour));
     }
 
     [Theory]
@@ -93,7 +97,9 @@ public class UserTests
     [InlineData("Some regular text! With __dif3r3nt &^% characters!)(_++_*@")]
     public void AddTodoItem_WhenTextValid_ThenTodoItemCreated(string text)
     {
-        var result = _sut.AddTodoItem(text);
+        var now = DateTime.UtcNow;
+
+        var result = _sut.AddTodoItem(text, now);
 
         result.IsSuccess.Should().BeTrue();
 
@@ -101,6 +107,7 @@ public class UserTests
         value.Text.Should().Be(text);
         value.Id.Should().NotBeEmpty();
         value.UserId.Should().Be(_sut.Id);
+        value.CreatedAt.Should().Be(now);
         _sut.TodoItems.Count.Should().Be(1);
     }
 
@@ -113,7 +120,7 @@ public class UserTests
     {
         var expectedError = Error.Validation($"User.AddTodoItem.{errorCode}", $"TodoItem:{errorCode}");
 
-        var result = _sut.AddTodoItem(text);
+        var result = _sut.AddTodoItem(text, DateTime.UtcNow);
 
         var error = result.Error;
         error.Should().NotBeNull();
@@ -124,22 +131,24 @@ public class UserTests
     [Fact]
     public void FinishItem_WhenItemExists_ThenItemRemovedFromCollection()
     {
-        var item = _sut.AddTodoItem("test");
+        var item = _sut.AddTodoItem("test", DateTime.UtcNow);
 
-        var result = _sut.FinishItem(item.Value.Id);
+        var finishedAt = DateTime.UtcNow.AddDays(1);
+        var result = _sut.FinishItem(item.Value.Id, finishedAt);
 
         result.IsSuccess.Should().BeTrue();
 
         _sut.TodoItems.Should().BeEmpty();
         result.Value.Id.Should().Be(item.Value.Id);
+        result.Value.FinishedAt.Should().Be(finishedAt);
     }
 
     [Fact]
     public void FinishItem_WhenItemWithSpecifiedIdNotExists_ThenFailureResultReturned()
     {
-        var expectedError = DefaultErrors.EntityNotFound(typeof(TodoItem));
+        var expectedError = DefaultErrors.EntityNotFound<TodoItem>();
 
-        var result = _sut.FinishItem(Guid.NewGuid());
+        var result = _sut.FinishItem(Guid.NewGuid(), DateTime.UtcNow);
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().NotBeNull();
@@ -161,7 +170,7 @@ public class UserTests
     }
 
     [Fact]
-    public void SetSignInCode_WhenCalledMultipleTImes_ThenNotSetNewCodeUntilPreviousExpires()
+    public void SetSignInCode_WhenCalledMultipleTimes_ThenNotSetNewCodeUntilPreviousExpires()
     {
         var setTime = new DateTime(new DateOnly(1990, 1, 1), new TimeOnly(12, 0));
 
@@ -236,7 +245,7 @@ public class UserTests
     [Fact]
     public void Create_WhenNewRegisteredSetAsTrue_ThenNewUserJoinedDomainEventRaised()
     {
-        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, true);
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, DateTime.UtcNow, true, true);
 
         var events = user.GetEvents();
 
@@ -255,10 +264,68 @@ public class UserTests
     [Fact]
     public void Create_WhenNewRegisteredSetAsFalse_ThenNoDomainEventRaised()
     {
-        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, false);
+        var user = User.Create(Guid.NewGuid(), "David", "Bowie", "Starman", 1, DateTime.UtcNow, true, false);
 
         var events = user.GetEvents();
 
         events.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData(MoodState.Good)]
+    [InlineData(MoodState.Bad)]
+    public void CreateMoodRecord_WhenCreated_ThenProperValuesSet(MoodState state)
+    {
+        var utcNow = DateTime.UtcNow;
+
+        var moodRecord = _sut.CreateMoodRecord(state, utcNow);
+
+        moodRecord.Id.Should().NotBeEmpty();
+        moodRecord.UserId.Should().Be(_sut.Id);
+        moodRecord.State.Should().Be(state);
+        moodRecord.CreatedAt.Should().Be(utcNow.WithTime(0, 0));
+    }
+
+    [Fact]
+    public void FinishTodoItem_WhenFinished_ThenEventRaised()
+    {
+        var user = UserGenerator.Get(newRegistered: false);
+
+        var todoItem = user.AddTodoItem("test", DateTime.UtcNow);
+        var finishedAt = DateTime.UtcNow.AddDays(1);
+
+        user.FinishItem(todoItem.Value.Id, finishedAt);
+
+        var events = user.GetEvents();
+
+        events.Should().ContainSingle();
+        var todoItemFinishedEvent = events[0].As<TodoItemFinishedDomainEvent>();
+        todoItemFinishedEvent.Should().NotBeNull();
+        todoItemFinishedEvent.UserId.Should().Be(user.Id);
+    }
+
+    [Theory]
+    [InlineData("test")]
+    public void ReceiveReminder_WhenReminderExists_ThenReminderRemovedAndEventOccured(string text)
+    {
+        var sut = UserGenerator.Get();
+        var expected = sut.AddReminder(text, new());
+
+        var actual = sut.ReceiveReminder(expected.Id);
+
+        actual.Should().BeEquivalentTo(expected);
+
+        sut.GetEvents().Should().Contain(x => x.As<RemindersReceivedDomainEvent>() != null
+            && x.As<RemindersReceivedDomainEvent>().UserId == sut.Id
+        );
+    }
+
+    [Fact]
+    public void ReceiveReminder_WhenReminderNotExist_ThenNullReturned()
+    {
+        var sut = UserGenerator.Get(newRegistered: false);
+
+        sut.ReceiveReminder(Guid.NewGuid()).Should().BeNull();
+        sut.GetEvents().Should().BeEmpty();
     }
 }

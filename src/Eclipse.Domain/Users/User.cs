@@ -1,33 +1,29 @@
 ﻿using Eclipse.Common.Results;
+using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
 using Eclipse.Domain.TodoItems;
 using Eclipse.Domain.Users.Events;
 
-using Newtonsoft.Json;
-
 namespace Eclipse.Domain.Users;
 
 public sealed class User : AggregateRoot
 {
-    private User(Guid id, string name, string surname, string userName, long chatId)
+    private User(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool isEnabled)
         : base(id)
     {
         Name = name;
         Surname = surname;
         UserName = userName;
         ChatId = chatId;
+        CreatedAt = createdAt;
+        IsEnabled = isEnabled;
     }
 
     private User() { }
-
-    [JsonProperty(nameof(Reminders))]
-    private readonly List<Reminder> _reminders = [];
-
-    [JsonProperty(nameof(TodoItems))]
-    private readonly List<TodoItem> _todoItems = [];
 
     public string Name { get; set; } = string.Empty;
 
@@ -44,22 +40,27 @@ public sealed class User : AggregateRoot
 
     public bool NotificationsEnabled { get; set; }
 
+    public bool IsEnabled { get; private set; }
 
     public TimeSpan Gmt { get; private set; }
 
-    [JsonIgnore]
-    public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
+    public DateTime CreatedAt { get; private set; }
 
-    [JsonIgnore]
+
+    private readonly List<Reminder> _reminders = [];
+
+    private readonly List<TodoItem> _todoItems = [];
+
+    public IReadOnlyCollection<Reminder> Reminders => _reminders.AsReadOnly();
     public IReadOnlyCollection<TodoItem> TodoItems => _todoItems.AsReadOnly();
 
     /// <summary>
     /// Creates this instance.
     /// </summary>
     /// <returns></returns>
-    internal static User Create(Guid id, string name, string surname, string userName, long chatId, bool newRegistered)
+    internal static User Create(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool isEnabled, bool newRegistered)
     {
-        var user = new User(id, name, surname, userName, chatId);
+        var user = new User(id, name, surname, userName, chatId, createdAt, isEnabled);
 
         if (newRegistered)
         {
@@ -75,32 +76,17 @@ public sealed class User : AggregateRoot
     /// <returns>Created Reminder</returns>
     public Reminder AddReminder(string text, TimeOnly notifyAt)
     {
-        return AddReminder(Guid.NewGuid(), text, notifyAt);
+        return AddReminder(Guid.CreateVersion7(), text, notifyAt);
     }
 
     public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
     {
-        var reminder = new Reminder(id, Id, text, notifyAt);
+        var reminder = new Reminder(id, Id, text, notifyAt.Add(Gmt * -1));
         _reminders.Add(reminder);
 
+        AddEvent(new ReminderAddedDomainEvent(id, Id, Gmt, reminder.NotifyAt, text, Culture, ChatId));
+
         return reminder;
-    }
-
-    /// <summary>Removes the reminders which matches provided time.</summary>
-    /// <param name="time">The time.</param>
-    /// <returns>Removed Reminders</returns>
-    public IReadOnlyList<Reminder> RemoveRemindersForTime(TimeOnly time)
-    {
-        var reminders = _reminders
-            .Where(new ReminderNotifyAtSpecification(time))
-            .ToList();
-
-        foreach (var reminder in reminders)
-        {
-            _reminders.Remove(reminder);
-        }
-
-        return reminders;
     }
 
     /// <summary>Sets the GMT by given input with user local time.</summary>
@@ -123,19 +109,22 @@ public sealed class User : AggregateRoot
         }
 
         Gmt = offset;
+
+        AddEvent(new GmtChangedDomainEvent(Id, Gmt));
     }
 
     public void SetGmt(TimeSpan gmt)
     {
         Gmt = gmt;
+        AddEvent(new GmtChangedDomainEvent(Id, Gmt));
     }
 
     /// <summary>Adds the todo item.</summary>
     /// <param name="text">The text.</param>
     /// <returns>Created TodoItem item</returns>
-    public Result<TodoItem> AddTodoItem(string? text)
+    public Result<TodoItem> AddTodoItem(string? text, DateTime createdAt)
     {
-        return AddTodoItem(Guid.NewGuid(), text, DateTime.UtcNow.Add(Gmt), false, default);
+        return AddTodoItem(Guid.CreateVersion7(), text, createdAt, false, default);
     }
 
     public Result<TodoItem> AddTodoItem(Guid id, string? text, DateTime createdAt, bool isFinished, DateTime? finishedAt)
@@ -164,8 +153,9 @@ public sealed class User : AggregateRoot
 
     /// <summary>Finishes the item.</summary>
     /// <param name="todoItemId">The todo item identifier.</param>
+    /// <param name="finsihedAt">When todo item was finished.</param>
     /// <returns>Removed <a cref="TodoItem"></a></returns>
-    public Result<TodoItem> FinishItem(Guid todoItemId)
+    public Result<TodoItem> FinishItem(Guid todoItemId, DateTime finsihedAt)
     {
         var item = _todoItems.FirstOrDefault(e => e.Id == todoItemId);
 
@@ -176,12 +166,14 @@ public sealed class User : AggregateRoot
 
         _todoItems.Remove(item);
 
-        var result = item.MarkAsFinished();
+        var result = item.MarkAsFinished(finsihedAt);
 
         if (!result.IsSuccess)
         {
             return result.Error;
         }
+
+        AddEvent(new TodoItemFinishedDomainEvent(Id));
 
         return item;
     }
@@ -200,21 +192,53 @@ public sealed class User : AggregateRoot
         SignInCodeExpiresAt = utcNow.Add(UserConsts.SignInCodeExpiration);
     }
 
-    public bool IsValidSignInCode(DateTime utcNow, string signInCode)
+    public void TriggerTestEvent()
+    {
+        AddEvent(new TestDomainEvent(ChatId));
+    }
+
+    public bool IsValidSignInCode(DateTime providedAt, string signInCode)
     {
         return !SignInCode.IsNullOrEmpty()
             && SignInCode == signInCode
-            && utcNow < SignInCodeExpiresAt;
+            && providedAt < SignInCodeExpiresAt;
     }
 
-    public TodoItem? GetTodoItem(Guid todoItemId)
+    public MoodRecord CreateMoodRecord(MoodState state, DateTime createdAt)
     {
-        return _todoItems.FirstOrDefault(item => item.Id == todoItemId);
+        return new MoodRecord(Guid.CreateVersion7(), Id, state, createdAt.WithTime(0, 0));
     }
 
-    public Reminder? GetReminder(Guid reminderId)
+    public Reminder? ReceiveReminder(Guid reminderId)
     {
-        return _reminders.FirstOrDefault(reminder => reminder.Id == reminderId);
+        var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
+
+        if (reminder is not null)
+        {
+            _reminders.Remove(reminder);
+            AddEvent(new RemindersReceivedDomainEvent(Id));
+        }
+
+        return reminder;
+    }
+
+    public void SetIsEnabled(bool isEnabled)
+    {
+        if (IsEnabled == isEnabled)
+        {
+            return;
+        }
+
+        IsEnabled = isEnabled;
+
+        if (IsEnabled)
+        {
+            AddEvent(new UserEnabledDomainEvent(Id));
+        }
+        else
+        {
+            AddEvent(new UserDisabledDomainEvent(Id));
+        }
     }
 
     public override string ToString()

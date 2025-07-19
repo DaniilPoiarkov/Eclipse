@@ -1,6 +1,4 @@
 ﻿using Eclipse.Localization.Builder;
-using Eclipse.Localization.Culture;
-using Eclipse.Localization.Extensions;
 using Eclipse.Localization.Resources;
 
 using FluentAssertions;
@@ -9,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-using NSubstitute;
+using System.Globalization;
 
 using Xunit;
 
@@ -69,39 +67,19 @@ public sealed class JsonStringLocalizerTests
     }
 
     [Fact]
-    public void GetString_WhenCultureNotExist_ThenDefaultCultureUsed()
-    {
-        var currentCulture = Substitute.For<ICurrentCulture>();
-        currentCulture.Culture.Returns("fr");
-        _sut.UseCurrentCulture(currentCulture);
-
-        var value = _sut["Test"];
-        value.Value.Should().Be("Test");
-    }
-
-    [Fact]
     public void GetAllStrings_WhenCalled_ThenAllValuesReturned()
     {
         var builder = new LocalizationBuilder();
         builder.AddJsonFiles(_file);
+
         var resourceProvider = new ResourceProvider(Options.Create(builder));
 
-        var resource = resourceProvider.Get(_culture, _file);
+        var resource = resourceProvider.Get(CultureInfo.GetCultureInfo(_culture), _file);
 
-        var actual = _sut.GetAllStrings().ToArray();
+        var actual = _sut.GetAllStrings();
 
-        actual.All(s => s.ResourceNotFound).Should().BeFalse();
-
-        actual.Length.Should().Be(resource.Texts.Count);
-
-        var keysFromResource = resource.Texts.Select(t => t.Key);
-        var keysFromActual = actual.Select(s => s.Name);
-
-        keysFromResource.Except(keysFromActual).Should().BeEmpty();
-
-        var valuesFromResource = resource.Texts.Select(t => t.Value);
-        var valuesFromActual = actual.Select(s => s.Value);
-
-        valuesFromResource.Except(valuesFromActual).Should().BeEmpty();
+        actual.Should().BeEquivalentTo(
+            resource.Texts.Select(t => new LocalizedString(t.Key, t.Value, false))
+        );
     }
 }

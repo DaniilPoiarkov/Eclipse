@@ -27,8 +27,9 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
 
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
+        entity = await Repository.CreateAsync(entity, cancellationToken);
         await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
-        return await Repository.CreateAsync(entity, cancellationToken);
+        return entity;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -37,95 +38,95 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
         await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
     }
 
-    public async Task<TEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<TEntity?> FindAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()}-{id}");
-        var entity = await CacheService.GetAsync<TEntity>(key, cancellationToken);
-
-        if (entity is not null)
+        var options = new CacheOptions
         {
-            return entity;
-        }
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
 
-        entity = await Repository.FindAsync(id, cancellationToken);
-
-        await CacheService.SetAsync(key, entity, CacheConsts.FiveMinutes, cancellationToken);
-
-        return entity;
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()}-{id}",
+            () => Repository.FindAsync(id, cancellationToken),
+            options,
+            cancellationToken
+        );
     }
 
-    public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()}-all");
-
-        var cached = await CacheService.GetAsync<List<TEntity>>(key, cancellationToken);
-
-        if (cached is not null)
+        var options = new CacheOptions
         {
-            return cached;
-        }
+            Expiration = CacheConsts.ThreeDays,
+            Tags = [GetPrefix()]
+        };
 
-        var items = await Repository.GetAllAsync(cancellationToken);
-
-        await CacheService.SetAsync(key, items, CacheConsts.ThreeDays, cancellationToken);
-
-        return items;
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()}-all",
+            () => Repository.GetAllAsync(cancellationToken),
+            options,
+            cancellationToken
+        );
     }
 
-    public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()};{expression.Body}");
-
-        var cached = await CacheService.GetAsync<List<TEntity>>(key, cancellationToken);
-
-        if (cached is not null)
+        var options = new CacheOptions
         {
-            return cached;
-        }
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
 
-        var items = await Repository.GetByExpressionAsync(expression, cancellationToken);
-
-        await CacheService.SetAsync(key, items, CacheConsts.FiveMinutes, cancellationToken);
-
-        return items;
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()};{expression.Body}",
+            () => Repository.GetByExpressionAsync(expression, cancellationToken),
+            options,
+            cancellationToken
+        );
     }
 
-    public async Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<TEntity>> GetByExpressionAsync(Expression<Func<TEntity, bool>> expression, int skipCount, int takeCount, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}");
-
-        var cached = await CacheService.GetAsync<List<TEntity>>(key, cancellationToken);
-
-        if (cached is not null)
+        var options = new CacheOptions
         {
-            return cached;
-        }
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
 
-        var items = await Repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken);
-
-        await CacheService.SetAsync(key, items, CacheConsts.FiveMinutes, cancellationToken);
-
-        return items;
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}",
+            () => Repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken),
+            options,
+            cancellationToken
+        );
     }
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        var key = new CacheKey($"{GetPrefix()}-{entity.Id}");
-
-        await CacheService.DeleteAsync(key, cancellationToken);
-
         entity = await Repository.UpdateAsync(entity, cancellationToken);
 
         await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
-        await CacheService.SetAsync(key, entity, CacheConsts.FiveMinutes, cancellationToken);
 
         return entity;
     }
 
     public async Task UpdateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
         await Repository.UpdateRangeAsync(entities, cancellationToken);
+        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
+    }
+
+    public async Task DeleteRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        await Repository.DeleteRangeAsync(entities, cancellationToken);
+        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
+    }
+
+    public async Task CreateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        await Repository.CreateRangeAsync(entities, cancellationToken);
+        await CacheService.DeleteByPrefixAsync(GetPrefix(), cancellationToken);
     }
 
     protected static string GetPrefix() => typeof(TEntity).AssemblyQualifiedName ?? string.Empty;

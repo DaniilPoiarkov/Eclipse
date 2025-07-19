@@ -1,17 +1,19 @@
-﻿using Eclipse.Common.Results;
+﻿using Eclipse.Common.Clock;
+using Eclipse.Common.Results;
 using Eclipse.Domain.Shared.Repositories;
-
-using System.Linq.Expressions;
 
 namespace Eclipse.Domain.Users;
 
 public sealed class UserManager
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUserRepository _repository;
 
-    public UserManager(IUserRepository userRepository)
+    private readonly ITimeProvider _timeProvider;
+
+    public UserManager(IUserRepository repository, ITimeProvider timeProvider)
     {
-        _userRepository = userRepository;
+        _repository = repository;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>Creates the user asynchronous.</summary>
@@ -28,12 +30,13 @@ public sealed class UserManager
     {
         var request = new CreateUserRequest
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             Name = name,
             Surname = surname,
             UserName = userName,
             ChatId = chatId,
             NewRegistered = true,
+            IsEnabled = true
         };
 
         return CreateAsync(request, cancellationToken);
@@ -51,57 +54,21 @@ public sealed class UserManager
             return Error.Validation("Users.Create", "{0}IsRequired", nameof(request.Id));
         }
 
-        var alreadyExist = await _userRepository.ContainsAsync(
+        var alreadyExist = await _repository.ContainsAsync(
             expression: u => u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty() && u.UserName == request.UserName),
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken
+        );
 
         if (alreadyExist)
         {
             return UserDomainErrors.DuplicateData(nameof(request.ChatId), request.ChatId);
         }
 
-        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, request.NewRegistered);
+        var user = User.Create(request.Id, request.Name, request.Surname, request.UserName, request.ChatId, _timeProvider.Now, request.IsEnabled, request.NewRegistered);
         user.NotificationsEnabled = request.NotificationsEnabled;
 
         user.SetGmt(request.Gmt);
 
-        return await _userRepository.CreateAsync(user, cancellationToken);
-    }
-
-    public Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
-    {
-        return _userRepository.UpdateAsync(user, cancellationToken);
-    }
-
-    public Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return _userRepository.GetAllAsync(cancellationToken);
-    }
-
-    public Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return _userRepository.FindAsync(id, cancellationToken);
-    }
-
-    public Task<IReadOnlyList<User>> GetByExpressionAsync(Expression<Func<User, bool>> expression, CancellationToken cancellationToken = default)
-    {
-        return _userRepository.GetByExpressionAsync(expression, cancellationToken);
-    }
-
-    public async Task<User?> FindByUserNameAsync(string userName, CancellationToken cancellationToken = default)
-    {
-        if (userName.IsNullOrEmpty())
-        {
-            return null;
-        }
-
-        return (await _userRepository.GetByExpressionAsync(u => u.UserName == userName, cancellationToken))
-            .SingleOrDefault();
-    }
-
-    public async Task<User?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
-    {
-        return (await _userRepository.GetByExpressionAsync(u => u.ChatId == chatId, cancellationToken))
-            .SingleOrDefault();
+        return await _repository.CreateAsync(user, cancellationToken);
     }
 }
