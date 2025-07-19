@@ -13,11 +13,3 @@ resource "azurerm_cosmosdb_sql_role_definition" "role" {
     ]
   }
 }
-
-resource "azurerm_cosmosdb_sql_role_assignment" "assignment" {
-  role_definition_id  = azurerm_cosmosdb_sql_role_definition.role.id
-  scope               = var.scope
-  account_name        = var.account_name
-  principal_id        = var.cosmos_principal
-  resource_group_name = var.resource_group_name
-}

@@ -93,4 +93,10 @@ resource "azurerm_linux_web_app" "app" {
     management                               = "terraform"
     "hidden-link: /app-insights-conn-string" = var.app_insights_connection_string
   }
+
+  lifecycle {
+    ignore_changes = [ 
+      app_settings["Google__Credentials"]
+    ]
+  }
 }

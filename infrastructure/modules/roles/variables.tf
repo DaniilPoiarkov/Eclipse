@@ -3,16 +3,6 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "cosmos_principal" {
-  description = "Identity to which assign cosmos access"
-  type        = string
-}
-
-variable "scope" {
-  description = "Assignment scope"
-  type        = string
-}
-
 variable "assignable_scopes" {
   description = "Assignable scopes"
   type        = list(string)

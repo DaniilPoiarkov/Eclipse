@@ -21,6 +21,12 @@ resource "azurerm_cosmosdb_account" "cosmosdb" {
     defaultExperience         = "Core (SQL)"
     "hidden-cosmos-mmspecial" = null
   }
+
+  lifecycle {
+    ignore_changes = [
+      restore
+     ]
+  }
 }
 
 resource "azurerm_cosmosdb_sql_database" "database" {
@@ -28,10 +34,19 @@ resource "azurerm_cosmosdb_sql_database" "database" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.cosmosdb.name
   throughput          = var.database_throughput
+
+  lifecycle {
+    ignore_changes = [ 
+      throughput,
+      autoscale_settings
+     ]
+  }
 }
 
 resource "azurerm_cosmosdb_sql_container" "container" {
-  name                  = var.container_name
+  for_each = var.container_names
+
+  name                  = each.key
   resource_group_name   = var.resource_group_name
   account_name          = azurerm_cosmosdb_account.cosmosdb.name
   database_name         = azurerm_cosmosdb_sql_database.database.name

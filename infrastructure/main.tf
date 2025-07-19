@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "resource_group_main" {
 
   tags = {
     environment = var.environment
-    source      = "terraform"
+    management  = "terraform"
   }
 }
 
@@ -35,7 +35,6 @@ module "alerts" {
   source              = "./modules/alerts"
   data_source_id      = module.monitoring.app_insights_id
   location            = local.location
-  environment         = var.environment
   email_receiver      = var.email_receiver
   severity            = var.alert_severity
   tg_alerts_chat      = var.tg_alerts_chat
@@ -65,12 +64,15 @@ module "database" {
   app_name              = var.app_name
   cosmos_free_tier      = var.cosmos_free_tier
   cosmos_offer_type     = var.cosmos_offer_type
-  container_name        = var.cosmos_container
   partition_paths       = var.partiton_paths
   partition_key_version = var.partition_key_version
   database_throughput   = var.database_throughput
   container_throughput  = var.container_throughput
   failover_priority     = var.failover_priority
+
+  container_names = [
+    var.cosmos_container
+  ]
 
   depends_on = [
     azurerm_resource_group.resource_group_main
@@ -80,7 +82,6 @@ module "database" {
 module "entraid" {
   source          = "./modules/entraid"
   app_name        = var.app_name
-  environment     = var.environment
   owner_object_id = local.user_object_id
 }
 
@@ -121,9 +122,7 @@ module "web-app" {
 module "roles" {
   source              = "./modules/roles"
   resource_group_name = local.resource_group_name
-  cosmos_principal    = module.web-app.app_principal_id
   account_name        = module.database.account_name
-  scope               = module.database.account_id
 
   assignable_scopes = [
     module.database.account_id
@@ -133,6 +132,15 @@ module "roles" {
     module.database,
     module.web-app
   ]
+}
+
+module "role_assignments" {
+  source              = "./modules/assignments"
+  scope               = module.database.account_id
+  principal_id        = module.web-app.app_principal_id
+  resource_group_name = local.resource_group_name
+  role_definition_id  = module.roles.cosmos_read_write_role
+  account_name        = module.database.account_name
 }
 
 module "redirection" {

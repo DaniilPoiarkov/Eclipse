@@ -1,11 +1,17 @@
 resource "azuread_application_registration" "app" {
-  display_name     = "${var.app_name} ${var.environment}"
+  display_name     = var.app_name
   sign_in_audience = "AzureADMyOrg"
 }
 
 resource "azuread_application_owner" "owner" {
   application_id  = azuread_application_registration.app.id
   owner_object_id = var.owner_object_id
+
+  lifecycle {
+    ignore_changes = [
+      application_id
+    ]
+  }
 }
 
 resource "random_uuid" "role_admin" {}
@@ -20,6 +26,13 @@ resource "azuread_application_app_role" "admin" {
   allowed_member_types = [
     "User"
   ]
+
+  lifecycle {
+    ignore_changes = [
+      role_id,
+      application_id
+    ]
+  }
 }
 
 resource "random_uuid" "scope_default" {}
@@ -30,6 +43,13 @@ resource "azuread_application_permission_scope" "default" {
   value                      = "Default"
   admin_consent_description  = "Default"
   admin_consent_display_name = "Default"
+  
+  lifecycle {
+    ignore_changes = [
+      scope_id,
+      application_id
+    ]
+  }
 }
 
 data "azuread_application_published_app_ids" "well_known" {}
@@ -49,4 +69,10 @@ resource "azuread_application_api_access" "api_access" {
     data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["openid"],
     data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["profile"]
   ]
+
+  lifecycle {
+    ignore_changes = [
+      application_id
+    ]
+  }
 }
