@@ -19,8 +19,6 @@ internal sealed class ReportsService : IReportsService
 
     private const double _margin = 0.5d;
 
-    private const int _emptyChartArray = 2;
-
     public ReportsService(
         IMoodRecordRepository moodRecordRepository,
         IPlotGenerator plotGenerator)
@@ -41,20 +39,19 @@ internal sealed class ReportsService : IReportsService
         var days = new DateTime[records.Count];
         var states = new int[records.Count];
 
-        var index = 0;
+        var tuples = records.OrderBy(r => r.CreatedAt)
+            .Select((record, index) => (record, index));
 
-        foreach (var record in records.OrderBy(r => r.CreatedAt))
+        foreach (var (record, index) in tuples)
         {
             days[index] = record.CreatedAt.WithTime(0, 0);
             states[index] = record.State.ToScore();
-
-            index++;
         }
 
         if (days.IsNullOrEmpty())
         {
             days = [options.From, options.To];
-            states = new int[_emptyChartArray];
+            states = new int[days.Length];
         }
 
         var title = $"{days[0]:dd.MM}-{days[^1]:dd.MM}";

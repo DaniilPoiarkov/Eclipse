@@ -58,7 +58,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
         {
             From = _timeProvider.Now.PreviousDayOfWeek(
                 _timeProvider.Now.DayOfWeek
-            ),
+            ).WithTime(0, 0),
             To = _timeProvider.Now
         };
 
