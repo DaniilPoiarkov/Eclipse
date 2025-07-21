@@ -19,10 +19,6 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Actions"]) }
     };
 
-    protected static readonly IReadOnlyList<string> KeyWords = ["Menu:TodoItems:List", "Menu:TodoItems:AddItem", "Menu:MainMenu:Actions"];
-
-    #region Helpers
-
     protected string BuildMessage(TimeSpan userTime, CultureInfo culture, IEnumerable<TodoItemDto> items)
     {
         var sb = new StringBuilder(Localizer[$"{PipelinePrefix}:YourToDos"])
@@ -55,10 +51,6 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
         return buttons;
     }
 
-    #endregion
-
-    #region Results
-
     protected IResult AllItemsFinishedResult(Message? message)
     {
         var text = Localizer[$"{PipelinePrefix}:YouDidEmAll"];
@@ -85,24 +77,8 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
     }
 
     protected IResult GoBackResult(Message? message) =>
-        MenuOrMultipleResult(message, Localizer["WhateverYouWant"]);
+        MenuOrMultipleResult(TodoItemMenuButtons, message, Localizer["WhateverYouWant"]);
 
     protected IResult InterruptedResult(Message? message, string text) =>
-        MenuOrMultipleResult(message, text);
-
-    private IResult MenuOrMultipleResult(Message? message, string text)
-    {
-        var menuResult = Menu(TodoItemMenuButtons, text);
-
-        if (message is null)
-        {
-            return menuResult;
-        }
-
-        var editResult = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
-
-        return Multiple(menuResult, editResult);
-    }
-
-    #endregion
+        MenuOrMultipleResult(TodoItemMenuButtons, message, text);
 }
