@@ -1,7 +1,7 @@
 {
   "Culture": "en",
   "Texts": {
-    "Pipelines:MoodRecords:Add:AskMood": "Hi🌒\n\rWhat's up'? Rate your mood on a 5-point scale😊",
+    "Pipelines:MoodRecords:Add:AskMood": "Hi🌒\n\rWhat's up? Rate your mood on a 5-point scale, where 1 is bad and 5 is good😊",
     "Pipelines:MoodRecords:Add:GoodMood": "Glad to hear that!\n\rWish you good evening😊",
     "Pipelines:MoodRecords:Add:BadMood": "Its okay, no one of us always in good mood🤗\n\rHope you'll have awesome evening😊",
     "Pipelines:MoodRecords:Add:NotDefined": "I don't fully understand, but I really hope it means you are good😅\n\rAnyway hope you will find a reason to smile😊"
