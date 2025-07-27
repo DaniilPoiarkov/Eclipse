@@ -53,32 +53,36 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
         if (!result.IsSuccess)
         {
-            return MenuAndRemoveOptions(
-                Localizer.LocalizeError(result.Error),
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer.LocalizeError(result.Error)
+            );
         }
 
         var user = result.Value;
 
         if (user.NotificationsEnabled.Equals(enable))
         {
-            return MenuAndRemoveOptions(
-                Localizer[$"{_pipelinePrefix}:Already{(enable ? "Enabled" : "Disabled")}"],
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer[$"{_pipelinePrefix}:Already{(enable ? "Enabled" : "Disabled")}"]
+            );
         }
 
-        var updateDto = new UserPartialUpdateDto
+        var update = new UserPartialUpdateDto
         {
             NotificationsEnabled = enable,
             NotificationsEnabledChanged = true,
         };
 
-        var updateResult = await _userService.UpdatePartialAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _userService.UpdatePartialAsync(user.Id, update, cancellationToken);
 
         var text = updateResult.IsSuccess
             ? Localizer[$"{_pipelinePrefix}:{(enable ? "Enabled" : "Disabled")}"]
             : Localizer.LocalizeError(updateResult.Error);
 
-        return MenuAndRemoveOptions(text, message?.MessageId);
+        return MenuAndClearPrevious(SettingsMenuButtons, message, text);
     }
 }

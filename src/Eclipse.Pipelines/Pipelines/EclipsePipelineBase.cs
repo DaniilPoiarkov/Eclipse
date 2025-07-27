@@ -37,17 +37,17 @@ public abstract class EclipsePipelineBase : PipelineBase
         );
     }
 
-    protected IResult MenuOrMultipleResult(IEnumerable<IEnumerable<KeyboardButton>> buttons, Message? message, string text)
+    protected IResult MenuAndClearPrevious(IEnumerable<IEnumerable<KeyboardButton>> buttons, Message? message, string text)
     {
-        var menuResult = Menu(buttons, text);
+        var menu = Menu(buttons, text);
 
         if (message is null)
         {
-            return menuResult;
+            return menu;
         }
 
-        var editResult = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
+        var edit = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
 
-        return Multiple(menuResult, editResult);
+        return Multiple(menu, edit);
     }
 }
