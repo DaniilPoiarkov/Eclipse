@@ -76,18 +76,22 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
         if (!result.IsSuccess)
         {
-            return MenuAndRemoveOptions(
-                Localizer.LocalizeError(result.Error),
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer.LocalizeError(result.Error)
+            );
         }
 
         var user = result.Value;
 
         if (user.Culture == context.Value)
         {
-            return MenuAndRemoveOptions(
-                Localizer[$"{_pipelinePrefix}:Changed"],
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer[$"{_pipelinePrefix}:Changed"]
+            );
         }
 
         var update = new UserPartialUpdateDto
@@ -100,18 +104,22 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
         if (!updateResult.IsSuccess)
         {
-            return MenuAndRemoveOptions(
-                Localizer.LocalizeError(updateResult.Error),
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer.LocalizeError(updateResult.Error)
+            );
         }
 
         await _cultureTracker.ResetAsync(context.ChatId, context.Value, cancellationToken);
 
         using var _ = _currentCulture.UsingCulture(context.Value);
 
-        return MenuAndRemoveOptions(
-            Localizer[$"{_pipelinePrefix}:Changed"],
-            message?.MessageId);
+        return MenuAndClearPrevious(
+            SettingsMenuButtons,
+            message,
+            Localizer[$"{_pipelinePrefix}:Changed"]
+        );
     }
 
     private bool SupportedLanguage(MessageContext context)
@@ -131,12 +139,12 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
                 "Menu:MainMenu" => RemoveMenuAndRedirect<MainMenuPipeline>(message),
                 "Menu:Settings:Language" => RemoveMenuAndRedirect<ChangeLanguagePipeline>(message),
                 "Menu:Settings:SetGmt" => RemoveMenuAndRedirect<SetGmtPipeline>(message),
-                _ => MenuOrMultipleResult(SettingsMenuButtons, message, Localizer[$"{_pipelinePrefix}:Unsupported", localized]),
+                _ => MenuAndClearPrevious(SettingsMenuButtons, message, Localizer[$"{_pipelinePrefix}:Unsupported", localized]),
             };
         }
         catch
         {
-            return MenuOrMultipleResult(SettingsMenuButtons, message, Localizer[$"{_pipelinePrefix}:Unsupported", context.Value]);
+            return MenuAndClearPrevious(SettingsMenuButtons, message, Localizer[$"{_pipelinePrefix}:Unsupported", context.Value]);
         }
     }
 }

@@ -77,8 +77,8 @@ internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
     }
 
     protected IResult GoBackResult(Message? message) =>
-        MenuOrMultipleResult(TodoItemMenuButtons, message, Localizer["WhateverYouWant"]);
+        MenuAndClearPrevious(TodoItemMenuButtons, message, Localizer["WhateverYouWant"]);
 
     protected IResult InterruptedResult(Message? message, string text) =>
-        MenuOrMultipleResult(TodoItemMenuButtons, message, text);
+        MenuAndClearPrevious(TodoItemMenuButtons, message, text);
 }
