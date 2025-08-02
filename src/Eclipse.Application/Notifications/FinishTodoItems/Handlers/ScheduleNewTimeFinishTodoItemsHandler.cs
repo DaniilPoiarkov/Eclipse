@@ -4,7 +4,7 @@ using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 
 internal sealed class ScheduleNewTimeFinishTodoItemsHandler : IEventHandler<GmtChangedDomainEvent>
 {
