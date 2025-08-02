@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 
 internal abstract class FinishTodoItemsHandlerBase<TEvent> : IEventHandler<TEvent>
     where TEvent : IDomainEvent
@@ -37,9 +37,9 @@ internal abstract class FinishTodoItemsHandlerBase<TEvent> : IEventHandler<TEven
     {
         var user = await UserRepository.FindAsync(userId, cancellationToken);
 
-        if (user is null)
+        if (user is not { IsEnabled: true })
         {
-            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserFinishTodoItemsHandler), userId, "User not found");
+            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserFinishTodoItemsHandler), userId, "User not found or disabled.");
             return;
         }
 

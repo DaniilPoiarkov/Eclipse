@@ -1,5 +1,4 @@
-﻿using Eclipse.Common.Events;
-using Eclipse.Common.Notifications;
+﻿using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 
 internal sealed class ScheduleNewUserFinishTodoItemsHandler : FinishTodoItemsHandlerBase<NewUserJoinedDomainEvent>
 {

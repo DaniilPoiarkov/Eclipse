@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 
 internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : FinishTodoItemsHandlerBase<UserEnabledDomainEvent>
 {
