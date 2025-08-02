@@ -18,13 +18,13 @@ internal abstract class CollectMoodRecordHandlerBase<TEvent> : IEventHandler<TEv
 
     protected INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> JobScheduler { get; }
 
-    protected ILogger<ScheduleNewUserCollectMoodRecordHandler> Logger { get; }
+    protected ILogger Logger { get; }
 
     protected CollectMoodRecordHandlerBase(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler,
-        ILogger<ScheduleNewUserCollectMoodRecordHandler> logger)
+        ILogger logger)
     {
         UserRepository = userRepository;
         SchedulerFactory = schedulerFactory;

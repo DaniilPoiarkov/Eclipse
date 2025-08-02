@@ -14,7 +14,7 @@ internal sealed class ScheduleUserEnabledCollectMoodRecordHandler : CollectMoodR
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler,
-        ILogger<ScheduleNewUserCollectMoodRecordHandler> logger) : base(userRepository, schedulerFactory, jobScheduler, logger)
+        ILogger<ScheduleUserEnabledCollectMoodRecordHandler> logger) : base(userRepository, schedulerFactory, jobScheduler, logger)
     {
     }
 
