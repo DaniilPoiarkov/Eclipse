@@ -60,7 +60,7 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(options);
 
         /// <see cref="UserEnabledDomainEvent"/>
-        AddJob<UserEnabledDomainEvent, ScheduleNewUserFinishTodoItemsHandler>(options);
+        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledFinishTodoItemsHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleNewUserGoodMorningHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleNewUserMoodReportHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleNewUserCollectMoodRecordHandler>(options);

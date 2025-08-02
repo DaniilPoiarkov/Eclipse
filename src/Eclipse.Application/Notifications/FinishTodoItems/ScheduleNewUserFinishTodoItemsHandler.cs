@@ -9,50 +9,19 @@ using Quartz;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems;
 
-internal sealed class ScheduleNewUserFinishTodoItemsHandler : IEventHandler<NewUserJoinedDomainEvent>, IEventHandler<UserEnabledDomainEvent>
+internal sealed class ScheduleNewUserFinishTodoItemsHandler : FinishTodoItemsHandlerBase<NewUserJoinedDomainEvent>
 {
-    private readonly IUserRepository _userRepository;
-
-    private readonly ISchedulerFactory _schedulerFactory;
-
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
-
-    private readonly ILogger<ScheduleNewUserFinishTodoItemsHandler> _logger;
-
     public ScheduleNewUserFinishTodoItemsHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler,
-        ILogger<ScheduleNewUserFinishTodoItemsHandler> logger)
+        ILogger<ScheduleNewUserFinishTodoItemsHandler> logger) : base(userRepository, schedulerFactory, jobScheduler, logger)
     {
-        _userRepository = userRepository;
-        _schedulerFactory = schedulerFactory;
-        _jobScheduler = jobScheduler;
-        _logger = logger;
+        
     }
 
-    public Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
+    public override Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
     {
         return Handle(@event.UserId, cancellationToken);
-    }
-
-    public Task Handle(UserEnabledDomainEvent @event, CancellationToken cancellationToken = default)
-    {
-        return Handle(@event.UserId, cancellationToken);
-    }
-
-    private async Task Handle(Guid userId, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.FindAsync(userId, cancellationToken);
-
-        if (user is null)
-        {
-            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserFinishTodoItemsHandler), userId, "User not found");
-            return;
-        }
-
-        var scheduler = await _schedulerFactory.GetScheduler();
-
-        await _jobScheduler.Schedule(scheduler, new FinishTodoItemsSchedulerOptions(user.Id, user.Gmt), cancellationToken);
     }
 }
