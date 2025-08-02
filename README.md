@@ -58,7 +58,7 @@ Run _.\stop.ps1_ script to stop container. It will also remove the image.
 ## Diagrams
 ### Infrastructure
 Service communication within _Azure_ done using _Managed Identity_.
-![infrastructure-dependencies-x2](https://github.com/user-attachments/assets/fa501c8a-e274-47f3-865d-6bf1421c8fad)
+<img width="3522" height="2184" alt="infrastructure-dependencies-x3" src="https://github.com/user-attachments/assets/68d94d60-29db-4660-a871-8fe93b13f120" />
 
 ### Outbox and Inbox messages processing
 ![outbox-and-inbox-processing](https://github.com/user-attachments/assets/36f4b4f2-d04e-4d20-b3cf-fd35d7cb94a2)
