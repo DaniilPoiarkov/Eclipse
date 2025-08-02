@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords.Collection.Handlers;
-using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Handlers;
 using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
-using Eclipse.Application.Notifications.GoodMorning;
+using Eclipse.Application.Notifications.GoodMorning.Handlers;
 using Eclipse.Application.Notifications.NewUserJoined;
 using Eclipse.Application.Notifications.Test;
 using Eclipse.Application.Reminders;
@@ -61,8 +61,8 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="UserEnabledDomainEvent"/>
         AddJob<UserEnabledDomainEvent, ScheduleUserEnabledFinishTodoItemsHandler>(options);
-        AddJob<UserEnabledDomainEvent, ScheduleNewUserGoodMorningHandler>(options);
-        AddJob<UserEnabledDomainEvent, ScheduleNewUserMoodReportHandler>(options);
+        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledGoodMorningHandler>(options);
+        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledMoodReportHandler>(options);
         AddJob<UserEnabledDomainEvent, ScheduleUserEnabledCollectMoodRecordHandler>(options);
         AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);
     }
