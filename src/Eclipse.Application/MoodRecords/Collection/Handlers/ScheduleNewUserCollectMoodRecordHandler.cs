@@ -16,7 +16,7 @@ internal sealed class ScheduleNewUserCollectMoodRecordHandler : CollectMoodRecor
         INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler,
         ILogger<ScheduleNewUserCollectMoodRecordHandler> logger) : base(userRepository, schedulerFactory, jobScheduler, logger)
     {
-        
+
     }
 
     public override Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)

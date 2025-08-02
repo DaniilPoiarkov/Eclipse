@@ -16,7 +16,7 @@ internal sealed class ScheduleNewUserFinishTodoItemsHandler : FinishTodoItemsHan
         INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler,
         ILogger<ScheduleNewUserFinishTodoItemsHandler> logger) : base(userRepository, schedulerFactory, jobScheduler, logger)
     {
-        
+
     }
 
     public override Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
