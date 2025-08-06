@@ -50,7 +50,7 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
 
         if (user is not { IsEnabled: true })
         {
-            Logger.LogError("User with id {UserId} not found or user disabled.", args.UserId);
+            Logger.LogError("User with id {UserId} not found or disabled.", args.UserId);
             return;
         }
 
@@ -65,7 +65,7 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
 
         var message = _localizer["Jobs:SendMoodReport:Caption"];
 
-        using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, cancellationToken);
+        using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
 
         try
         {
