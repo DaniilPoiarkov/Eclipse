@@ -8,6 +8,8 @@ namespace Eclipse.Infrastructure.Plots;
 
 internal sealed class PlotGenerator : IPlotGenerator
 {
+    private static readonly Color _dataBackgroundColor = Color.FromHex("#0b3049");
+
     private static readonly Color _figureColor = Color.FromHex("#07263b");
 
     private static readonly Color _axesColor = Color.FromHex("#a0acb5");
@@ -74,6 +76,7 @@ internal sealed class PlotGenerator : IPlotGenerator
         plot.Axes.Bottom.TickGenerator = xAxisTickGenerator;
         plot.Axes.Left.TickGenerator = yAxisTickGenerator;
 
+        plot.DataBackground.Color = _dataBackgroundColor;
         plot.FigureBackground.Color = _figureColor;
 
         plot.Axes.Color(_axesColor);
