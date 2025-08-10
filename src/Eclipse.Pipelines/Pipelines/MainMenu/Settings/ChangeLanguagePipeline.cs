@@ -5,11 +5,13 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Culture;
+using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Microsoft.Extensions.Options;
 
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
@@ -31,7 +33,12 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private static readonly int _languagesChunk = 2;
 
-    public ChangeLanguagePipeline(ICultureTracker cultureTracker, IUserService userService, IMessageStore messageStore, IOptions<CultureList> cultures, ICurrentCulture currentCulture)
+    public ChangeLanguagePipeline(
+        ICultureTracker cultureTracker,
+        IUserService userService,
+        IMessageStore messageStore,
+        IOptions<CultureList> cultures,
+        ICurrentCulture currentCulture)
     {
         _cultureTracker = cultureTracker;
         _userService = userService;
@@ -62,56 +69,82 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
         if (!SupportedLanguage(context))
         {
-            return MenuAndRemoveOptions(
-                Localizer[$"{_pipelinePrefix}:Unsupported"],
-                message?.MessageId);
+            return InvalidActionOrRedirect(context, message);
         }
 
         var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            return MenuAndRemoveOptions(
-                Localizer.LocalizeError(result.Error),
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer.LocalizeError(result.Error)
+            );
         }
 
         var user = result.Value;
 
         if (user.Culture == context.Value)
         {
-            return MenuAndRemoveOptions(
-                Localizer[$"{_pipelinePrefix}:Changed"],
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer[$"{_pipelinePrefix}:Changed"]
+            );
         }
 
-        var updateDto = new UserPartialUpdateDto
+        var update = new UserPartialUpdateDto
         {
             CultureChanged = true,
             Culture = context.Value,
         };
 
-        var updateResult = await _userService.UpdatePartialAsync(user.Id, updateDto, cancellationToken);
+        var updateResult = await _userService.UpdatePartialAsync(user.Id, update, cancellationToken);
 
         if (!updateResult.IsSuccess)
         {
-            return MenuAndRemoveOptions(
-                Localizer.LocalizeError(updateResult.Error),
-                message?.MessageId);
+            return MenuAndClearPrevious(
+                SettingsMenuButtons,
+                message,
+                Localizer.LocalizeError(updateResult.Error)
+            );
         }
 
         await _cultureTracker.ResetAsync(context.ChatId, context.Value, cancellationToken);
 
         using var _ = _currentCulture.UsingCulture(context.Value);
 
-        return MenuAndRemoveOptions(
-            Localizer[$"{_pipelinePrefix}:Changed"],
-            message?.MessageId);
+        return MenuAndClearPrevious(
+            SettingsMenuButtons,
+            message,
+            Localizer[$"{_pipelinePrefix}:Changed"]
+        );
     }
 
     private bool SupportedLanguage(MessageContext context)
     {
         return _cultures.Value
             .Exists(l => l.Code.Equals(context.Value));
+    }
+
+    private IResult InvalidActionOrRedirect(MessageContext context, Message? message)
+    {
+        try
+        {
+            var localized = Localizer.ToLocalizableString(context.Value);
+
+            return localized switch
+            {
+                "Menu:MainMenu" => RemoveMenuAndRedirect<MainMenuPipeline>(message),
+                "Menu:Settings:Language" => RemoveMenuAndRedirect<ChangeLanguagePipeline>(message),
+                "Menu:Settings:SetGmt" => RemoveMenuAndRedirect<SetGmtPipeline>(message),
+                _ => MenuAndClearPrevious(SettingsMenuButtons, message, Localizer[$"{_pipelinePrefix}:Unsupported", localized]),
+            };
+        }
+        catch
+        {
+            return MenuAndClearPrevious(SettingsMenuButtons, message, Localizer[$"{_pipelinePrefix}:Unsupported", context.Value]);
+        }
     }
 }

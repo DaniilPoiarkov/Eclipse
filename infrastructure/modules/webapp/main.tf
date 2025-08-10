@@ -58,7 +58,7 @@ resource "azurerm_linux_web_app" "app" {
     Authorization__JwtBearer__Audience         = var.app_name
     Authorization__JwtBearer__Issuer           = var.app_name
     Google__Credentials                        = var.google_credentials
-    Sheets__SheetsId                           = var.sheets_id
+    Sheets__SheetId                            = var.sheets_id
     Sheets__SuggestionsRange                   = var.sheets_range
     Settings__IsRedisEnabled                   = var.settings_use_redis
     Azure__CosmosOptions__Endpoint             = var.cosmos_endpoint
@@ -98,7 +98,8 @@ resource "azurerm_linux_web_app" "app" {
   lifecycle {
     ignore_changes = [
       app_settings["Google__Credentials"],
-      app_settings["Telegram__Token"]
+      app_settings["Telegram__Token"],
+      site_config.0.application_stack.0.docker_image_name
     ]
   }
 }

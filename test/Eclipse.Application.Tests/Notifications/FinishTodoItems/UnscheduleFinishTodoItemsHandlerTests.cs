@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Notifications.FinishTodoItems;
+using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Tests.Fixtures;

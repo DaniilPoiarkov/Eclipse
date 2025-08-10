@@ -88,7 +88,7 @@ public sealed class MoodReportJobTests
         var utcNow = DateTime.UtcNow;
         _timeProvider.Now.Returns(utcNow);
 
-        var expectedFrom = utcNow.PreviousDayOfWeek(DayOfWeek.Sunday);
+        var from = utcNow.PreviousDayOfWeek(DayOfWeek.Sunday).WithTime(0, 0);
 
         using var stream = new MemoryStream();
         _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
@@ -107,7 +107,7 @@ public sealed class MoodReportJobTests
         _currentCulture.Received().UsingCulture(user.Culture);
 
         await _reportsService.Received().GetMoodReportAsync(user.Id,
-            Arg.Is<MoodReportOptions>(o => o.From == expectedFrom && o.To == utcNow)
+            Arg.Is<MoodReportOptions>(o => o.From == from && o.To == utcNow)
         );
 
         await _client.Received().SendRequest(

@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Application.MoodRecords.Collection.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 

@@ -55,4 +55,14 @@ public sealed class InboxMessage : Entity
     {
         Status = InboxMessageStatus.InProcess;
     }
+
+    public void Reset()
+    {
+        if (Status != InboxMessageStatus.Failed)
+        {
+            throw new InvalidOperationException("Cannot reset a message that is not in Failed status.");
+        }
+
+        Status = InboxMessageStatus.Pending;
+    }
 }

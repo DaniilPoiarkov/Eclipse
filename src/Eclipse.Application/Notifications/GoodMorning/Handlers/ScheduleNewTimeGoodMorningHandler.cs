@@ -4,7 +4,7 @@ using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.GoodMorning;
+namespace Eclipse.Application.Notifications.GoodMorning.Handlers;
 
 internal sealed class ScheduleNewTimeGoodMorningHandler : IEventHandler<GmtChangedDomainEvent>
 {

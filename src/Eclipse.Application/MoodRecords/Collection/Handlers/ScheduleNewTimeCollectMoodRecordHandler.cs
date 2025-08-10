@@ -4,7 +4,7 @@ using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
-namespace Eclipse.Application.MoodRecords.Collection;
+namespace Eclipse.Application.MoodRecords.Collection.Handlers;
 
 internal sealed class ScheduleNewTimeCollectMoodRecordHandler : IEventHandler<GmtChangedDomainEvent>
 {

@@ -48,15 +48,16 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
     {
         var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
-        if (user is null)
+        if (user is not { IsEnabled: true })
         {
-            Logger.LogError("User with id {UserId} not found", args.UserId);
+            Logger.LogError("User with id {UserId} not found or disabled.", args.UserId);
             return;
         }
 
         var options = new MoodReportOptions
         {
-            From = _timeProvider.Now.PreviousDayOfWeek(DayOfWeek.Sunday),
+            From = _timeProvider.Now.PreviousDayOfWeek(DayOfWeek.Sunday)
+                .WithTime(0, 0),
             To = _timeProvider.Now,
         };
 
@@ -64,7 +65,7 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
 
         var message = _localizer["Jobs:SendMoodReport:Caption"];
 
-        using var stream = await _reportsService.GetMoodReportAsync(args.UserId, options, cancellationToken);
+        using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
 
         try
         {

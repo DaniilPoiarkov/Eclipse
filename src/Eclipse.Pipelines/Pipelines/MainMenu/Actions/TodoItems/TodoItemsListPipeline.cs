@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
-using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
@@ -10,7 +9,6 @@ using Eclipse.Pipelines.Stores.Messages;
 using System.Globalization;
 
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
@@ -111,11 +109,6 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
         {
             var localized = Localizer.ToLocalizableString(context.Value);
 
-            if (!KeyWords.Contains(localized))
-            {
-                return InterruptedResult(message, Localizer[_errorMessage]);
-            }
-
             return localized switch
             {
                 "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
@@ -128,18 +121,5 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
         {
             return InterruptedResult(message, Localizer[_errorMessage]);
         }
-    }
-
-    private static IResult RemoveMenuAndRedirect<TPipeline>(Message? message)
-        where TPipeline : PipelineBase
-    {
-        if (message is null)
-        {
-            return Redirect<TPipeline>();
-        }
-
-        return Redirect<TPipeline>(
-            Edit(message.MessageId, InlineKeyboardMarkup.Empty())
-        );
     }
 }

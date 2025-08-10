@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Tests.Fixtures;

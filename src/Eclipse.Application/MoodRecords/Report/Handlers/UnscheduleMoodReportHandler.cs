@@ -4,7 +4,7 @@ using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
-namespace Eclipse.Application.MoodRecords.Report;
+namespace Eclipse.Application.MoodRecords.Report.Handlers;
 
 internal sealed class UnscheduleMoodReportHandler : IEventHandler<UserDisabledDomainEvent>
 {

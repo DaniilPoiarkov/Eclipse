@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Notifications.GoodMorning;
+using Eclipse.Application.Notifications.GoodMorning.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 

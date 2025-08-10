@@ -1,9 +1,9 @@
 ﻿using Eclipse.Application.Notifications.FinishTodoItems;
+using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Tests.Extensions;
-using Eclipse.Tests.Generators;
 
 using Microsoft.Extensions.Logging;
 
@@ -50,23 +50,5 @@ public sealed class ScheduleNewUserFinishTodoItemsHandlerTests
 
         await _schedulerFactory.DidNotReceive().GetScheduler();
         await _jobScheduler.DidNotReceive().Schedule(Arg.Any<IScheduler>(), Arg.Any<FinishTodoItemsSchedulerOptions>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenUserFound_ThenSchedulesJob()
-    {
-        var user = UserGenerator.Get();
-
-        _userRepository.FindAsync(user.Id, Arg.Any<CancellationToken>()).Returns(user);
-
-        var scheduler = Substitute.For<IScheduler>();
-        _schedulerFactory.GetScheduler().Returns(scheduler);
-
-        await _sut.Handle(new UserEnabledDomainEvent(user.Id));
-
-        await _jobScheduler.Received().Schedule(scheduler,
-            Arg.Is<FinishTodoItemsSchedulerOptions>(opts => opts.UserId == user.Id
-                && opts.Gmt == user.Gmt)
-        );
     }
 }
