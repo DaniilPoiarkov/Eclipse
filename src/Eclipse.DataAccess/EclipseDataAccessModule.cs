@@ -7,6 +7,7 @@ using Eclipse.DataAccess.Migrations;
 using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
+using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
 using Eclipse.Domain.InboxMessages;
@@ -37,6 +38,8 @@ public static class EclipseDataAccessModule
     {
         services.AddCosmosDb()
             .AddDataAccessHealthChecks();
+
+        services.AddSingleton<IExpressionHashStore, ExpressionHashStore>();
 
         services
             .AddScoped<IUserRepository, UserRepository>()

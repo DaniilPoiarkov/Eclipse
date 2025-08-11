@@ -1,13 +1,14 @@
 ﻿using Eclipse.Common.Caching;
 using Eclipse.DataAccess.Repositories;
+using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.Domain.InboxMessages;
 
 namespace Eclipse.DataAccess.InboxMessages;
 
 internal sealed class CachedInboxMessageRepository : CachedRepositoryBase<InboxMessage, IInboxMessageRepository>, IInboxMessageRepository
 {
-    public CachedInboxMessageRepository(IInboxMessageRepository repository, ICacheService cacheService)
-        : base(repository, cacheService) { }
+    public CachedInboxMessageRepository(IInboxMessageRepository repository, ICacheService cacheService, IExpressionHashStore expressionHashStore)
+        : base(repository, cacheService, expressionHashStore) { }
 
     public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {
