@@ -1,4 +1,5 @@
 ﻿using Eclipse.Common.Caching;
+using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Repositories;
 
@@ -14,10 +15,13 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
 
     protected readonly ICacheService CacheService;
 
-    public CachedRepositoryBase(TRepository repository, ICacheService cacheService)
+    protected readonly IExpressionHashStore ExpressionHashStore;
+
+    public CachedRepositoryBase(TRepository repository, ICacheService cacheService, IExpressionHashStore expressionHashStore)
     {
         Repository = repository;
         CacheService = cacheService;
+        ExpressionHashStore = expressionHashStore;
     }
 
     public Task<int> CountAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
@@ -78,8 +82,10 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
             Tags = [GetPrefix()]
         };
 
+        var hash = ExpressionHashStore.Get(expression);
+
         return CacheService.GetOrCreateAsync(
-            $"{GetPrefix()};{expression.Body}",
+            $"{GetPrefix()};{hash}",
             () => Repository.GetByExpressionAsync(expression, cancellationToken),
             options,
             cancellationToken
@@ -94,8 +100,10 @@ internal class CachedRepositoryBase<TEntity, TRepository> : IRepository<TEntity>
             Tags = [GetPrefix()]
         };
 
+        var hash = ExpressionHashStore.Get(expression);
+
         return CacheService.GetOrCreateAsync(
-            $"{GetPrefix()};{expression.Body};skip={skipCount};take={takeCount}",
+            $"{GetPrefix()};{hash};skip={skipCount};take={takeCount}",
             () => Repository.GetByExpressionAsync(expression, skipCount, takeCount, cancellationToken),
             options,
             cancellationToken
