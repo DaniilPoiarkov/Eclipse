@@ -1,13 +1,14 @@
 ﻿using Eclipse.Common.Caching;
 using Eclipse.DataAccess.Repositories;
+using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.Domain.Users;
 
 namespace Eclipse.DataAccess.Users;
 
 internal sealed class CachedUserRepository : CachedRepositoryBase<User, IUserRepository>, IUserRepository
 {
-    public CachedUserRepository(IUserRepository repository, ICacheService cacheService)
-        : base(repository, cacheService) { }
+    public CachedUserRepository(IUserRepository repository, ICacheService cacheService, IExpressionHashStore expressionHashStore)
+        : base(repository, cacheService, expressionHashStore) { }
 
     public Task<User?> FindByChatIdAsync(long chatId, CancellationToken cancellationToken = default)
     {

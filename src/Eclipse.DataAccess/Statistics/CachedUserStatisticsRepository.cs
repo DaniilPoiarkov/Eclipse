@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Caching;
 using Eclipse.DataAccess.Repositories;
+using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.Domain.Statistics;
 
 namespace Eclipse.DataAccess.Statistics;
@@ -8,7 +9,8 @@ internal sealed class CachedUserStatisticsRepository : CachedRepositoryBase<User
 {
     public CachedUserStatisticsRepository(
         IUserStatisticsRepository repository,
-        ICacheService cacheService) : base(repository, cacheService) { }
+        ICacheService cacheService,
+        IExpressionHashStore expressionHashStore) : base(repository, cacheService, expressionHashStore) { }
 
     public Task<UserStatistics?> FindByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
@@ -19,7 +21,7 @@ internal sealed class CachedUserStatisticsRepository : CachedRepositoryBase<User
         };
 
         return CacheService.GetOrCreateAsync(
-            $"{GetPrefix()}-{userId}",
+            $"{GetPrefix()}-user-id-{userId}",
             () => Repository.FindByUserIdAsync(userId, cancellationToken),
             options,
             cancellationToken

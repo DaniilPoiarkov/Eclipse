@@ -1,13 +1,14 @@
 ﻿using Eclipse.Common.Caching;
 using Eclipse.DataAccess.Repositories;
+using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.Domain.OutboxMessages;
 
 namespace Eclipse.DataAccess.OutboxMessages;
 
 internal sealed class CachedOutboxMessageRepository : CachedRepositoryBase<OutboxMessage, IOutboxMessageRepository>, IOutboxMessageRepository
 {
-    public CachedOutboxMessageRepository(IOutboxMessageRepository repository, ICacheService cacheService)
-        : base(repository, cacheService) { }
+    public CachedOutboxMessageRepository(IOutboxMessageRepository repository, ICacheService cacheService, IExpressionHashStore expressionHashStore)
+        : base(repository, cacheService, expressionHashStore) { }
 
     public async Task DeleteSuccessfullyProcessedAsync(CancellationToken cancellationToken = default)
     {
