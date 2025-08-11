@@ -30,7 +30,7 @@ public sealed class InboxMessageTests
     public void Reset_WhenNotFailed_ThenExceptionThrown()
     {
         var inboxMessage = InboxMessage.Create(Guid.NewGuid(), Guid.NewGuid(), "handler", "{}", "object", DateTime.UtcNow);
-        
+
         inboxMessage.Invoking(im => im.Reset())
             .Should().Throw<InvalidOperationException>()
             .WithMessage("Cannot reset a message that is not in Failed status.");
