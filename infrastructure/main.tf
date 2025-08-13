@@ -69,6 +69,7 @@ module "database" {
   database_throughput   = var.database_throughput
   container_throughput  = var.container_throughput
   failover_priority     = var.failover_priority
+  ip_range_filter       = var.db_ip_range_filter
 
   container_names = [
     var.cosmos_container

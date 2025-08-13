@@ -67,3 +67,9 @@ variable "container_throughput" {
   description = "Container throughput"
   type        = number
 }
+
+variable "ip_range_filter" {
+  description = "Allowed IP addresses"
+  type        = list(string)
+  sensitive   = true
+}
