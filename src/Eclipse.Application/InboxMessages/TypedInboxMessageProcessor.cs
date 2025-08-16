@@ -60,7 +60,10 @@ internal sealed class TypedInboxMessageProcessor<TEvent, TEventHandler> : IInbox
 
                 if (payload is null)
                 {
-                    _logger.LogError("Cannot deserialize payload type \'{Type}\' from {Message} with Id \'{Id}\'", inboxMessage.Type, nameof(InboxMessage), inboxMessage.Id);
+                    _logger.LogError("Failed to process inbox message with Id \'{Id}\'. {Reason}", inboxMessage.Id,
+                        $"Cannot deserialize message {nameof(InboxMessage)} into {inboxMessage.Type}."
+                    );
+
                     inboxMessage.SetError("Cannot deserialize the payload.", _timeProvider.Now);
                     continue;
                 }
@@ -71,6 +74,10 @@ internal sealed class TypedInboxMessageProcessor<TEvent, TEventHandler> : IInbox
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to process inbox message with Id \'{Id}\'. {Reason}",
+                    inboxMessage.Id, $"Exception thrown by {_eventHandler.GetType().Name}."
+                );
+
                 inboxMessage.SetError(JsonConvert.SerializeObject(ex), _timeProvider.Now);
             }
         }
