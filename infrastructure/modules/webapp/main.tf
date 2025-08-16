@@ -41,6 +41,11 @@ resource "azurerm_linux_web_app" "app" {
         retention_in_mb   = 35
       }
     }
+    application_logs {
+      file_system_level = "Warning"
+    }
+    detailed_error_messages = true
+    failed_request_tracing  = true
   }
 
   app_settings = {
@@ -101,5 +106,31 @@ resource "azurerm_linux_web_app" "app" {
       app_settings["Telegram__Token"],
       site_config.0.application_stack.0.docker_image_name
     ]
+  }
+}
+
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories" {
+  resource_id = azurerm_linux_web_app.app.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
+  name                       = "${var.app_name}-${var.environment}-diagnostic-logs"
+  target_resource_id         = azurerm_linux_web_app.app.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  dynamic "enabled_log" {
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories.log_category_types
+
+    content {
+      category = enabled_log.value
+    }
+  }
+
+  dynamic "metric" {
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories.metrics
+
+    content {
+      category = metric.value
+    }
   }
 }

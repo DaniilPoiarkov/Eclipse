@@ -1,12 +1,13 @@
 resource "azurerm_cosmosdb_account" "cosmosdb" {
-  name                          = "cosmos-${var.app_name}-${var.environment}"
-  location                      = var.location
-  resource_group_name           = var.resource_group_name
-  kind                          = var.cosmos_kind
-  offer_type                    = var.cosmos_offer_type
-  free_tier_enabled             = var.cosmos_free_tier
-  ip_range_filter               = var.ip_range_filter
-  local_authentication_disabled = true
+  name                               = "cosmos-${var.app_name}-${var.environment}"
+  location                           = var.location
+  resource_group_name                = var.resource_group_name
+  kind                               = var.cosmos_kind
+  offer_type                         = var.cosmos_offer_type
+  free_tier_enabled                  = var.cosmos_free_tier
+  ip_range_filter                    = var.ip_range_filter
+  local_authentication_disabled      = true
+  access_key_metadata_writes_enabled = false
 
   geo_location {
     location          = var.location
