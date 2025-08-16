@@ -134,3 +134,8 @@ variable "tenant_id" {
   description = "Tenant id"
   type        = string
 }
+
+variable "log_analytics_workspace_id" {
+  description = "Log analytics workspace id for diagnostic logs"
+  type        = string
+}
