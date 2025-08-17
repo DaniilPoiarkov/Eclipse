@@ -182,3 +182,31 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_
 
   tags = local.tags
 }
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "failed_inbox_messages" {
+  name                = "Failed to process inbox messages"
+  location            = var.location
+  data_source_id      = var.data_source_id
+  severity            = var.severity
+  resource_group_name = local.rg_name
+  frequency           = local.frequency
+  time_window         = local.time_window
+
+  query = <<-QUERY
+    traces
+    | where severityLevel == 3 and message contains 'Failed to process inbox message'
+    QUERY
+
+  action {
+    action_group = [
+      azurerm_monitor_action_group.monitor_action_group.id
+    ]
+  }
+
+  trigger {
+    operator  = "GreaterThanOrEqual"
+    threshold = local.threashold
+  }
+
+  tags = local.tags
+}
