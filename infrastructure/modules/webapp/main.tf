@@ -119,7 +119,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   dynamic "enabled_log" {
-    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories.log_category_types
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.log_category_types)
 
     content {
       category = enabled_log.value
@@ -127,10 +127,20 @@ resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
   }
 
   dynamic "metric" {
-    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories.metrics
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.metrics)
 
     content {
       category = metric.value
+      enabled = true
     }
+  }
+
+  # Ignore changes to prevent configuration removal due to azurerm_monitor_diagnostic_categories behavior
+  # Remove when issue with terraform data will be fixed.
+  lifecycle {
+    ignore_changes = [
+      enabled_log,
+      metric
+    ]
   }
 }
