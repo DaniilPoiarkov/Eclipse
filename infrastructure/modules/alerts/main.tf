@@ -184,7 +184,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "failed_inbox_messages" {
-  name                = "Failed to process inbox messages."
+  name                = "Failed to process inbox messages"
   location            = var.location
   data_source_id      = var.data_source_id
   severity            = var.severity
