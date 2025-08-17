@@ -131,7 +131,7 @@ resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
 
     content {
       category = metric.value
-      enabled = true
+      enabled  = true
     }
   }
 
