@@ -210,3 +210,45 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "failed_inbox_messages" {
 
   tags = local.tags
 }
+
+resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
+  location            = var.location
+  resource_group_name = local.rg_name
+  name                = "common-alerts-log"
+  tags                = local.tags
+}
+
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories" {
+  resource_id = azurerm_logic_app_workflow.logic_app.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
+  name                       = "logic-send-tg-alert-diagnostic-logs"
+  target_resource_id         = azurerm_logic_app_workflow.logic_app.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+
+  dynamic "enabled_log" {
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.log_category_types)
+
+    content {
+      category = enabled_log.value
+    }
+  }
+
+  dynamic "enabled_metric" {
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.metrics)
+
+    content {
+      category = enabled_metric.value
+    }
+  }
+
+  # Ignore changes to prevent configuration removal due to azurerm_monitor_diagnostic_categories behavior
+  # Remove when issue with terraform data will be fixed.
+  lifecycle {
+    ignore_changes = [
+      enabled_log,
+      metric
+    ]
+  }
+}
