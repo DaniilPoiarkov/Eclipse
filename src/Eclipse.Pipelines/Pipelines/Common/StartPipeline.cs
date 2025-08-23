@@ -9,7 +9,6 @@ using Eclipse.Pipelines.Stores.Messages;
 
 using Microsoft.Extensions.Options;
 
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common;
@@ -47,11 +46,12 @@ public sealed class StartPipeline : EclipsePipelineBase
 
     protected override void Initialize()
     {
-        RegisterStage(ConfigureAccountAsync);
-        RegisterStage(SetLanguage);
+        RegisterStage(ConfigureLanguage);
+        RegisterStage(ConfigureGmt);
+        RegisterStage(FinishOnboarding);
     }
 
-    private async Task<IResult> ConfigureAccountAsync(MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> ConfigureLanguage(MessageContext context, CancellationToken cancellationToken)
     {
         var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
@@ -69,27 +69,27 @@ public sealed class StartPipeline : EclipsePipelineBase
         return Menu(buttons, Localizer[$"{_prefix}:SetLanguage"]);
     }
 
-    private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
+    private async Task<IResult> ConfigureGmt(MessageContext context, CancellationToken cancellationToken = default)
     {
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
         if (!SupportedLanguage(context))
         {
-            return SendGreeting(context, message);
+            return RequestTime(message?.Id);
         }
 
         var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            return SendGreeting(context, message);
+            return RequestTime(message?.Id);
         }
 
         var user = result.Value;
 
         if (user.Culture == context.Value)
         {
-            return SendGreeting(context, message);
+            return RequestTime(message?.Id);
         }
 
         var model = new UserPartialUpdateDto
@@ -104,29 +104,57 @@ public sealed class StartPipeline : EclipsePipelineBase
 
         using var _ = _currentCulture.UsingCulture(context.Value);
 
-        return SendGreeting(context, message);
+        return RequestTime(message?.Id);
     }
 
-    private IResult SendGreeting(MessageContext context, Message? message = null)
+    private async Task<IResult> FinishOnboarding(MessageContext context, CancellationToken cancellationToken)
     {
-        return MenuAndRemoveOptions(Localizer[_prefix, context.User.Name.TrimEnd()], message);
+        if (context.Value.Equals("/cancel"))
+        {
+            return SendGreeting(context);
+        }
+
+        if (!context.Value.TryParseAsTimeOnly(out var time))
+        {
+            RegisterStage(FinishOnboarding);
+            return Text(Localizer[$"{_prefix}:CannotParseTime"]);
+        }
+
+        var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!user.IsSuccess)
+        {
+            return SendGreeting(context);
+        }
+
+        var update = new UserPartialUpdateDto
+        {
+            Gmt = time,
+            GmtChanged = true,
+        };
+
+        await _userService.UpdatePartialAsync(user.Value.Id, update, cancellationToken);
+
+        return SendGreeting(context);
+    }
+
+    private IResult RequestTime(int? messageId)
+    {
+        return messageId.HasValue
+            ? Multiple(
+                Edit(messageId.Value, InlineKeyboardMarkup.Empty()),
+                Menu(new ReplyKeyboardRemove(), Localizer[$"{_prefix}:SetTime"])
+            )
+            : Menu(new ReplyKeyboardRemove(), Localizer[$"{_prefix}:SetTime"]);
+    }
+
+    private IResult SendGreeting(MessageContext context)
+    {
+        return Menu(MainMenuButtons, Localizer[_prefix, context.User.Name.TrimEnd()]);
     }
 
     private bool SupportedLanguage(MessageContext context)
     {
         return _cultures.Value.Exists(l => l.Code.Equals(context.Value));
-    }
-
-    private IResult MenuAndRemoveOptions(string text, Message? message)
-    {
-        if (message is null)
-        {
-            return Menu(MainMenuButtons, text);
-        }
-
-        return Multiple(
-            Edit(message.MessageId, InlineKeyboardMarkup.Empty()),
-            Menu(MainMenuButtons, text)
-        );
     }
 }
