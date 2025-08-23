@@ -5,6 +5,7 @@ using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
+using Eclipse.Pipelines.Stores.Messages;
 
 using Microsoft.Extensions.Options;
 
@@ -19,6 +20,8 @@ public sealed class StartPipeline : EclipsePipelineBase
 
     private readonly IUserService _userService;
 
+    private readonly IMessageStore _messageStore;
+
     private readonly IOptions<CultureList> _cultures;
 
     private readonly ICurrentCulture _currentCulture;
@@ -30,11 +33,13 @@ public sealed class StartPipeline : EclipsePipelineBase
     public StartPipeline(
         ICultureTracker cultureTracker,
         IUserService userService,
+        IMessageStore messageStore,
         IOptions<CultureList> cultures,
         ICurrentCulture currentCulture)
     {
         _cultureTracker = cultureTracker;
         _userService = userService;
+        _messageStore = messageStore;
         _cultures = cultures;
         _currentCulture = currentCulture;
     }
@@ -66,23 +71,25 @@ public sealed class StartPipeline : EclipsePipelineBase
 
     private async Task<IResult> ConfigureGmt(MessageContext context, CancellationToken cancellationToken = default)
     {
+        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+
         if (!SupportedLanguage(context))
         {
-            return RequestTime();
+            return RequestTime(message?.Id);
         }
 
         var result = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!result.IsSuccess)
         {
-            return RequestTime();
+            return RequestTime(message?.Id);
         }
 
         var user = result.Value;
 
         if (user.Culture == context.Value)
         {
-            return RequestTime();
+            return RequestTime(message?.Id);
         }
 
         var model = new UserPartialUpdateDto
@@ -97,7 +104,7 @@ public sealed class StartPipeline : EclipsePipelineBase
 
         using var _ = _currentCulture.UsingCulture(context.Value);
 
-        return RequestTime();
+        return RequestTime(message?.Id);
     }
 
     private async Task<IResult> FinishOnboarding(MessageContext context, CancellationToken cancellationToken)
@@ -131,9 +138,14 @@ public sealed class StartPipeline : EclipsePipelineBase
         return SendGreeting(context);
     }
 
-    private IResult RequestTime()
+    private IResult RequestTime(int? messageId)
     {
-        return Menu(new ReplyKeyboardRemove(), Localizer[$"{_prefix}:SetTime"]);
+        return messageId.HasValue
+            ? Multiple(
+                Edit(messageId.Value, InlineKeyboardMarkup.Empty()),
+                Menu(new ReplyKeyboardRemove(), Localizer[$"{_prefix}:SetTime"])
+            )
+            : Menu(new ReplyKeyboardRemove(), Localizer[$"{_prefix}:SetTime"]);
     }
 
     private IResult SendGreeting(MessageContext context)
