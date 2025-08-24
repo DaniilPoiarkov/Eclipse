@@ -1,7 +1,7 @@
 {
   "Culture": "en",
   "Texts": {
-    "Pipelines:Start": "Hello, {0}, I'm Eclipse. Right now I'm studying different things, so if you don't mind helping me become better you can click the 'Suggest' button and describe your thoughts.\nSee you 🌒",
+    "Pipelines:Start": "Hello, {0}, I'm Eclipse. Press /guide for detailed information what I can do.\n\r\n\rIf you don't mind help me become better you can click the 'Suggest 💡' button and describe your thoughts.\nSee you 🌒",
     "Pipelines:Start:SetLanguage": "Select a language, you'll be able to change it later",
     "Pipelines:Start:SetTime": "And now specify your time in 24h format (e.g 16:45). It is needed for me to know when send you reminders, you'll be able to change it later as well. If you want to skip this step just click /cancel",
     "Pipelines:Start:CannotParseTime": "Oh, I can't understand this format. Ensure you specifying this as HH:mm (e.g. 9:05 or 21:59) or just click /cancel if you want to set this later"
