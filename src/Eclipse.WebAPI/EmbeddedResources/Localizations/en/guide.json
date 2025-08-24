@@ -1,0 +1,6 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Guide": "So let's dive in what we have here!\n\r\n\rFirst thing you see is main menu. Let's click 'Actions 🖋️', here you can manage your todo items and reminders in corresponding menus or get back to main menu.\n\r\n\rOther button you can see in main menu is 'Reports 📑'. By clicking here you can generate chart which will show how your mood changed during the week and check your statitics based on how many items you finished and reminders you received. Now I think you have a question based on which information chart will be generated? Every day I'll ask you to rate your mood and at the end of the week I'll send you this chart automatically, but you always can generate it by yourself!\n\r\n\rIf you have any ideas to make me become better you can click 'Suggest 💡' button and write them down, I highly appreciate it!\n\r\n\rAnd the last thing you can find here is 'Settings ⚙️' menu, here you can change prefferable language and your local time. I use this time to understand when to send you reminders, you probably don't want to schedule reminder for 5 PM and receive it at midnight, right?\n\r\n\rI hope this helped you understand what I can do for you, so see you 🌒"
+  }
+}
