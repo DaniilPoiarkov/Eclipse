@@ -70,6 +70,11 @@ internal class RepositoryBase<TEntity> : IRepository<TEntity>
             .ToListAsync(cancellationToken);
     }
 
+    public IQueryable<TEntity> Query()
+    {
+        return DbSet.AsQueryable();
+    }
+
     public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var entry = DbSet.Update(entity);

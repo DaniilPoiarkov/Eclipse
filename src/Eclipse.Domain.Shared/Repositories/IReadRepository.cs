@@ -51,4 +51,6 @@ public interface IReadRepository<TEntity>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<int> CountAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
+
+    IQueryable<TEntity> Query();
 }
