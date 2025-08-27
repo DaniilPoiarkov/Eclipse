@@ -2,5 +2,5 @@
 
 public interface IHasCreatedAt
 {
-    DateTime CreatedAt { get; init; }
+    DateTime CreatedAt { get; }
 }
