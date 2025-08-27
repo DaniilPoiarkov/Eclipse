@@ -4,4 +4,5 @@ namespace Eclipse.Domain.Feedbacks;
 
 public interface IFeedbackRepository : IRepository<Feedback>
 {
+
 }

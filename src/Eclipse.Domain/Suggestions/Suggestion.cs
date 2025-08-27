@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.Suggestions;
 
-public sealed class Suggestion : AggregateRoot
+public sealed class Suggestion : AggregateRoot, IHasCreatedAt
 {
     internal Suggestion(Guid id, string text, long telegramUserId, DateTime createdAt) : base(id)
     {
@@ -17,7 +17,7 @@ public sealed class Suggestion : AggregateRoot
 
     public long TelegramUserId { get; private set; }
 
-    public DateTime CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; init; }
 
     public static Suggestion Create(Guid id, string text, long telegramUserId, DateTime createdAt)
     {
