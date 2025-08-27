@@ -25,17 +25,19 @@ internal sealed class UserReadService : IUserReadService
     public async Task<PaginatedList<UserSlimDto>> GetListAsync(PaginationRequest<GetUsersRequest> request, CancellationToken cancellationToken = default)
     {
         var specification = request.Options.ToSpecification();
-        var skip = (request.Page - 1) * request.PageSize;
 
         var count = await _repository.CountAsync(specification, cancellationToken);
 
-        var users = (await _repository.GetByExpressionAsync(specification, skip, request.PageSize, cancellationToken))
-            .Select(u => u.ToSlimDto())
-            .ToArray();
+        var users = await _repository.GetByExpressionAsync(
+            specification,
+            request.GetSkipCount(),
+            request.PageSize,
+            cancellationToken
+        );
+        
+        var models = users.Select(u => u.ToSlimDto());
 
-        var pages = PaginatedList<UserSlimDto>.GetPagesCount(count, request.PageSize);
-
-        return new PaginatedList<UserSlimDto>(users, pages, count);
+        return PaginatedList<UserSlimDto>.Create(models, count, request.PageSize);
     }
 
     public async Task<Result<UserDto>> GetByChatIdAsync(long chatId, CancellationToken cancellationToken = default)

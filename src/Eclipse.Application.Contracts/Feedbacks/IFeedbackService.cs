@@ -6,5 +6,5 @@ public interface IFeedbackService
 {
     Task<FeedbackDto> CreateAsync(Guid userId, CreateFeedbackModel model, CancellationToken cancellationToken = default);
 
-    Task<PaginatedList<FeedbackDto>> GetAllAsync(int page, int size, CancellationToken cancellationToken = default);
+    Task<PaginatedList<FeedbackDto>> GetListAsync(PaginationRequest<GetFeedbacksOptions> request, CancellationToken cancellationToken = default);
 }
