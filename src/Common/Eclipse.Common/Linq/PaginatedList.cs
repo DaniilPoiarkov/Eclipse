@@ -34,6 +34,11 @@ public sealed class PaginatedList<T>
     /// <returns></returns>
     public static PaginatedList<T> Create(IEnumerable<T> items, int totalCount, int pageSize)
     {
+        if (pageSize <= decimal.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be greater than zero.");
+        }
+
         var pagesCount = (int)Math.Ceiling((double)totalCount / pageSize);
         return new PaginatedList<T>([.. items], pagesCount, totalCount);
     }

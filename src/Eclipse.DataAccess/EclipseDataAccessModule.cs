@@ -1,6 +1,7 @@
 ﻿using Azure.Identity;
 
 using Eclipse.DataAccess.Cosmos;
+using Eclipse.DataAccess.Feedbacks;
 using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Migrations;
@@ -10,6 +11,7 @@ using Eclipse.DataAccess.OutboxMessages;
 using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.Feedbacks;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
@@ -47,6 +49,7 @@ public static class EclipseDataAccessModule
             .AddScoped<IInboxMessageRepository, InboxMessageRepository>()
             .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
             .AddScoped<IUserStatisticsRepository, UserStatisticsRepository>()
+            .AddScoped<IFeedbackRepository, FeedbackRepository>()
             .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
 
         services
@@ -54,7 +57,8 @@ public static class EclipseDataAccessModule
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
             .Decorate<IInboxMessageRepository, CachedInboxMessageRepository>()
             .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>()
-            .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>();
+            .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>()
+            .Decorate<IFeedbackRepository, CachedFeedbackRepository>();
 
         services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 
