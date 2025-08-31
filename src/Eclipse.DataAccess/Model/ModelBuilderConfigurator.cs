@@ -1,5 +1,6 @@
 ﻿using Eclipse.DataAccess.Cosmos;
 using Eclipse.DataAccess.Migrations;
+using Eclipse.Domain.Feedbacks;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
@@ -27,6 +28,8 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
 
     private readonly IEntityTypeConfiguration<VersionInfo> _versionInfoConfiguration;
 
+    private readonly IEntityTypeConfiguration<Feedback> _feedbackConfiguration;
+
     public ModelBuilderConfigurator(
         IOptions<CosmosDbContextOptions> options,
         IEntityTypeConfiguration<User> userConfiguration,
@@ -34,7 +37,8 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
         IEntityTypeConfiguration<MoodRecord> moodRecordConfiguration,
         IEntityTypeConfiguration<UserStatistics> userStatisticsConfiguration,
         IEntityTypeConfiguration<InboxMessage> inboxMessageConfiguration,
-        IEntityTypeConfiguration<VersionInfo> versionInfoConfiguration)
+        IEntityTypeConfiguration<VersionInfo> versionInfoConfiguration,
+        IEntityTypeConfiguration<Feedback> feedbackConfiguration)
     {
         _options = options;
 
@@ -44,6 +48,7 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
         _userStatisticsConfiguration = userStatisticsConfiguration;
         _inboxMessageConfiguration = inboxMessageConfiguration;
         _versionInfoConfiguration = versionInfoConfiguration;
+        _feedbackConfiguration = feedbackConfiguration;
     }
 
     public void Configure(ModelBuilder modelBuilder)
@@ -54,6 +59,7 @@ internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
         modelBuilder.ApplyConfiguration(_userStatisticsConfiguration);
         modelBuilder.ApplyConfiguration(_inboxMessageConfiguration);
         modelBuilder.ApplyConfiguration(_versionInfoConfiguration);
+        modelBuilder.ApplyConfiguration(_feedbackConfiguration);
 
         modelBuilder.HasDefaultContainer(_options.Value.Container);
     }
