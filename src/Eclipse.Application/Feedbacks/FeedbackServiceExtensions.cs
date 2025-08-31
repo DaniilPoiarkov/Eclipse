@@ -11,7 +11,8 @@ internal static class FeedbackServiceExtensions
             feedback.Id,
             feedback.UserId,
             feedback.Comment,
-            feedback.Rate
+            feedback.Rate,
+            feedback.CreatedAt
         );
     }
 }

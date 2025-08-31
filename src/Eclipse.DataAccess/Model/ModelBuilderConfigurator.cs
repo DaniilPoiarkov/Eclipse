@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.DataAccess.Model;
 
+// TODO: Refactor
 internal sealed class ModelBuilderConfigurator : IModelBuilderConfigurator
 {
     private readonly IOptions<CosmosDbContextOptions> _options;
