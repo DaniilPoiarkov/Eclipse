@@ -12,7 +12,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common.Feedbacks;
 
-[Route("Feedback", "/feedback")]
+[Route("Menu:Feedback", "/feedback")]
 internal sealed class FeedbackPipeline : EclipsePipelineBase
 {
     private readonly IFeedbackService _feedbackService;
@@ -114,9 +114,10 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
             return Text(Localizer["Pipelines:Feedback:Error"]);
         }
 
-        var model = new CreateFeedbackModel(context.Value, rate.Value);
-
-        await _feedbackService.CreateAsync(user.Value.Id, model, cancellationToken);
+        await _feedbackService.CreateAsync(user.Value.Id,
+            new CreateFeedbackModel(context.Value, rate.Value),
+            cancellationToken
+        );
 
         await _cacheService.DeleteAsync($"feedback-rate-{context.ChatId}", cancellationToken);
 

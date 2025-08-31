@@ -2,7 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.Common;
 
-[Route("Guide", "/guide")]
+[Route("Menu:Guide", "/guide")]
 internal sealed class GuidePipeline : EclipsePipelineBase
 {
     protected override void Initialize()

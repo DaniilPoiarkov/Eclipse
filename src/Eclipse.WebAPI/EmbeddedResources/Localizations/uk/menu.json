@@ -2,6 +2,8 @@
   "Culture": "uk",
   "Texts": {
     "Menu:MainMenu": "Головне меню",
+    "Menu:Guide": "Посібник 📕",
+    "Menu:Feedback": "Відгук 🖊",
 
     "Menu:MainMenu:Suggest": "Запропонувати 💡",
     "Menu:MainMenu:MyToDos": "Мої плани 📝",
