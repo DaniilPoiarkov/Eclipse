@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.InboxMessages;
+﻿using Eclipse.Application.Feedbacks;
+using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords.Collection.Handlers;
 using Eclipse.Application.MoodRecords.Report.Handlers;
 using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
@@ -10,6 +11,7 @@ using Eclipse.Application.Statistics.ReminderReceived;
 using Eclipse.Application.Statistics.TodoItemFinished;
 using Eclipse.Application.Suggestions;
 using Eclipse.Common.Events;
+using Eclipse.Domain.Feedbacks;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.Users.Events;
 
@@ -36,6 +38,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
+
+        /// <see cref="FeedbackSentEvent"/>
+        AddJob<FeedbackSentEvent, FeedbackSentEventHandler>(options);
 
         /// <see cref="ReminderAddedDomainEvent"/>
         AddJob<ReminderAddedDomainEvent, ReminderAddedEventHandler>(options);

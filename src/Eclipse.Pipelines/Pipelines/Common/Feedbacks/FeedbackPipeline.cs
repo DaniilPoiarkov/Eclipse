@@ -136,10 +136,10 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
             return Menu(MainMenuButtons, Localizer["Pipelines:Feedback:Error"]);
         }
 
-        //await _feedbackService.CreateAsync(user.Value.Id,
-        //    new CreateFeedbackModel(comment, rate.Value),
-        //    cancellationToken
-        //);
+        await _feedbackService.CreateAsync(user.Value.Id,
+            new CreateFeedbackModel(comment, rate.Value),
+            cancellationToken
+        );
 
         await _cacheService.DeleteAsync($"feedback-rate-{chatId}", cancellationToken);
 

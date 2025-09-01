@@ -6,6 +6,6 @@ namespace Eclipse.Domain.Feedbacks;
 public sealed record FeedbackSentEvent(
     Guid FeedbackId,
     Guid UserId,
-    string? Comment,
+    string Comment,
     FeedbackRate Rate
 ) : IDomainEvent;
