@@ -3,6 +3,6 @@
 namespace Eclipse.Application.Contracts.Feedbacks;
 
 public record CreateFeedbackModel(
-    string? Comment,
+    string Comment,
     FeedbackRate Rate
 );

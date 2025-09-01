@@ -7,13 +7,13 @@ public sealed class Feedback : AggregateRoot, IHasCreatedAt
 {
     public Guid UserId { get; init; }
 
-    public string? Comment { get; init; }
+    public string Comment { get; init; } = string.Empty;
 
     public FeedbackRate Rate { get; init; }
 
     public DateTime CreatedAt { get; init; }
 
-    private Feedback(Guid id, Guid userId, string? comment, FeedbackRate rate, DateTime createdAt) : base(id)
+    private Feedback(Guid id, Guid userId, string comment, FeedbackRate rate, DateTime createdAt) : base(id)
     {
         UserId = userId;
         Comment = comment;
@@ -23,7 +23,7 @@ public sealed class Feedback : AggregateRoot, IHasCreatedAt
 
     private Feedback() { }
 
-    public static Feedback Create(Guid userId, string? comment, FeedbackRate rate, DateTime createdAt)
+    public static Feedback Create(Guid userId, string comment, FeedbackRate rate, DateTime createdAt)
     {
         var feedback = new Feedback(Guid.CreateVersion7(), userId, comment, rate, createdAt);
         feedback.AddEvent(new FeedbackSentEvent(feedback.Id, userId, comment, rate));
