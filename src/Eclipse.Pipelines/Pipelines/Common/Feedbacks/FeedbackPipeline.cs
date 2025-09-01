@@ -7,6 +7,8 @@ using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.Feedbacks;
 using Eclipse.Pipelines.Stores.Messages;
 
+using Polly;
+
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -101,7 +103,7 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
     {
         if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
         {
-            return Menu(MainMenuButtons, Localizer["Okay"]);
+            return await CreateFeedbackAsync(context.ChatId, string.Empty, cancellationToken);
         }
 
         if (context.Value.IsNullOrEmpty())
@@ -110,8 +112,13 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
             return Text(Localizer["Pipelines:Feedback:Send:Empty"]);
         }
 
+        return await CreateFeedbackAsync(context.ChatId, context.Value, cancellationToken);
+    }
+
+    private async Task<IResult> CreateFeedbackAsync(long chatId, string comment, CancellationToken cancellationToken)
+    {
         var rate = await _cacheService.GetOrCreateAsync(
-            $"feedback-rate-{context.ChatId}",
+            $"feedback-rate-{chatId}",
             () => Task.FromResult<FeedbackRate?>(null),
             new CacheOptions { Expiration = TimeSpan.FromMinutes(10) },
             cancellationToken
@@ -122,19 +129,19 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
             return Menu(MainMenuButtons, Localizer["Pipelines:Feedback:Error"]);
         }
 
-        var user = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
+        var user = await _userService.GetByChatIdAsync(chatId, cancellationToken);
 
         if (!user.IsSuccess)
         {
             return Menu(MainMenuButtons, Localizer["Pipelines:Feedback:Error"]);
         }
 
-        await _feedbackService.CreateAsync(user.Value.Id,
-            new CreateFeedbackModel(context.Value, rate.Value),
-            cancellationToken
-        );
+        //await _feedbackService.CreateAsync(user.Value.Id,
+        //    new CreateFeedbackModel(comment, rate.Value),
+        //    cancellationToken
+        //);
 
-        await _cacheService.DeleteAsync($"feedback-rate-{context.ChatId}", cancellationToken);
+        await _cacheService.DeleteAsync($"feedback-rate-{chatId}", cancellationToken);
 
         return Menu(MainMenuButtons, Localizer["Pipelines:Feedback:Thanks"]);
     }
