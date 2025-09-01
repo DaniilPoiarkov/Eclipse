@@ -1,12 +1,12 @@
 {
   "Culture": "en",
   "Texts": {
-    "Pipelines:Feedback:Rate": "Rate your experience on scale from 1 to 5 where 1 is awful and 5 is excellent:",
-    "Pipelines:Feedback:Send:Good": "That's really nice to hear! If you have any suggestions please write them down or press /cancel to skip this step",
-    "Pipelines:Feedback:Send:Bad": "Could you write down what I can do better or write points how can I improve myself? If you want to skip this step press /cancel",
-    "Pipelines:Feedback:Send:NotDefined": "Oh, I can't understand this rate. Try again or press /cancel to finish",
-    "Pipelines:Feedback:Send:Empty": "Please write down your ideas, I can't understand any other format. Or click /cancel to skip this step",
+    "Pipelines:Feedback:Rate": "🖊 Rate your experience on scale from 1 to 5 where 1 is awful and 5 is excellent:",
+    "Pipelines:Feedback:Send:Good": "😊 That's really nice to hear! If you have any suggestions please write them down or press /cancel to skip this step",
+    "Pipelines:Feedback:Send:Bad": "🤔 Could you write down what I can do better or write points how can I improve myself? If you want to skip this step press /cancel",
+    "Pipelines:Feedback:Send:NotDefined": "🙃 Oh, I can't understand this rate. Try again or press /cancel to finish",
+    "Pipelines:Feedback:Send:Empty": "🤕 Please write down your ideas, I can't understand any other format. Or click /cancel to skip this step",
     "Pipelines:Feedback:Error": "Hmm, I'm sorry but something went not as expected. Click /feedback again to restart",
-    "Pipelines:Feedback:Thanks": "Thank you for your time and your feedback!"
+    "Pipelines:Feedback:Thanks": "Thank you for your time and your feedback!🤗"
   }
 }
