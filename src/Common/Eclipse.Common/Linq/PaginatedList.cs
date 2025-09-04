@@ -38,6 +38,10 @@ public sealed class PaginatedList<T>
         {
             throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be greater than zero.");
         }
+        if (totalCount < decimal.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize), "Total count must be greater or equal to zero.");
+        }
 
         var pagesCount = (int)Math.Ceiling((double)totalCount / pageSize);
         return new PaginatedList<T>([.. items], pagesCount, totalCount);

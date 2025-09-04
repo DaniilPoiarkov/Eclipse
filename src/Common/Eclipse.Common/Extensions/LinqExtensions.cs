@@ -53,11 +53,11 @@ public static class LinqExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
-    /// <param name="page"></param>
+    /// <param name="totalCount"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    public static PaginatedList<T> ToPaginatedList<T>(this IEnumerable<T> source, int page, int pageSize)
+    public static PaginatedList<T> ToPaginatedList<T>(this IEnumerable<T> source, int totalCount, int pageSize)
     {
-        return PaginatedList<T>.Create(source, page, pageSize);
+        return PaginatedList<T>.Create(source, totalCount, pageSize);
     }
 }
