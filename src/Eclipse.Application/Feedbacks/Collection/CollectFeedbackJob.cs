@@ -13,7 +13,7 @@ internal sealed class CollectFeedbackJob : JobWithArgs<CollectFeedbackJobData>
 
     private readonly IFeedbackCollector _collector;
 
-    public CollectFeedbackJob(ILogger logger, IUserRepository userRepository, IFeedbackCollector collector) : base(logger)
+    public CollectFeedbackJob(ILogger<CollectFeedbackJob> logger, IUserRepository userRepository, IFeedbackCollector collector) : base(logger)
     {
         _userRepository = userRepository;
         _collector = collector;

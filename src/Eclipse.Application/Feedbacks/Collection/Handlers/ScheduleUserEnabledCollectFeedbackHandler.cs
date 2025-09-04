@@ -14,7 +14,7 @@ internal sealed class ScheduleUserEnabledCollectFeedbackHandler : CollectFeedbac
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> jobScheduler,
-        ILogger logger)
+        ILogger<ScheduleUserEnabledCollectFeedbackHandler> logger)
         : base(userRepository, schedulerFactory, jobScheduler, logger) { }
 
     public override Task Handle(UserEnabledDomainEvent @event, CancellationToken cancellationToken = default)
