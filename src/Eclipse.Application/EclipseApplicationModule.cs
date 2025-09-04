@@ -20,6 +20,7 @@ using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
 using Eclipse.Application.Feedbacks;
+using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
@@ -149,5 +150,8 @@ public static class EclipseApplicationModule
 
         await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>();
         logger.LogInformation("Enqueued {Job} job.", nameof(CollectMoodRecordJobRescheduler));
+
+        await manager.EnqueueAsync<CollectFeedbackRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(CollectFeedbackRescheduler));
     }
 }

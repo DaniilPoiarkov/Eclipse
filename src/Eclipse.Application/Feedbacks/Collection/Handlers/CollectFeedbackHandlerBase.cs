@@ -6,23 +6,23 @@ using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Application.MoodRecords.Collection.Handlers;
+namespace Eclipse.Application.Feedbacks.Collection.Handlers;
 
-internal abstract class CollectMoodRecordHandlerBase<TEvent> : IEventHandler<TEvent>
+internal abstract class CollectFeedbackHandlerBase<TEvent> : IEventHandler<TEvent>
     where TEvent : IDomainEvent
 {
     protected IUserRepository UserRepository { get; }
 
     protected ISchedulerFactory SchedulerFactory { get; }
 
-    protected INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> JobScheduler { get; }
+    protected INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> JobScheduler { get; }
 
     protected ILogger Logger { get; }
 
-    protected CollectMoodRecordHandlerBase(
+    public CollectFeedbackHandlerBase(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler,
+        INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> jobScheduler,
         ILogger logger)
     {
         UserRepository = userRepository;
@@ -39,12 +39,11 @@ internal abstract class CollectMoodRecordHandlerBase<TEvent> : IEventHandler<TEv
 
         if (user is not { IsEnabled: true })
         {
-            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(CollectMoodRecordJob), userId, "User not found or disabled.");
+            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(CollectFeedbackJob), userId, "User not found or disabled.");
             return;
         }
 
         var scheduler = await SchedulerFactory.GetScheduler();
-
-        await JobScheduler.Schedule(scheduler, new CollectMoodRecordSchedulerOptions(user.Id, user.Gmt), cancellationToken);
+        await JobScheduler.Schedule(scheduler, new CollectFeedbackSchedulerOptions(user.Id, user.Gmt), cancellationToken);
     }
 }
