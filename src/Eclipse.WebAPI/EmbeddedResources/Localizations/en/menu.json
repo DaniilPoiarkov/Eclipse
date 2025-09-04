@@ -2,6 +2,8 @@
   "Culture": "en",
   "Texts": {
     "Menu:MainMenu": "Main menu",
+    "Menu:Guide": "Guide 📕",
+    "Menu:Feedback": "Feedback 🖊",
 
     "Menu:MainMenu:Suggest": "Suggest 💡",
     "Menu:MainMenu:MyToDos": "My to dos 📝",

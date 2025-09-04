@@ -10,7 +10,7 @@ using Eclipse.Domain.Users.Events;
 
 namespace Eclipse.Domain.Users;
 
-public sealed class User : AggregateRoot
+public sealed class User : AggregateRoot, IHasCreatedAt
 {
     private User(Guid id, string name, string surname, string userName, long chatId, DateTime createdAt, bool isEnabled)
         : base(id)
@@ -44,7 +44,7 @@ public sealed class User : AggregateRoot
 
     public TimeSpan Gmt { get; private set; }
 
-    public DateTime CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; init; }
 
 
     private readonly List<Reminder> _reminders = [];

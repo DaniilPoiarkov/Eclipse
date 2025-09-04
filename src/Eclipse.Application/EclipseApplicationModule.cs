@@ -5,6 +5,7 @@ using Eclipse.Application.Contracts.Account;
 using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
+using Eclipse.Application.Contracts.Feedbacks;
 using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
@@ -18,6 +19,8 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
+using Eclipse.Application.Feedbacks;
+using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
@@ -73,6 +76,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
                 .AddTransient<IReportsService, ReportsService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>()
+                .AddTransient<IFeedbackService, FeedbackService>()
             .AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services
@@ -146,5 +150,8 @@ public static class EclipseApplicationModule
 
         await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>();
         logger.LogInformation("Enqueued {Job} job.", nameof(CollectMoodRecordJobRescheduler));
+
+        await manager.EnqueueAsync<CollectFeedbackRescheduler>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(CollectFeedbackRescheduler));
     }
 }

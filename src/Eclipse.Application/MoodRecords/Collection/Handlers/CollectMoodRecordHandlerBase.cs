@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
-using Eclipse.Common.Events;
+﻿using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 
@@ -40,7 +39,7 @@ internal abstract class CollectMoodRecordHandlerBase<TEvent> : IEventHandler<TEv
 
         if (user is not { IsEnabled: true })
         {
-            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(ScheduleNewUserFinishTodoItemsHandler), userId, "User not found or disabled.");
+            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(CollectMoodRecordJob), userId, "User not found or disabled.");
             return;
         }
 

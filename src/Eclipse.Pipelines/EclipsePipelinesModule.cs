@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Url;
+using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
@@ -65,7 +66,8 @@ public static class EclipsePipelinesModule
             .AddPipelinesHealthChecks()
             .AddTelegramIntegration();
 
-        services.AddTransient<IMoodRecordCollector, MoodRecordCollector>();
+        services.AddTransient<IMoodRecordCollector, MoodRecordCollector>()
+            .AddTransient<IFeedbackCollector, FeedbackCollector>();
 
         return services;
     }
