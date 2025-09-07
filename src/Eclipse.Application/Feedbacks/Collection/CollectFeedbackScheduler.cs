@@ -25,7 +25,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
             .UsingJobData("data", JsonConvert.SerializeObject(new CollectFeedbackJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.NextMonth()
+        var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Monday)
             .WithTime(NotificationConsts.Day130PM)
             .Add(-options.Gmt);
 
