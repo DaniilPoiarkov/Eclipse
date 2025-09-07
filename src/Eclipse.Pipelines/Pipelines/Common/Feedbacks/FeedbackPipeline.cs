@@ -63,10 +63,12 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
 
     private async Task<IResult> AskForComment(MessageContext context, CancellationToken cancellationToken = default)
     {
+        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+
         if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer["Okay"]);
+            return EditedOrDefaultResult(message, Menu(MainMenuButtons, Localizer["Okay"]));
         }
 
         var rate = context.Value switch
@@ -78,8 +80,6 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
             "1️⃣" => new FeedbackAnswer(FeedbackRate.Awful, "Pipelines:Feedback:Send:Bad"),
             _ => new FeedbackAnswer(null, "Pipelines:Feedback:Send:NotDefined")
         };
-
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
 
         if (rate.Rate is null)
         {
