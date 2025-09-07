@@ -1,28 +1,28 @@
 ﻿using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
-using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Application.Feedbacks.Collection.Handlers;
+namespace Eclipse.Domain.Users.Handlers;
 
-internal abstract class CollectFeedbackHandlerBase<TEvent> : IEventHandler<TEvent>
+public abstract class UserEventHandlerBase<TEvent, TJob, TJobOptions> : IEventHandler<TEvent>
+    where TJob : IJob
     where TEvent : IDomainEvent
 {
     protected IUserRepository UserRepository { get; }
 
     protected ISchedulerFactory SchedulerFactory { get; }
 
-    protected INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> JobScheduler { get; }
+    protected INotificationScheduler<TJob, TJobOptions> JobScheduler { get; }
 
     protected ILogger Logger { get; }
 
-    public CollectFeedbackHandlerBase(
+    protected UserEventHandlerBase(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> jobScheduler,
+        INotificationScheduler<TJob, TJobOptions> jobScheduler,
         ILogger logger)
     {
         UserRepository = userRepository;
@@ -39,11 +39,20 @@ internal abstract class CollectFeedbackHandlerBase<TEvent> : IEventHandler<TEven
 
         if (user is not { IsEnabled: true })
         {
-            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}", nameof(CollectFeedbackJob), userId, "User not found or disabled.");
+            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}",
+                typeof(TJob).Name,
+                userId,
+                user is null
+                    ? "User not found."
+                    : "User is disabled."
+            );
+
             return;
         }
 
-        var scheduler = await SchedulerFactory.GetScheduler();
-        await JobScheduler.Schedule(scheduler, new CollectFeedbackSchedulerOptions(user.Id, user.Gmt), cancellationToken);
+        var scheduler = await SchedulerFactory.GetScheduler(cancellationToken);
+        await JobScheduler.Schedule(scheduler, GetOptions(user), cancellationToken);
     }
+
+    protected abstract TJobOptions GetOptions(User user);
 }
