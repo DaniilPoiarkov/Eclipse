@@ -37,7 +37,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .WithCalendarIntervalSchedule(schedule => 
-                schedule.WithIntervalInMonths(NotificationConsts.OneUnit)
+                schedule.WithIntervalInWeeks(NotificationConsts.OneUnit)
             )
             .StartAt(time)
             .Build();
