@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.FinishTodoItems;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
@@ -21,8 +22,8 @@ public sealed class ScheduleNewUserFinishTodoItemsHandlerTests
 
     private readonly ISchedulerFactory _schedulerFactory = Substitute.For<ISchedulerFactory>();
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler =
-        Substitute.For<INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
+    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _jobScheduler =
+        Substitute.For<INotificationScheduler<FinishTodoItemsJob, SchedulerOptions>>();
 
     private readonly ILogger<ScheduleNewUserFinishTodoItemsHandler> _logger =
         Substitute.For<ILogger<ScheduleNewUserFinishTodoItemsHandler>>();
@@ -49,6 +50,6 @@ public sealed class ScheduleNewUserFinishTodoItemsHandlerTests
         _logger.ShouldReceiveLog(LogLevel.Error);
 
         await _schedulerFactory.DidNotReceive().GetScheduler();
-        await _jobScheduler.DidNotReceive().Schedule(Arg.Any<IScheduler>(), Arg.Any<FinishTodoItemsSchedulerOptions>());
+        await _jobScheduler.DidNotReceive().Schedule(Arg.Any<IScheduler>(), Arg.Any<SchedulerOptions>());
     }
 }

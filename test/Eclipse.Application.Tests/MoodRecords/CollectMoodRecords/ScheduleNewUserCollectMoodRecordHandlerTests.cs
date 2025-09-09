@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Collection.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
@@ -21,7 +22,7 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture
 
     private readonly IUserRepository _userRepository;
 
-    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> _jobScheduler;
 
     private readonly ILogger<ScheduleNewUserCollectMoodRecordHandler> _logger;
 
@@ -31,7 +32,7 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture
     {
         _schedulerFixture = schedulerFixture;
         _userRepository = Substitute.For<IUserRepository>();
-        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, SchedulerOptions>>();
         _logger = Substitute.For<ILogger<ScheduleNewUserCollectMoodRecordHandler>>();
 
         _sut = new ScheduleNewUserCollectMoodRecordHandler(_userRepository, _schedulerFixture.SchedulerFactory, _jobScheduler, _logger);
@@ -61,7 +62,7 @@ public sealed class ScheduleNewUserCollectMoodRecordHandlerTests : IClassFixture
 
         await _schedulerFixture.SchedulerFactory.Received().GetScheduler();
         await _jobScheduler.Received().Schedule(_schedulerFixture.Scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
         );
     }
 }

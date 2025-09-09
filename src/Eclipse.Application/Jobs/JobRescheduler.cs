@@ -6,17 +6,16 @@ using Quartz;
 
 namespace Eclipse.Application.Jobs;
 
-internal abstract class JobRescheduler<TJob, TSchedulerOptions> : IBackgroundJob
+internal class JobRescheduler<TJob> : IBackgroundJob
     where TJob : IJob
-    where TSchedulerOptions : ISchedulerOptions
 {
     private readonly IUserRepository _userRepository;
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<TJob, TSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<TJob, SchedulerOptions> _jobScheduler;
 
-    public JobRescheduler(IUserRepository userRepository, ISchedulerFactory schedulerFactory, INotificationScheduler<TJob, TSchedulerOptions> jobScheduler)
+    public JobRescheduler(IUserRepository userRepository, ISchedulerFactory schedulerFactory, INotificationScheduler<TJob, SchedulerOptions> jobScheduler)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
@@ -30,9 +29,7 @@ internal abstract class JobRescheduler<TJob, TSchedulerOptions> : IBackgroundJob
 
         foreach (var user in users)
         {
-            await _jobScheduler.Schedule(scheduelr, GetOptions(user), cancellationToken);
+            await _jobScheduler.Schedule(scheduelr, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
         }
     }
-
-    protected abstract TSchedulerOptions GetOptions(User user);
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
@@ -10,11 +11,11 @@ internal sealed class UnscheduleCollectMoodRecordHandler : IEventHandler<UserDis
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> _jobScheduler;
 
     public UnscheduleCollectMoodRecordHandler(
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler)
+        INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -24,6 +25,6 @@ internal sealed class UnscheduleCollectMoodRecordHandler : IEventHandler<UserDis
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        await _jobScheduler.Unschedule(scheduler, new CollectMoodRecordSchedulerOptions(@event.UserId, default), cancellationToken);
+        await _jobScheduler.Unschedule(scheduler, new SchedulerOptions(@event.UserId, default), cancellationToken);
     }
 }

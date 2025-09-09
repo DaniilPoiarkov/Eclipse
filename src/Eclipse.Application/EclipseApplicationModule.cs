@@ -22,6 +22,7 @@ using Eclipse.Application.Exporting;
 using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
+using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
@@ -139,19 +140,19 @@ public static class EclipseApplicationModule
         await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
         logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
 
-        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(FinishTodoItemsJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<FinishTodoItemsJob>>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(JobRescheduler<FinishTodoItemsJob>));
 
-        await manager.EnqueueAsync<GoodMorningJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(GoodMorningJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<GoodMorningJob>>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(JobRescheduler<GoodMorningJob>));
 
-        await manager.EnqueueAsync<MoodReportJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(MoodReportJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<MoodReportJob>>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(JobRescheduler<MoodReportJob>));
 
-        await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(CollectMoodRecordJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<CollectMoodRecordJob>>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(JobRescheduler<CollectMoodRecordJob>));
 
-        await manager.EnqueueAsync<CollectFeedbackRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(CollectFeedbackRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<CollectFeedbackJob>>();
+        logger.LogInformation("Enqueued {Job} job.", nameof(JobRescheduler<CollectFeedbackJob>));
     }
 }

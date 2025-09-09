@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.FinishTodoItems;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
@@ -14,14 +15,14 @@ public sealed class UnscheduleFinishTodoItemsHandlerTests : IClassFixture<Schedu
 {
     private readonly SchedulerFactoryFixture _schedulerFactoryFixture;
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _jobScheduler;
 
     private readonly UnscheduleFinishTodoItemsHandler _sut;
 
     public UnscheduleFinishTodoItemsHandlerTests(SchedulerFactoryFixture schedulerFactoryFixture)
     {
         _schedulerFactoryFixture = schedulerFactoryFixture;
-        _jobScheduler = Substitute.For<INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<FinishTodoItemsJob, SchedulerOptions>>();
 
         _sut = new UnscheduleFinishTodoItemsHandler(_schedulerFactoryFixture.SchedulerFactory, _jobScheduler);
     }
@@ -34,7 +35,7 @@ public sealed class UnscheduleFinishTodoItemsHandlerTests : IClassFixture<Schedu
         await _sut.Handle(@event);
 
         await _jobScheduler.Received().Unschedule(_schedulerFactoryFixture.Scheduler,
-            Arg.Is<FinishTodoItemsSchedulerOptions>(o => o.UserId == @event.UserId)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId)
         );
     }
 }

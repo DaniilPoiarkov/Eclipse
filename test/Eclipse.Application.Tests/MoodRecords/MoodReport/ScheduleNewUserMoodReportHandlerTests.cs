@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Report;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.MoodRecords.Report.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
@@ -23,7 +24,7 @@ public sealed class ScheduleNewUserMoodReportHandlerTests : IClassFixture<Schedu
 
     private readonly ILogger<ScheduleNewUserMoodReportHandler> _logger;
 
-    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<MoodReportJob, SchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewUserMoodReportHandler _sut;
 
@@ -32,7 +33,7 @@ public sealed class ScheduleNewUserMoodReportHandlerTests : IClassFixture<Schedu
         _schedulerFixture = schedulerFixture;
         _userRepository = Substitute.For<IUserRepository>();
         _logger = Substitute.For<ILogger<ScheduleNewUserMoodReportHandler>>();
-        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, SchedulerOptions>>();
 
         _sut = new ScheduleNewUserMoodReportHandler(_userRepository, _schedulerFixture.SchedulerFactory, _logger, _jobScheduler);
     }
@@ -61,7 +62,7 @@ public sealed class ScheduleNewUserMoodReportHandlerTests : IClassFixture<Schedu
 
         await _schedulerFixture.SchedulerFactory.Received().GetScheduler();
         await _jobScheduler.Received().Schedule(_schedulerFixture.Scheduler,
-            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
         );
     }
 }
@@ -74,7 +75,7 @@ public sealed class ScheduleUserEnabledMoodReportHandlerTests : IClassFixture<Sc
 
     private readonly ILogger<ScheduleUserEnabledMoodReportHandler> _logger;
 
-    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<MoodReportJob, SchedulerOptions> _jobScheduler;
 
     private readonly ScheduleUserEnabledMoodReportHandler _sut;
 
@@ -83,7 +84,7 @@ public sealed class ScheduleUserEnabledMoodReportHandlerTests : IClassFixture<Sc
         _schedulerFixture = schedulerFixture;
         _userRepository = Substitute.For<IUserRepository>();
         _logger = Substitute.For<ILogger<ScheduleUserEnabledMoodReportHandler>>();
-        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, SchedulerOptions>>();
 
         _sut = new ScheduleUserEnabledMoodReportHandler(_userRepository, _schedulerFixture.SchedulerFactory, _logger, _jobScheduler);
     }
@@ -101,7 +102,7 @@ public sealed class ScheduleUserEnabledMoodReportHandlerTests : IClassFixture<Sc
 
         await _schedulerFixture.SchedulerFactory.Received().GetScheduler();
         await _jobScheduler.Received().Schedule(_schedulerFixture.Scheduler,
-            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == user.Id && o.Gmt == user.Gmt)
         );
     }
 }
