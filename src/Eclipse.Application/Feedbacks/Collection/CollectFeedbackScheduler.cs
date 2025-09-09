@@ -20,7 +20,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
     public Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var jobKey = JobKey.Create($"{nameof(CollectFeedbackJob)}-{options.UserId}");
-        
+
         var job = JobBuilder.Create<CollectFeedbackJob>()
             .WithIdentity(jobKey)
             .UsingJobData("data", JsonConvert.SerializeObject(new CollectFeedbackJobData(options.UserId)))
@@ -37,7 +37,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
-            .WithCalendarIntervalSchedule(schedule => 
+            .WithCalendarIntervalSchedule(schedule =>
                 schedule.WithIntervalInWeeks(NotificationConsts.OneUnit)
             )
             .StartAt(time)

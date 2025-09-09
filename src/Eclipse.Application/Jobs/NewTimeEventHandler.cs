@@ -1,21 +1,19 @@
-﻿using Eclipse.Application.Jobs;
-using Eclipse.Common.Events;
+﻿using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
-namespace Eclipse.Application.MoodRecords.Collection.Handlers;
+namespace Eclipse.Application.Jobs;
 
-internal sealed class ScheduleNewTimeCollectMoodRecordHandler : IEventHandler<GmtChangedDomainEvent>
+internal sealed class NewTimeEventHandler<TJob> : IEventHandler<GmtChangedDomainEvent>
+    where TJob : IJob
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<TJob, SchedulerOptions> _jobScheduler;
 
-    public ScheduleNewTimeCollectMoodRecordHandler(
-        ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> jobScheduler)
+    public NewTimeEventHandler(ISchedulerFactory schedulerFactory, INotificationScheduler<TJob, SchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -23,7 +21,7 @@ internal sealed class ScheduleNewTimeCollectMoodRecordHandler : IEventHandler<Gm
 
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var scheduler = await _schedulerFactory.GetScheduler();
+        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
         var options = new SchedulerOptions(@event.UserId, @event.Gmt);
 
         await _jobScheduler.Unschedule(scheduler, options, cancellationToken);

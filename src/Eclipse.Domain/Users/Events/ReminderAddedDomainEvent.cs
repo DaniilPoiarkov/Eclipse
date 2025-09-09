@@ -1,8 +1,9 @@
 ﻿using Eclipse.Common.Events;
+using Eclipse.Domain.Shared.Users;
 
 namespace Eclipse.Domain.Users.Events;
 
-public sealed class ReminderAddedDomainEvent : IDomainEvent
+public sealed class ReminderAddedDomainEvent : IDomainEvent, IHasUserId
 {
     public Guid ReminderId { get; }
     public Guid UserId { get; }
