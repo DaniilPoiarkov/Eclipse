@@ -1,3 +1,5 @@
-﻿namespace Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.Jobs;
 
-internal sealed record CollectMoodRecordSchedulerOptions(Guid UserId, TimeSpan Gmt);
+namespace Eclipse.Application.MoodRecords.Collection;
+
+internal sealed record CollectMoodRecordSchedulerOptions(Guid UserId, TimeSpan Gmt) : ISchedulerOptions;

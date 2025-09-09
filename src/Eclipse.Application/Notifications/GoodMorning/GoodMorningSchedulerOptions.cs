@@ -1,3 +1,5 @@
-﻿namespace Eclipse.Application.Notifications.GoodMorning;
+﻿using Eclipse.Application.Jobs;
 
-internal record GoodMorningSchedulerOptions(Guid UserId, TimeSpan Gmt);
+namespace Eclipse.Application.Notifications.GoodMorning;
+
+internal record GoodMorningSchedulerOptions(Guid UserId, TimeSpan Gmt) : ISchedulerOptions;

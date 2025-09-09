@@ -1,3 +1,5 @@
-﻿namespace Eclipse.Application.MoodRecords.Report;
+﻿using Eclipse.Application.Jobs;
 
-internal record MoodReportSchedulerOptions(Guid UserId, TimeSpan Gmt);
+namespace Eclipse.Application.MoodRecords.Report;
+
+internal record MoodReportSchedulerOptions(Guid UserId, TimeSpan Gmt) : ISchedulerOptions;

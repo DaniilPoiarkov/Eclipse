@@ -1,3 +1,5 @@
-﻿namespace Eclipse.Application.Feedbacks.Collection;
+﻿using Eclipse.Application.Jobs;
 
-internal sealed record CollectFeedbackSchedulerOptions(Guid UserId, TimeSpan Gmt);
+namespace Eclipse.Application.Feedbacks.Collection;
+
+internal sealed record CollectFeedbackSchedulerOptions(Guid UserId, TimeSpan Gmt) : ISchedulerOptions;
