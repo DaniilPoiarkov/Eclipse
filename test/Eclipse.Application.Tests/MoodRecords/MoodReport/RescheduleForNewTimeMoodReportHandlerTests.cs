@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Report;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.MoodRecords.Report.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
@@ -15,14 +16,14 @@ public sealed class RescheduleForNewTimeMoodReportHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<MoodReportJob, SchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeMoodReportHandler _sut;
 
     public RescheduleForNewTimeMoodReportHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, SchedulerOptions>>();
 
         _sut = new ScheduleNewTimeMoodReportHandler(_schedulerFactory, _jobScheduler);
     }
@@ -38,10 +39,10 @@ public sealed class RescheduleForNewTimeMoodReportHandlerTests
         await _sut.Handle(@event);
 
         await _jobScheduler.Received().Unschedule(scheduler,
-            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
         await _jobScheduler.Received().Schedule(scheduler,
-            Arg.Is<MoodReportSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
     }
 }

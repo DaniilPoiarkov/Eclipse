@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
@@ -10,9 +11,9 @@ internal sealed class UnscheduleMoodReportHandler : IEventHandler<UserDisabledDo
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<MoodReportJob, SchedulerOptions> _jobScheduler;
 
-    public UnscheduleMoodReportHandler(ISchedulerFactory schedulerFactory, INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> jobScheduler)
+    public UnscheduleMoodReportHandler(ISchedulerFactory schedulerFactory, INotificationScheduler<MoodReportJob, SchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -21,6 +22,6 @@ internal sealed class UnscheduleMoodReportHandler : IEventHandler<UserDisabledDo
     public async Task Handle(UserDisabledDomainEvent @event, CancellationToken cancellationToken = default)
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-        await _jobScheduler.Unschedule(scheduler, new MoodReportSchedulerOptions(@event.UserId, default), cancellationToken);
+        await _jobScheduler.Unschedule(scheduler, new SchedulerOptions(@event.UserId, default), cancellationToken);
     }
 }
