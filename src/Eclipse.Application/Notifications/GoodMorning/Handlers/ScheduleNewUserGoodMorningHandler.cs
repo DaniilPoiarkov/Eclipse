@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Notifications;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Domain.Users.Handlers;
@@ -9,13 +10,13 @@ using Quartz;
 
 namespace Eclipse.Application.Notifications.GoodMorning.Handlers;
 
-internal sealed class ScheduleNewUserGoodMorningHandler : UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob, GoodMorningSchedulerOptions>
+internal sealed class ScheduleNewUserGoodMorningHandler : UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob, SchedulerOptions>
 {
     public ScheduleNewUserGoodMorningHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         ILogger<ScheduleNewUserGoodMorningHandler> logger,
-        INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions> jobScheduler)
+        INotificationScheduler<GoodMorningJob, SchedulerOptions> jobScheduler)
         : base(userRepository, schedulerFactory, jobScheduler, logger) { }
 
     public override Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
@@ -23,8 +24,8 @@ internal sealed class ScheduleNewUserGoodMorningHandler : UserEventHandlerBase<N
         return Handle(@event.UserId, cancellationToken);
     }
 
-    protected override GoodMorningSchedulerOptions GetOptions(User user)
+    protected override SchedulerOptions GetOptions(User user)
     {
-        return new GoodMorningSchedulerOptions(user.Id, user.Gmt);
+        return new SchedulerOptions(user.Id, user.Gmt);
     }
 }

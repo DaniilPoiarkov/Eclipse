@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.GoodMorning;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Fixtures;
@@ -20,7 +21,7 @@ public sealed class GoodMorningJobReschedulerTests : IClassFixture<SchedulerFact
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<GoodMorningJob, SchedulerOptions> _jobScheduler;
 
     private readonly SchedulerFactoryFixture _schedulerFactoryFixture;
 
@@ -30,7 +31,7 @@ public sealed class GoodMorningJobReschedulerTests : IClassFixture<SchedulerFact
     {
         _userRepository = Substitute.For<IUserRepository>();
         _schedulerFactory = schedulerFactoryFixture.SchedulerFactory;
-        _jobScheduler = Substitute.For<INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<GoodMorningJob, SchedulerOptions>>();
         _schedulerFactoryFixture = schedulerFactoryFixture;
 
         _sut = new GoodMorningJobRescheduler(_userRepository, _schedulerFactory, _jobScheduler);
@@ -48,7 +49,7 @@ public sealed class GoodMorningJobReschedulerTests : IClassFixture<SchedulerFact
 
         await _jobScheduler.Received(users.Count).Schedule(
             _schedulerFactoryFixture.Scheduler,
-            Arg.Is<GoodMorningSchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))
+            Arg.Is<SchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))
         );
     }
 }
