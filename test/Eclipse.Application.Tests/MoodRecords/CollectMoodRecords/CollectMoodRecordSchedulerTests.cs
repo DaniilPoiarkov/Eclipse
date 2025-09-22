@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
@@ -27,7 +28,7 @@ public sealed class CollectMoodRecordSchedulerTests
     public async Task Schedule_WhenCalled_ThenSchedulesJob()
     {
         var scheduler = Substitute.For<IScheduler>();
-        var options = new CollectMoodRecordSchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
+        var options = new SchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
 
         var currentTime = DateTime.UtcNow;
 
@@ -51,7 +52,7 @@ public sealed class CollectMoodRecordSchedulerTests
     public async Task Unschedule_WhenCalled_ThenDeletesJob()
     {
         var scheduler = Substitute.For<IScheduler>();
-        var options = new CollectMoodRecordSchedulerOptions(Guid.NewGuid(), default);
+        var options = new SchedulerOptions(Guid.NewGuid(), default);
 
         await _sut.Unschedule(scheduler, options);
         await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(CollectMoodRecordJob)}-{options.UserId}"));

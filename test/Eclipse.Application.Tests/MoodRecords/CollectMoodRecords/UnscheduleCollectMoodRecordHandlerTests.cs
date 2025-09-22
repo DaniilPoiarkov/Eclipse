@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Collection.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
@@ -14,14 +15,14 @@ public sealed class UnscheduleCollectMoodRecordHandlerTests : IClassFixture<Sche
 {
     private readonly SchedulerFactoryFixture _schedulerFixture;
 
-    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> _jobScheduler;
 
     private readonly UnscheduleCollectMoodRecordHandler _sut;
 
     public UnscheduleCollectMoodRecordHandlerTests(SchedulerFactoryFixture scheduler)
     {
         _schedulerFixture = scheduler;
-        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, SchedulerOptions>>();
 
         _sut = new UnscheduleCollectMoodRecordHandler(scheduler.SchedulerFactory, _jobScheduler);
     }
@@ -36,7 +37,7 @@ public sealed class UnscheduleCollectMoodRecordHandlerTests : IClassFixture<Sche
         await _schedulerFixture.SchedulerFactory.Received().GetScheduler();
         await _jobScheduler.Received().Unschedule(
             _schedulerFixture.Scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == @event.UserId)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId)
         );
     }
 }
