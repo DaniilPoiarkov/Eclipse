@@ -25,7 +25,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
             .UsingJobData("data", JsonConvert.SerializeObject(new CollectFeedbackJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Monday)
+        var time = _timeProvider.Now.NextMonth()
             .WithTime(NotificationConsts.Day130PM)
             .Add(-options.Gmt);
 
@@ -37,7 +37,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .WithCalendarIntervalSchedule(schedule => 
-                schedule.WithIntervalInWeeks(NotificationConsts.OneUnit)
+                schedule.WithIntervalInMonths(NotificationConsts.OneUnit)
             )
             .StartAt(time)
             .Build();

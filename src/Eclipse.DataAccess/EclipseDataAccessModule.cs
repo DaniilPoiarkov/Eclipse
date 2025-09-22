@@ -142,7 +142,7 @@ public static class EclipseDataAccessModule
         return services;
     }
 
-    public static async Task InitializeDataAccessModuleAsync(this WebApplication app)
+    public static async Task InitializeDataAccessModuleAsync(this WebApplication app, CancellationToken cancellationToken = default)
     {
         using var scope = app.Services.CreateScope();
 
@@ -162,14 +162,14 @@ public static class EclipseDataAccessModule
         using var client = new CosmosClient(configuration.GetConnectionString("Emulator"));
 
         logger.LogInformation("Creating database if it not exists...");
-        var database = await client.CreateDatabaseIfNotExistsAsync(options.Value.DatabaseId, ThroughputProperties.CreateManualThroughput(1000));
+        var database = await client.CreateDatabaseIfNotExistsAsync(options.Value.DatabaseId, ThroughputProperties.CreateManualThroughput(1000), cancellationToken: cancellationToken);
 
         logger.LogInformation("Creating container if it not exists...");
         await database.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
         {
             Id = options.Value.Container,
             PartitionKeyPath = "/Id",
-        });
+        }, cancellationToken: cancellationToken);
 
         logger.LogInformation("{module} module initialized successfully", nameof(EclipseDataAccessModule));
     }
