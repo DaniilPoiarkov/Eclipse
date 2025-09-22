@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
@@ -10,11 +11,11 @@ internal sealed class ScheduleNewTimeFinishTodoItemsHandler : IEventHandler<GmtC
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _jobScheduler;
 
     public ScheduleNewTimeFinishTodoItemsHandler(
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
+        INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -23,7 +24,7 @@ internal sealed class ScheduleNewTimeFinishTodoItemsHandler : IEventHandler<GmtC
     public async Task Handle(GmtChangedDomainEvent @event, CancellationToken cancellationToken = default)
     {
         var scheduler = await _schedulerFactory.GetScheduler();
-        var options = new FinishTodoItemsSchedulerOptions(@event.UserId, @event.Gmt);
+        var options = new SchedulerOptions(@event.UserId, @event.Gmt);
 
         await _jobScheduler.Unschedule(scheduler, options, cancellationToken);
         await _jobScheduler.Schedule(scheduler, options, cancellationToken);

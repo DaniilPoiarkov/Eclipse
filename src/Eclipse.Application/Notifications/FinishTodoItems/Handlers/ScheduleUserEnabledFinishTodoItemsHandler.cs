@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Notifications;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Domain.Users.Handlers;
@@ -9,12 +10,12 @@ using Quartz;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 
-internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>
+internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob, SchedulerOptions>
 {
     public ScheduleUserEnabledFinishTodoItemsHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler,
+        INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> jobScheduler,
         ILogger<ScheduleUserEnabledFinishTodoItemsHandler> logger)
         : base(userRepository, schedulerFactory, jobScheduler, logger) { }
 
@@ -23,8 +24,8 @@ internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : UserEventHandl
         return Handle(@event.UserId, cancellationToken);
     }
 
-    protected override FinishTodoItemsSchedulerOptions GetOptions(User user)
+    protected override SchedulerOptions GetOptions(User user)
     {
-        return new FinishTodoItemsSchedulerOptions(user.Id, user.Gmt);
+        return new SchedulerOptions(user.Id, user.Gmt);
     }
 }

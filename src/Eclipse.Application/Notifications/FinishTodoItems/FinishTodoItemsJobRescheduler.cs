@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 
@@ -12,12 +13,12 @@ internal sealed class FinishTodoItemsJobRescheduler : IBackgroundJob
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _jobScheduler;
 
     public FinishTodoItemsJobRescheduler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> jobScheduler)
+        INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> jobScheduler)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
@@ -32,7 +33,7 @@ internal sealed class FinishTodoItemsJobRescheduler : IBackgroundJob
 
         foreach (var user in users)
         {
-            await _jobScheduler.Schedule(scheduler, new FinishTodoItemsSchedulerOptions(user.Id, user.Gmt), cancellationToken);
+            await _jobScheduler.Schedule(scheduler, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.FinishTodoItems;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Fixtures;
@@ -16,7 +17,7 @@ public sealed class FinishTodoItemsJobReschedulerTests : IClassFixture<Scheduler
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _notificationScheduler;
+    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _notificationScheduler;
 
     private readonly SchedulerFactoryFixture _schedulerFactoryFixture;
 
@@ -25,7 +26,7 @@ public sealed class FinishTodoItemsJobReschedulerTests : IClassFixture<Scheduler
     public FinishTodoItemsJobReschedulerTests(SchedulerFactoryFixture schedulerFactoryFixture)
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _notificationScheduler = Substitute.For<INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
+        _notificationScheduler = Substitute.For<INotificationScheduler<FinishTodoItemsJob, SchedulerOptions>>();
         _schedulerFactoryFixture = schedulerFactoryFixture;
 
         _sut = new FinishTodoItemsJobRescheduler(_userRepository, schedulerFactoryFixture.SchedulerFactory, _notificationScheduler);
@@ -44,7 +45,7 @@ public sealed class FinishTodoItemsJobReschedulerTests : IClassFixture<Scheduler
         await _notificationScheduler.Received(users.Count)
             .Schedule(
                 _schedulerFactoryFixture.Scheduler,
-                Arg.Is<FinishTodoItemsSchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))
+                Arg.Is<SchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))
             );
     }
 }
