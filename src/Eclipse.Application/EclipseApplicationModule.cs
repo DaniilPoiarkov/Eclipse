@@ -129,29 +129,29 @@ public static class EclipseApplicationModule
         return services;
     }
 
-    public static async Task InitializeApplicationLayerAsync(this WebApplication app)
+    public static async Task InitializeApplicationLayerAsync(this WebApplication app, CancellationToken cancellationToken = default)
     {
         using var scope = app.Services.CreateAsyncScope();
 
         var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<IBackgroundJobManager>>();
 
-        await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
+        await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>(cancellationToken);
         logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
 
-        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>();
+        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>(cancellationToken);
         logger.LogInformation("Enqueued {Job} job.", nameof(FinishTodoItemsJobRescheduler));
 
-        await manager.EnqueueAsync<GoodMorningJobRescheduler>();
+        await manager.EnqueueAsync<GoodMorningJobRescheduler>(cancellationToken);
         logger.LogInformation("Enqueued {Job} job.", nameof(GoodMorningJobRescheduler));
 
-        await manager.EnqueueAsync<MoodReportJobRescheduler>();
+        await manager.EnqueueAsync<MoodReportJobRescheduler>(cancellationToken);
         logger.LogInformation("Enqueued {Job} job.", nameof(MoodReportJobRescheduler));
 
-        await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>();
+        await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>(cancellationToken);
         logger.LogInformation("Enqueued {Job} job.", nameof(CollectMoodRecordJobRescheduler));
 
-        await manager.EnqueueAsync<CollectFeedbackRescheduler>();
+        await manager.EnqueueAsync<CollectFeedbackRescheduler>(cancellationToken);
         logger.LogInformation("Enqueued {Job} job.", nameof(CollectFeedbackRescheduler));
     }
 }
