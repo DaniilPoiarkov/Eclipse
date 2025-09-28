@@ -2,5 +2,4 @@
 
 namespace Eclipse.Domain.Users.Events;
 
-public sealed record UserDisabledDomainEvent(Guid UserId) : IDomainEvent;
-
+public sealed record UserDisabledDomainEvent(Guid UserId) : IDomainEvent, IHasUserId;

@@ -127,6 +127,12 @@ public static class EclipseApplicationModule
             .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<MoodReportJob>>()
             .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<GoodMorningJob>>();
 
+        services.AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<CollectFeedbackJob>>()
+            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<CollectMoodRecordJob>>()
+            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<FinishTodoItemsJob>>()
+            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<MoodReportJob>>()
+            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<GoodMorningJob>>();
+
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(INotificationScheduler<,>)), publicOnly: false)
             .AsImplementedInterfaces()

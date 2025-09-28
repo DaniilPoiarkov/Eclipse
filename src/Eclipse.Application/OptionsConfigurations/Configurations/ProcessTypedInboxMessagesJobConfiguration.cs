@@ -67,12 +67,12 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectFeedbackJob>>(options);
 
         /// <see cref="UserDisabledDomainEvent"/>
-        AddJob<UserDisabledDomainEvent, UnscheduleCollectMoodRecordHandler>(options);
-        AddJob<UserDisabledDomainEvent, UnscheduleMoodReportHandler>(options);
-        AddJob<UserDisabledDomainEvent, UnscheduleFinishTodoItemsHandler>(options);
-        AddJob<UserDisabledDomainEvent, UnscheduleGoodMorningHandler>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectMoodRecordJob>>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<MoodReportJob>>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<FinishTodoItemsJob>>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<GoodMorningJob>>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectFeedbackJob>>(options);
         AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(options);
-        AddJob<UserDisabledDomainEvent, UnscheduleCollectFeedbackHandler>(options);
 
         /// <see cref="UserEnabledDomainEvent"/>
         AddJob<UserEnabledDomainEvent, ScheduleUserEnabledFinishTodoItemsHandler>(options);
