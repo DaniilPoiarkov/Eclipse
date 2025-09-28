@@ -1,13 +1,14 @@
 ﻿using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
+using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
 
 using Quartz;
 
-namespace Eclipse.Domain.Users.Handlers;
+namespace Eclipse.Application.Jobs;
 
-public abstract class UserEventHandlerBase<TEvent, TJob, TJobOptions> : IEventHandler<TEvent>
+internal abstract class UserEventHandlerBase<TEvent, TJob> : IEventHandler<TEvent>
     where TJob : IJob
     where TEvent : IDomainEvent
 {
@@ -15,14 +16,14 @@ public abstract class UserEventHandlerBase<TEvent, TJob, TJobOptions> : IEventHa
 
     protected ISchedulerFactory SchedulerFactory { get; }
 
-    protected INotificationScheduler<TJob, TJobOptions> JobScheduler { get; }
+    protected INotificationScheduler<TJob, SchedulerOptions> JobScheduler { get; }
 
     protected ILogger Logger { get; }
 
     protected UserEventHandlerBase(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<TJob, TJobOptions> jobScheduler,
+        INotificationScheduler<TJob, SchedulerOptions> jobScheduler,
         ILogger logger)
     {
         UserRepository = userRepository;
@@ -51,8 +52,6 @@ public abstract class UserEventHandlerBase<TEvent, TJob, TJobOptions> : IEventHa
         }
 
         var scheduler = await SchedulerFactory.GetScheduler(cancellationToken);
-        await JobScheduler.Schedule(scheduler, GetOptions(user), cancellationToken);
+        await JobScheduler.Schedule(scheduler, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
     }
-
-    protected abstract TJobOptions GetOptions(User user);
 }
