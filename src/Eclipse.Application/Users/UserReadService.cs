@@ -34,7 +34,7 @@ internal sealed class UserReadService : IUserReadService
             request.PageSize,
             cancellationToken
         );
-        
+
         var models = users.Select(u => u.ToSlimDto());
 
         return PaginatedList<UserSlimDto>.Create(models, count, request.PageSize);
