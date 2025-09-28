@@ -2,7 +2,6 @@
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
-using Eclipse.Domain.Users.Handlers;
 
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +9,7 @@ using Quartz;
 
 namespace Eclipse.Application.MoodRecords.Report.Handlers;
 
-internal sealed class ScheduleNewUserMoodReportHandler : UserEventHandlerBase<NewUserJoinedDomainEvent, MoodReportJob, SchedulerOptions>
+internal sealed class ScheduleNewUserMoodReportHandler : UserEventHandlerBase<NewUserJoinedDomainEvent, MoodReportJob>
 {
     public ScheduleNewUserMoodReportHandler(
         IUserRepository userRepository,
@@ -22,10 +21,5 @@ internal sealed class ScheduleNewUserMoodReportHandler : UserEventHandlerBase<Ne
     public override Task Handle(NewUserJoinedDomainEvent @event, CancellationToken cancellationToken = default)
     {
         return Handle(@event.UserId, cancellationToken);
-    }
-
-    protected override SchedulerOptions GetOptions(User user)
-    {
-        return new SchedulerOptions(user.Id, user.Gmt);
     }
 }

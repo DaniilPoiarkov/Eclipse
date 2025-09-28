@@ -2,7 +2,6 @@
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
-using Eclipse.Domain.Users.Handlers;
 
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +9,7 @@ using Quartz;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 
-internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob, SchedulerOptions>
+internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>
 {
     public ScheduleUserEnabledFinishTodoItemsHandler(
         IUserRepository userRepository,
@@ -22,10 +21,5 @@ internal sealed class ScheduleUserEnabledFinishTodoItemsHandler : UserEventHandl
     public override Task Handle(UserEnabledDomainEvent @event, CancellationToken cancellationToken = default)
     {
         return Handle(@event.UserId, cancellationToken);
-    }
-
-    protected override SchedulerOptions GetOptions(User user)
-    {
-        return new SchedulerOptions(user.Id, user.Gmt);
     }
 }

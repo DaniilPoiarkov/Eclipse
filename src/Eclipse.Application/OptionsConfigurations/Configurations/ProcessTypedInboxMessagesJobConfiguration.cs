@@ -1,9 +1,15 @@
 ﻿using Eclipse.Application.Feedbacks;
+using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.Feedbacks.Collection.Handlers;
 using Eclipse.Application.InboxMessages;
+using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Collection.Handlers;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.MoodRecords.Report.Handlers;
+using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
+using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.Notifications.GoodMorning.Handlers;
 using Eclipse.Application.Notifications.NewUserJoined;
 using Eclipse.Application.Notifications.Test;
@@ -54,11 +60,11 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<TodoItemFinishedDomainEvent, TodoItemFinishedEventHandler>(options);
 
         /// <see cref="GmtChangedDomainEvent"/>
-        AddJob<GmtChangedDomainEvent, ScheduleNewTimeFinishTodoItemsHandler>(options);
-        AddJob<GmtChangedDomainEvent, ScheduleNewTimeGoodMorningHandler>(options);
-        AddJob<GmtChangedDomainEvent, ScheduleNewTimeMoodReportHandler>(options);
-        AddJob<GmtChangedDomainEvent, ScheduleNewTimeCollectMoodRecordHandler>(options);
-        AddJob<GmtChangedDomainEvent, ScheduleNewTimeCollectFeedbackHandler>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<FinishTodoItemsJob>>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<GoodMorningJob>>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<MoodReportJob>>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectMoodRecordJob>>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectFeedbackJob>>(options);
 
         /// <see cref="UserDisabledDomainEvent"/>
         AddJob<UserDisabledDomainEvent, UnscheduleCollectMoodRecordHandler>(options);

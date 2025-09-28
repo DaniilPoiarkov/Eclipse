@@ -22,6 +22,7 @@ using Eclipse.Application.Exporting;
 using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
+using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
@@ -40,6 +41,7 @@ using Eclipse.Application.Users;
 using Eclipse.Common.Background;
 using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
+using Eclipse.Domain.Users.Events;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -118,6 +120,12 @@ public static class EclipseApplicationModule
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)), publicOnly: false)
             .AsSelfWithInterfaces()
             .WithTransientLifetime());
+
+        services.AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<CollectFeedbackJob>>()
+            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<CollectMoodRecordJob>>()
+            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<FinishTodoItemsJob>>()
+            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<MoodReportJob>>()
+            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<GoodMorningJob>>();
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(INotificationScheduler<,>)), publicOnly: false)
