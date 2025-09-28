@@ -2,4 +2,4 @@
 
 namespace Eclipse.Domain.Users.Events;
 
-public sealed record UserEnabledDomainEvent(Guid UserId) : IDomainEvent;
+public sealed record UserEnabledDomainEvent(Guid UserId) : IDomainEvent, IHasUserId;

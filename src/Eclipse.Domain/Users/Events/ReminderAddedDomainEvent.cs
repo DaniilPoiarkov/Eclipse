@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.Users.Events;
 
-public sealed class ReminderAddedDomainEvent : IDomainEvent
+public sealed class ReminderAddedDomainEvent : IDomainEvent, IHasUserId
 {
     public Guid ReminderId { get; }
     public Guid UserId { get; }
