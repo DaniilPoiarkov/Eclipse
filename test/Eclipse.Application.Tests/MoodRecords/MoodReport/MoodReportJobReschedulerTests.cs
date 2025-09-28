@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Report;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Fixtures;
@@ -18,7 +19,7 @@ public sealed class MoodReportJobReschedulerTests : IClassFixture<SchedulerFacto
 
     private readonly IUserRepository _userRepository;
 
-    private readonly INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<MoodReportJob, SchedulerOptions> _jobScheduler;
 
     private readonly MoodReportJobRescheduler _sut;
 
@@ -26,7 +27,7 @@ public sealed class MoodReportJobReschedulerTests : IClassFixture<SchedulerFacto
     {
         _schedulerFixture = schedulerFixture;
         _userRepository = Substitute.For<IUserRepository>();
-        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<MoodReportJob, SchedulerOptions>>();
 
         _sut = new MoodReportJobRescheduler(_userRepository, _schedulerFixture.SchedulerFactory, _jobScheduler);
     }
@@ -41,7 +42,7 @@ public sealed class MoodReportJobReschedulerTests : IClassFixture<SchedulerFacto
         await _sut.Execute();
         await _jobScheduler.Received(users.Count).Schedule(
             _schedulerFixture.Scheduler,
-            Arg.Is<MoodReportSchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))
+            Arg.Is<SchedulerOptions>(o => users.Exists(u => u.Id == o.UserId))
         );
     }
 }

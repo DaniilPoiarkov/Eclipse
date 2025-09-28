@@ -7,8 +7,6 @@ using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.Feedbacks;
 using Eclipse.Pipelines.Stores.Messages;
 
-using Polly;
-
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 

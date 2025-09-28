@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Events;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
 
@@ -10,11 +11,11 @@ internal sealed class UnscheduleCollectFeedbackHandler : IEventHandler<UserDisab
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectFeedbackJob, SchedulerOptions> _jobScheduler;
 
     public UnscheduleCollectFeedbackHandler(
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> jobScheduler)
+        INotificationScheduler<CollectFeedbackJob, SchedulerOptions> jobScheduler)
     {
         _schedulerFactory = schedulerFactory;
         _jobScheduler = jobScheduler;
@@ -23,6 +24,6 @@ internal sealed class UnscheduleCollectFeedbackHandler : IEventHandler<UserDisab
     public async Task Handle(UserDisabledDomainEvent @event, CancellationToken cancellationToken = default)
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-        await _jobScheduler.Unschedule(scheduler, new CollectFeedbackSchedulerOptions(@event.UserId, default), cancellationToken);
+        await _jobScheduler.Unschedule(scheduler, new SchedulerOptions(@event.UserId, default), cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 
@@ -12,12 +13,12 @@ internal sealed class CollectFeedbackRescheduler : IBackgroundJob
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectFeedbackJob, SchedulerOptions> _jobScheduler;
 
     public CollectFeedbackRescheduler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions> jobScheduler)
+        INotificationScheduler<CollectFeedbackJob, SchedulerOptions> jobScheduler)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
@@ -31,7 +32,7 @@ internal sealed class CollectFeedbackRescheduler : IBackgroundJob
 
         foreach (var user in users)
         {
-            await _jobScheduler.Schedule(scheduelr, new CollectFeedbackSchedulerOptions(user.Id, user.Gmt), cancellationToken);
+            await _jobScheduler.Schedule(scheduelr, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
         }
     }
 }

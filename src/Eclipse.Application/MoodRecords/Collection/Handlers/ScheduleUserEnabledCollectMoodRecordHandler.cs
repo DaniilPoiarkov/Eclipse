@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Notifications;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 using Eclipse.Domain.Users.Events;
 using Eclipse.Domain.Users.Handlers;
@@ -9,12 +10,12 @@ using Quartz;
 
 namespace Eclipse.Application.MoodRecords.Collection.Handlers;
 
-internal sealed class ScheduleUserEnabledCollectMoodRecordHandler : UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>
+internal sealed class ScheduleUserEnabledCollectMoodRecordHandler : UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob, SchedulerOptions>
 {
     public ScheduleUserEnabledCollectMoodRecordHandler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> jobScheduler,
+        INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> jobScheduler,
         ILogger<ScheduleUserEnabledCollectMoodRecordHandler> logger)
         : base(userRepository, schedulerFactory, jobScheduler, logger) { }
 
@@ -23,8 +24,8 @@ internal sealed class ScheduleUserEnabledCollectMoodRecordHandler : UserEventHan
         return Handle(@event.UserId, cancellationToken);
     }
 
-    protected override CollectMoodRecordSchedulerOptions GetOptions(User user)
+    protected override SchedulerOptions GetOptions(User user)
     {
-        return new CollectMoodRecordSchedulerOptions(user.Id, user.Gmt);
+        return new SchedulerOptions(user.Id, user.Gmt);
     }
 }

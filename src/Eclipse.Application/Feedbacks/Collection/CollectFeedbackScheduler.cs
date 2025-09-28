@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Notifications;
 
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Application.Feedbacks.Collection;
 
-internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectFeedbackJob, CollectFeedbackSchedulerOptions>
+internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectFeedbackJob, SchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -16,10 +17,10 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
         _timeProvider = timeProvider;
     }
 
-    public Task Schedule(IScheduler scheduler, CollectFeedbackSchedulerOptions options, CancellationToken cancellationToken = default)
+    public Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var jobKey = JobKey.Create($"{nameof(CollectFeedbackJob)}-{options.UserId}");
-        
+
         var job = JobBuilder.Create<CollectFeedbackJob>()
             .WithIdentity(jobKey)
             .UsingJobData("data", JsonConvert.SerializeObject(new CollectFeedbackJobData(options.UserId)))
@@ -36,7 +37,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
-            .WithCalendarIntervalSchedule(schedule => 
+            .WithCalendarIntervalSchedule(schedule =>
                 schedule.WithIntervalInMonths(NotificationConsts.OneUnit)
             )
             .StartAt(time)
@@ -45,7 +46,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
         return scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, CollectFeedbackSchedulerOptions options, CancellationToken cancellationToken = default)
+    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var jobKey = JobKey.Create($"{nameof(CollectFeedbackJob)}-{options.UserId}");
         return scheduler.DeleteJob(jobKey, cancellationToken);

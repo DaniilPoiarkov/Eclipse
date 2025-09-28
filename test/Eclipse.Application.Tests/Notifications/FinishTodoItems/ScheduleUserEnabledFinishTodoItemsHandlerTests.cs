@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.FinishTodoItems;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
@@ -21,8 +22,8 @@ public sealed class ScheduleUserEnabledFinishTodoItemsHandlerTests
 
     private readonly ISchedulerFactory _schedulerFactory = Substitute.For<ISchedulerFactory>();
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions> _jobScheduler =
-        Substitute.For<INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>>();
+    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _jobScheduler =
+        Substitute.For<INotificationScheduler<FinishTodoItemsJob, SchedulerOptions>>();
 
     private readonly ILogger<ScheduleUserEnabledFinishTodoItemsHandler> _logger =
         Substitute.For<ILogger<ScheduleUserEnabledFinishTodoItemsHandler>>();
@@ -52,7 +53,7 @@ public sealed class ScheduleUserEnabledFinishTodoItemsHandlerTests
         await _sut.Handle(new UserEnabledDomainEvent(user.Id));
 
         await _jobScheduler.Received().Schedule(scheduler,
-            Arg.Is<FinishTodoItemsSchedulerOptions>(opts => opts.UserId == user.Id
+            Arg.Is<SchedulerOptions>(opts => opts.UserId == user.Id
                 && opts.Gmt == user.Gmt)
         );
     }

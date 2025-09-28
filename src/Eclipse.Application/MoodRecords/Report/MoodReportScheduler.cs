@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Notifications;
 
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Application.MoodRecords.Report;
 
-internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob, MoodReportSchedulerOptions>
+internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob, SchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -16,7 +17,7 @@ internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob
         _timeProvider = timeProvider;
     }
 
-    public async Task Schedule(IScheduler scheduler, MoodReportSchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
 
@@ -43,7 +44,7 @@ internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, MoodReportSchedulerOptions options, CancellationToken cancellationToken = default)
+    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
         return scheduler.DeleteJob(key, cancellationToken);

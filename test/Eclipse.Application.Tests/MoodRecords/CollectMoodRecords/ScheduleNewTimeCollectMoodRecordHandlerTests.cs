@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Collection.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
@@ -15,14 +16,14 @@ public sealed class ScheduleNewTimeCollectMoodRecordHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<CollectMoodRecordJob, SchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeCollectMoodRecordHandler _sut;
 
     public ScheduleNewTimeCollectMoodRecordHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<CollectMoodRecordJob, SchedulerOptions>>();
         _sut = new ScheduleNewTimeCollectMoodRecordHandler(_schedulerFactory, _jobScheduler);
     }
 
@@ -37,10 +38,10 @@ public sealed class ScheduleNewTimeCollectMoodRecordHandlerTests
         await _sut.Handle(@event);
 
         await _jobScheduler.Received().Unschedule(scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
         await _jobScheduler.Received().Schedule(scheduler,
-            Arg.Is<CollectMoodRecordSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
     }
 }

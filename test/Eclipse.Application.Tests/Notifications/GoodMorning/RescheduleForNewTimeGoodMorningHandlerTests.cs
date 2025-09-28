@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.GoodMorning;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.Notifications.GoodMorning.Handlers;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users.Events;
@@ -15,14 +16,14 @@ public sealed class RescheduleForNewTimeGoodMorningHandlerTests
 {
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<GoodMorningJob, SchedulerOptions> _jobScheduler;
 
     private readonly ScheduleNewTimeGoodMorningHandler _sut;
 
     public RescheduleForNewTimeGoodMorningHandlerTests()
     {
         _schedulerFactory = Substitute.For<ISchedulerFactory>();
-        _jobScheduler = Substitute.For<INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions>>();
+        _jobScheduler = Substitute.For<INotificationScheduler<GoodMorningJob, SchedulerOptions>>();
 
         _sut = new ScheduleNewTimeGoodMorningHandler(_schedulerFactory, _jobScheduler);
     }
@@ -38,10 +39,10 @@ public sealed class RescheduleForNewTimeGoodMorningHandlerTests
         await _sut.Handle(@event);
 
         await _jobScheduler.Received().Unschedule(scheduler,
-            Arg.Is<GoodMorningSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
         await _jobScheduler.Received().Schedule(scheduler,
-            Arg.Is<GoodMorningSchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
+            Arg.Is<SchedulerOptions>(o => o.UserId == @event.UserId && o.Gmt == @event.Gmt)
         );
     }
 }

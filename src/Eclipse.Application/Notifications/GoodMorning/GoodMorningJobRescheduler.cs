@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 
@@ -12,12 +13,12 @@ internal sealed class GoodMorningJobRescheduler : IBackgroundJob
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<GoodMorningJob, SchedulerOptions> _jobScheduler;
 
     public GoodMorningJobRescheduler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<GoodMorningJob, GoodMorningSchedulerOptions> jobScheduler)
+        INotificationScheduler<GoodMorningJob, SchedulerOptions> jobScheduler)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
@@ -32,7 +33,7 @@ internal sealed class GoodMorningJobRescheduler : IBackgroundJob
 
         foreach (var user in users)
         {
-            await _jobScheduler.Schedule(scheduler, new GoodMorningSchedulerOptions(user.Id, user.Gmt), cancellationToken);
+            await _jobScheduler.Schedule(scheduler, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
         }
     }
 }

@@ -20,7 +20,7 @@ internal sealed class FeedbackService : IFeedbackService
     public async Task<FeedbackDto> CreateAsync(Guid userId, CreateFeedbackModel model, CancellationToken cancellationToken = default)
     {
         var feedback = Feedback.Create(userId, model.Comment, model.Rate, _timeProvider.Now);
-        
+
         await _feedbackRepository.CreateAsync(feedback);
 
         return feedback.ToDto();
