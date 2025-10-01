@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
@@ -7,7 +8,7 @@ using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Feedbacks.Collection;
 
-internal sealed class CollectFeedbackJob : JobWithArgs<CollectFeedbackJobData>
+internal sealed class CollectFeedbackJob : JobWithArgs<UserIdJobData>
 {
     private readonly IUserRepository _userRepository;
 
@@ -19,7 +20,7 @@ internal sealed class CollectFeedbackJob : JobWithArgs<CollectFeedbackJobData>
         _collector = collector;
     }
 
-    protected override async Task Execute(CollectFeedbackJobData args, CancellationToken cancellationToken)
+    protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
         try
         {

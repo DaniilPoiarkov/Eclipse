@@ -35,7 +35,7 @@ public sealed class CollectMoodRecordSchedulerTests
         _timeProvider.Now.Returns(currentTime);
 
         var expectedJobKey = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
-        var expectedData = JsonConvert.SerializeObject(new CollectMoodRecordJobData(options.UserId));
+        var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
 

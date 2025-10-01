@@ -23,7 +23,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
 
         var job = JobBuilder.Create<CollectFeedbackJob>()
             .WithIdentity(jobKey)
-            .UsingJobData("data", JsonConvert.SerializeObject(new CollectFeedbackJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.NextMonth()

@@ -36,7 +36,7 @@ public sealed class FinishTodoItemsSchedulerTests
         _timeProvider.Now.Returns(currentTime);
 
         var expectedJobKey = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{options.UserId}");
-        var expectedData = JsonConvert.SerializeObject(new FinishTodoItemsJobData(options.UserId));
+        var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
 

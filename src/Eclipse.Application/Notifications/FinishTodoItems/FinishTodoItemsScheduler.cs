@@ -23,7 +23,7 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
 
         var job = JobBuilder.Create<FinishTodoItemsJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening6PM)

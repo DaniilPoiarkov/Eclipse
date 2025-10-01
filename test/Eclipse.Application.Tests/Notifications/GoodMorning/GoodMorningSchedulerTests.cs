@@ -35,7 +35,7 @@ public sealed class GoodMorningSchedulerTests
         _timeProvider.Now.Returns(currentTime);
 
         var expectedJobKey = JobKey.Create($"{nameof(GoodMorningJob)}-{options.UserId}");
-        var expectedData = JsonConvert.SerializeObject(new GoodMorningJobData(options.UserId));
+        var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
 

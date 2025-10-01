@@ -23,7 +23,7 @@ internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob
 
         var job = JobBuilder.Create<MoodReportJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new MoodReportJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)
