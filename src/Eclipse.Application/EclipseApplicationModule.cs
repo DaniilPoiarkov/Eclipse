@@ -133,6 +133,18 @@ public static class EclipseApplicationModule
             .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<MoodReportJob>>()
             .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<GoodMorningJob>>();
 
+        services.AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>()
+            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>()
+            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>()
+            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, MoodReportJob>>()
+            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob>>();
+
+        services.AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>()
+            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>()
+            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>>()
+            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, MoodReportJob>>()
+            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, GoodMorningJob>>();
+
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(INotificationScheduler<,>)), publicOnly: false)
             .AsImplementedInterfaces()

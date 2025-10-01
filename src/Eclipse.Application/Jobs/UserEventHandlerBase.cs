@@ -8,39 +8,42 @@ using Quartz;
 
 namespace Eclipse.Application.Jobs;
 
-internal abstract class UserEventHandlerBase<TEvent, TJob> : IEventHandler<TEvent>
+internal sealed class UserEventHandlerBase<TEvent, TJob> : IEventHandler<TEvent>
     where TJob : IJob
-    where TEvent : IDomainEvent
+    where TEvent : IDomainEvent, IHasUserId
 {
-    protected IUserRepository UserRepository { get; }
+    private readonly IUserRepository _userRepository;
 
-    protected ISchedulerFactory SchedulerFactory { get; }
+    private readonly ISchedulerFactory _schedulerFactory;
 
-    protected INotificationScheduler<TJob, SchedulerOptions> JobScheduler { get; }
+    private readonly INotificationScheduler<TJob, SchedulerOptions> _jobScheduler;
 
-    protected ILogger Logger { get; }
+    private readonly ILogger<UserEventHandlerBase<TEvent, TJob>> _logger;
 
-    protected UserEventHandlerBase(
+    public UserEventHandlerBase(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         INotificationScheduler<TJob, SchedulerOptions> jobScheduler,
-        ILogger logger)
+        ILogger<UserEventHandlerBase<TEvent, TJob>> logger)
     {
-        UserRepository = userRepository;
-        SchedulerFactory = schedulerFactory;
-        JobScheduler = jobScheduler;
-        Logger = logger;
+        _userRepository = userRepository;
+        _schedulerFactory = schedulerFactory;
+        _jobScheduler = jobScheduler;
+        _logger = logger;
     }
 
-    public abstract Task Handle(TEvent @event, CancellationToken cancellationToken = default);
-
-    protected async Task Handle(Guid userId, CancellationToken cancellationToken = default)
+    public Task Handle(TEvent @event, CancellationToken cancellationToken = default)
     {
-        var user = await UserRepository.FindAsync(userId, cancellationToken);
+        return Handle(@event.UserId, cancellationToken);
+    }
+
+    private async Task Handle(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
 
         if (user is not { IsEnabled: true })
         {
-            Logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}",
+            _logger.LogError("Cannot scheduler {Job} job for user {UserId}. Reason: {Reason}",
                 typeof(TJob).Name,
                 userId,
                 user is null
@@ -51,7 +54,7 @@ internal abstract class UserEventHandlerBase<TEvent, TJob> : IEventHandler<TEven
             return;
         }
 
-        var scheduler = await SchedulerFactory.GetScheduler(cancellationToken);
-        await JobScheduler.Schedule(scheduler, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
+        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+        await _jobScheduler.Schedule(scheduler, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
     }
 }
