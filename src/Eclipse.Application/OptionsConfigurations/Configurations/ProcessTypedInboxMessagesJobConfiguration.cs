@@ -38,11 +38,11 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewUserJoinedDomainEvent"/>
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserFinishTodoItemsHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserGoodMorningHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserMoodReportHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserCollectMoodRecordHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserCollectFeedbackHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<FinishTodoItemsJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<GoodMorningJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<MoodReportJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<CollectMoodRecordJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<CollectFeedbackJob>>(options);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
