@@ -1,16 +1,11 @@
 ﻿using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
-using Eclipse.Application.Feedbacks.Collection.Handlers;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords.Collection;
-using Eclipse.Application.MoodRecords.Collection.Handlers;
 using Eclipse.Application.MoodRecords.Report;
-using Eclipse.Application.MoodRecords.Report.Handlers;
 using Eclipse.Application.Notifications.FinishTodoItems;
-using Eclipse.Application.Notifications.FinishTodoItems.Handlers;
 using Eclipse.Application.Notifications.GoodMorning;
-using Eclipse.Application.Notifications.GoodMorning.Handlers;
 using Eclipse.Application.Notifications.NewUserJoined;
 using Eclipse.Application.Notifications.Test;
 using Eclipse.Application.Reminders;
@@ -38,11 +33,11 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewUserJoinedDomainEvent"/>
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserFinishTodoItemsHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserGoodMorningHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserMoodReportHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserCollectMoodRecordHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, ScheduleNewUserCollectFeedbackHandler>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<FinishTodoItemsJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<GoodMorningJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<MoodReportJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<CollectMoodRecordJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<CollectFeedbackJob>>(options);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
@@ -75,12 +70,12 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(options);
 
         /// <see cref="UserEnabledDomainEvent"/>
-        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledFinishTodoItemsHandler>(options);
-        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledGoodMorningHandler>(options);
-        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledMoodReportHandler>(options);
-        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledCollectMoodRecordHandler>(options);
+        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<FinishTodoItemsJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<GoodMorningJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<MoodReportJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<CollectMoodRecordJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<CollectFeedbackJob>>(options);
         AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);
-        AddJob<UserEnabledDomainEvent, ScheduleUserEnabledCollectFeedbackHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
