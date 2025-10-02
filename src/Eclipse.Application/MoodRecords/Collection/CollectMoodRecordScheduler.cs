@@ -23,7 +23,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
 
         var job = JobBuilder.Create<CollectMoodRecordJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening7PM)

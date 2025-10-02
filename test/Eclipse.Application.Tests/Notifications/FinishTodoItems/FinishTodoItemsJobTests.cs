@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.FinishTodoItems;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Tests.Extensions;
@@ -59,7 +60,7 @@ public sealed class FinishTodoItemsJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(Guid.NewGuid())) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(Guid.NewGuid())) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -89,7 +90,7 @@ public sealed class FinishTodoItemsJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -118,7 +119,7 @@ public sealed class FinishTodoItemsJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -144,7 +145,7 @@ public sealed class FinishTodoItemsJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);

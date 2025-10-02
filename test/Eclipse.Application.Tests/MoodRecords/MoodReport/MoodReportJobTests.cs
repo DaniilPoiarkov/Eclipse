@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reports;
+using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
@@ -65,7 +66,7 @@ public sealed class MoodReportJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new MoodReportJobData(Guid.NewGuid())) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(Guid.NewGuid())) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -97,7 +98,7 @@ public sealed class MoodReportJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new MoodReportJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -135,7 +136,7 @@ public sealed class MoodReportJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new MoodReportJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);

@@ -33,11 +33,11 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="NewUserJoinedDomainEvent"/>
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<FinishTodoItemsJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<GoodMorningJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<MoodReportJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<CollectMoodRecordJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler<CollectFeedbackJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, MoodReportJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>(options);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
         AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
@@ -70,11 +70,11 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(options);
 
         /// <see cref="UserEnabledDomainEvent"/>
-        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<FinishTodoItemsJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<GoodMorningJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<MoodReportJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<CollectMoodRecordJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEnabledEventHandler<CollectFeedbackJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, GoodMorningJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, MoodReportJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>(options);
         AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);
     }
 

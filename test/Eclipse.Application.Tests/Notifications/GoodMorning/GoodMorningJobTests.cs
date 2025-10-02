@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Notifications.GoodMorning;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Tests.Extensions;
@@ -60,7 +61,7 @@ public sealed class GoodMorningJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new GoodMorningJobData(Guid.NewGuid())) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(Guid.NewGuid())) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -89,7 +90,7 @@ public sealed class GoodMorningJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new GoodMorningJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -116,7 +117,7 @@ public sealed class GoodMorningJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new GoodMorningJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);

@@ -23,7 +23,7 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
 
         var job = JobBuilder.Create<GoodMorningJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new GoodMorningJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Morning9AM)

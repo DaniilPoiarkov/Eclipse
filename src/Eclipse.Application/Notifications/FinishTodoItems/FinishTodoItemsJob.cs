@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
@@ -10,7 +11,7 @@ using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems;
 
-internal sealed class FinishTodoItemsJob : JobWithArgs<FinishTodoItemsJobData>
+internal sealed class FinishTodoItemsJob : JobWithArgs<UserIdJobData>
 {
     private readonly IStringLocalizer<FinishTodoItemsJob> _localizer;
 
@@ -33,7 +34,7 @@ internal sealed class FinishTodoItemsJob : JobWithArgs<FinishTodoItemsJobData>
         _userRepository = userRepository;
     }
 
-    protected override async Task Execute(FinishTodoItemsJobData args, CancellationToken cancellationToken)
+    protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
