@@ -22,13 +22,13 @@ using Eclipse.Application.Exporting;
 using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
-using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
+using Eclipse.Application.OptionsConfigurations.Registrators.Events;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Reports;
@@ -41,7 +41,6 @@ using Eclipse.Application.Users;
 using Eclipse.Common.Background;
 using Eclipse.Common.Events;
 using Eclipse.Common.Notifications;
-using Eclipse.Domain.Users.Events;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -116,34 +115,22 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
+        List<IApplicationServicesRegistrator> registrators = [
+            new NewUserJoinedEventRegistrator(),
+            new GmtChangedEventRegistrator(),
+            new UserDisabledEventRegistrator(),
+            new UserEnabledEventRegistrator()
+        ];
+
+        foreach (var registrator in registrators)
+        {
+            registrator.Register(services);
+        }
+
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)), publicOnly: false)
             .AsSelfWithInterfaces()
             .WithTransientLifetime());
-
-        services.AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<CollectFeedbackJob>>()
-            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<CollectMoodRecordJob>>()
-            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<FinishTodoItemsJob>>()
-            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<MoodReportJob>>()
-            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<GoodMorningJob>>();
-
-        services.AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<CollectFeedbackJob>>()
-            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<CollectMoodRecordJob>>()
-            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<FinishTodoItemsJob>>()
-            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<MoodReportJob>>()
-            .AddTransient<IEventHandler<UserDisabledDomainEvent>, UserDisabledEventHandler<GoodMorningJob>>();
-
-        services.AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>()
-            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>()
-            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>()
-            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, MoodReportJob>>()
-            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob>>();
-
-        services.AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>()
-            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>()
-            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>>()
-            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, MoodReportJob>>()
-            .AddTransient<IEventHandler<UserEnabledDomainEvent>, UserEventHandlerBase<UserEnabledDomainEvent, GoodMorningJob>>();
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(INotificationScheduler<,>)), publicOnly: false)
