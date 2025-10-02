@@ -22,6 +22,7 @@ using Eclipse.Application.Exporting;
 using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
+using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
@@ -150,21 +151,21 @@ public static class EclipseApplicationModule
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<IBackgroundJobManager>>();
 
         await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>(cancellationToken);
-        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(RescheduleRemindersBackgroundJob));
 
-        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>(cancellationToken);
-        logger.LogInformation("Enqueued {Job} job.", nameof(FinishTodoItemsJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<GoodMorningJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(GoodMorningJob));
 
-        await manager.EnqueueAsync<GoodMorningJobRescheduler>(cancellationToken);
-        logger.LogInformation("Enqueued {Job} job.", nameof(GoodMorningJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<FinishTodoItemsJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(FinishTodoItemsJob));
 
-        await manager.EnqueueAsync<MoodReportJobRescheduler>(cancellationToken);
-        logger.LogInformation("Enqueued {Job} job.", nameof(MoodReportJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<CollectMoodRecordJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectMoodRecordJob));
 
-        await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>(cancellationToken);
-        logger.LogInformation("Enqueued {Job} job.", nameof(CollectMoodRecordJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<MoodReportJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(MoodReportJob));
 
-        await manager.EnqueueAsync<CollectFeedbackRescheduler>(cancellationToken);
-        logger.LogInformation("Enqueued {Job} job.", nameof(CollectFeedbackRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<CollectFeedbackJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectFeedbackJob));
     }
 }

@@ -1,24 +1,24 @@
-﻿using Eclipse.Application.Jobs;
-using Eclipse.Common.Background;
+﻿using Eclipse.Common.Background;
 using Eclipse.Common.Notifications;
 using Eclipse.Domain.Users;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.Jobs;
 
-internal sealed class FinishTodoItemsJobRescheduler : IBackgroundJob
+internal sealed class JobRescheduler<TJob> : IBackgroundJob
+    where TJob : IJob
 {
     private readonly IUserRepository _userRepository;
 
     private readonly ISchedulerFactory _schedulerFactory;
 
-    private readonly INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> _jobScheduler;
+    private readonly INotificationScheduler<TJob, SchedulerOptions> _jobScheduler;
 
-    public FinishTodoItemsJobRescheduler(
+    public JobRescheduler(
         IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
-        INotificationScheduler<FinishTodoItemsJob, SchedulerOptions> jobScheduler)
+        INotificationScheduler<TJob, SchedulerOptions> jobScheduler)
     {
         _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
@@ -28,12 +28,11 @@ internal sealed class FinishTodoItemsJobRescheduler : IBackgroundJob
     public async Task Execute(CancellationToken cancellationToken = default)
     {
         var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
-
-        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+        var scheduelr = await _schedulerFactory.GetScheduler(cancellationToken);
 
         foreach (var user in users)
         {
-            await _jobScheduler.Schedule(scheduler, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
+            await _jobScheduler.Schedule(scheduelr, new SchedulerOptions(user.Id, user.Gmt), cancellationToken);
         }
     }
 }
