@@ -1,5 +1,3 @@
-version: '3.9'
-
 # Create a copy of this file in this directory
 # Give it a name docker-compose.local.yaml
 # It will be ignored by .gitignore
