@@ -7,25 +7,20 @@ namespace Eclipse.Application.Contracts.Users;
 [Serializable]
 public sealed class UserDto : AggregateRootDto
 {
-    public string Name { get; init; } = string.Empty;
-
-    public string Surname { get; init; } = string.Empty;
-
-    public string UserName { get; init; } = string.Empty;
+    public required string Name { get; init; }
+    public required string Surname { get; init; }
+    public required string UserName { get; init; }
+    public required string Culture { get; init; }
 
     public long ChatId { get; init; }
 
-    public string Culture { get; init; } = string.Empty;
-
     public bool NotificationsEnabled { get; init; }
-
     public bool IsEnabled { get; init; }
 
     public TimeSpan Gmt { get; init; }
 
-    public DateTime? CreatedAt { get; init; }
+    public DateTime CreatedAt { get; init; }
 
     public IReadOnlyList<ReminderDto> Reminders { get; init; } = [];
-
     public IReadOnlyList<TodoItemDto> TodoItems { get; init; } = [];
 }
