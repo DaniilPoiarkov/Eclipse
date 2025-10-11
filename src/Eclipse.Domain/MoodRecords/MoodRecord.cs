@@ -3,7 +3,7 @@ using Eclipse.Domain.Shared.MoodRecords;
 
 namespace Eclipse.Domain.MoodRecords;
 
-public sealed class MoodRecord : Entity
+public sealed class MoodRecord : Entity, IHasCreatedAt
 {
     internal MoodRecord(Guid id, Guid userId, MoodState state, DateTime createdAt) : base(id)
     {
@@ -18,7 +18,7 @@ public sealed class MoodRecord : Entity
 
     public MoodState State { get; private set; }
 
-    public DateTime CreatedAt { get; private set; }
+    public DateTime CreatedAt { get; init; }
 
     public void SetState(MoodState state)
     {

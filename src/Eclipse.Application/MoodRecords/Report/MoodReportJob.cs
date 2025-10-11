@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reports;
+using Eclipse.Application.Jobs;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
@@ -13,7 +14,7 @@ using Telegram.Bot.Types;
 
 namespace Eclipse.Application.MoodRecords.Report;
 
-internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
+internal sealed class MoodReportJob : JobWithArgs<UserIdJobData>
 {
     private readonly IUserRepository _userRepository;
 
@@ -44,7 +45,7 @@ internal sealed class MoodReportJob : JobWithArgs<MoodReportJobData>
         _localizer = localizer;
     }
 
-    protected override async Task Execute(MoodReportJobData args, CancellationToken cancellationToken)
+    protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 

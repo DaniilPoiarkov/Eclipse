@@ -2,4 +2,4 @@
 
 namespace Eclipse.Domain.Users.Events;
 
-public sealed record TodoItemFinishedDomainEvent(Guid UserId) : IDomainEvent;
+public sealed record TodoItemFinishedDomainEvent(Guid UserId) : IDomainEvent, IHasUserId;

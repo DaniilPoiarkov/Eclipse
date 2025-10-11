@@ -5,6 +5,7 @@ using Eclipse.Application.Contracts.Account;
 using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
+using Eclipse.Application.Contracts.Feedbacks;
 using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
@@ -18,13 +19,17 @@ using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
+using Eclipse.Application.Feedbacks;
+using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
+using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
+using Eclipse.Application.OptionsConfigurations.Registrators.Events;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Reports;
@@ -73,6 +78,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
                 .AddTransient<IReportsService, ReportsService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>()
+                .AddTransient<IFeedbackService, FeedbackService>()
             .AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services
@@ -110,6 +116,18 @@ public static class EclipseApplicationModule
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
 
+        List<IApplicationServicesRegistrator> registrators = [
+            new NewUserJoinedEventRegistrator(),
+            new GmtChangedEventRegistrator(),
+            new UserDisabledEventRegistrator(),
+            new UserEnabledEventRegistrator()
+        ];
+
+        foreach (var registrator in registrators)
+        {
+            registrator.Register(services);
+        }
+
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseApplicationModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEventHandler<>)), publicOnly: false)
             .AsSelfWithInterfaces()
@@ -125,26 +143,29 @@ public static class EclipseApplicationModule
         return services;
     }
 
-    public static async Task InitializeApplicationLayerAsync(this WebApplication app)
+    public static async Task InitializeApplicationLayerAsync(this WebApplication app, CancellationToken cancellationToken = default)
     {
         using var scope = app.Services.CreateAsyncScope();
 
         var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<IBackgroundJobManager>>();
 
-        await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(RescheduleRemindersBackgroundJob));
+        await manager.EnqueueAsync<RescheduleRemindersBackgroundJob>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(RescheduleRemindersBackgroundJob));
 
-        await manager.EnqueueAsync<FinishTodoItemsJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(FinishTodoItemsJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<GoodMorningJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(GoodMorningJob));
 
-        await manager.EnqueueAsync<GoodMorningJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(GoodMorningJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<FinishTodoItemsJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(FinishTodoItemsJob));
 
-        await manager.EnqueueAsync<MoodReportJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(MoodReportJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<CollectMoodRecordJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectMoodRecordJob));
 
-        await manager.EnqueueAsync<CollectMoodRecordJobRescheduler>();
-        logger.LogInformation("Enqueued {Job} job.", nameof(CollectMoodRecordJobRescheduler));
+        await manager.EnqueueAsync<JobRescheduler<MoodReportJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(MoodReportJob));
+
+        await manager.EnqueueAsync<JobRescheduler<CollectFeedbackJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectFeedbackJob));
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Collection;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Domain.Users;
 using Eclipse.Tests.Extensions;
 using Eclipse.Tests.Generators;
@@ -70,7 +71,7 @@ public sealed class CollectMoodRecordJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(userId)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(userId)) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -90,7 +91,7 @@ public sealed class CollectMoodRecordJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(user.Id)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
         };
 
         context.MergedJobDataMap.Returns(map);
@@ -113,7 +114,7 @@ public sealed class CollectMoodRecordJobTests
 
         var map = new JobDataMap
         {
-            { "data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(userId)) }
+            { "data", JsonConvert.SerializeObject(new UserIdJobData(userId)) }
         };
 
         context.MergedJobDataMap.Returns(map);

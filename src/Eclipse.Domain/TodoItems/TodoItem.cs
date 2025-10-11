@@ -4,14 +4,26 @@ using Eclipse.Domain.Shared.TodoItems;
 
 namespace Eclipse.Domain.TodoItems;
 
-public sealed class TodoItem : Entity
+public sealed class TodoItem : Entity, IHasCreatedAt
 {
+    public Guid UserId { get; private set; }
+
+    public string Text { get; private set; } = string.Empty;
+
+    public bool IsFinished { get; private set; }
+
+    public DateTime CreatedAt { get; init; }
+
+    public DateTime? FinishedAt { get; private set; }
+
     private TodoItem(Guid id, Guid userId, string text, DateTime createdAt) : base(id)
     {
         UserId = userId;
         Text = text;
         CreatedAt = createdAt;
     }
+
+    private TodoItem() { }
 
     /// <summary>
     /// Creates new TodoItem
@@ -39,18 +51,6 @@ public sealed class TodoItem : Entity
             FinishedAt = finishedAt
         };
     }
-
-    private TodoItem() { }
-
-    public Guid UserId { get; private set; }
-
-    public string Text { get; private set; } = string.Empty;
-
-    public bool IsFinished { get; private set; }
-
-    public DateTime CreatedAt { get; private set; }
-
-    public DateTime? FinishedAt { get; private set; }
 
     /// <summary>Marks item as finished.</summary>
     internal Result MarkAsFinished(DateTime finishedAt)

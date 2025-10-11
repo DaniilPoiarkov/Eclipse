@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Url;
+using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
@@ -65,7 +66,8 @@ public static class EclipsePipelinesModule
             .AddPipelinesHealthChecks()
             .AddTelegramIntegration();
 
-        services.AddTransient<IMoodRecordCollector, MoodRecordCollector>();
+        services.AddTransient<IMoodRecordCollector, MoodRecordCollector>()
+            .AddTransient<IFeedbackCollector, FeedbackCollector>();
 
         return services;
     }
@@ -83,7 +85,7 @@ public static class EclipsePipelinesModule
         return services;
     }
 
-    public static async Task InitializePipelineModuleAsync(this WebApplication app)
+    public static async Task InitializePipelineModuleAsync(this WebApplication app, CancellationToken cancellationToken = default)
     {
         using var scope = app.Services.CreateScope();
 
@@ -94,20 +96,20 @@ public static class EclipsePipelinesModule
 
         logger.LogInformation("Initializing {module} module", nameof(EclipsePipelinesModule));
 
-        await ResetWebhookAsync(serviceProvider, client);
+        await ResetWebhookAsync(serviceProvider, client, cancellationToken);
 
-        var me = await client.GetMe();
+        var me = await client.GetMe(cancellationToken);
 
         logger.LogInformation("\tBot: {bot}", me?.Username);
         logger.LogInformation("{module} module initialized successfully", nameof(EclipsePipelinesModule));
     }
 
-    private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client)
+    private static async Task ResetWebhookAsync(IServiceProvider serviceProvider, ITelegramBotClient client, CancellationToken cancellationToken)
     {
         var options = serviceProvider.GetRequiredService<IOptions<PipelinesOptions>>();
         var appUrlProvider = serviceProvider.GetRequiredService<IAppUrlProvider>();
 
-        var webhookInfo = await client.GetWebhookInfo();
+        var webhookInfo = await client.GetWebhookInfo(cancellationToken);
 
         var webhook = $"{appUrlProvider.AppUrl.EnsureEndsWith('/')}{options.Value.ActiveEndpoint}";
 
@@ -118,7 +120,8 @@ public static class EclipsePipelinesModule
 
         await client.SetWebhook(
             url: webhook,
-            secretToken: options.Value.SecretToken
+            secretToken: options.Value.SecretToken,
+            cancellationToken: cancellationToken
         );
     }
 }

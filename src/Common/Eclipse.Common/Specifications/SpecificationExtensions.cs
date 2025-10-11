@@ -42,4 +42,14 @@ public static class SpecificationExtensions
     {
         return new AndNotSpecification<T>(left, right);
     }
+
+    public static Specification<T> AndIf<T>(this Specification<T> left, bool condition, Specification<T> right)
+    {
+        if (condition)
+        {
+            return left.And(right);
+        }
+
+        return left;
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
@@ -7,7 +8,7 @@ using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.MoodRecords.Collection;
 
-internal sealed class CollectMoodRecordJob : JobWithArgs<CollectMoodRecordJobData>
+internal sealed class CollectMoodRecordJob : JobWithArgs<UserIdJobData>
 {
     private readonly IMoodRecordCollector _collector;
 
@@ -22,7 +23,7 @@ internal sealed class CollectMoodRecordJob : JobWithArgs<CollectMoodRecordJobDat
         _userRepository = userRepository;
     }
 
-    protected override async Task Execute(CollectMoodRecordJobData args, CancellationToken cancellationToken)
+    protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
         try
         {

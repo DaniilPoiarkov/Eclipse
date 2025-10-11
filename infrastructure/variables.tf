@@ -184,3 +184,9 @@ variable "tg_alert_bot_token" {
   description = "Telegram bot which should sent alerts"
   sensitive   = true
 }
+
+variable "db_ip_range_filter" {
+  description = "Allowed IP addresses to access database"
+  type        = list(string)
+  sensitive   = true
+}

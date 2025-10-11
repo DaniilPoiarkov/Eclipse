@@ -103,7 +103,7 @@ public sealed class LoginManagerTests
 
         _userRepository.FindByUserNameAsync(user.UserName).Returns(user);
 
-        var result = await _sut.LoginAsync(new LoginRequest { UserName = user.UserName, SignInCode = new string(user.SignInCode.Reverse().ToArray()) });
+        var result = await _sut.LoginAsync(new LoginRequest { UserName = user.UserName, SignInCode = new string([.. user.SignInCode.Reverse()]) });
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(expectedError);

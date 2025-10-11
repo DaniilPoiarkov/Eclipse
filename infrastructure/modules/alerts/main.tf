@@ -182,3 +182,73 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_
 
   tags = local.tags
 }
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "failed_inbox_messages" {
+  name                = "Failed to process inbox messages"
+  location            = var.location
+  data_source_id      = var.data_source_id
+  severity            = var.severity
+  resource_group_name = local.rg_name
+  frequency           = local.frequency
+  time_window         = local.time_window
+
+  query = <<-QUERY
+    traces
+    | where severityLevel == 3 and message contains 'Failed to process inbox message'
+    QUERY
+
+  action {
+    action_group = [
+      azurerm_monitor_action_group.monitor_action_group.id
+    ]
+  }
+
+  trigger {
+    operator  = "GreaterThanOrEqual"
+    threshold = local.threashold
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
+  location            = var.location
+  resource_group_name = local.rg_name
+  name                = "common-alerts-log"
+  tags                = local.tags
+}
+
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories" {
+  resource_id = azurerm_logic_app_workflow.logic_app.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
+  name                       = "logic-send-tg-alert-diagnostic-logs"
+  target_resource_id         = azurerm_logic_app_workflow.logic_app.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+
+  dynamic "enabled_log" {
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.log_category_types)
+
+    content {
+      category = enabled_log.value
+    }
+  }
+
+  dynamic "enabled_metric" {
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.metrics)
+
+    content {
+      category = enabled_metric.value
+    }
+  }
+
+  # Ignore changes to prevent configuration removal due to azurerm_monitor_diagnostic_categories behavior
+  # Remove when issue with terraform data will be fixed.
+  lifecycle {
+    ignore_changes = [
+      enabled_log,
+      metric
+    ]
+  }
+}

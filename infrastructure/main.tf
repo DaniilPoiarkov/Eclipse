@@ -69,6 +69,7 @@ module "database" {
   database_throughput   = var.database_throughput
   container_throughput  = var.container_throughput
   failover_priority     = var.failover_priority
+  ip_range_filter       = var.db_ip_range_filter
 
   container_names = [
     var.cosmos_container
@@ -111,6 +112,7 @@ module "web-app" {
   google_credentials             = file(var.google_credentials_path)
   azuread_client_id              = module.entraid.app_client_id
   tenant_id                      = local.tenant_id
+  log_analytics_workspace_id     = module.monitoring.log_analytics_workspace_id
 
   depends_on = [
     azurerm_resource_group.resource_group_main,

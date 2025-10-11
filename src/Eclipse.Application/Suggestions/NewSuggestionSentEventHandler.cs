@@ -23,13 +23,13 @@ public sealed class NewSuggestionSentEventHandler : IEventHandler<NewSuggestionS
         _userService = userService;
     }
 
-    public async Task Handle(NewSuggestionSentDomainEvent notification, CancellationToken cancellationToken = default)
+    public async Task Handle(NewSuggestionSentDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var result = await _userService.GetByChatIdAsync(notification.ChatId, cancellationToken);
+        var result = await _userService.GetByChatIdAsync(@event.ChatId, cancellationToken);
 
         var message = result.Match(
-            user => $"Suggestion from {user.Name}{user.UserName.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{notification.Text}",
-            _ => $"Suggestion from unknown user with chat id {notification.ChatId}:{Environment.NewLine}{notification.Text}"
+            user => $"Suggestion from {user.Name}{user.UserName.FormattedOrEmpty(s => $", @{s}")}:{Environment.NewLine}{@event.Text}",
+            _ => $"Suggestion from unknown user with chat id {@event.ChatId}:{Environment.NewLine}{@event.Text}"
         );
 
         var send = new SendMessageModel

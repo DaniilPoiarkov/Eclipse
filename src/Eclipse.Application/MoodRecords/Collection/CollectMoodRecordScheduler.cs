@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Notifications;
 
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Application.MoodRecords.Collection;
 
-internal sealed class CollectMoodRecordScheduler : INotificationScheduler<CollectMoodRecordJob, CollectMoodRecordSchedulerOptions>
+internal sealed class CollectMoodRecordScheduler : INotificationScheduler<CollectMoodRecordJob, SchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -16,13 +17,13 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
         _timeProvider = timeProvider;
     }
 
-    public async Task Schedule(IScheduler scheduler, CollectMoodRecordSchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var key = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
 
         var job = JobBuilder.Create<CollectMoodRecordJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new CollectMoodRecordJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening7PM)
@@ -45,7 +46,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, CollectMoodRecordSchedulerOptions options, CancellationToken cancellationToken = default)
+    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var key = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
         return scheduler.DeleteJob(key, cancellationToken);

@@ -16,7 +16,7 @@ resource "azurerm_linux_web_app" "app" {
   resource_group_name = var.resource_group_name
   name                = "${var.app_name}-${var.environment}-app"
   location            = var.location
-
+  https_only          = true
   site_config {
     always_on = (
       var.service_plan_sku_name != "F1" &&
@@ -30,8 +30,9 @@ resource "azurerm_linux_web_app" "app" {
       docker_image_name        = var.image_name
     }
 
-    api_definition_url = "https://${var.app_name}-${var.environment}-app.azurewebsites.net/swagger/index.html"
-    ftps_state         = "FtpsOnly"
+    api_definition_url  = "https://${var.app_name}-${var.environment}-app.azurewebsites.net/swagger/index.html"
+    ftps_state          = "FtpsOnly"
+    minimum_tls_version = "1.3"
   }
 
   logs {
@@ -41,6 +42,11 @@ resource "azurerm_linux_web_app" "app" {
         retention_in_mb   = 35
       }
     }
+    application_logs {
+      file_system_level = "Warning"
+    }
+    detailed_error_messages = true
+    failed_request_tracing  = true
   }
 
   app_settings = {
@@ -100,6 +106,41 @@ resource "azurerm_linux_web_app" "app" {
       app_settings["Google__Credentials"],
       app_settings["Telegram__Token"],
       site_config.0.application_stack.0.docker_image_name
+    ]
+  }
+}
+
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories" {
+  resource_id = azurerm_linux_web_app.app.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "app_diagnostic" {
+  name                       = "${var.app_name}-${var.environment}-diagnostic-logs"
+  target_resource_id         = azurerm_linux_web_app.app.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  dynamic "enabled_log" {
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.log_category_types)
+
+    content {
+      category = enabled_log.value
+    }
+  }
+
+  dynamic "enabled_metric" {
+    for_each = toset(data.azurerm_monitor_diagnostic_categories.diagnostic_categories.metrics)
+
+    content {
+      category = enabled_metric.value
+    }
+  }
+
+  # Ignore changes to prevent configuration removal due to azurerm_monitor_diagnostic_categories behavior
+  # Remove when issue with terraform data will be fixed.
+  lifecycle {
+    ignore_changes = [
+      enabled_log,
+      metric
     ]
   }
 }

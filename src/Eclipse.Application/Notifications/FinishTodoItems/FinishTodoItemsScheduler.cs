@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Clock;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Clock;
 using Eclipse.Common.Notifications;
 
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using Quartz;
 
 namespace Eclipse.Application.Notifications.FinishTodoItems;
 
-internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTodoItemsJob, FinishTodoItemsSchedulerOptions>
+internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTodoItemsJob, SchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
@@ -16,13 +17,13 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
         _timeProvider = timeProvider;
     }
 
-    public async Task Schedule(IScheduler scheduler, FinishTodoItemsSchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var key = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{options.UserId}");
 
         var job = JobBuilder.Create<FinishTodoItemsJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new FinishTodoItemsJobData(options.UserId)))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening6PM)
@@ -45,7 +46,7 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, FinishTodoItemsSchedulerOptions options, CancellationToken cancellationToken = default)
+    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
         var key = JobKey.Create($"{nameof(FinishTodoItemsJob)}-{options.UserId}");
         return scheduler.DeleteJob(key, cancellationToken);

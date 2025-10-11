@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
@@ -10,7 +11,7 @@ using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Notifications.GoodMorning;
 
-internal sealed class GoodMorningJob : JobWithArgs<GoodMorningJobData>
+internal sealed class GoodMorningJob : JobWithArgs<UserIdJobData>
 {
     private readonly ICurrentCulture _currentCulture;
 
@@ -33,7 +34,7 @@ internal sealed class GoodMorningJob : JobWithArgs<GoodMorningJobData>
         _userRepository = userRepository;
     }
 
-    protected override async Task Execute(GoodMorningJobData args, CancellationToken cancellationToken)
+    protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 

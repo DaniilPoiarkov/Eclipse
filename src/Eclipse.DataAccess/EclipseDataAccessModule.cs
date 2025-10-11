@@ -1,6 +1,7 @@
 ﻿using Azure.Identity;
 
 using Eclipse.DataAccess.Cosmos;
+using Eclipse.DataAccess.Feedbacks;
 using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Migrations;
@@ -10,6 +11,7 @@ using Eclipse.DataAccess.OutboxMessages;
 using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.Feedbacks;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
@@ -47,6 +49,7 @@ public static class EclipseDataAccessModule
             .AddScoped<IInboxMessageRepository, InboxMessageRepository>()
             .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
             .AddScoped<IUserStatisticsRepository, UserStatisticsRepository>()
+            .AddScoped<IFeedbackRepository, FeedbackRepository>()
             .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
 
         services
@@ -54,7 +57,8 @@ public static class EclipseDataAccessModule
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
             .Decorate<IInboxMessageRepository, CachedInboxMessageRepository>()
             .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>()
-            .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>();
+            .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>()
+            .Decorate<IFeedbackRepository, CachedFeedbackRepository>();
 
         services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 
@@ -138,7 +142,7 @@ public static class EclipseDataAccessModule
         return services;
     }
 
-    public static async Task InitializeDataAccessModuleAsync(this WebApplication app)
+    public static async Task InitializeDataAccessModuleAsync(this WebApplication app, CancellationToken cancellationToken = default)
     {
         using var scope = app.Services.CreateScope();
 
@@ -158,14 +162,14 @@ public static class EclipseDataAccessModule
         using var client = new CosmosClient(configuration.GetConnectionString("Emulator"));
 
         logger.LogInformation("Creating database if it not exists...");
-        var database = await client.CreateDatabaseIfNotExistsAsync(options.Value.DatabaseId, ThroughputProperties.CreateManualThroughput(1000));
+        var database = await client.CreateDatabaseIfNotExistsAsync(options.Value.DatabaseId, ThroughputProperties.CreateManualThroughput(1000), cancellationToken: cancellationToken);
 
         logger.LogInformation("Creating container if it not exists...");
         await database.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
         {
             Id = options.Value.Container,
             PartitionKeyPath = "/Id",
-        });
+        }, cancellationToken: cancellationToken);
 
         logger.LogInformation("{module} module initialized successfully", nameof(EclipseDataAccessModule));
     }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.MoodRecords.Report;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
@@ -28,14 +29,14 @@ public sealed class MoodReportSchedulerTests
     public async Task Schedule_WhenScheduler_ThenCreateJobWithCorrectIdentityAndData()
     {
         var scheduler = Substitute.For<IScheduler>();
-        var options = new MoodReportSchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
+        var options = new SchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
 
         var currentTime = new DateTime(2025, 4, 27, 19, 30, 0);
 
         _timeProvider.Now.Returns(currentTime);
 
         var expectedJobKey = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
-        var expectedData = JsonConvert.SerializeObject(new MoodReportJobData(options.UserId));
+        var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
 
@@ -52,7 +53,7 @@ public sealed class MoodReportSchedulerTests
     public async Task Unschedule_WhenCalled_ThenDeletesJob()
     {
         var scheduler = Substitute.For<IScheduler>();
-        var options = new MoodReportSchedulerOptions(Guid.NewGuid(), default);
+        var options = new SchedulerOptions(Guid.NewGuid(), default);
 
         await _sut.Unschedule(scheduler, options);
         await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(MoodReportJob)}-{options.UserId}"));
