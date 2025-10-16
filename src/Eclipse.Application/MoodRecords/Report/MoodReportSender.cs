@@ -53,7 +53,7 @@ internal sealed class MoodReportSender : IMoodReportSender
 
         using var _ = _currentCulture.UsingCulture(user.Culture);
 
-        var message = _localizer["Jobs:SendMoodReport:Caption"];
+        var message = _localizer[options.Message];
 
         using var stream = await _reportsService.GetMoodReportAsync(user.Id, new MoodReportOptions() { From = options.From, To = options.To }, cancellationToken);
 
