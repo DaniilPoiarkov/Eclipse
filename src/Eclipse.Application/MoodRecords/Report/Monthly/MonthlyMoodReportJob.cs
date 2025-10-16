@@ -24,11 +24,11 @@ internal sealed class MonthlyMoodReportJob : JobWithArgs<UserIdJobData>
 
     protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
-        var options = new MoodReportOptions
-        {
-            From = _timeProvider.Now.FirstDayOfTheMonth(),
-            To = _timeProvider.Now,
-        };
+        var options = new SendMoodReportOptions(
+            _timeProvider.Now.FirstDayOfTheMonth(),
+            _timeProvider.Now,
+            "Jobs:MoodReport:Monthly:Caption"
+        );
 
         await _sender.Send(args.UserId, options, cancellationToken);
     }

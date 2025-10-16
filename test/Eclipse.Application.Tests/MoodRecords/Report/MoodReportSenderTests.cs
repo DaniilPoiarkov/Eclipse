@@ -53,11 +53,7 @@ public sealed class MoodReportSenderTests
     [Fact]
     public async Task Execute_WhenUserNotFound_ThenLogsError()
     {
-        var options = new MoodReportOptions
-        {
-            From = DateTime.UtcNow.AddDays(-7),
-            To = DateTime.UtcNow,
-        };
+        var options = new SendMoodReportOptions(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, "");
 
         await _sut.Send(Guid.NewGuid(), options);
 
@@ -76,17 +72,16 @@ public sealed class MoodReportSenderTests
         using var stream = new MemoryStream();
         _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
-        var options = new MoodReportOptions
-        {
-            From = DateTime.UtcNow.AddDays(-7),
-            To = DateTime.UtcNow,
-        };
+        var options = new SendMoodReportOptions(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, "");
 
         await _sut.Send(user.Id, options);
 
         _currentCulture.Received().UsingCulture(user.Culture);
 
-        await _reportsService.Received().GetMoodReportAsync(user.Id, options);
+        await _reportsService.Received().GetMoodReportAsync(user.Id,
+            Arg.Is<MoodReportOptions>(o => o.From == options.From
+                && o.To == options.To)
+        );
 
         await _client.Received().SendRequest(
             Arg.Is<SendPhotoRequest>(r => r.ChatId == user.ChatId
@@ -107,11 +102,7 @@ public sealed class MoodReportSenderTests
         using var stream = new MemoryStream();
         _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
-        var options = new MoodReportOptions
-        {
-            From = DateTime.UtcNow.AddDays(-7),
-            To = DateTime.UtcNow,
-        };
+        var options = new SendMoodReportOptions(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, "");
 
         await _sut.Send(user.Id, options);
 
