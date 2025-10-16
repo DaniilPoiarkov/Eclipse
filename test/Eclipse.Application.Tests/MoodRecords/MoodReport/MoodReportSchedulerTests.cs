@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Jobs;
-using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
@@ -16,13 +16,13 @@ public sealed class MoodReportSchedulerTests
 {
     private readonly ITimeProvider _timeProvider;
 
-    private readonly MoodReportScheduler _sut;
+    private readonly WeeklyMoodReportScheduler _sut;
 
     public MoodReportSchedulerTests()
     {
         _timeProvider = Substitute.For<ITimeProvider>();
 
-        _sut = new MoodReportScheduler(_timeProvider);
+        _sut = new WeeklyMoodReportScheduler(_timeProvider);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public sealed class MoodReportSchedulerTests
 
         _timeProvider.Now.Returns(currentTime);
 
-        var expectedJobKey = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var expectedJobKey = JobKey.Create($"{nameof(WeeklyMoodReportJob)}-{options.UserId}");
         var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
@@ -56,6 +56,6 @@ public sealed class MoodReportSchedulerTests
         var options = new SchedulerOptions(Guid.NewGuid(), default);
 
         await _sut.Unschedule(scheduler, options);
-        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(MoodReportJob)}-{options.UserId}"));
+        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(WeeklyMoodReportJob)}-{options.UserId}"));
     }
 }

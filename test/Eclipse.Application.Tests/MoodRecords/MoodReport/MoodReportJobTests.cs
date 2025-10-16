@@ -1,6 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Reports;
 using Eclipse.Application.Jobs;
-using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
@@ -40,11 +40,11 @@ public sealed class MoodReportJobTests
 
     private readonly ITimeProvider _timeProvider;
 
-    private readonly IStringLocalizer<MoodReportJob> _localizer;
+    private readonly IStringLocalizer<WeeklyMoodReportJob> _localizer;
 
-    private readonly ILogger<MoodReportJob> _logger;
+    private readonly ILogger<WeeklyMoodReportJob> _logger;
 
-    private readonly MoodReportJob _sut;
+    private readonly WeeklyMoodReportJob _sut;
 
     public MoodReportJobTests()
     {
@@ -53,10 +53,10 @@ public sealed class MoodReportJobTests
         _reportsService = Substitute.For<IReportsService>();
         _client = Substitute.For<ITelegramBotClient>();
         _timeProvider = Substitute.For<ITimeProvider>();
-        _localizer = Substitute.For<IStringLocalizer<MoodReportJob>>();
-        _logger = Substitute.For<ILogger<MoodReportJob>>();
+        _localizer = Substitute.For<IStringLocalizer<WeeklyMoodReportJob>>();
+        _logger = Substitute.For<ILogger<WeeklyMoodReportJob>>();
 
-        _sut = new MoodReportJob(_repository, _currentCulture, _reportsService, _client, _timeProvider, _localizer, _logger);
+        _sut = new WeeklyMoodReportJob(_repository, _currentCulture, _reportsService, _client, _timeProvider, _localizer, _logger);
     }
 
     [Fact]

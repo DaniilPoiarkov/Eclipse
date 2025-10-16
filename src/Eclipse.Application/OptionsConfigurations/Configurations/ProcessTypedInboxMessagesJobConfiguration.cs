@@ -3,7 +3,7 @@ using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords.Collection;
-using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.Notifications.NewUserJoined;
@@ -35,7 +35,7 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
         AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>(options);
         AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, MoodReportJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, WeeklyMoodReportJob>>(options);
         AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>(options);
         AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>(options);
 
@@ -57,13 +57,13 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         /// <see cref="GmtChangedDomainEvent"/>
         AddJob<GmtChangedDomainEvent, NewTimeEventHandler<FinishTodoItemsJob>>(options);
         AddJob<GmtChangedDomainEvent, NewTimeEventHandler<GoodMorningJob>>(options);
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<MoodReportJob>>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<WeeklyMoodReportJob>>(options);
         AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectMoodRecordJob>>(options);
         AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectFeedbackJob>>(options);
 
         /// <see cref="UserDisabledDomainEvent"/>
         AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectMoodRecordJob>>(options);
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<MoodReportJob>>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<WeeklyMoodReportJob>>(options);
         AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<FinishTodoItemsJob>>(options);
         AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<GoodMorningJob>>(options);
         AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectFeedbackJob>>(options);
@@ -72,7 +72,7 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         /// <see cref="UserEnabledDomainEvent"/>
         AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>>(options);
         AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, GoodMorningJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, MoodReportJob>>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, WeeklyMoodReportJob>>(options);
         AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>(options);
         AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>(options);
         AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);

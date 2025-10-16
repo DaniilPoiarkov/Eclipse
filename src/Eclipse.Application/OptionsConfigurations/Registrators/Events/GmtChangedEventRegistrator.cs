@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords.Collection;
-using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Common.Events;
@@ -18,7 +18,7 @@ internal sealed class GmtChangedEventRegistrator : IApplicationServicesRegistrat
         services.AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<GoodMorningJob>>()
             .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<FinishTodoItemsJob>>()
             .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<CollectMoodRecordJob>>()
-            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<MoodReportJob>>()
+            .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<WeeklyMoodReportJob>>()
             .AddTransient<IEventHandler<GmtChangedDomainEvent>, NewTimeEventHandler<CollectFeedbackJob>>();
 
         return services;
