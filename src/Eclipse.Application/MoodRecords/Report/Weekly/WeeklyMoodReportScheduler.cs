@@ -6,22 +6,22 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.MoodRecords.Report;
+namespace Eclipse.Application.MoodRecords.Report.Weekly;
 
-internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob, SchedulerOptions>
+internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyMoodReportJob, SchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
-    public MoodReportScheduler(ITimeProvider timeProvider)
+    public WeeklyMoodReportScheduler(ITimeProvider timeProvider)
     {
         _timeProvider = timeProvider;
     }
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var key = JobKey.Create($"{nameof(WeeklyMoodReportJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<MoodReportJob>()
+        var job = JobBuilder.Create<WeeklyMoodReportJob>()
             .WithIdentity(key)
             .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
@@ -46,7 +46,7 @@ internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var key = JobKey.Create($"{nameof(WeeklyMoodReportJob)}-{options.UserId}");
         return scheduler.DeleteJob(key, cancellationToken);
     }
 }

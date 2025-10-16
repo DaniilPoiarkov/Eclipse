@@ -21,7 +21,7 @@ using Xunit;
 
 using User = Eclipse.Domain.Users.User;
 
-namespace Eclipse.Application.Tests.MoodRecords.CollectMoodRecords;
+namespace Eclipse.Application.Tests.MoodRecords.Collection;
 
 public sealed class CollectMoodRecordJobTests
 {
