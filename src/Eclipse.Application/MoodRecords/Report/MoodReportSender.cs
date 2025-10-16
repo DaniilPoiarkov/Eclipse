@@ -41,7 +41,7 @@ internal sealed class MoodReportSender : IMoodReportSender
         _logger = logger;
     }
 
-    public async Task Send(Guid userId, MoodReportOptions options, CancellationToken cancellationToken = default)
+    public async Task Send(Guid userId, SendMoodReportOptions options, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
@@ -53,9 +53,9 @@ internal sealed class MoodReportSender : IMoodReportSender
 
         using var _ = _currentCulture.UsingCulture(user.Culture);
 
-        var message = _localizer["Jobs:SendMoodReport:Caption"];
+        var message = _localizer[options.Message];
 
-        using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
+        using var stream = await _reportsService.GetMoodReportAsync(user.Id, new MoodReportOptions() { From = options.From, To = options.To }, cancellationToken);
 
         try
         {
