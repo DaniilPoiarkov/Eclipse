@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Application.MoodRecords.Report.Monthly;
 using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
@@ -19,6 +20,7 @@ internal sealed class NewUserJoinedEventRegistrator : IApplicationServicesRegist
             .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>()
             .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>()
             .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, WeeklyMoodReportJob>>()
+            .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, MonthlyMoodReportJob>>()
             .AddTransient<IEventHandler<NewUserJoinedDomainEvent>, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>();
 
         return services;
