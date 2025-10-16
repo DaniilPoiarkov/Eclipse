@@ -41,7 +41,7 @@ internal sealed class MoodReportSender : IMoodReportSender
         _logger = logger;
     }
 
-    public async Task Send(Guid userId, MoodReportOptions options, CancellationToken cancellationToken)
+    public async Task Send(Guid userId, MoodReportOptions options, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 

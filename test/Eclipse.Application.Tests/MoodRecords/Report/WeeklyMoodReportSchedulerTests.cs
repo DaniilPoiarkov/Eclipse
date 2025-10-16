@@ -10,15 +10,15 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
+namespace Eclipse.Application.Tests.MoodRecords.Report;
 
-public sealed class MoodReportSchedulerTests
+public sealed class WeeklyMoodReportSchedulerTests
 {
     private readonly ITimeProvider _timeProvider;
 
     private readonly WeeklyMoodReportScheduler _sut;
 
-    public MoodReportSchedulerTests()
+    public WeeklyMoodReportSchedulerTests()
     {
         _timeProvider = Substitute.For<ITimeProvider>();
 

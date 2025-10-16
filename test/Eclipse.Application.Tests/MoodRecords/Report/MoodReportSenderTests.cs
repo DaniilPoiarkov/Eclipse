@@ -1,7 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reports;
-using Eclipse.Application.Jobs;
-using Eclipse.Application.MoodRecords.Report.Weekly;
-using Eclipse.Common.Clock;
+using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 using Eclipse.Tests.Extensions;
@@ -12,12 +10,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-
-using Quartz;
 
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -26,9 +20,9 @@ using Telegram.Bot.Types.Enums;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
+namespace Eclipse.Application.Tests.MoodRecords.Report;
 
-public sealed class MoodReportJobTests
+public sealed class MoodReportSenderTests
 {
     private readonly IUserRepository _repository;
 
@@ -38,40 +32,34 @@ public sealed class MoodReportJobTests
 
     private readonly ITelegramBotClient _client;
 
-    private readonly ITimeProvider _timeProvider;
+    private readonly IStringLocalizer<MoodReportSender> _localizer;
 
-    private readonly IStringLocalizer<WeeklyMoodReportJob> _localizer;
+    private readonly ILogger<MoodReportSender> _logger;
 
-    private readonly ILogger<WeeklyMoodReportJob> _logger;
+    private readonly MoodReportSender _sut;
 
-    private readonly WeeklyMoodReportJob _sut;
-
-    public MoodReportJobTests()
+    public MoodReportSenderTests()
     {
         _repository = Substitute.For<IUserRepository>();
         _currentCulture = Substitute.For<ICurrentCulture>();
         _reportsService = Substitute.For<IReportsService>();
         _client = Substitute.For<ITelegramBotClient>();
-        _timeProvider = Substitute.For<ITimeProvider>();
-        _localizer = Substitute.For<IStringLocalizer<WeeklyMoodReportJob>>();
-        _logger = Substitute.For<ILogger<WeeklyMoodReportJob>>();
+        _localizer = Substitute.For<IStringLocalizer<MoodReportSender>>();
+        _logger = Substitute.For<ILogger<MoodReportSender>>();
 
-        _sut = new WeeklyMoodReportJob(_repository, _currentCulture, _reportsService, _client, _timeProvider, _localizer, _logger);
+        _sut = new MoodReportSender(_repository, _currentCulture, _reportsService, _client, _localizer, _logger);
     }
 
     [Fact]
     public async Task Execute_WhenUserNotFound_ThenLogsError()
     {
-        var context = Substitute.For<IJobExecutionContext>();
-
-        var map = new JobDataMap
+        var options = new MoodReportOptions
         {
-            { "data", JsonConvert.SerializeObject(new UserIdJobData(Guid.NewGuid())) }
+            From = DateTime.UtcNow.AddDays(-7),
+            To = DateTime.UtcNow,
         };
 
-        context.MergedJobDataMap.Returns(map);
-
-        await _sut.Execute(context);
+        await _sut.Send(Guid.NewGuid(), options);
 
         _logger.ShouldReceiveLog(LogLevel.Error);
         await _repository.DidNotReceive().UpdateAsync(Arg.Any<User>());
@@ -83,33 +71,22 @@ public sealed class MoodReportJobTests
         var user = UserGenerator.Get();
 
         _repository.FindAsync(user.Id).Returns(user);
-
         _localizer[Arg.Any<string>()].Returns(new LocalizedString("", "mood report"));
-
-        var utcNow = DateTime.UtcNow;
-        _timeProvider.Now.Returns(utcNow);
-
-        var from = utcNow.PreviousDayOfWeek(DayOfWeek.Sunday).WithTime(0, 0);
 
         using var stream = new MemoryStream();
         _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
-        var context = Substitute.For<IJobExecutionContext>();
-
-        var map = new JobDataMap
+        var options = new MoodReportOptions
         {
-            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
+            From = DateTime.UtcNow.AddDays(-7),
+            To = DateTime.UtcNow,
         };
 
-        context.MergedJobDataMap.Returns(map);
-
-        await _sut.Execute(context);
+        await _sut.Send(user.Id, options);
 
         _currentCulture.Received().UsingCulture(user.Culture);
 
-        await _reportsService.Received().GetMoodReportAsync(user.Id,
-            Arg.Is<MoodReportOptions>(o => o.From == from && o.To == utcNow)
-        );
+        await _reportsService.Received().GetMoodReportAsync(user.Id, options);
 
         await _client.Received().SendRequest(
             Arg.Is<SendPhotoRequest>(r => r.ChatId == user.ChatId
@@ -124,24 +101,19 @@ public sealed class MoodReportJobTests
         var user = UserGenerator.Get();
         _repository.FindAsync(user.Id).Returns(user);
 
-        _timeProvider.Now.Returns(DateTime.UtcNow);
-
         var exception = new ApiRequestException("test");
         _client.SendRequest(Arg.Any<SendPhotoRequest>()).ThrowsAsync(exception);
 
         using var stream = new MemoryStream();
         _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
-        var context = Substitute.For<IJobExecutionContext>();
-
-        var map = new JobDataMap
+        var options = new MoodReportOptions
         {
-            { "data", JsonConvert.SerializeObject(new UserIdJobData(user.Id)) }
+            From = DateTime.UtcNow.AddDays(-7),
+            To = DateTime.UtcNow,
         };
 
-        context.MergedJobDataMap.Returns(map);
-
-        await _sut.Execute(context);
+        await _sut.Send(user.Id, options);
 
         _logger.ShouldReceiveLog(LogLevel.Error);
         user.IsEnabled.Should().BeFalse();

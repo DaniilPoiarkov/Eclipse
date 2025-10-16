@@ -10,7 +10,7 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.MoodRecords.CollectMoodRecords;
+namespace Eclipse.Application.Tests.MoodRecords.Collection;
 
 public sealed class CollectMoodRecordSchedulerTests
 {
