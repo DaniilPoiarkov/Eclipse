@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Reports;
-using Eclipse.Application.Jobs;
+﻿using Eclipse.Application.Jobs;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 
