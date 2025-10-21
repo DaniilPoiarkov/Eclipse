@@ -23,7 +23,8 @@ internal sealed class GoogleClient : IGoogleClient
 
     private BaseClientService.Initializer InitializeBaseClient(string scope)
     {
-        var credentials = GoogleCredential.FromJson(_options.Value.Credentials)
+        var credentials = CredentialFactory.FromJson<ServiceAccountCredential>(_options.Value.Credentials)
+            .ToGoogleCredential()
             .CreateScoped(scope);
 
         return new BaseClientService.Initializer()
