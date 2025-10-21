@@ -17,15 +17,15 @@ internal sealed class GoogleClient : IGoogleClient
 
     public SheetsService GetSheetsService()
     {
-        var baseClient = InitializeBaseClient(SheetsService.Scope.Spreadsheets);
+        var baseClient = InitializeBaseClient([SheetsService.Scope.Spreadsheets]);
         return new SheetsService(baseClient);
     }
 
-    private BaseClientService.Initializer InitializeBaseClient(string scope)
+    private BaseClientService.Initializer InitializeBaseClient(IEnumerable<string> scopes)
     {
-        var credentials = CredentialFactory.FromJson<ServiceAccountCredential>(_options.Value.Credentials)
-            .ToGoogleCredential()
-            .CreateScoped(scope);
+        var credentials = CredentialFactory.FromJson<ServiceAccountCredential>(_options.Value.Credentials);
+
+        credentials.Scopes = scopes;
 
         return new BaseClientService.Initializer()
         {
