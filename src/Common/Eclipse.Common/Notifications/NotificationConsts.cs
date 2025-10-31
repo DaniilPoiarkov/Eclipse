@@ -14,5 +14,7 @@ public static class NotificationConsts
 
     public static readonly TimeOnly Evening730PM = new(19, 30);
 
+    public static readonly TimeOnly Evening830PM = new(20, 30);
+
     public static readonly TimeOnly Day130PM = new(13, 30);
 }

@@ -1,5 +1,4 @@
 ﻿using Eclipse.Application.Jobs;
-using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Notifications;
 
@@ -22,13 +21,13 @@ internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<Monthl
     {
         var key = JobKey.Create($"{nameof(MonthlyMoodReportJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<WeeklyMoodReportJob>()
+        var job = JobBuilder.Create<MonthlyMoodReportJob>()
             .WithIdentity(key)
             .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
         var time = _timeProvider.Now.LastDayOfTheMonth()
-            .WithTime(NotificationConsts.Evening730PM)
+            .WithTime(NotificationConsts.Evening830PM)
             .Add(-options.Gmt);
 
         if (time < _timeProvider.Now)
