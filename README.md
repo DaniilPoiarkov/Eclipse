@@ -140,7 +140,7 @@ Terraform used for cloud provisioning.
 ### PR policy
 Includes build, test, and generate result and coverage reports steps, which will be attached as a comments by _github-actions bot_.
 
-Requires ticket number.
+Requires ticket number in branch name.
 
 ### Merge
 Includes build, test, build docker image, and deploy to Azure App Service jobs.
