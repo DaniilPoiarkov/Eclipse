@@ -1,7 +1,6 @@
 ﻿using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Excel;
-using Eclipse.Common.Plots;
 using Eclipse.Common.Sheets;
 using Eclipse.Infrastructure.Background;
 using Eclipse.Infrastructure.Caching;
@@ -31,12 +30,12 @@ public static class EclipseInfrastructureModule
             .AddSerilogIntegration()
             .AddCache()
             .AddQuartzIntegration()
-            .AddGoogleIntegration();
+            .AddGoogleIntegration()
+            .AddPlotServices();
 
         services
             .AddSingleton<IExcelManager, ExcelManager>()
             .AddSingleton<IBackgroundJobManager, BackgroundJobManager>()
-            .AddSingleton<IPlotGenerator, PlotGenerator>()
             .AddSingleton<ITimeProvider, UtcNowTimeProvider>();
 
         return services;
