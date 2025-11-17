@@ -2,8 +2,6 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Core" />
-    <PackageReference Include="FluentValidation" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Google.Apis.Auth" />
     <PackageReference Include="Google.Apis.Sheets.v4" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
