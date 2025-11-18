@@ -12,7 +12,7 @@ internal sealed class SegoeDarkTemplate : IPlotTemplate
 
     private static readonly string _font = "Segoe UI";
 
-    private static readonly float _minorTickSize = 0.2f;
+    private static readonly float _minorTickSize = 1f;
 
     public Plot Create()
     {

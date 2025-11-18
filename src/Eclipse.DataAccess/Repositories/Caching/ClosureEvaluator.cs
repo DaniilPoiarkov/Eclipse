@@ -9,55 +9,50 @@ internal sealed class ClosureEvaluator : ExpressionVisitor
 
     protected override Expression VisitMember(MemberExpression node)
     {
-        var (succes, value) = TryExtractValue(node, 0);
-
-        if (succes)
+        if (!TryExtractValue(node, 0, out var value))
         {
-            return Expression.Constant(value, node.Type);
+            return base.VisitMember(node);
         }
 
-        return base.VisitMember(node);
+        return Expression.Constant(value, node.Type);
     }
 
-    private static (bool IsSuccess, object? Value) TryExtractValue(MemberExpression node, int depth)
+    private static bool TryExtractValue(MemberExpression node, int depth, out object? value)
     {
+        value = null;
+
         if (depth >= _maxDepth)
         {
-            return (false, null);
+            return false;
         }
 
-        var (isSuccess, value) = TryExtractConstant(node.Expression, depth);
-
-        if (!isSuccess)
+        if (node.Expression is ConstantExpression constantExpression)
         {
-            return (false, null);
+            value = constantExpression.Value;
+        }
+
+        if (node.Expression is MemberExpression memberExpression)
+        {
+            TryExtractValue(memberExpression, depth + 1, out value);
+        }
+
+        if (value is null)
+        {
+            return false;
         }
 
         if (node.Member is FieldInfo fieldInfo)
         {
-            return (true, fieldInfo.GetValue(value));
+            value = fieldInfo.GetValue(value);
+            return true;
         }
 
         if (node.Member is PropertyInfo propertyInfo)
         {
-            return (true, propertyInfo.GetValue(value));
+            value = propertyInfo.GetValue(value);
+            return true;
         }
 
-        return (false, null);
-    }
-
-    private static (bool IsSuccess, object? Value) TryExtractConstant(Expression? expression, int depth)
-    {
-        if (expression is ConstantExpression constantExpression)
-        {
-            return (true, constantExpression.Value);
-        }
-
-        if (expression is MemberExpression memberExpression)
-        {
-            return TryExtractValue(memberExpression, depth + 1);
-        }
-
-        return (false, null);
+        return false;
     }
 }
