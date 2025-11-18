@@ -5,36 +5,46 @@ namespace Eclipse.Infrastructure.Plots.TickGenerators;
 
 internal sealed class DateTimeTickGeneratorFactory : ITickGeneratorFactory<DateTime>
 {
+    private static readonly int _maxTicks = 11;
+
+    private static readonly int[] _intervals = [1, 2, 3];
+
     public ITickGenerator Create(IList<DateTime> values)
     {
-        var manual = new DateTimeManual();
-
-        var intervals = values.Count switch
+        var manual = new DateTimeManual()
         {
-            28 or 30 => 3,
-            >= 21 and <= 29 or 31 => 2,
-            _ => 1,
+            MaxTickCount = _maxTicks
         };
 
-        var chunks = values.Select(v => v.WithTime(0, 0))
-            .Chunk(intervals);
-
-        if (chunks.IsNullOrEmpty())
+        if (values.IsNullOrEmpty())
         {
             return manual;
         }
 
-        foreach (var date in chunks.Select(c => c.First()))
+        var start = values.Min();
+        var end = values.Max();
+
+        var range = (end - start).TotalDays;
+
+        var interval = _intervals.FirstOrDefault(i => range / i <= _maxTicks);
+
+        if (interval == 0)
         {
-            manual.AddMajor(date, $"{date:dd.MM}");
+            interval = (int)Math.Ceiling(range / _maxTicks);
         }
 
-        var last = chunks.Last();
+        var chunks = values.Select(v => v.WithTime(0, 0))
+            .Chunk(interval);
 
-        if (last.Length > 1)
+        foreach (var dates in chunks)
         {
-            var date = last[^1];
-            manual.AddMajor(date, $"{date:dd.MM}");
+            var first = dates[0];
+            manual.AddMajor(first, $"{first:dd.MM}");
+
+            for (int i = 1; i < dates.Length; i++)
+            {
+                manual.AddMinor(dates[i]);
+            }
         }
 
         return manual;

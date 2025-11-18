@@ -11,9 +11,9 @@ internal sealed class ReportsService : IReportsService
 
     private readonly IPlotGenerator _plotGenerator;
 
-    private const int _width = 550;
+    private const int _width = 600;
 
-    private const int _height = 300;
+    private const int _height = 400;
 
     private const string _yAxisTitle = "Score";
 
