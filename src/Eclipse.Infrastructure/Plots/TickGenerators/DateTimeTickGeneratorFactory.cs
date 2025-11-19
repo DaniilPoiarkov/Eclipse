@@ -33,7 +33,7 @@ internal sealed class DateTimeTickGeneratorFactory : ITickGeneratorFactory<DateT
             interval = (int)Math.Ceiling(range / _maxTicks);
         }
 
-        var chunks = values.Select(v => v.WithTime(0, 0))
+        var chunks = NormalizeDates(start, end)
             .Chunk(interval);
 
         foreach (var dates in chunks)
@@ -48,5 +48,23 @@ internal sealed class DateTimeTickGeneratorFactory : ITickGeneratorFactory<DateT
         }
 
         return manual;
+    }
+
+    private IEnumerable<DateTime> NormalizeDates(DateTime start, DateTime end)
+    {
+        var current = start.Date;
+
+        yield return current;
+
+        while (current < end)
+        {
+            current = current.NextDay();
+            yield return current;
+        }
+
+        if (current != end.Date)
+        {
+            yield return end.Date;
+        }
     }
 }
