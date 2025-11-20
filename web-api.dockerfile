@@ -8,8 +8,7 @@ RUN apt-get update && \
     apt-get install -y fontconfig && \
     apt-get install -y libfontconfig1 && \
     apt-get install -y libfreetype6 && \
-    apt-get install -y ttf-mscorefonts-installer && \
-    sudo fc-cache -fv
+    apt-get install -y ttf-mscorefonts-installer
 
 EXPOSE 8080
 EXPOSE 443
