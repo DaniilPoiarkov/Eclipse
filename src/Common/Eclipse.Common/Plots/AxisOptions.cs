@@ -6,4 +6,5 @@ public sealed class AxisOptions<TValue>
     public string Label { get; set; } = string.Empty;
     public double Min { get; set; }
     public double Max { get; set; }
+    public ILaberFormatter<TValue> Formatter { get; set; } = new DefaultLablelFormatter<TValue>();
 }
