@@ -2,7 +2,7 @@
 
 namespace Eclipse.Infrastructure.Plots.Templates;
 
-internal sealed class SegoeDarkTemplate : IPlotTemplate
+internal sealed class SansDarkTemplate : IPlotTemplate
 {
     private static readonly Color _dataBackgroundColor = Color.FromHex("#0b3049");
 
@@ -10,7 +10,7 @@ internal sealed class SegoeDarkTemplate : IPlotTemplate
 
     private static readonly Color _axesColor = Color.FromHex("#a0acb5");
 
-    private static readonly string _font = "Segoe UI";
+    private static readonly string _font = "Sans Font";
 
     private static readonly float _minorTickSize = 1f;
 

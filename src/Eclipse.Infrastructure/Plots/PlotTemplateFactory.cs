@@ -8,7 +8,7 @@ internal sealed class PlotTemplateFactory : IPlotTemplateFactory
     {
         return type switch
         {
-            PlotTemplateType.SegoeDark => new SegoeDarkTemplate(),
+            PlotTemplateType.SansDark => new SansDarkTemplate(),
             _ => throw new NotSupportedException($"Plot template type '{type}' is not supported.")
         };
     }

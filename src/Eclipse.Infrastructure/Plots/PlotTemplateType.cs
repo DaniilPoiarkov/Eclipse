@@ -2,5 +2,5 @@
 
 internal enum PlotTemplateType
 {
-    SegoeDark
+    SansDark
 }
