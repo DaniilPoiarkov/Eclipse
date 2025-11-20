@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y libfontconfig1 && \
     apt-get install -y libfreetype6 && \
     apt-get install -y ttf-mscorefonts-installer && \
-    fc-cache -fv
+    sudo fc-cache -fv
 
 EXPOSE 8080
 EXPOSE 443
