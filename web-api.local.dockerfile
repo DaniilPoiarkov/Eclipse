@@ -11,7 +11,9 @@ RUN apt-get update && \
     apt-get install -y curl && \ 
     apt-get install -y fontconfig && \
     apt-get install -y jq && \
-    apt-get install -y dos2unix
+    apt-get install -y dos2unix && \
+    apt-get install -y ttf-mscorefonts-installer && \
+    fc-cache -fv
 
 EXPOSE 80
 EXPOSE 443
