@@ -12,8 +12,7 @@ RUN apt-get update && \
     apt-get install -y fontconfig && \
     apt-get install -y jq && \
     apt-get install -y dos2unix && \
-    apt-get install -y ttf-mscorefonts-installer && \
-    sudo fc-cache -fv
+    apt-get install -y ttf-mscorefonts-installer
 
 EXPOSE 80
 EXPOSE 443
