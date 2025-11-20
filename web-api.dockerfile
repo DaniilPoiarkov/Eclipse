@@ -7,8 +7,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y fontconfig && \
     apt-get install -y libfontconfig1 && \
-    apt-get install -y libfreetype6 && \
-    apt-get install -y ttf-mscorefonts-installer
+    apt-get install -y libfreetype6
 
 EXPOSE 8080
 EXPOSE 443
