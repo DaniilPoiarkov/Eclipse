@@ -30,8 +30,8 @@ public sealed class ReportsController : ControllerBase
         {
             From = _timeProvider.Now.PreviousDayOfWeek(
                 _timeProvider.Now.DayOfWeek
-            ),
-            To = _timeProvider.Now
+            ).WithTime(0, 0),
+            To = _timeProvider.Now.WithTime(23, 59)
         }, cancellationToken);
 
         return File(stream, MimeContentTypes.ImagePng, "mood-report.png");

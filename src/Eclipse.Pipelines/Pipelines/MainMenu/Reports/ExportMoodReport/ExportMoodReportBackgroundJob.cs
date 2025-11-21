@@ -59,7 +59,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
             From = _timeProvider.Now.PreviousDayOfWeek(
                 _timeProvider.Now.DayOfWeek
             ).WithTime(0, 0),
-            To = _timeProvider.Now
+            To = _timeProvider.Now.WithTime(23, 59)
         };
 
         using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);

@@ -13,6 +13,13 @@
     "Pipelines:TodoItems:AddItem:DescribeWhatToAdd": "Describe what do you wanna to add or press /cancel to return",
     "Pipelines:TodoItems:AddItem:NewItemAdded": "New item added!",
     "Pipelines:TodoItems:AddItem:Error": "Oops, something went wrong. Try again a bit later",
-    "Pipelines:TodoItems:AddItem:{0}Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔"
+    "Pipelines:TodoItems:AddItem:{0}Limit": "Not so fast cowboy😳\n\rYou already have {0} items. Don't you think it's time to finish at least one before planning something more? 🤔",
+
+    "Pipelines:TodoItems:AddItem:ScheduleReminder": "✅ Schedule",
+    "Pipelines:TodoItems:AddItem:NotScheduleReminder": "❌ No",
+    "Pipelines:TodoItems:AddItem:AskToScheduleReminder": "Do you want to get a reminder?🤔",
+    "Pipelines:TodoItems:AddItem:AskForReminderTime": "Great! Send me time in 24h HH:mm format (e.g. 18:45) when to send reminder to you😊\n\rOr press /cancel to skip this step",
+    "Pipelines:TodoItems:AddItem:InvalidTime": "Oh, I cannot understand this format, ensure you specify it in 24h HH:mm format (e.g. 16:15 or 9:25) or press /cancel to skip this step",
+    "Pipelines:TodoItems:AddItem:ReminderAdded": "Good, I will send you a reminder when time will come😊"
   }
 }
