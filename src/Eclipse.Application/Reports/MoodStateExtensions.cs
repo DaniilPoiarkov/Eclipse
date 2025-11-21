@@ -8,15 +8,16 @@ public static class MoodStateExtensions
     {
         return state switch
         {
+            MoodState.Amazing => 10,
             MoodState.Excelent => 9,
-            MoodState.AlmsotExcelent => 8,
+            MoodState.VeryGood => 8,
             MoodState.Good => 7,
-            MoodState.SlightlyGood => 6,
+            MoodState.Fine => 6,
             MoodState.Neutral => 5,
-            MoodState.SlightlyBad => 4,
+            MoodState.Poor => 4,
             MoodState.Bad => 3,
-            MoodState.AlmsotWorst => 2,
-            MoodState.Worst => 1,
+            MoodState.VeryBad => 2,
+            MoodState.Terrible => 1,
             _ => 0,
         };
     }
