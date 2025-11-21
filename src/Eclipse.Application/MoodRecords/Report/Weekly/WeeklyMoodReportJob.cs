@@ -23,10 +23,11 @@ internal sealed class WeeklyMoodReportJob : JobWithArgs<UserIdJobData>
 
     protected override async Task Execute(UserIdJobData args, CancellationToken cancellationToken)
     {
-        var from = _timeProvider.Now.PreviousDayOfWeek(DayOfWeek.Sunday)
-            .WithTime(0, 0);
-
-        var options = new SendMoodReportOptions(from, _timeProvider.Now, "Jobs:MoodReport:Weekly:Caption");
+        var options = new SendMoodReportOptions(
+            _timeProvider.Now.PreviousDayOfWeek(DayOfWeek.Sunday).WithTime(0, 0),
+            _timeProvider.Now.WithTime(23, 59),
+            "Jobs:MoodReport:Weekly:Caption"
+        );
 
         await _sender.Send(args.UserId, options, cancellationToken);
     }
