@@ -4,7 +4,7 @@ using Eclipse.WebAPI.Options;
 using Eclipse.WebAPI.Swagger;
 
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -34,7 +34,7 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 
     private void ConfigureAzureEntraIdAuthentication(SwaggerGenOptions options)
     {
-        var scheme = new OpenApiSecurityScheme
+        var scheme = new OpenApiSecuritySchemeReference
         {
             Reference = new OpenApiReference
             {
