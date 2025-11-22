@@ -35,13 +35,22 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
 
     private async Task<IResult> AskMood(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var buttons = new InlineKeyboardButton[]
+        var buttons = new InlineKeyboardButton[][]
         {
-            InlineKeyboardButton.WithCallbackData("1️⃣"),
-            InlineKeyboardButton.WithCallbackData("2️⃣"),
-            InlineKeyboardButton.WithCallbackData("3️⃣"),
-            InlineKeyboardButton.WithCallbackData("4️⃣"),
-            InlineKeyboardButton.WithCallbackData("5️⃣"),
+            [
+                InlineKeyboardButton.WithCallbackData("1️⃣"),
+                InlineKeyboardButton.WithCallbackData("2️⃣"),
+                InlineKeyboardButton.WithCallbackData("3️⃣"),
+                InlineKeyboardButton.WithCallbackData("4️⃣"),
+                InlineKeyboardButton.WithCallbackData("5️⃣")
+            ],
+            [
+                InlineKeyboardButton.WithCallbackData("6️⃣"),
+                InlineKeyboardButton.WithCallbackData("7️⃣"),
+                InlineKeyboardButton.WithCallbackData("8️⃣"),
+                InlineKeyboardButton.WithCallbackData("9️⃣"),
+                InlineKeyboardButton.WithCallbackData("🔟")
+            ]
         };
 
         var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
@@ -53,11 +62,16 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
     {
         var mood = context.Value switch
         {
-            "5️⃣" => new MoodAnswer(MoodState.Good, "Pipelines:MoodRecords:Add:GoodMood"),
-            "4️⃣" => new MoodAnswer(MoodState.SlightlyGood, "Pipelines:MoodRecords:Add:GoodMood"),
-            "3️⃣" => new MoodAnswer(MoodState.Neutral, "Pipelines:MoodRecords:Add:BadMood"),
-            "2️⃣" => new MoodAnswer(MoodState.SlightlyBad, "Pipelines:MoodRecords:Add:BadMood"),
-            "1️⃣" => new MoodAnswer(MoodState.Bad, "Pipelines:MoodRecords:Add:BadMood"),
+            "🔟" => new MoodAnswer(MoodState.Amazing, "Pipelines:MoodRecords:Add:GoodMood"),
+            "9️⃣" => new MoodAnswer(MoodState.Excellent, "Pipelines:MoodRecords:Add:GoodMood"),
+            "8️⃣" => new MoodAnswer(MoodState.VeryGood, "Pipelines:MoodRecords:Add:GoodMood"),
+            "7️⃣" => new MoodAnswer(MoodState.Good, "Pipelines:MoodRecords:Add:GoodMood"),
+            "6️⃣" => new MoodAnswer(MoodState.Fine, "Pipelines:MoodRecords:Add:BadMood"),
+            "5️⃣" => new MoodAnswer(MoodState.Neutral, "Pipelines:MoodRecords:Add:BadMood"),
+            "4️⃣" => new MoodAnswer(MoodState.Poor, "Pipelines:MoodRecords:Add:BadMood"),
+            "3️⃣" => new MoodAnswer(MoodState.Bad, "Pipelines:MoodRecords:Add:BadMood"),
+            "2️⃣" => new MoodAnswer(MoodState.VeryBad, "Pipelines:MoodRecords:Add:BadMood"),
+            "1️⃣" => new MoodAnswer(MoodState.Terrible, "Pipelines:MoodRecords:Add:BadMood"),
             _ => new MoodAnswer(null, "Pipelines:MoodRecords:Add:NotDefined")
         };
 
