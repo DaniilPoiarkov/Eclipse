@@ -3,7 +3,7 @@
 public enum MoodState
 {
     Amazing,
-    Excelent,
+    Excellent,
     VeryGood,
     Good,
     Fine,

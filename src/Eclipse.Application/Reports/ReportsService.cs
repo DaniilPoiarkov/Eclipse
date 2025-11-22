@@ -45,7 +45,7 @@ internal sealed class ReportsService : IReportsService
 
     public async Task<MemoryStream> GetMoodReportAsync(Guid userId, MoodReportOptions options, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.FindAsync(userId, cancellationToken) 
+        var user = await _userRepository.FindAsync(userId, cancellationToken)
             ?? throw new ArgumentException("User not found.", nameof(userId));
 
         var records = await _moodRecordRepository.GetByExpressionAsync(
@@ -87,8 +87,8 @@ internal sealed class ReportsService : IReportsService
             {
                 Values = states,
                 Label = _localizer[_yAxisTitle],
-                Min = MoodState.Bad.ToScore() - _margin,
-                Max = MoodState.Good.ToScore() + _margin,
+                Min = MoodState.Terrible.ToScore() - _margin,
+                Max = MoodState.Amazing.ToScore() + _margin,
             },
             Title = title,
             Width = _width,

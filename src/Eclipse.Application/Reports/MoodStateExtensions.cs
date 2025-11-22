@@ -9,7 +9,7 @@ public static class MoodStateExtensions
         return state switch
         {
             MoodState.Amazing => 10,
-            MoodState.Excelent => 9,
+            MoodState.Excellent => 9,
             MoodState.VeryGood => 8,
             MoodState.Good => 7,
             MoodState.Fine => 6,
