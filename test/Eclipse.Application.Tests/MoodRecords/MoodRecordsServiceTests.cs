@@ -84,9 +84,9 @@ public sealed class MoodRecordsServiceTests
     }
 
     [Theory]
-    [InlineData(MoodState.Good, MoodState.SlightlyGood)]
+    [InlineData(MoodState.Good, MoodState.Bad)]
     [InlineData(MoodState.Good, MoodState.Good)]
-    [InlineData(MoodState.Bad, MoodState.SlightlyGood)]
+    [InlineData(MoodState.Bad, MoodState.Fine)]
     public async Task CreateOrUpdateAsync_WhenMoodRecordExists_ThenNoNewRecordCreated(MoodState initialState, MoodState newState)
     {
         var userId = Guid.NewGuid();

@@ -2,9 +2,14 @@
 
 public enum MoodState
 {
+    Amazing,
+    Excellent,
+    VeryGood,
     Good,
-    SlightlyGood,
+    Fine,
     Neutral,
-    SlightlyBad,
+    Poor,
     Bad,
+    VeryBad,
+    Terrible
 }
