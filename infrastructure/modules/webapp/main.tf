@@ -75,6 +75,8 @@ resource "azurerm_linux_web_app" "app" {
     AzureAd__Urls__Authorization               = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/authorize"
     AzureAd__Urls__Token                       = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
     AzureAd__Urls__Refresh                     = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
+    AzureAd__Scopes__0__Name                   = "api://${var.azuread_client_id}/Default"
+    AzureAd__Scopes__0__Description            = "Default scope without any delegations."
   }
 
   sticky_settings {

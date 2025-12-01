@@ -102,4 +102,25 @@ public static class DateTimeExtensions
     {
         return dateTime.AddDays(1);
     }
+
+    /// <summary>
+    /// Returns first day of the month with time set to 00:00.
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static DateTime FirstDayOfTheMonth(this DateTime dateTime)
+    {
+        return new DateTime(dateTime.Year, dateTime.Month, 1).WithTime(0, 0);
+    }
+
+    /// <summary>
+    /// Returns last day of the month with time set to 00:00.
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static DateTime LastDayOfTheMonth(this DateTime dateTime)
+    {
+        var firstDayOfNextMonth = dateTime.AddMonths(1).FirstDayOfTheMonth();
+        return firstDayOfNextMonth.AddDays(-1).WithTime(0, 0);
+    }
 }

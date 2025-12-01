@@ -8,7 +8,8 @@
     "Jobs:Evening:Empty": "Hey, {0}, it's evening!🌒\n\rTime to slow down and prepare for rest😴\n\rHope you had a great day😊",
     "Jobs:Evening:RemindMarkAsFinished": "Hey, {0}, it's evening!🌒\n\rTime to slow down and prepare for rest😴\n\rQuick reminder:\n\r\n\rYou have {1} unfinished todo items!\n\r\n\rIf you done some of them it's time to mark them as finished😊",
 
-    "Jobs:SendMoodReport:Caption": "Hey, what's up? I want to show you dynamics of your mood changes during the week!\n\rI recommend you to remind how your week passed and think about how different situations affected you",
+    "Jobs:MoodReport:Weekly:Caption": "Hey, what's up? I want to show you dynamics of your mood changes during the week!\n\rI recommend you to remind how your week passed and think about how different situations affected you",
+    "Jobs:MoodReport:Monthly:Caption": "Hello hello! That's the end of the month, here is how you felt since the first day!\n\rHave a good rest and see you tomorrow🌒",
 
     "Jobs:Feedback": "Hey, hope you're doing great!💫\n\rI'd like to hear your feedback, click /feedback to start, it will take less than a minute"
   }

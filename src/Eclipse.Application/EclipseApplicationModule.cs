@@ -26,6 +26,8 @@ using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Report.Monthly;
+using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
@@ -72,6 +74,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IAccountService, AccountService>()
                 .AddTransient<ILoginManager, LoginManager>()
                 .AddTransient<IMoodRecordsService, MoodRecordsService>()
+                .AddTransient<IMoodReportSender, MoodReportSender>()
                 .AddTransient<IConfigurationService, ConfigurationService>()
                 .AddTransient<IOutboxMessagesService, OutboxMessagesService>()
                 .AddTransient<IInboxMessageService, InboxMessageService>()
@@ -162,8 +165,11 @@ public static class EclipseApplicationModule
         await manager.EnqueueAsync<JobRescheduler<CollectMoodRecordJob>>(cancellationToken);
         logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectMoodRecordJob));
 
-        await manager.EnqueueAsync<JobRescheduler<MoodReportJob>>(cancellationToken);
-        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(MoodReportJob));
+        await manager.EnqueueAsync<JobRescheduler<WeeklyMoodReportJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(WeeklyMoodReportJob));
+
+        await manager.EnqueueAsync<JobRescheduler<MonthlyMoodReportJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(MonthlyMoodReportJob));
 
         await manager.EnqueueAsync<JobRescheduler<CollectFeedbackJob>>(cancellationToken);
         logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectFeedbackJob));

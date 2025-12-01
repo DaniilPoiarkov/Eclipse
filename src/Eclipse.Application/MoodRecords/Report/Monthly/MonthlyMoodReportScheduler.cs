@@ -6,38 +6,38 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.MoodRecords.Report;
+namespace Eclipse.Application.MoodRecords.Report.Monthly;
 
-internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob, SchedulerOptions>
+internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<MonthlyMoodReportJob, SchedulerOptions>
 {
     private readonly ITimeProvider _timeProvider;
 
-    public MoodReportScheduler(ITimeProvider timeProvider)
+    public MonthlyMoodReportScheduler(ITimeProvider timeProvider)
     {
         _timeProvider = timeProvider;
     }
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var key = JobKey.Create($"{nameof(MonthlyMoodReportJob)}-{options.UserId}");
 
-        var job = JobBuilder.Create<MoodReportJob>()
+        var job = JobBuilder.Create<MonthlyMoodReportJob>()
             .WithIdentity(key)
             .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .Build();
 
-        var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)
-            .WithTime(NotificationConsts.Evening730PM)
+        var time = _timeProvider.Now.LastDayOfTheMonth()
+            .WithTime(NotificationConsts.Evening830PM)
             .Add(-options.Gmt);
 
         if (time < _timeProvider.Now)
         {
-            time = time.NextDayOfWeek(DayOfWeek.Sunday);
+            time = time.AddMonths(NotificationConsts.OneUnit);
         }
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
-            .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInWeeks(NotificationConsts.OneUnit))
+            .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInMonths(NotificationConsts.OneUnit))
             .StartAt(time)
             .Build();
 
@@ -46,7 +46,7 @@ internal sealed class MoodReportScheduler : INotificationScheduler<MoodReportJob
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var key = JobKey.Create($"{nameof(MonthlyMoodReportJob)}-{options.UserId}");
         return scheduler.DeleteJob(key, cancellationToken);
     }
 }

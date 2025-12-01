@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Jobs;
-using Eclipse.Application.MoodRecords.Report;
+using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;
@@ -10,32 +10,31 @@ using Quartz;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.MoodRecords.MoodReport;
+namespace Eclipse.Application.Tests.MoodRecords.Collection;
 
-public sealed class MoodReportSchedulerTests
+public sealed class CollectMoodRecordSchedulerTests
 {
     private readonly ITimeProvider _timeProvider;
 
-    private readonly MoodReportScheduler _sut;
+    private readonly CollectMoodRecordScheduler _sut;
 
-    public MoodReportSchedulerTests()
+    public CollectMoodRecordSchedulerTests()
     {
         _timeProvider = Substitute.For<ITimeProvider>();
-
-        _sut = new MoodReportScheduler(_timeProvider);
+        _sut = new CollectMoodRecordScheduler(_timeProvider);
     }
 
     [Fact]
-    public async Task Schedule_WhenScheduler_ThenCreateJobWithCorrectIdentityAndData()
+    public async Task Schedule_WhenCalled_ThenSchedulesJob()
     {
         var scheduler = Substitute.For<IScheduler>();
         var options = new SchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
 
-        var currentTime = new DateTime(2025, 4, 27, 19, 30, 0);
+        var currentTime = DateTime.UtcNow;
 
         _timeProvider.Now.Returns(currentTime);
 
-        var expectedJobKey = JobKey.Create($"{nameof(MoodReportJob)}-{options.UserId}");
+        var expectedJobKey = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
         var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
@@ -56,6 +55,6 @@ public sealed class MoodReportSchedulerTests
         var options = new SchedulerOptions(Guid.NewGuid(), default);
 
         await _sut.Unschedule(scheduler, options);
-        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(MoodReportJob)}-{options.UserId}"));
+        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(CollectMoodRecordJob)}-{options.UserId}"));
     }
 }

@@ -2,40 +2,34 @@
 
 using ScottPlot;
 using ScottPlot.TickGenerators;
-using ScottPlot.TickGenerators.TimeUnits;
 
 namespace Eclipse.Infrastructure.Plots;
 
 internal sealed class PlotGenerator : IPlotGenerator
 {
-    private static readonly Color _dataBackgroundColor = Color.FromHex("#0b3049");
-
-    private static readonly Color _figureColor = Color.FromHex("#07263b");
-
-    private static readonly Color _axesColor = Color.FromHex("#a0acb5");
-
-    private static readonly string _font = "Segoe UI";
-
-    private static readonly int _minorTickSize = 0;
-
     private static readonly int _tickInterval = 1;
+
+    private readonly ITickGeneratorFactory<DateTime> _dateTimeTickGeneratorFactory;
+
+    private readonly IPlotTemplateFactory _plotTemplateFactory;
+
+    public PlotGenerator(ITickGeneratorFactory<DateTime> dateTimeTickGeneratorFactory, IPlotTemplateFactory plotTemplateFactory)
+    {
+        _dateTimeTickGeneratorFactory = dateTimeTickGeneratorFactory;
+        _plotTemplateFactory = plotTemplateFactory;
+    }
 
     public MemoryStream Create<TYAxis>(PlotOptions<DateTime, TYAxis> options)
     {
-        var yAxisTickGenerator = new NumericFixedInterval(_tickInterval);
-
-        var xAxisTickGenerator = new DateTimeFixedInterval(new Day())
-        {
-            LabelFormatter = date => $"{date:dd.MM}",
-            GetIntervalStartFunc = date => date.WithTime(0, 0),
-        };
-
-        using var plot = GetTemplate(xAxisTickGenerator, yAxisTickGenerator);
-
-        FillPlotTitles(plot, options);
-
         var xValues = options.Bottom?.Values ?? [];
         var yValues = options.Left?.Values ?? [];
+
+        using var plot = _plotTemplateFactory.Create(PlotTemplateType.SansDark).Create();
+
+        plot.Axes.Bottom.TickGenerator = _dateTimeTickGeneratorFactory.Create(xValues);
+        plot.Axes.Left.TickGenerator = new NumericFixedInterval(_tickInterval);
+
+        FillPlotTitles(plot, options);
 
         plot.Add.Scatter(xValues, yValues);
 
@@ -67,25 +61,5 @@ internal sealed class PlotGenerator : IPlotGenerator
 
         axis.Label.Text = options.Label;
         axis.Label.IsVisible = !options.Label.IsNullOrEmpty();
-    }
-
-    private static Plot GetTemplate(ITickGenerator xAxisTickGenerator, ITickGenerator yAxisTickGenerator)
-    {
-        var plot = new Plot();
-
-        plot.Axes.Bottom.TickGenerator = xAxisTickGenerator;
-        plot.Axes.Left.TickGenerator = yAxisTickGenerator;
-
-        plot.DataBackground.Color = _dataBackgroundColor;
-        plot.FigureBackground.Color = _figureColor;
-
-        plot.Axes.Color(_axesColor);
-
-        plot.Axes.Bottom.MinorTickStyle.Length = _minorTickSize;
-        plot.Axes.Left.MinorTickStyle.Length = _minorTickSize;
-
-        plot.Font.Set(_font);
-
-        return plot;
     }
 }
