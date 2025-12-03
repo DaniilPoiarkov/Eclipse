@@ -2,7 +2,7 @@
 
 namespace Eclipse.DataAccess.Model;
 
-public interface IModelBuilderConfigurator
+internal interface IModelBuilderConfigurator
 {
     void Configure(ModelBuilder modelBuilder);
 }
