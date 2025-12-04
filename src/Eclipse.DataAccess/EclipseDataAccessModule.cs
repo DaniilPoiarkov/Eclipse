@@ -60,12 +60,12 @@ public static class EclipseDataAccessModule
             .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>()
             .Decorate<IFeedbackRepository, CachedFeedbackRepository>();
 
-        services.AddScoped<IModelBuilderConfigurator, ModelBuilderConfigurator>();
+        services.AddSingleton<IModelBuilderConfigurator, ModelBuilderConfigurator>();
 
         services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)), publicOnly: false)
             .AsImplementedInterfaces()
-            .WithScopedLifetime());
+            .WithSingletonLifetime());
 
         return services;
     }

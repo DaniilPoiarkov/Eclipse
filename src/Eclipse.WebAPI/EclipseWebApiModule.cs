@@ -5,13 +5,11 @@ using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
 using Eclipse.WebAPI.Filters;
-using Eclipse.WebAPI.Formatters;
 using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Options;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 
 using System.Text.Json.Serialization;
@@ -45,8 +43,6 @@ public static class EclipseWebApiModule
             {
                 jsonOptions.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
-
-        services.ConfigureTelegramBotMvc();
 
         services
             .AddEndpointsApiExplorer();
@@ -125,14 +121,4 @@ public static class EclipseWebApiModule
 
         return app;
     }
-
-    // TODO: Drop this when fix for Telegram.Bot package will be ready. (version 22.5.*)
-    //       Issue lies in message enum deserialization.
-    //       The code below taken from official fix used in deprecated lib.
-    private static IServiceCollection ConfigureTelegramBotMvc(this IServiceCollection services)
-            => services.Configure<MvcOptions>(options =>
-            {
-                options.InputFormatters.Insert(0, new TelegramBotInputFormatter());
-                options.OutputFormatters.Insert(0, new TelegramBotOutputFormatter());
-            });
 }

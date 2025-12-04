@@ -3,7 +3,7 @@ name: Development Container-based Build and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-dev-app
-  DOTNET_VERSION: '9.0.*'
+  DOTNET_VERSION: '10.0.*'
   DOTNET_CONFIGURATION: 'Release'
   REPO: 
 

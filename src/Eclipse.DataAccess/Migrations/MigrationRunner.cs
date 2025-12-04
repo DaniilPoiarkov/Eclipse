@@ -44,14 +44,19 @@ internal sealed class MigrationRunner<AppDbContext> : IMigrationRunner
 
         foreach (var (migration, attribute) in migrations)
         {
-            _logger.LogInformation("Applying migration: {Version}", attribute!.Version);
+            if (attribute is null)
+            {
+                throw new InvalidOperationException($"Migration {migration.GetType().FullName} is missing MigrationAttribute");
+            }
+
+            _logger.LogInformation("Applying migration: {Version}", attribute.Version);
 
             await migration.Migrate(cancellationToken).ConfigureAwait(false);
 
             var versionInfo = new VersionInfo
             {
                 Id = Guid.CreateVersion7(),
-                Version = attribute!.Version,
+                Version = attribute.Version,
                 Description = attribute.Description,
                 AppliedAt = DateTime.UtcNow,
             };

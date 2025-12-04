@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Eclipse.DataAccess.MoodRecords;
 
-internal class MoodRecordConfiguration : IEntityTypeConfiguration<MoodRecord>
+internal sealed class MoodRecordConfiguration : IEntityTypeConfiguration<MoodRecord>
 {
     private readonly IOptions<CosmosDbContextOptions> _options;
 
