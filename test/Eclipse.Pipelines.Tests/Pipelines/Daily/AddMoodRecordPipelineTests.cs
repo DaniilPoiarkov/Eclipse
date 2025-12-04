@@ -41,8 +41,13 @@ public class AddMoodRecordPipelineTests : PipelineTestFixture<AddMoodRecordPipel
     }
 
     [Theory]
-    [InlineData("5️⃣", "Good")]
-    [InlineData("4️⃣", "Good")]
+    [InlineData("🔟", "Good")]
+    [InlineData("9️⃣", "Good")]
+    [InlineData("8️⃣", "Good")]
+    [InlineData("7️⃣", "Good")]
+    [InlineData("6️⃣", "Bad")]
+    [InlineData("5️⃣", "Bad")]
+    [InlineData("4️⃣", "Bad")]
     [InlineData("3️⃣", "Bad")]
     [InlineData("2️⃣", "Bad")]
     [InlineData("1️⃣", "Bad")]
