@@ -1,7 +1,7 @@
 name: Build, Test, and generate report
 
 env:
-  DOTNET_VERSION: '9.0.*'
+  DOTNET_VERSION: '10.0.*'
   DOTNET_CONFIGURATION: 'Release'
 
 on:

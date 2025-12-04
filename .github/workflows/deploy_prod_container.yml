@@ -3,7 +3,7 @@ name: Production Container-based Build and deploy to an Azure
 
 env:
   AZURE_WEBAPP_NAME: eclipse-prod-app
-  DOTNET_VERSION: '9.0.*'
+  DOTNET_VERSION: '10.0.*'
   DOTNET_CONFIGURATION: 'Release'
   REPO:
 
