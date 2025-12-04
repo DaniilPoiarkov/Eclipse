@@ -34,25 +34,9 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 
     private void ConfigureAzureEntraIdAuthentication(SwaggerGenOptions options)
     {
-        var scheme = new OpenApiSecuritySchemeReference
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
         {
-            Reference = new OpenApiReference
-            {
-                Type = ReferenceType.SecurityScheme,
-                Id = "oauth2"
-            },
-            Scheme = "oauth2",
-            Name = "oauth2",
-            In = ParameterLocation.Header
-        };
-
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            { scheme , new List<string>() }
-        });
-
-        var definition = new OpenApiSecurityScheme
-        {
+            Description = "Azure Entra ID OAuth2 Authorization for administration purposes.",
             Type = SecuritySchemeType.OAuth2,
             Flows = new OpenApiOAuthFlows
             {
@@ -64,9 +48,12 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
                     Scopes = _options.Value.Scopes.ToDictionary(s => s.Name, s => s.Description)
                 }
             }
-        };
+        });
 
-        options.AddSecurityDefinition("oauth2", definition);
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("oauth2", document)] = []
+        });
     }
 
     private static void ConfigureAuthorizationSecurityDefinition(SwaggerGenOptions options)
@@ -75,30 +62,17 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 
         options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
         {
+            Name = "Authorization",
             Description = "JWT Bearer token based authorization. Enter your token to access authorized API",
             Scheme = apiKeySecurity,
-            Name = "Authorization",
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.ApiKey,
         });
 
-        var scheme = new OpenApiSecurityScheme
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
         {
-            Reference = new OpenApiReference
-            {
-                Type = ReferenceType.SecurityScheme,
-                Id = apiKeySecurity
-            },
-
-            In = ParameterLocation.Header
-        };
-
-        var requirement = new OpenApiSecurityRequirement
-        {
-            { scheme, Array.Empty<string>() }
-        };
-
-        options.AddSecurityRequirement(requirement);
+            [new OpenApiSecuritySchemeReference(apiKeySecurity, document)] = []
+        });
     }
 
     private void ConfigureApiVersioning(SwaggerGenOptions options)
