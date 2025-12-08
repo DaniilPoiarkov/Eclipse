@@ -16,7 +16,7 @@ internal sealed class MigrationHostedService : IHostedService
     {
         try
         {
-            using var scope = _serviceProvider.CreateAsyncScope();
+            await using var scope = _serviceProvider.CreateAsyncScope();
 
             var migrator = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
 
