@@ -45,7 +45,21 @@ internal sealed class RequestFeedbackBackgroundJob : IBackgroundJob<UserIdJobDat
             _logger.LogError("Cannot request feedback from user {Id}. {Reason}.", args.UserId, "User not found");
 
             await _client.SendMessage(_options.Value.Chat,
-                $"Feedback not requested from user: {args.UserId}\n\rUser not found.",
+                $"❌ Feedback not requested from user: {args.UserId}\n\rUser not found.",
+                cancellationToken: cancellationToken
+            );
+
+            return;
+        }
+
+        var displayName = user.GetReportingDisplayName();
+
+        if (!user.IsEnabled)
+        {
+            _logger.LogWarning("Cannot request feedback from user {Id}. {Reason}.", args.UserId, "User is disabled");
+
+            await _client.SendMessage(_options.Value.Chat,
+                $"❌ Feedback not requested from user: {displayName}\n\rUser is disabled.",
                 cancellationToken: cancellationToken
             );
 
@@ -54,22 +68,10 @@ internal sealed class RequestFeedbackBackgroundJob : IBackgroundJob<UserIdJobDat
 
         try
         {
-            if (!user.IsEnabled)
-            {
-                _logger.LogWarning("Cannot request feedback from user {Id}. {Reason}.", args.UserId, "User is disabled");
-
-                await _client.SendMessage(_options.Value.Chat,
-                    $"Feedback not requested from user: {args.UserId}\n\rUser is disabled.",
-                    cancellationToken: cancellationToken
-                );
-
-                return;
-            }
-
             await _collector.CollectAsync(args.UserId, cancellationToken);
 
             await _client.SendMessage(_options.Value.Chat,
-                $"Requested feedback from user: {args.UserId}",
+                $"✅ Requested feedback from user: {displayName}",
                 cancellationToken: cancellationToken
             );
         }
@@ -79,6 +81,11 @@ internal sealed class RequestFeedbackBackgroundJob : IBackgroundJob<UserIdJobDat
 
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
+
+            await _client.SendMessage(_options.Value.Chat,
+                $"❌ Failed to request feedback from user: {displayName}\n\rDisabling user.",
+                cancellationToken: cancellationToken
+            );
         }
     }
 }
