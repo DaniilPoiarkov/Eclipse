@@ -25,8 +25,15 @@ public abstract class AggregateRoot : Entity, IHasDomainEvents
     /// Gets the events.
     /// </summary>
     /// <returns></returns>
-    public IReadOnlyList<IDomainEvent> GetEvents()
+    public IReadOnlyList<IDomainEvent> GetEvents(bool clear = true)
     {
-        return _domainEvents.AsReadOnly();
+        var events = _domainEvents.ToList();
+
+        if (clear)
+        {
+            _domainEvents.Clear();
+        }
+
+        return events;
     }
 }
