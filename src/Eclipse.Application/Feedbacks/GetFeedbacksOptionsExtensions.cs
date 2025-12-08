@@ -11,7 +11,7 @@ internal static class GetFeedbacksOptionsExtensions
     {
         return Specification<Feedback>.Empty
             .AndIf(!options.UserIds.IsNullOrEmpty(), new PostedByUsersSpecification(options.UserIds))
-            .AndIf(options.From.HasValue, new FromSpecification(options.From!.Value))
-            .AndIf(options.To.HasValue, new ToSpecification(options.To!.Value));
+            .AndIf(options.From.HasValue, new FromSpecification(options.From.GetValueOrDefault()))
+            .AndIf(options.To.HasValue, new ToSpecification(options.To.GetValueOrDefault()));
     }
 }

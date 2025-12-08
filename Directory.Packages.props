@@ -47,7 +47,7 @@
     <PackageVersion Include="Quartz" Version="3.15.1" />
     <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.15.1" />
     <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.15.1" />
-    <PackageVersion Include="Telegram.Bot" Version="22.7.5" />
+    <PackageVersion Include="Telegram.Bot" Version="22.7.6" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="MiniExcel" Version="1.42.0" />
     <PackageVersion Include="ScottPlot" Version="5.1.57" />

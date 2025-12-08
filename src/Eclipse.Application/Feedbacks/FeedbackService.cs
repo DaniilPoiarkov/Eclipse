@@ -1,7 +1,11 @@
 ﻿using Eclipse.Application.Contracts.Feedbacks;
+using Eclipse.Application.Feedbacks.Collection;
+using Eclipse.Application.Jobs;
+using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Domain.Feedbacks;
+using Eclipse.Domain.Users;
 
 namespace Eclipse.Application.Feedbacks;
 
@@ -9,11 +13,21 @@ internal sealed class FeedbackService : IFeedbackService
 {
     private readonly IFeedbackRepository _feedbackRepository;
 
+    private readonly IUserRepository _userRepository;
+
+    private readonly IBackgroundJobManager _backgroundJobManager;
+
     private readonly ITimeProvider _timeProvider;
 
-    public FeedbackService(IFeedbackRepository feedbackRepository, ITimeProvider timeProvider)
+    public FeedbackService(
+        IFeedbackRepository feedbackRepository,
+        IUserRepository userRepository,
+        IBackgroundJobManager backgroundJobManager,
+        ITimeProvider timeProvider)
     {
         _feedbackRepository = feedbackRepository;
+        _userRepository = userRepository;
+        _backgroundJobManager = backgroundJobManager;
         _timeProvider = timeProvider;
     }
 
@@ -42,5 +56,18 @@ internal sealed class FeedbackService : IFeedbackService
         var models = feedbacks.Select(f => f.ToDto());
 
         return PaginatedList<FeedbackDto>.Create(models, count, request.PageSize);
+    }
+
+    public async Task RequestAsync(CancellationToken cancellationToken = default)
+    {
+        var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
+        
+        foreach (var user in users)
+        {
+            await _backgroundJobManager.EnqueueAsync<RequestFeedbackBackgroundJob, UserIdJobData>(
+                new UserIdJobData(user.Id),
+                cancellationToken
+            );
+        }
     }
 }

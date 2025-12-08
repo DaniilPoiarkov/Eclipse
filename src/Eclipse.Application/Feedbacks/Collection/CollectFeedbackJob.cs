@@ -28,7 +28,7 @@ internal sealed class CollectFeedbackJob : JobWithArgs<UserIdJobData>
         }
         catch (ApiRequestException e)
         {
-            Logger.LogError(e, "Failed to send collect mood record job for user {UserId}. Disabling user.", args.UserId);
+            Logger.LogError(e, "Failed to send collect feedback from user {UserId}. Disabling user.", args.UserId);
 
             var user = await _userRepository.FindAsync(args.UserId, cancellationToken);
 
