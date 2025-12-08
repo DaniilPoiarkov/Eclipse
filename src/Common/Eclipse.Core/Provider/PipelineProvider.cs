@@ -72,7 +72,7 @@ internal sealed class PipelineProvider : IPipelineProvider
             return true;
         }
 
-        using var scope = _serviceProvider.CreateAsyncScope();
+        using var scope = _serviceProvider.CreateScope();
 
         var context = new ValidationContext(scope.ServiceProvider, update);
 

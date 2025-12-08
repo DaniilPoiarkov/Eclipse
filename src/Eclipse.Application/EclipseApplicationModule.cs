@@ -148,7 +148,7 @@ public static class EclipseApplicationModule
 
     public static async Task InitializeApplicationLayerAsync(this WebApplication app, CancellationToken cancellationToken = default)
     {
-        using var scope = app.Services.CreateAsyncScope();
+        await using var scope = app.Services.CreateAsyncScope();
 
         var manager = scope.ServiceProvider.GetRequiredService<IBackgroundJobManager>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<IBackgroundJobManager>>();
