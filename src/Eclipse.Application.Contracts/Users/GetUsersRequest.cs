@@ -3,9 +3,8 @@
 [Serializable]
 public sealed class GetUsersRequest
 {
-    public string? Name { get; set; }
-
-    public string? UserName { get; set; }
-
-    public bool NotificationsEnabled { get; set; }
+    public string? Name { get; init; }
+    public string? UserName { get; init; }
+    public bool NotificationsEnabled { get; init; }
+    public bool OnlyActive { get; init; }
 }
