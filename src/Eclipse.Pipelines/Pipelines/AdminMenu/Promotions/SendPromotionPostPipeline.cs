@@ -48,7 +48,6 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
         {
             FinishPipeline();
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Invalid"]);
-
         }
 
         var options = new CacheOptions

@@ -110,6 +110,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         await _pipelineStore.RemoveAsync(key, cancellationToken);
 
         pipeline.SetLocalizer(_localizer);
+        pipeline.SetUpdate(update);
 
         var result = await pipeline.RunNext(context, cancellationToken);
 
