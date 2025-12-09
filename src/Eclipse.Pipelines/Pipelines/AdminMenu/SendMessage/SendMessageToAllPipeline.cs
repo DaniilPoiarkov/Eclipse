@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Caching;
+using Eclipse.Common.Linq;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
@@ -72,7 +73,19 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        var notifications = (await _userService.GetAllAsync(cancellationToken))
+        var options = new PaginationRequest<GetUsersRequest>
+        {
+            Page = 1,
+            PageSize = int.MaxValue,
+            Options = new GetUsersRequest
+            {
+                OnlyActive = true,
+            }
+        };
+
+        var users = await _userService.GetListAsync(options, cancellationToken);
+
+        var requests = users.Items
             .Select(u => new SendMessageModel
             {
                 ChatId = u.ChatId,
@@ -80,8 +93,9 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             })
             .Select(m => _telegramService.Send(m, cancellationToken));
 
-        var errors = (await Task.WhenAll(notifications))
-            .Where(r => !r.IsSuccess)
+        var results = await Task.WhenAll(requests);
+
+        var errors = results.Where(r => !r.IsSuccess)
             .Select(r => r.Error)
             .Select(Localizer.LocalizeError)
             .Select((error, index) => $"{index + 1}. {error}");
