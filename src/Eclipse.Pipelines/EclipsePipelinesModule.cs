@@ -9,6 +9,7 @@ using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Stores.Users;
 using Eclipse.Pipelines.UpdateHandler;
 
 using Microsoft.AspNetCore.Builder;
@@ -44,6 +45,7 @@ public static class EclipsePipelinesModule
             .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<IMessageStore, MessageStore>()
             .AddTransient<IPipelineStore, PipelineStore>()
+            .AddTransient<IUserStore, UserStore>()
             .AddTransient<ICultureTracker, CultureTracker>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
