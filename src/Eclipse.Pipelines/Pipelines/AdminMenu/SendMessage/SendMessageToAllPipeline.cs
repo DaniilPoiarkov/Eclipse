@@ -7,6 +7,8 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 
+using Telegram.Bot.Types.ReplyMarkups;
+
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
 [Route("Menu:AdminMenu:Send:All", "/admin_send_all")]
@@ -34,7 +36,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
     private IResult AskForMessage(MessageContext context)
     {
-        return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:AdminMenu:SendContent"]);
     }
 
     private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
@@ -52,7 +54,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
         await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, options, cancellationToken);
 
-        return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
@@ -105,8 +107,8 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
 
-        var text = string.Join(Environment.NewLine, errors);
-
-        return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{text}");
+        return Menu(AdminMenuButtons,
+            $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{errors.Join(Environment.NewLine)}"
+        );
     }
 }
