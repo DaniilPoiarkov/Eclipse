@@ -24,6 +24,7 @@ internal sealed class GoogleSheetsService : ISheetsService
         return values.Values
             .Skip(_namesRow)
             .Select(parser.Parse)
+            .Where(r => r.IsSuccess)
             .Select(result => result.Value);
     }
 
