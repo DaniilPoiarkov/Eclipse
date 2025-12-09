@@ -3,6 +3,8 @@
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 
+using Microsoft.Extensions.Logging;
+
 namespace Eclipse.Infrastructure.Google;
 
 internal sealed class GoogleSheetsService : ISheetsService
@@ -11,9 +13,12 @@ internal sealed class GoogleSheetsService : ISheetsService
 
     private readonly SheetsService _sheetsService;
 
-    public GoogleSheetsService(SheetsService sheetsService)
+    private readonly ILogger<GoogleSheetsService> _logger;
+
+    public GoogleSheetsService(SheetsService sheetsService, ILogger<GoogleSheetsService> logger)
     {
         _sheetsService = sheetsService;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<TObject>> GetAsync<TObject>(string sheetId, string range, IObjectParser<TObject> parser, CancellationToken cancellationToken = default)
@@ -21,10 +26,19 @@ internal sealed class GoogleSheetsService : ISheetsService
         var request = _sheetsService.Spreadsheets.Values.Get(sheetId, range);
         var values = await request.ExecuteAsync(cancellationToken);
 
-        return values.Values
+        var parsed = values.Values
             .Skip(_namesRow)
-            .Select(parser.Parse)
-            .Where(r => r.IsSuccess)
+            .Select(parser.Parse);
+
+        var errors = parsed.Where(r => !r.IsSuccess)
+            .Select(r => r.Error);
+
+        foreach (var error in errors)
+        {
+            _logger.LogWarning("Failed to parse row from Google Sheets: {Error}", error);
+        }
+
+        return parsed.Where(r => r.IsSuccess)
             .Select(result => result.Value);
     }
 
