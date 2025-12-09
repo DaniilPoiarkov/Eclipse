@@ -39,7 +39,7 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private IResult RequestPostMessage(MessageContext context)
     {
-        return Text(Localizer["Pipelines:Admin:Promotions:Post:Request"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Post:Request"]);
     }
 
     private async Task<IResult> ReviewPostMessageAsync(MessageContext context, CancellationToken cancellationToken)
@@ -97,7 +97,7 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
             cancellationToken
         );
 
-        return Text(Localizer["Pipelines:Admin:Promotions:Post:Confirm{0}", confirmationCode]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Post:Confirm{0}", confirmationCode]);
     }
 
     private async Task<IResult> SendPromotionPostAsync(MessageContext context, CancellationToken cancellationToken)

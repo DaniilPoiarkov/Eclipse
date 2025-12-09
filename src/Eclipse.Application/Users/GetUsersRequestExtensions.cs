@@ -34,6 +34,12 @@ internal static class GetUsersRequestExtensions
                 .And(new NotificationsEnabledSpecification());
         }
 
+        if (request.OnlyActive)
+        {
+            specification = specification
+                .And(new CustomSpecification<User>(u => u.IsEnabled));
+        }
+
         return specification;
     }
 }
