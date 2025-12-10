@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Reports;
+﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
@@ -28,7 +28,7 @@ public sealed class MoodReportSenderTests
 
     private readonly ICurrentCulture _currentCulture;
 
-    private readonly IReportsService _reportsService;
+    private readonly IMoodReportService _reportsService;
 
     private readonly ITelegramBotClient _client;
 
@@ -42,7 +42,7 @@ public sealed class MoodReportSenderTests
     {
         _repository = Substitute.For<IUserRepository>();
         _currentCulture = Substitute.For<ICurrentCulture>();
-        _reportsService = Substitute.For<IReportsService>();
+        _reportsService = Substitute.For<IMoodReportService>();
         _client = Substitute.For<ITelegramBotClient>();
         _localizer = Substitute.For<IStringLocalizer<MoodReportSender>>();
         _logger = Substitute.For<ILogger<MoodReportSender>>();
@@ -70,7 +70,7 @@ public sealed class MoodReportSenderTests
         _localizer[Arg.Any<string>()].Returns(new LocalizedString("", "mood report"));
 
         using var stream = new MemoryStream();
-        _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
+        _reportsService.GetAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
         var options = new SendMoodReportOptions(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, "");
 
@@ -78,7 +78,7 @@ public sealed class MoodReportSenderTests
 
         _currentCulture.Received().UsingCulture(user.Culture);
 
-        await _reportsService.Received().GetMoodReportAsync(user.Id,
+        await _reportsService.Received().GetAsync(user.Id,
             Arg.Is<MoodReportOptions>(o => o.From == options.From
                 && o.To == options.To)
         );
@@ -100,7 +100,7 @@ public sealed class MoodReportSenderTests
         _client.SendRequest(Arg.Any<SendPhotoRequest>()).ThrowsAsync(exception);
 
         using var stream = new MemoryStream();
-        _reportsService.GetMoodReportAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
+        _reportsService.GetAsync(user.Id, Arg.Any<MoodReportOptions>()).Returns(stream);
 
         var options = new SendMoodReportOptions(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, "");
 

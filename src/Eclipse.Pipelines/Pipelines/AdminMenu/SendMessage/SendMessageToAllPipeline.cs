@@ -2,9 +2,12 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Localizations;
 using Eclipse.Common.Caching;
+using Eclipse.Common.Linq;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
@@ -33,7 +36,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
     private IResult AskForMessage(MessageContext context)
     {
-        return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:AdminMenu:SendContent"]);
     }
 
     private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
@@ -51,7 +54,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
         await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, options, cancellationToken);
 
-        return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:AdminMenu:Confirm"]);
     }
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
@@ -72,7 +75,19 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
         }
 
-        var notifications = (await _userService.GetAllAsync(cancellationToken))
+        var options = new PaginationRequest<GetUsersRequest>
+        {
+            Page = 1,
+            PageSize = int.MaxValue,
+            Options = new GetUsersRequest
+            {
+                OnlyActive = true,
+            }
+        };
+
+        var users = await _userService.GetListAsync(options, cancellationToken);
+
+        var requests = users.Items
             .Select(u => new SendMessageModel
             {
                 ChatId = u.ChatId,
@@ -80,8 +95,9 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             })
             .Select(m => _telegramService.Send(m, cancellationToken));
 
-        var errors = (await Task.WhenAll(notifications))
-            .Where(r => !r.IsSuccess)
+        var results = await Task.WhenAll(requests);
+
+        var errors = results.Where(r => !r.IsSuccess)
             .Select(r => r.Error)
             .Select(Localizer.LocalizeError)
             .Select((error, index) => $"{index + 1}. {error}");
@@ -91,8 +107,8 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
         }
 
-        var text = string.Join(Environment.NewLine, errors);
-
-        return Menu(AdminMenuButtons, $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{text}");
+        return Menu(AdminMenuButtons,
+            $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{errors.Join(Environment.NewLine)}"
+        );
     }
 }

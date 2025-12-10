@@ -7,17 +7,17 @@ namespace Eclipse.Core.Pipelines;
 
 public abstract class Pipeline
 {
-    private Update? _update;
-
     internal protected Update Update
     {
-        get => _update ?? throw new InvalidOperationException($"{nameof(Update)} is null.");
+        get => field ?? throw new InvalidOperationException($"{nameof(Update)} is null.");
         set
         {
             ArgumentNullException.ThrowIfNull(value, nameof(value));
-            _update = value;
+            field = value;
         }
     }
+
+    public void SetUpdate(Update update) => Update = update;
 
     protected static IResult Empty() => new EmptyResult();
     protected static IResult Text(string text) => new TextResult(text);

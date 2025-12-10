@@ -46,7 +46,7 @@ internal sealed class InboxMessageConvertor : IInboxMessageConvertor
 
         var converted = new List<InboxMessage>();
 
-        using var scope = _serviceProvider.CreateAsyncScope();
+        await using var scope = _serviceProvider.CreateAsyncScope();
 
         foreach (var outboxMessage in outboxMessages)
         {

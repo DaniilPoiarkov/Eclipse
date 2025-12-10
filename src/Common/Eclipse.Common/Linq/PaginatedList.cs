@@ -3,7 +3,7 @@
 [Serializable]
 public sealed class PaginatedList<T>
 {
-    public ICollection<T> Items { get; private set; }
+    public IList<T> Items { get; private set; }
 
     public int Pages { get; private set; }
 
@@ -17,7 +17,7 @@ public sealed class PaginatedList<T>
     /// <param name="items">The items after applying pagination</param>
     /// <param name="pages">Total pages</param>
     /// <param name="totalCount">Total items count</param>
-    public PaginatedList(ICollection<T> items, int pages, int totalCount)
+    public PaginatedList(IList<T> items, int pages, int totalCount)
     {
         Items = items;
         Pages = pages;

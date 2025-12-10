@@ -1,7 +1,7 @@
 ﻿using Bogus;
 
-using Eclipse.Application.Contracts.Reports;
-using Eclipse.Application.Reports;
+using Eclipse.Application.Contracts.MoodRecords;
+using Eclipse.Application.MoodRecords;
 using Eclipse.Common.Plots;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
@@ -19,9 +19,9 @@ using System.Linq.Expressions;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reports;
+namespace Eclipse.Application.Tests.MoodRecords;
 
-public sealed class ReportServiceTests
+public sealed class MoodReportServiceTests
 {
     private readonly IMoodRecordRepository _moodRecordRepository;
 
@@ -31,17 +31,17 @@ public sealed class ReportServiceTests
 
     private readonly ICurrentCulture _currentCulture;
 
-    private readonly IStringLocalizer<ReportsService> _localizer;
+    private readonly IStringLocalizer<MoodReportService> _localizer;
 
-    private readonly ReportsService _sut;
+    private readonly MoodReportService _sut;
 
-    public ReportServiceTests()
+    public MoodReportServiceTests()
     {
         _moodRecordRepository = Substitute.For<IMoodRecordRepository>();
         _userRepository = Substitute.For<IUserRepository>();
         _plotGenerator = Substitute.For<IPlotGenerator>();
         _currentCulture = Substitute.For<ICurrentCulture>();
-        _localizer = Substitute.For<IStringLocalizer<ReportsService>>();
+        _localizer = Substitute.For<IStringLocalizer<MoodReportService>>();
 
         _sut = new(_moodRecordRepository, _userRepository, _plotGenerator, _currentCulture, _localizer);
     }
@@ -90,7 +90,7 @@ public sealed class ReportServiceTests
             To = to,
         };
 
-        using var _ = await _sut.GetMoodReportAsync(user.Id, options);
+        using var _ = await _sut.GetAsync(user.Id, options);
 
         await _moodRecordRepository.Received()
             .GetByExpressionAsync(Arg.Any<Expression<Func<MoodRecord, bool>>>());
@@ -129,7 +129,7 @@ public sealed class ReportServiceTests
         var from = new DateTime(2024, 10, 1);
         var to = new DateTime(2024, 10, 7);
 
-        await _sut.GetMoodReportAsync(user.Id, new MoodReportOptions { From = from, To = to });
+        await _sut.GetAsync(user.Id, new MoodReportOptions { From = from, To = to });
 
         _plotGenerator.Received().Create(
             Arg.Is<PlotOptions<DateTime, int>>(o => o.Left != null
@@ -144,7 +144,7 @@ public sealed class ReportServiceTests
     {
         var userId = Guid.NewGuid();
 
-        var act = () => _sut.GetMoodReportAsync(userId, new MoodReportOptions());
+        var act = () => _sut.GetAsync(userId, new MoodReportOptions());
 
         var exception = await act.Should().ThrowAsync<ArgumentException>()
             .WithMessage("User not found. (Parameter 'userId')");

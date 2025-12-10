@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -8,6 +8,8 @@ public sealed class ContentLanguageHeaderFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
+        operation.Parameters ??= [];
+
         operation.Parameters.Add(new OpenApiParameter
         {
             Name = "Content-Language",

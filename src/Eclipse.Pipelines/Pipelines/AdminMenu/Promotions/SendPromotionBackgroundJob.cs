@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Background;
+using Eclipse.Common.Linq;
 
 using Microsoft.Extensions.Options;
 
@@ -24,21 +25,31 @@ internal sealed class SendPromotionBackgroundJob : IBackgroundJob<SendPromotionB
 
     public async Task ExecuteAsync(SendPromotionBackgroundJobArgs args, CancellationToken cancellationToken = default)
     {
-        var users = await _userService.GetAllAsync(cancellationToken);
+        var options = new PaginationRequest<GetUsersRequest>
+        {
+            Page = 1,
+            PageSize = int.MaxValue,
+            Options = new GetUsersRequest()
+            {
+                OnlyActive = true,
+            }
+        };
 
-        var notifications = users.Select(u => SendPromotion(u.ChatId, args, cancellationToken));
+        var users = await _userService.GetListAsync(options, cancellationToken);
+
+        var notifications = users.Items.Select(u => SendPromotion(u.ChatId, args, cancellationToken));
 
         var results = await Task.WhenAll(notifications);
 
-        var failedResults = results.Where(r => !r.IsSuccess);
+        var failed = results.Where(r => !r.IsSuccess);
 
-        if (failedResults.IsNullOrEmpty())
+        if (failed.IsNullOrEmpty())
         {
-            await _botClient.SendMessage(_options.Value.Chat, "Promotion send successfully", cancellationToken: cancellationToken);
+            await _botClient.SendMessage(_options.Value.Chat, "Promotion sent successfully", cancellationToken: cancellationToken);
             return;
         }
 
-        var errors = failedResults
+        var errors = failed
             .Select((e, i) => $"{i + 1}. Failed to send promotion to chat: {e.ChatId}{Environment.NewLine}{e.Exception}")
             .Select(e => _botClient.SendMessage(_options.Value.Chat, e, cancellationToken: cancellationToken));
 

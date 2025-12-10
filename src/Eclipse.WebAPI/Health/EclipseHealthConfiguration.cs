@@ -18,7 +18,12 @@ public static class EclipseHealthConfiguration
 
         app.MapHealthChecks("/_health-checks", options)
             .RequireAuthorization(AuthorizationPolicies.Admin)
-            .WithOpenApi();
+            .AddOpenApiOperationTransformer((operation, context, _) =>
+            {
+                operation.Summary = "Health Checks";
+                operation.Description = "Endpoint to report the health of the application.";
+                return Task.CompletedTask;
+            });
 
         return app;
     }

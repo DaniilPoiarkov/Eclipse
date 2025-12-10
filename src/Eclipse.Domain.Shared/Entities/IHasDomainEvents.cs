@@ -4,5 +4,5 @@ namespace Eclipse.Domain.Shared.Entities;
 
 public interface IHasDomainEvents
 {
-    IReadOnlyList<IDomainEvent> GetEvents();
+    IReadOnlyList<IDomainEvent> GetEvents(bool clear = true);
 }

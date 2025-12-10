@@ -1,4 +1,6 @@
 ﻿using Eclipse.Application.Contracts.MoodRecords;
+using Eclipse.Common.Clock;
+using Eclipse.Common.ContentTypes;
 using Eclipse.Common.Results;
 using Eclipse.WebAPI.Extensions;
 
@@ -15,13 +17,21 @@ public sealed class MoodRecordsController : ControllerBase
 {
     private readonly IMoodRecordsService _moodRecordsService;
 
+    private readonly IMoodReportService _reportsService;
+
+    private readonly ITimeProvider _timeProvider;
+
     private readonly IStringLocalizer<MoodRecordsController> _localizer;
 
     public MoodRecordsController(
         IMoodRecordsService moodRecordsService,
+        IMoodReportService reportsService,
+        ITimeProvider timeProvider,
         IStringLocalizer<MoodRecordsController> localizer)
     {
         _moodRecordsService = moodRecordsService;
+        _reportsService = reportsService;
+        _timeProvider = timeProvider;
         _localizer = localizer;
     }
 
@@ -49,5 +59,19 @@ public sealed class MoodRecordsController : ControllerBase
             : string.Empty;
 
         return result.Match(value => Created(createdUrl, value), error => error.ToProblems(_localizer));
+    }
+
+    [HttpGet("report")]
+    public async Task<IActionResult> GetMoodReportAsync(CancellationToken cancellationToken)
+    {
+        var stream = await _reportsService.GetAsync(User.GetUserId(), new MoodReportOptions
+        {
+            From = _timeProvider.Now.PreviousDayOfWeek(
+                _timeProvider.Now.DayOfWeek
+            ).WithTime(0, 0),
+            To = _timeProvider.Now.WithTime(23, 59)
+        }, cancellationToken);
+
+        return File(stream, MimeContentTypes.ImagePng, "mood-report.png");
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Eclipse.Domain.Shared.MoodRecords;
 
-namespace Eclipse.Application.Reports;
+namespace Eclipse.Application.MoodRecords;
 
 public static class MoodStateExtensions
 {
