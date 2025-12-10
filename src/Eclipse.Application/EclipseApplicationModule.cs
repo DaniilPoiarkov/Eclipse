@@ -11,7 +11,6 @@ using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
 using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Contracts.Reports;
 using Eclipse.Application.Contracts.Statistics;
 using Eclipse.Application.Contracts.Suggestions;
 using Eclipse.Application.Contracts.Telegram;
@@ -34,7 +33,6 @@ using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OptionsConfigurations.Registrators.Events;
 using Eclipse.Application.OutboxMessages;
 using Eclipse.Application.Reminders;
-using Eclipse.Application.Reports;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
@@ -79,7 +77,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IOutboxMessagesService, OutboxMessagesService>()
                 .AddTransient<IInboxMessageService, InboxMessageService>()
                 .AddTransient<IInboxMessageConvertor, InboxMessageConvertor>()
-                .AddTransient<IReportsService, ReportsService>()
+                .AddTransient<IMoodReportService, MoodReportService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>()
                 .AddTransient<IFeedbackService, FeedbackService>()
             .AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));

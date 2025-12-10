@@ -1,11 +1,11 @@
-﻿using Eclipse.Application.Reports;
+﻿using Eclipse.Application.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
 
 using FluentAssertions;
 
 using Xunit;
 
-namespace Eclipse.Application.Tests.Reports;
+namespace Eclipse.Application.Tests.MoodRecords;
 
 public sealed class MoodStateExtensionsTests
 {

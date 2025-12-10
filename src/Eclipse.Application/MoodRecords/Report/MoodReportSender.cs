@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Reports;
+﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Domain.Users;
 using Eclipse.Localization.Culture;
 
@@ -17,7 +17,7 @@ internal sealed class MoodReportSender : IMoodReportSender
 
     private readonly ICurrentCulture _currentCulture;
 
-    private readonly IReportsService _reportsService;
+    private readonly IMoodReportService _reportsService;
 
     private readonly ITelegramBotClient _client;
 
@@ -28,7 +28,7 @@ internal sealed class MoodReportSender : IMoodReportSender
     public MoodReportSender(
         IUserRepository userRepository,
         ICurrentCulture currentCulture,
-        IReportsService reportsService,
+        IMoodReportService reportsService,
         ITelegramBotClient client,
         IStringLocalizer<MoodReportSender> localizer,
         ILogger<MoodReportSender> logger)
@@ -55,7 +55,7 @@ internal sealed class MoodReportSender : IMoodReportSender
 
         var message = _localizer[options.Message];
 
-        using var stream = await _reportsService.GetMoodReportAsync(user.Id, new MoodReportOptions() { From = options.From, To = options.To }, cancellationToken);
+        using var stream = await _reportsService.GetAsync(user.Id, new MoodReportOptions() { From = options.From, To = options.To }, cancellationToken);
 
         try
         {

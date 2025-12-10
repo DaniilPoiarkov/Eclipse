@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Contracts.Reports;
+﻿namespace Eclipse.Application.Contracts.MoodRecords;
 
 public sealed class MoodReportOptions
 {

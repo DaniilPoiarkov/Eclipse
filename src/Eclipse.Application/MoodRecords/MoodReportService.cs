@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Reports;
+﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Common.Plots;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Shared.MoodRecords;
@@ -7,9 +7,9 @@ using Eclipse.Localization.Culture;
 
 using Microsoft.Extensions.Localization;
 
-namespace Eclipse.Application.Reports;
+namespace Eclipse.Application.MoodRecords;
 
-internal sealed class ReportsService : IReportsService
+internal sealed class MoodReportService : IMoodReportService
 {
     private readonly IMoodRecordRepository _moodRecordRepository;
 
@@ -19,7 +19,7 @@ internal sealed class ReportsService : IReportsService
 
     private readonly ICurrentCulture _currentCulture;
 
-    private readonly IStringLocalizer<ReportsService> _localizer;
+    private readonly IStringLocalizer<MoodReportService> _localizer;
 
     private const int _width = 600;
 
@@ -29,12 +29,12 @@ internal sealed class ReportsService : IReportsService
 
     private const double _margin = 0.5d;
 
-    public ReportsService(
+    public MoodReportService(
         IMoodRecordRepository moodRecordRepository,
         IUserRepository userRepository,
         IPlotGenerator plotGenerator,
         ICurrentCulture currentCulture,
-        IStringLocalizer<ReportsService> localizer)
+        IStringLocalizer<MoodReportService> localizer)
     {
         _moodRecordRepository = moodRecordRepository;
         _userRepository = userRepository;
@@ -43,7 +43,7 @@ internal sealed class ReportsService : IReportsService
         _localizer = localizer;
     }
 
-    public async Task<MemoryStream> GetMoodReportAsync(Guid userId, MoodReportOptions options, CancellationToken cancellationToken = default)
+    public async Task<MemoryStream> GetAsync(Guid userId, MoodReportOptions options, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken)
             ?? throw new ArgumentException("User not found.", nameof(userId));
