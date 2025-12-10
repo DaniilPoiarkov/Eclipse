@@ -1,4 +1,4 @@
-﻿using Eclipse.Application.Contracts.Reports;
+﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
@@ -15,7 +15,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
 {
     private readonly IUserService _userService;
 
-    private readonly IReportsService _reportsService;
+    private readonly IMoodReportService _reportsService;
 
     private readonly ITimeProvider _timeProvider;
 
@@ -27,7 +27,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
 
     public ExportMoodReportBackgroundJob(
         IUserService userService,
-        IReportsService reportsService,
+        IMoodReportService reportsService,
         ITimeProvider timeProvider,
         ITelegramBotClient botClient,
         IStringLocalizer<ExportMoodReportBackgroundJob> localizer,
@@ -62,7 +62,7 @@ internal sealed class ExportMoodReportBackgroundJob : IBackgroundJob<ExportMoodR
             To = _timeProvider.Now.WithTime(23, 59)
         };
 
-        using var stream = await _reportsService.GetMoodReportAsync(user.Id, options, cancellationToken);
+        using var stream = await _reportsService.GetAsync(user.Id, options, cancellationToken);
 
         await _botClient.SendPhoto(
             args.ChatId,
