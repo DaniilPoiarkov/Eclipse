@@ -39,4 +39,10 @@ public abstract class AdminPipelineBase : EclipsePipelineBase
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Promotions:Post"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu"]) }
     };
+
+    protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> FeedbacksButtons => new List<KeyboardButton[]>()
+    {
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Feedbacks:Read"]), new KeyboardButton(Localizer["Menu:AdminMenu:Feedbacks:Request"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu"]) }
+    };
 }

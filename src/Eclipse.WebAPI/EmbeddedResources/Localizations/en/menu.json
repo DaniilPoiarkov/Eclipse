@@ -36,6 +36,10 @@
     "Menu:AdminMenu:Promotions": "Promotions",
     "Menu:AdminMenu:Promotions:Post": "Post promotion",
 
+    "Menu:AdminMenu:Feedbacks": "Feedbacks",
+    "Menu:AdminMenu:Feedbacks:Read": "Read feedbacks",
+    "Menu:AdminMenu:Feedbacks:Request": "Request feedback from users",
+
     "Menu:TodoItems:AddItem": "Add item ✏️",
     "Menu:TodoItems:List": "My list 🗒",
 
