@@ -2,7 +2,7 @@
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
 
-namespace Eclipse.Application.Notifications.Test;
+namespace Eclipse.Application.Users.Test;
 
 internal sealed class AnotherTestEventHandler : IEventHandler<TestDomainEvent>
 {

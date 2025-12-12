@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 using Quartz;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.TodoItems.Finish;
 
 internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTodoItemsJob, SchedulerOptions>
 {
