@@ -11,6 +11,7 @@ public abstract class AdminPipelineBase : EclipsePipelineBase
     {
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:View"]), new KeyboardButton(Localizer["Menu:AdminMenu:Send"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Export"]), new KeyboardButton(Localizer["Menu:AdminMenu:Promotions"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Feedbacks"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu:SwitchToUserMode"]) },
     };
 
