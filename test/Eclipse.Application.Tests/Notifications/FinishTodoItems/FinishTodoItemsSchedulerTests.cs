@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Jobs;
-using Eclipse.Application.Notifications.FinishTodoItems;
+using Eclipse.Application.TodoItems.Finish;
 using Eclipse.Common.Clock;
 
 using Newtonsoft.Json;

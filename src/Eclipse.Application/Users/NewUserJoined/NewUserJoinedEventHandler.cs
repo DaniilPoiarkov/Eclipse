@@ -7,7 +7,7 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace Eclipse.Application.Notifications.NewUserJoined;
+namespace Eclipse.Application.Users.NewUserJoined;
 
 public sealed class NewUserJoinedEventHandler : IEventHandler<NewUserJoinedDomainEvent>
 {
