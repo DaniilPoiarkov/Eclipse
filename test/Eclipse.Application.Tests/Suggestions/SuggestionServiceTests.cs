@@ -1,5 +1,5 @@
-﻿using Eclipse.Application.Contracts.Google.Sheets;
-using Eclipse.Application.Contracts.Suggestions;
+﻿using Eclipse.Application.Contracts.Suggestions;
+using Eclipse.Application.Google.Sheets;
 using Eclipse.Application.Suggestions;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Suggestions;
