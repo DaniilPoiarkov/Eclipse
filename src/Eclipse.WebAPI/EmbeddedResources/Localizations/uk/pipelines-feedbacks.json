@@ -1,0 +1,9 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin:Feedbacks": "Меню фідбеків",
+    "Pipelines:Admin:Feedbacks:Request:Confirm{0}": "Для підтвердження відправте код: {0}, для скасування натисніть /cancel",
+    "Pipelines:Admin:Feedbacks:Request:Canceled": "Фідбек не запрошено у користувачів.",
+    "Pipelines:Admin:Feedbacks:Request:Requested": "Розпочато запит на фідбек від користувачів."
+  }
+}

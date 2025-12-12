@@ -1,0 +1,9 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Admin:Feedbacks": "Feedbacks menu",
+    "Pipelines:Admin:Feedbacks:Request:Confirm{0}": "To confirm send {0}, to cancel send /cancel",
+    "Pipelines:Admin:Feedbacks:Request:Canceled": "Feedback is not requested.",
+    "Pipelines:Admin:Feedbacks:Request:Requested": "Starting to send feedback requests."
+  }
+}
