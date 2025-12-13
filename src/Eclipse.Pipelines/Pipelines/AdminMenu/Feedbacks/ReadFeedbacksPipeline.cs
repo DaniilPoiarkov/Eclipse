@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Feedbacks;
+using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Caching;
 using Eclipse.Common.Linq;
 using Eclipse.Core.Context;
@@ -17,15 +18,22 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
 {
     private readonly IFeedbackService _feedbackService;
 
+    private readonly IUserService _userService;
+
     private readonly ICacheService _cacheService;
 
     private readonly IMessageStore _messageStore;
 
     private static readonly int _pageSize = 15;
 
-    public ReadFeedbacksPipeline(IFeedbackService feedbackService, ICacheService cacheService, IMessageStore messageStore)
+    public ReadFeedbacksPipeline(
+        IFeedbackService feedbackService,
+        IUserService userService,
+        ICacheService cacheService,
+        IMessageStore messageStore)
     {
         _feedbackService = feedbackService;
+        _userService = userService;
         _cacheService = cacheService;
         _messageStore = messageStore;
     }
@@ -48,8 +56,9 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
         };
 
         var list = await _feedbackService.GetListAsync(request, cancellationToken);
+        var users = await GetUsers(list, cancellationToken);
 
-        var text = GetMessage(request, list);
+        var text = GetMessage(request, list, users.Items);
         var buttons = GetButtons(page, list);
 
         if (buttons.IsNullOrEmpty())
@@ -81,10 +90,11 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
             Options = new GetFeedbacksOptions()
         };
 
-        var list = await _feedbackService.GetListAsync(request, cancellationToken);
+        var feedbacks = await _feedbackService.GetListAsync(request, cancellationToken);
+        var users = await GetUsers(feedbacks, cancellationToken);
 
-        var text = GetMessage(request, list);
-        var buttons = GetButtons(page, list);
+        var text = GetMessage(request, feedbacks, users.Items);
+        var buttons = GetButtons(page, feedbacks);
 
         RegisterStage(HandleUpdate);
 
@@ -94,6 +104,19 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
         }
 
         return Edit(message.Id, text, buttons);
+    }
+
+    private Task<PaginatedList<UserSlimDto>> GetUsers(PaginatedList<FeedbackDto> list, CancellationToken cancellationToken)
+    {
+        return _userService.GetListAsync(new PaginationRequest<GetUsersRequest>
+        {
+            Page = 1,
+            PageSize = int.MaxValue,
+            Options = new GetUsersRequest
+            {
+                UserIds = list.Items.Select(f => f.UserId).Distinct()
+            }
+        }, cancellationToken);
     }
 
     private IResult InvalidActionOrRedirect(Message? message, MessageContext context)
@@ -152,16 +175,18 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
         return page;
     }
 
-    private static string GetMessage(PaginationRequest<GetFeedbacksOptions> request, PaginatedList<FeedbackDto> list)
+    private string GetMessage(PaginationRequest<GetFeedbacksOptions> request, PaginatedList<FeedbackDto> list, IEnumerable<UserSlimDto> users)
     {
         var skippedCount = request.GetSkipCount();
 
-        var feedbacks = list.Items.Select((f, i) => $"{i + skippedCount + 1}. {f.Rate} | {f.Comment}")
+        var feedbacks = list.Items.Join(users, f => f.UserId, u => u.Id, (f, u) => (Feedback: f, User: u))
+            .Select((t, i) => $"{i + skippedCount + 1}. {t.User.GetDisplayName()}: {t.Feedback.GetReportingView()}")
             .Join(Environment.NewLine);
 
-        return $"Page {request.Page} of {list.Pages}. Total cound: {list.TotalCount}.{Environment.NewLine}" +
-            $"{Environment.NewLine}" +
-            $"{feedbacks}";
+        return Localizer["PagingInformation{Page}{PagesCount}{TotalCount}", request.Page, list.Pages, list.TotalCount]
+            + Environment.NewLine
+            + Environment.NewLine
+            + feedbacks;
     }
 
     private List<List<InlineKeyboardButton>> GetButtons(int page, PaginatedList<FeedbackDto> list)
