@@ -1,7 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Background;
+using Eclipse.Common.Extensions;
 using Eclipse.Common.Linq;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
@@ -14,12 +16,19 @@ internal sealed class SendPromotionBackgroundJob : IBackgroundJob<SendPromotionB
 
     private readonly IUserService _userService;
 
+    private readonly ILogger<SendPromotionBackgroundJob> _logger;
+
     private readonly IOptions<PipelinesOptions> _options;
 
-    public SendPromotionBackgroundJob(ITelegramBotClient botClient, IUserService userService, IOptions<PipelinesOptions> options)
+    public SendPromotionBackgroundJob(
+        ITelegramBotClient botClient,
+        IUserService userService,
+        ILogger<SendPromotionBackgroundJob> logger,
+        IOptions<PipelinesOptions> options)
     {
         _botClient = botClient;
         _userService = userService;
+        _logger = logger;
         _options = options;
     }
 
@@ -37,38 +46,29 @@ internal sealed class SendPromotionBackgroundJob : IBackgroundJob<SendPromotionB
 
         var users = await _userService.GetListAsync(options, cancellationToken);
 
-        var notifications = users.Items.Select(u => SendPromotion(u.ChatId, args, cancellationToken));
-
-        var results = await Task.WhenAll(notifications);
-
-        var failed = results.Where(r => !r.IsSuccess);
-
-        if (failed.IsNullOrEmpty())
-        {
-            await _botClient.SendMessage(_options.Value.Chat, "Promotion sent successfully", cancellationToken: cancellationToken);
-            return;
-        }
-
-        var errors = failed
-            .Select((e, i) => $"{i + 1}. Failed to send promotion to chat: {e.ChatId}{Environment.NewLine}{e.Exception}")
-            .Select(e => _botClient.SendMessage(_options.Value.Chat, e, cancellationToken: cancellationToken));
-
-        await Task.WhenAll(errors);
+        await users.Items.Select(u => SendPromotion(u, args, cancellationToken)).WhenAll();
     }
 
-    private async Task<SendPromotionResult> SendPromotion(long chatId, SendPromotionBackgroundJobArgs args, CancellationToken cancellationToken)
+    private async Task SendPromotion(UserSlimDto user, SendPromotionBackgroundJobArgs args, CancellationToken cancellationToken)
     {
         try
         {
-            await _botClient.CopyMessage(chatId, args.FromChatId, args.MessageId, cancellationToken: cancellationToken);
-
-            return new SendPromotionResult(chatId, true, null);
+            await _botClient.CopyMessage(user.ChatId, args.FromChatId, args.MessageId, cancellationToken: cancellationToken);
+            await _botClient.SendMessage(_options.Value.Chat, $"✅ Successfully sent promotion to {user.GetDisplayName()}.", cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
-            return new SendPromotionResult(chatId, false, ex);
+            await _botClient.SendMessage(_options.Value.Chat, $"❌ Failed to send promotion to {user.GetDisplayName()}.{Environment.NewLine}{ex}", cancellationToken: cancellationToken);
+
+            _logger.LogError(ex, "Failed to send promotion to {UserId} ({UserName}). Disabling user.", user.Id, user.UserName);
+
+            var options = new UserPartialUpdateDto
+            {
+                IsEnabled = false,
+                IsEnabledChanged = true,
+            };
+
+            await _userService.UpdatePartialAsync(user.Id, options, cancellationToken);
         }
     }
-
-    record SendPromotionResult(long ChatId, bool IsSuccess, Exception? Exception);
 }
