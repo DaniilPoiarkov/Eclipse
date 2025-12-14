@@ -1,9 +1,9 @@
 ﻿using Eclipse.Application.Contracts.Feedbacks;
 using Eclipse.Application.Contracts.Users;
 
-namespace Eclipse.Pipelines.Pipelines.AdminMenu.Feedbacks;
+namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-internal static class FeedbackMenuExtensions
+internal static class AdminMenuExtensions
 {
     internal static string GetDisplayName(this UserSlimDto user)
     {
