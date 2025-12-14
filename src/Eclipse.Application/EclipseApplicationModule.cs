@@ -9,6 +9,7 @@ using Eclipse.Application.Contracts.Feedbacks;
 using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
+using Eclipse.Application.Contracts.Promotions;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Statistics;
 using Eclipse.Application.Contracts.Suggestions;
@@ -31,6 +32,7 @@ using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OptionsConfigurations.Registrators.Events;
 using Eclipse.Application.OutboxMessages;
+using Eclipse.Application.Promotions;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
@@ -80,6 +82,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IMoodReportService, MoodReportService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>()
                 .AddTransient<IFeedbackService, FeedbackService>()
+                .AddTransient<IPromotionService, PromotionService>()
             .AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services

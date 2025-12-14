@@ -1,4 +1,4 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Contracts.Promotions;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
@@ -17,16 +17,16 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
     private readonly ITelegramBotClient _botClient;
 
-    private readonly IBackgroundJobManager _backgroundJobManager;
+    private readonly IPromotionService _promotionService;
 
     public SendPromotionPostPipeline(
         ICacheService cacheService,
         ITelegramBotClient botClient,
-        IBackgroundJobManager backgroundJobManager)
+        IPromotionService promotionService)
     {
         _cacheService = cacheService;
         _botClient = botClient;
-        _backgroundJobManager = backgroundJobManager;
+        _promotionService = promotionService;
     }
 
     protected override void Initialize()
@@ -124,13 +124,7 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:MessageNotFound"]);
         }
 
-        await _backgroundJobManager.EnqueueAsync<SendPromotionBackgroundJob, SendPromotionBackgroundJobArgs>(
-            new SendPromotionBackgroundJobArgs
-            {
-                FromChatId = context.ChatId,
-                MessageId = messageId,
-            }
-        );
+        await _promotionService.SendPromotion(new SendPromotionRequest(context.ChatId, messageId), cancellationToken);
 
         return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Confirmed"]);
     }
