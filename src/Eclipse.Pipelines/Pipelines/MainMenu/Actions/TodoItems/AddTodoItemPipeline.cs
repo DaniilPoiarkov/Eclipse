@@ -7,6 +7,7 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.TodoItems;
+using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -85,14 +86,17 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer.LocalizeError(result.Error));
         }
 
-        await _cacheService.SetAsync(
-            $"add-todo-item-{context.ChatId}",
-            context.Value,
-            new CacheOptions
-            {
-                Expiration = CacheConsts.ThreeDays,
-                Tags = [$"chat-{context.ChatId}"]
-            },
+        await _cacheService.SetForThreeDaysAsync(
+            $"pipelines-todoitems-add-text-{context.ChatId}",
+            result.Value.Text,
+            context.ChatId,
+            cancellationToken
+        );
+
+        await _cacheService.SetForThreeDaysAsync(
+            $"pipelines-todoitems-add-itemid-{context.ChatId}",
+            result.Value.Id,
+            context.ChatId,
             cancellationToken
         );
 
@@ -153,19 +157,24 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Error"]);
         }
 
-        string text = await _cacheService.GetOrCreateAsync(
-            $"add-todo-item-{context.ChatId}",
+        var text = await _cacheService.GetOrCreateAsync(
+            $"pipelines-todoitems-add-text-{context.ChatId}",
             () => Task.FromResult(string.Empty),
             cancellationToken: cancellationToken
         );
 
-        if (text.IsNullOrEmpty())
+        var todoItemId = await _cacheService.GetOrCreateAsync(
+            $"pipelines-todoitems-add-itemid-{context.ChatId}",
+            () => Task.FromResult(Guid.Empty),
+            cancellationToken: cancellationToken
+        );
+
+        if (text.IsNullOrEmpty() || todoItemId.IsEmpty())
         {
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Error"]);
         }
 
-        // TODO: Specify item id
-        var model = new ReminderCreateDto(null, text, time);
+        var model = new ReminderCreateDto(todoItemId, text, time);
 
         await _reminderService.CreateAsync(user.Value.Id, model, cancellationToken);
 
