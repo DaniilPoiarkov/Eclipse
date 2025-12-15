@@ -40,7 +40,7 @@ In fewer words, go through menu and try everything by yourself!
 #### Requirements
 * Docker
 * Ngrok account
-* .NET 9
+* .NET 10
 
 #### Step by step
 Go to <i>docker</i> directory, create here a copy of _docker-compose.override.yaml_ file with name _docker-compose.local.yaml_.
@@ -102,13 +102,13 @@ Integration tests also isolated in separate assembly called **Eclipse.Integratio
 
 ## Integrations
 
-### API
+### 3rd parties
 * Google API
 * Telegram API
 * EntraID
 
 ### Tech stack
-* ASP.NET 9
+* ASP.NET 10
 * Quartz
 * Azure CosmosDb
 * Polly
@@ -130,7 +130,7 @@ Integration tests also isolated in separate assembly called **Eclipse.Integratio
 * Meziantou
 * Testcontainers
 
-## Deployment and CICD
+## Deployment and CI/CD
 * GitHub actions
 * Azure App Service
 * Terraform

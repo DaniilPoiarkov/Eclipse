@@ -36,6 +36,10 @@
     "Menu:AdminMenu:Promotions": "Просування",
     "Menu:AdminMenu:Promotions:Post": "Надіслати пост",
 
+    "Menu:AdminMenu:Feedbacks": "Фідбеки",
+    "Menu:AdminMenu:Feedbacks:Read": "Прочитати фідбеки",
+    "Menu:AdminMenu:Feedbacks:Request": "Запросити фідбек від користувачів",
+
     "Menu:TodoItems:AddItem": "Запланувати ✏️",
     "Menu:TodoItems:List": "Мій список 🗒",
 

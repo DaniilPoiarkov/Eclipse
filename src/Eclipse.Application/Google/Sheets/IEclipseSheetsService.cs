@@ -1,6 +1,6 @@
-﻿namespace Eclipse.Application.Contracts.Google.Sheets;
+﻿namespace Eclipse.Application.Google.Sheets;
 
-public interface IEclipseSheetsService<TObject>
+internal interface IEclipseSheetsService<TObject>
 {
     Task<IEnumerable<TObject>> GetAllAsync(CancellationToken cancellationToken = default);
 

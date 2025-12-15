@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
-namespace Eclipse.Application.Notifications.FinishTodoItems;
+namespace Eclipse.Application.TodoItems.Finish;
 
 internal sealed class FinishTodoItemsJob : JobWithArgs<UserIdJobData>
 {

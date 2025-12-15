@@ -6,10 +6,10 @@ using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
 using Eclipse.Application.Contracts.Feedbacks;
-using Eclipse.Application.Contracts.Google.Sheets;
 using Eclipse.Application.Contracts.InboxMessages;
 using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.OutboxMessages;
+using Eclipse.Application.Contracts.Promotions;
 using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Statistics;
 using Eclipse.Application.Contracts.Suggestions;
@@ -20,6 +20,7 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Exporting;
 using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
+using Eclipse.Application.Google.Sheets;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords;
@@ -27,16 +28,17 @@ using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.MoodRecords.Report.Monthly;
 using Eclipse.Application.MoodRecords.Report.Weekly;
-using Eclipse.Application.Notifications.FinishTodoItems;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OptionsConfigurations.Registrators.Events;
 using Eclipse.Application.OutboxMessages;
+using Eclipse.Application.Promotions;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Statistics;
 using Eclipse.Application.Suggestions;
 using Eclipse.Application.Telegram;
 using Eclipse.Application.TodoItems;
+using Eclipse.Application.TodoItems.Finish;
 using Eclipse.Application.Url;
 using Eclipse.Application.Users;
 using Eclipse.Common.Background;
@@ -80,6 +82,7 @@ public static class EclipseApplicationModule
                 .AddTransient<IMoodReportService, MoodReportService>()
                 .AddTransient<IUserStatisticsService, UserStatisticsService>()
                 .AddTransient<IFeedbackService, FeedbackService>()
+                .AddTransient<IPromotionService, PromotionService>()
             .AddScoped(typeof(IInboxMessageProcessor<,>), typeof(TypedInboxMessageProcessor<,>));
 
         services
