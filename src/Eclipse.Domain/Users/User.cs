@@ -84,7 +84,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         var reminder = new Reminder(id, Id, relatedItemId, text, notifyAt.Add(Gmt * -1));
         _reminders.Add(reminder);
 
-        AddEvent(new ReminderAddedDomainEvent(id, Id, Gmt, reminder.NotifyAt, text, Culture, ChatId));
+        AddEvent(new ReminderAddedDomainEvent(reminder.Id, Id, relatedItemId, Gmt, reminder.NotifyAt, text, Culture, ChatId));
 
         return reminder;
     }

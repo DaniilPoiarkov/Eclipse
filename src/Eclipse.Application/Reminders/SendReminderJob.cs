@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Quartz;
 
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Application.Reminders;
 
@@ -60,8 +61,14 @@ internal sealed class SendReminderJob : IJob
 
         var message = $"{_localizer["Jobs:SendReminders:Message"]}\n\r\n\r{reminder.Text}";
 
-        await _client.SendMessage(reminder.ChatId, message, cancellationToken: context.CancellationToken);
+        // TODO: Localize button texts, start according pipeline
+        List<InlineKeyboardButton> menu = reminder.RelatedItemId.HasValue
+            ? [InlineKeyboardButton.WithCallbackData("Finish", reminder.RelatedItemId.Value.ToString()), InlineKeyboardButton.WithCallbackData("Reschedule", "reschedule")]
+            : [];
 
+        await _client.SendMessage(reminder.ChatId, message, replyMarkup: menu, cancellationToken: context.CancellationToken);
+
+        // TODO: Move as a separate process after adding "snooze" functionality
         var result = await _reminderService.DeleteAsync(reminder.UserId, reminder.ReminderId, context.CancellationToken);
 
         if (!result.IsSuccess)

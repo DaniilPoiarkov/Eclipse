@@ -35,6 +35,7 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
                 ReminderId = notification.ReminderId,
                 Text = notification.Text,
                 UserId = notification.UserId,
+                RelatedItemId = notification.RelatedItemId
             }))
             .Build();
 
