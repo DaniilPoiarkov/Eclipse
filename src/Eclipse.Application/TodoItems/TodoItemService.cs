@@ -21,7 +21,7 @@ internal sealed class TodoItemService : ITodoItemService
         _timeProvider = timeProvider;
     }
 
-    public async Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
+    public async Task<Result<TodoItemDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindByChatIdAsync(chatId, cancellationToken);
 
@@ -32,7 +32,7 @@ internal sealed class TodoItemService : ITodoItemService
 
         return await user.AddTodoItem(model.Text, _timeProvider.Now)
             .TapAsync(_ => _userRepository.UpdateAsync(user, cancellationToken))
-            .BindAsync(_ => user.ToDto());
+            .BindAsync(todoItem => todoItem.ToDto());
     }
 
     public async Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default)

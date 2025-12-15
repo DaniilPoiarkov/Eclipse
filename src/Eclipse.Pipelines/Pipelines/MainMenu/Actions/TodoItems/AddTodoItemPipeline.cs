@@ -77,12 +77,7 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer["Okay"]);
         }
 
-        var createNewItemModel = new CreateTodoItemDto
-        {
-            Text = context.Value,
-        };
-
-        var result = await _todoItemService.CreateAsync(context.User.Id, createNewItemModel, cancellationToken);
+        var result = await _todoItemService.CreateAsync(context.User.Id, new CreateTodoItemDto(context.Value), cancellationToken);
 
         if (!result.IsSuccess)
         {
