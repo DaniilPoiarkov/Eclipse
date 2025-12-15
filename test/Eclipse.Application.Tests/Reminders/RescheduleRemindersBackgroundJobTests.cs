@@ -38,8 +38,8 @@ public sealed class RescheduleRemindersBackgroundJobTests
     {
         var user = UserGenerator.Get();
 
-        user.AddReminder(text, new TimeOnly(hour, minute));
-        user.AddReminder(text, new TimeOnly(hour, minute));
+        user.AddReminder(null, text, new TimeOnly(hour, minute));
+        user.AddReminder(null, text, new TimeOnly(hour, minute));
 
         _userRepository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
 

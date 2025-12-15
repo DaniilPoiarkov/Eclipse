@@ -169,11 +169,8 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
             return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:Error"]);
         }
 
-        var model = new ReminderCreateDto
-        {
-            Text = text,
-            NotifyAt = time
-        };
+        // TODO: Specify item id
+        var model = new ReminderCreateDto(null, text, time);
 
         await _reminderService.CreateAsync(user.Value.Id, model, cancellationToken);
 

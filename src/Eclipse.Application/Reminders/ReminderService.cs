@@ -45,7 +45,7 @@ internal sealed class ReminderService : IReminderService
 
     private async Task<Result<Reminder>> CreateAsync(User user, ReminderCreateDto model, CancellationToken cancellationToken)
     {
-        var reminder = user.AddReminder(model.Text, model.NotifyAt);
+        var reminder = user.AddReminder(model.RelatedItemId, model.Text, model.NotifyAt);
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 

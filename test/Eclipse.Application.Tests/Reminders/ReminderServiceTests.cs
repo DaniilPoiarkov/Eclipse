@@ -31,11 +31,7 @@ public sealed class ReminderServiceTests
     {
         var user = UserGenerator.Get();
 
-        var create = new ReminderCreateDto
-        {
-            NotifyAt = TimeOnly.FromDateTime(DateTime.UtcNow),
-            Text = text
-        };
+        var create = new ReminderCreateDto(Guid.NewGuid(), text, TimeOnly.FromDateTime(DateTime.UtcNow));
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
@@ -59,7 +55,7 @@ public sealed class ReminderServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserNotExists_ThenErrorReturned()
     {
-        var result = await _sut.CreateAsync(Guid.NewGuid(), new ReminderCreateDto());
+        var result = await _sut.CreateAsync(Guid.NewGuid(), new ReminderCreateDto(null, "", new()));
 
         result.IsSuccess.Should().BeFalse();
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
@@ -71,7 +67,7 @@ public sealed class ReminderServiceTests
     [InlineData(1)]
     public async Task CreateAsync_WhenUserNotFoundByChatId_ThenErrorReturned(long chatId)
     {
-        var result = await _sut.CreateAsync(chatId, new ReminderCreateDto());
+        var result = await _sut.CreateAsync(chatId, new ReminderCreateDto(null, "", new()));
 
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
@@ -84,11 +80,7 @@ public sealed class ReminderServiceTests
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var create = new ReminderCreateDto
-        {
-            Text = text,
-            NotifyAt = TimeOnly.FromDateTime(DateTime.UtcNow),
-        };
+        var create = new ReminderCreateDto(null, text, TimeOnly.FromDateTime(DateTime.UtcNow));
 
         var result = await _sut.CreateAsync(user.Id, create);
 
@@ -100,7 +92,7 @@ public sealed class ReminderServiceTests
     [Fact]
     public async Task CreateAsync_WhenUserWithGivenIdNotExists_ThenErrorReturned()
     {
-        var result = await _sut.CreateAsync(Guid.NewGuid(), new ReminderCreateDto());
+        var result = await _sut.CreateAsync(Guid.NewGuid(), new ReminderCreateDto(Guid.Empty, "", new()));
 
         result.Error.Should().BeEquivalentTo(DefaultErrors.EntityNotFound<User>());
     }
@@ -110,7 +102,7 @@ public sealed class ReminderServiceTests
     public async Task GetAsync_WhenExists_ThenProperModelReturned(string text)
     {
         var user = UserGenerator.Get();
-        var expected = user.AddReminder(text, TimeOnly.FromDateTime(DateTime.UtcNow)).ToDto();
+        var expected = user.AddReminder(Guid.NewGuid(), text, TimeOnly.FromDateTime(DateTime.UtcNow)).ToDto();
 
         _repository.FindAsync(user.Id).Returns(user);
 
@@ -142,7 +134,7 @@ public sealed class ReminderServiceTests
     public async Task GetList_WhenRequested_ThenRemindersReturned(string text)
     {
         var user = UserGenerator.Get();
-        var reminder = user.AddReminder(text, new TimeOnly()).ToDto();
+        var reminder = user.AddReminder(null, text, new TimeOnly()).ToDto();
 
         _repository.FindAsync(user.Id).Returns(user);
 
@@ -184,7 +176,7 @@ public sealed class ReminderServiceTests
     {
         var user = UserGenerator.Get();
 
-        var reminder = user.AddReminder(text, new TimeOnly());
+        var reminder = user.AddReminder(null, text, new TimeOnly());
 
         _repository.FindAsync(user.Id).Returns(user);
 
