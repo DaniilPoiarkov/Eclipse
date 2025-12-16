@@ -6,7 +6,6 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Feedbacks;
 using Eclipse.Pipelines.Health;
-using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.MoodRecords;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
