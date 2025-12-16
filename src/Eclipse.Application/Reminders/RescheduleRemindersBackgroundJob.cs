@@ -32,17 +32,10 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
         var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var reminders = users.SelectMany(u =>
-            u.Reminders.Select(r => (new SendReminderJobData
-            {
-                ChatId = u.ChatId,
-                ReminderId = r.Id,
-                Culture = u.Culture,
-                Text = r.Text,
-                UserId = r.UserId,
-                RelatedItemId = r.RelatedItemId
-            },
-            r.NotifyAt)
+        var reminders = users.SelectMany(u => u.Reminders.Select(r => (
+                new SendReminderJobData(r.UserId, r.Id, r.RelatedItemId, u.ChatId, u.Culture, r.Text),
+                r.NotifyAt
+            )
         ));
 
         foreach (var (reminder, notifyAt) in reminders)

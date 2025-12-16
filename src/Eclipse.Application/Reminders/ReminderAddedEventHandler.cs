@@ -29,15 +29,16 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
 
         var job = JobBuilder.Create<SendReminderJob>()
             .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new SendReminderJobData
-            {
-                ChatId = notification.ChatId,
-                Culture = notification.Culture,
-                ReminderId = notification.ReminderId,
-                Text = notification.Text,
-                UserId = notification.UserId,
-                RelatedItemId = notification.RelatedItemId
-            }))
+            .UsingJobData("data", JsonConvert.SerializeObject(
+                new SendReminderJobData(
+                    notification.UserId,
+                    notification.ReminderId,
+                    notification.RelatedItemId,
+                    notification.ChatId,
+                    notification.Culture,
+                    notification.Text
+                ))
+            )
             .Build();
 
         var time = _timeProvider.Now.WithTime(notification.NotifyAt);

@@ -1,13 +1,10 @@
 ﻿namespace Eclipse.Application.Reminders.Sendings;
 
-internal sealed class SendReminderJobData
-{
-    public Guid UserId { get; init; }
-    public Guid ReminderId { get; init; }
-    public Guid? RelatedItemId { get; init; }
-
-    public long ChatId { get; init; }
-
-    public required string Culture { get; init; }
-    public required string Text { get; init; }
-}
+internal sealed record SendReminderJobData(
+    Guid UserId,
+    Guid ReminderId,
+    Guid? RelatedItemId,
+    long ChatId,
+    string Culture,
+    string Text
+);

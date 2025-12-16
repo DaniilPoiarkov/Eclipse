@@ -44,14 +44,10 @@ internal sealed class RescheduleRemindersHandler : IEventHandler<UserEnabledDoma
             return;
         }
 
-        var remidners = user.Reminders.Select(r => (new SendReminderJobData
-        {
-            ChatId = user.ChatId,
-            ReminderId = r.Id,
-            Culture = user.Culture,
-            Text = r.Text,
-            UserId = r.UserId,
-        }, r.NotifyAt));
+        var remidners = user.Reminders.Select(r => (
+            new SendReminderJobData(r.UserId, r.Id, r.RelatedItemId, user.ChatId, user.Culture, r.Text),
+            r.NotifyAt)
+        );
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 

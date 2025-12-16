@@ -5,6 +5,7 @@ namespace Eclipse.Application.Contracts.Reminders;
 public class ReminderDto : EntityDto
 {
     public Guid UserId { get; set; }
+    public Guid? RelatedItemId { get; init; }
 
     public string Text { get; set; } = string.Empty;
 
