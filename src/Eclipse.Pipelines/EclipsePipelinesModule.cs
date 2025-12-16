@@ -9,6 +9,7 @@ using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.Jobs;
 using Eclipse.Pipelines.MoodRecords;
 using Eclipse.Pipelines.Pipelines;
+using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Stores.Users;
@@ -56,12 +57,7 @@ public static class EclipsePipelinesModule
             .AsSelf()
             .WithScopedLifetime());
 
-        services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
-            .AddClasses(c => c.AssignableTo<EclipseJobBase>(), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
-
-        services.Scan(tss => tss.FromAssemblyOf<EclipseJobBase>()
+        services.Scan(tss => tss.FromAssemblyOf<ExportToUserBackgroundJobArgs>()
             .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
