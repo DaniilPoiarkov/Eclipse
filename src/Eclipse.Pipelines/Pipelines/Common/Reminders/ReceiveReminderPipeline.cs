@@ -12,8 +12,6 @@ using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
-using Quartz.Logging;
-
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common.Reminders;
@@ -57,7 +55,6 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private async Task<IResult> SendReminder(MessageContext context, CancellationToken cancellationToken)
     {
-        // TODO: Remove previous message menu if exists.
         var message = await _messageStore.GetOrDefaultAsync(
             new MessageKey(context.ChatId),
             cancellationToken
@@ -104,7 +101,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Reminders:Receive:Reschedule"], rescheduleKeyPayload)
         ];
 
-        return Menu(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}");
+        return RemoveInlineMenuAndSend(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}", message);
     }
 
     private async Task<IResult> FinishTodoItem(MessageContext context, CancellationToken cancellationToken)
@@ -122,8 +119,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (cacheKey.IsNullOrEmpty())
         {
-            // TODO: ...
-            return Text("KEY IS EMPTY");
+            return RemoveInlineMenuAndSend(Localizer["Error"], message);
         }
 
         var reply = await _cacheService.GetOrCreateAsync(
@@ -134,20 +130,19 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply is null)
         {
-            // Remove menu from message and process further.
-            return Text(Localizer["Error"]);
+            return RemoveInlineMenuAndSend(Localizer["Error"], message);
         }
 
         if (reply.Action == ReminderReceivedReplyAction.Reschedule)
         {
             // Reschedule reminder.
-            return Text("Reschedule");
+            return RemoveInlineMenuAndSend(Localizer["Reschedule"], message);
         }
 
         if (reply.Action != ReminderReceivedReplyAction.FinishTodoItem)
         {
             // Remove menu from message and process further.
-            return Text("NOT FinishTodoItem");
+            return RemoveInlineMenuAndSend(Localizer["NOT FinishTodoItem"], message);
         }
 
         // TODO: Migrate to use UserId?
@@ -155,6 +150,6 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
 
         // TODO: Return text as finished.
-        return Text("FinishTodoItem");
+        return RemoveInlineMenuAndSend(Localizer["FinishTodoItem"], message);
     }
 }
