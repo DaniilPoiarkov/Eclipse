@@ -1,4 +1,5 @@
-﻿using Eclipse.Common.Background;
+﻿using Eclipse.Application.Reminders.Sendings;
+using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
 
@@ -39,6 +40,7 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
                 Culture = u.Culture,
                 Text = r.Text,
                 UserId = r.UserId,
+                RelatedItemId = r.RelatedItemId
             },
             r.NotifyAt)
         ));

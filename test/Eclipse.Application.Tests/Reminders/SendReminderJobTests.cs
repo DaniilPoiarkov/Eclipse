@@ -1,5 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Errors;

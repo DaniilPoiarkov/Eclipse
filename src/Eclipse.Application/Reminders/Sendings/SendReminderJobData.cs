@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Application.Reminders;
+﻿namespace Eclipse.Application.Reminders.Sendings;
 
 internal sealed class SendReminderJobData
 {

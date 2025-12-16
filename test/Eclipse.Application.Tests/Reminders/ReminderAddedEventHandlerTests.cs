@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users.Events;
 
