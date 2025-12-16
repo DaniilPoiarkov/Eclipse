@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Url;
 using Eclipse.Application.Feedbacks.Collection;
 using Eclipse.Application.MoodRecords.Collection;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
 using Eclipse.Pipelines.Culture;
@@ -9,6 +10,7 @@ using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.MoodRecords;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
+using Eclipse.Pipelines.Reminders;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Stores.Users;
@@ -48,7 +50,8 @@ public static class EclipsePipelinesModule
             .AddTransient<IMessageStore, MessageStore>()
             .AddTransient<IPipelineStore, PipelineStore>()
             .AddTransient<IUserStore, UserStore>()
-            .AddTransient<ICultureTracker, CultureTracker>();
+            .AddTransient<ICultureTracker, CultureTracker>()
+            .AddTransient<IReminderSender, ReminderSender>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
@@ -58,6 +61,11 @@ public static class EclipsePipelinesModule
 
         services.Scan(tss => tss.FromAssemblyOf<ExportToUserBackgroundJobArgs>()
             .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)
+            .AsSelf()
+            .WithTransientLifetime());
+
+        services.Scan(tss => tss.FromAssemblyOf<IReminderSenderStrategy>()
+            .AddClasses(c => c.AssignableTo<IReminderSenderStrategy>(), publicOnly: false)
             .AsSelf()
             .WithTransientLifetime());
 
