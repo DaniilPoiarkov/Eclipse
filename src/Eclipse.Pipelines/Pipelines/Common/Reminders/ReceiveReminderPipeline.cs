@@ -1,6 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.TodoItems;
-using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
@@ -19,8 +18,6 @@ namespace Eclipse.Pipelines.Pipelines.Common.Reminders;
 [Route("", "/href_reminders_receive")]
 internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 {
-    private readonly IUserService _userService;
-
     private readonly ITodoItemService _todoItemService;
 
     private readonly IReminderService _reminderService;
@@ -32,14 +29,12 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
     private readonly ILogger<ReceiveReminderPipeline> _logger;
 
     public ReceiveReminderPipeline(
-        IUserService userService,
         ITodoItemService todoItemService,
         IReminderService reminderService,
         IMessageStore messageStore,
         ICacheService cacheService,
         ILogger<ReceiveReminderPipeline> logger)
     {
-        _userService = userService;
         _todoItemService = todoItemService;
         _reminderService = reminderService;
         _messageStore = messageStore;
@@ -136,20 +131,18 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         if (reply.Action == ReminderReceivedReplyAction.Reschedule)
         {
             // Reschedule reminder.
-            return RemoveInlineMenuAndSend(Localizer["Reschedule"], message);
+            return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:RescheduleReminder"], message);
         }
 
         if (reply.Action != ReminderReceivedReplyAction.FinishTodoItem)
         {
-            // Remove menu from message and process further.
-            return RemoveInlineMenuAndSend(Localizer["NOT FinishTodoItem"], message);
+            await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
+            return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:InvalidAction"], message);
         }
 
-        // TODO: Migrate to use UserId?
         await _todoItemService.FinishAsync(context.ChatId, reply.TodoItemId, cancellationToken);
         await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
 
-        // TODO: Return text as finished.
-        return RemoveInlineMenuAndSend(Localizer["FinishTodoItem"], message);
+        return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:TodoItemFinished"], message);
     }
 }
