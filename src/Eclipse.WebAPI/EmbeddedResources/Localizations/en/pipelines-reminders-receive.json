@@ -1,0 +1,12 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Reminders:Receive:Finish": "✅ Finish",
+    "Pipelines:Reminders:Receive:Reschedule": "🕔 Reschedule",
+
+    "Jobs:SendReminders:RelatedItem": "Hey there😊\n\rYou asked to remind you about this, have you finished your plan?🤔",
+    "Pipelines:Reminders:Receive:InvalidAction": "😢 Not sure I understand what it means, I will remove reminder and leave item in your list",
+    "Pipelines:Reminders:Receive:TodoItemFinished": "😊 Great job, I will remove this item from your list",
+    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Sure, I will remind you tommorow at this time"
+  }
+}
