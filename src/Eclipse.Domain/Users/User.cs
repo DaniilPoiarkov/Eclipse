@@ -74,17 +74,17 @@ public sealed class User : AggregateRoot, IHasCreatedAt
     /// <param name="text">The text.</param>
     /// <param name="notifyAt">The notify at.</param>
     /// <returns>Created Reminder</returns>
-    public Reminder AddReminder(string text, TimeOnly notifyAt)
+    public Reminder AddReminder(Guid? relatedItemId, string text, TimeOnly notifyAt)
     {
-        return AddReminder(Guid.CreateVersion7(), text, notifyAt);
+        return AddReminder(Guid.CreateVersion7(), relatedItemId, text, notifyAt);
     }
 
-    public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
+    public Reminder AddReminder(Guid id, Guid? relatedItemId, string text, TimeOnly notifyAt)
     {
-        var reminder = new Reminder(id, Id, text, notifyAt.Add(Gmt * -1));
+        var reminder = new Reminder(id, Id, relatedItemId, text, notifyAt.Add(Gmt * -1));
         _reminders.Add(reminder);
 
-        AddEvent(new ReminderAddedDomainEvent(id, Id, Gmt, reminder.NotifyAt, text, Culture, ChatId));
+        AddEvent(new ReminderAddedDomainEvent(reminder.Id, Id, relatedItemId, Gmt, reminder.NotifyAt, text, Culture, ChatId));
 
         return reminder;
     }

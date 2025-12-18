@@ -81,13 +81,13 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
             return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
         }
 
-        var chatId = await _cacheService.GetOrCreateAsync<long>(
+        var chatId = await _cacheService.GetOrCreateAsync(
             $"send-chat-{context.ChatId}",
             () => Task.FromResult<long>(default),
             cancellationToken: cancellationToken
         );
 
-        var message = await _cacheService.GetOrCreateAsync<string>(
+        var message = await _cacheService.GetOrCreateAsync(
             $"send-message-{context.ChatId}",
             () => Task.FromResult(string.Empty),
             cancellationToken: cancellationToken

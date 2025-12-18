@@ -6,6 +6,7 @@ public sealed class ReminderAddedDomainEvent : IDomainEvent, IHasUserId
 {
     public Guid ReminderId { get; }
     public Guid UserId { get; }
+    public Guid? RelatedItemId { get; }
 
     public TimeSpan UserGmt { get; }
     public TimeOnly NotifyAt { get; }
@@ -15,10 +16,11 @@ public sealed class ReminderAddedDomainEvent : IDomainEvent, IHasUserId
 
     public long ChatId { get; }
 
-    public ReminderAddedDomainEvent(Guid reminderId, Guid userId, TimeSpan userGmt, TimeOnly notifyAt, string text, string culture, long chatId)
+    public ReminderAddedDomainEvent(Guid reminderId, Guid userId, Guid? relatedItemId, TimeSpan userGmt, TimeOnly notifyAt, string text, string culture, long chatId)
     {
         ReminderId = reminderId;
         UserId = userId;
+        RelatedItemId = relatedItemId;
         UserGmt = userGmt;
         NotifyAt = notifyAt;
         Text = text;

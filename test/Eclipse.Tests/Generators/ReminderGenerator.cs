@@ -14,7 +14,7 @@ public class ReminderGenerator
 
         for (int i = 0; i < count; i++)
         {
-            reminders.Add(new Reminder(Guid.NewGuid(), Guid.NewGuid(), faker.Lorem.Word(), time));
+            reminders.Add(new Reminder(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), faker.Lorem.Word(), time));
         }
 
         return reminders;

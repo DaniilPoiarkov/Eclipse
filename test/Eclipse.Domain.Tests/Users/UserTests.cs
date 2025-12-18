@@ -64,7 +64,7 @@ public class UserTests
     [Fact]
     public void AddReminder_WhenReminderCreated_ThenValidDataReturned_AndAddedToCollection()
     {
-        var result = _sut.AddReminder("test", TimeOnly.FromDateTime(DateTime.UtcNow));
+        var result = _sut.AddReminder(Guid.CreateVersion7(), "test", TimeOnly.FromDateTime(DateTime.UtcNow));
 
         result.Id.Should().NotBeEmpty();
         result.Text.Should().Be("test");
@@ -87,7 +87,7 @@ public class UserTests
 
         var notifyAt = new TimeOnly(notifyAtHour, utcNow.Minute);
 
-        var reminder = _sut.AddReminder("test", notifyAt);
+        var reminder = _sut.AddReminder(Guid.CreateVersion7(), "test", notifyAt);
         reminder.NotifyAt.Should().Be(notifyAt.AddHours(-userHour));
     }
 
@@ -309,7 +309,7 @@ public class UserTests
     public void ReceiveReminder_WhenReminderExists_ThenReminderRemovedAndEventOccured(string text)
     {
         var sut = UserGenerator.Get();
-        var expected = sut.AddReminder(text, new());
+        var expected = sut.AddReminder(Guid.CreateVersion7(), text, new());
 
         var actual = sut.ReceiveReminder(expected.Id);
 

@@ -12,7 +12,8 @@ internal static class ReminderExtensions
             Id = reminder.Id,
             UserId = reminder.UserId,
             Text = reminder.Text,
-            NotifyAt = reminder.NotifyAt
+            NotifyAt = reminder.NotifyAt,
+            RelatedItemId = reminder.RelatedItemId
         };
     }
 }

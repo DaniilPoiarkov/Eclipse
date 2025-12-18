@@ -1,5 +1,7 @@
 ﻿using Eclipse.Core.Results;
 
+using System.Data.SqlTypes;
+
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -64,4 +66,30 @@ public abstract class Pipeline
 
     protected static IResult Photo(MemoryStream stream, string fileName, string? caption = null) =>
         new PhotoResult(stream, fileName, caption);
+
+    protected static IResult RemoveInlineMenuAndSend(ReplyMarkup menu, string text, Message? message)
+    {
+        if (message?.ReplyMarkup is null || !message.ReplyMarkup.InlineKeyboard.Any())
+        {
+            return Menu(menu, text);
+        }
+
+        return Multiple(
+            Edit(message.MessageId, InlineKeyboardMarkup.Empty()),
+            Menu(menu, text)
+        );
+    }
+
+    protected static IResult RemoveInlineMenuAndSend(string text, Message? message)
+    {
+        if (message?.ReplyMarkup is null || !message.ReplyMarkup.InlineKeyboard.Any())
+        {
+            return Text(text);
+        }
+
+        return Multiple(
+            Edit(message.MessageId, InlineKeyboardMarkup.Empty()),
+            Text(text)
+        );
+    }
 }

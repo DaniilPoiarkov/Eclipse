@@ -4,7 +4,7 @@ using Eclipse.Common.Background;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Jobs.OneOffs.ExportTodoItems;
+namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 internal sealed class ExportTodoItemsBackgroundJob : IBackgroundJob<ExportToUserBackgroundJobArgs>
 {

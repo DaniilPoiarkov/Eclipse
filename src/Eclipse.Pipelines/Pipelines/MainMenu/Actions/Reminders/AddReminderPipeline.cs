@@ -88,11 +88,7 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
             return Menu(RemindersMenuButtons, Localizer["Error"]);
         }
 
-        var createModel = new ReminderCreateDto
-        {
-            Text = text,
-            NotifyAt = time
-        };
+        var createModel = new ReminderCreateDto(null, text, time);
 
         var result = await _reminderService.CreateAsync(chatId, createModel, cancellationToken);
 

@@ -45,7 +45,7 @@ internal sealed class ReminderService : IReminderService
 
     private async Task<Result<Reminder>> CreateAsync(User user, ReminderCreateDto model, CancellationToken cancellationToken)
     {
-        var reminder = user.AddReminder(model.Text, model.NotifyAt);
+        var reminder = user.AddReminder(model.RelatedItemId, model.Text, model.NotifyAt);
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
@@ -102,5 +102,29 @@ internal sealed class ReminderService : IReminderService
         await _userRepository.UpdateAsync(user, cancellationToken);
 
         return Result.Success();
+    }
+
+    public async Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, DateTime notifyAt, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound<User>();
+        }
+
+        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
+
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
+        }
+
+        // TODO: Actual event not published.
+        reminder.Reschedule(notifyAt.GetTime());
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return reminder.ToDto();
     }
 }

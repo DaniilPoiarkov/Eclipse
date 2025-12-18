@@ -2,8 +2,7 @@
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Pipelines.Jobs.OneOffs;
-using Eclipse.Pipelines.Jobs.OneOffs.ExportUsers;
+using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export;
 

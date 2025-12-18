@@ -108,10 +108,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = text,
-        };
+        var createModel = new CreateTodoItemDto(text);
 
         var result = await _sut.CreateAsync(user.Id, createModel);
 
@@ -132,10 +129,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = "text",
-        };
+        var createModel = new CreateTodoItemDto("text");
 
         var result = await _sut.CreateAsync(user.Id, createModel);
 
@@ -153,10 +147,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindAsync(user.Id).Returns(user);
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = text,
-        };
+        var createModel = new CreateTodoItemDto(text);
 
         var result = await _sut.CreateAsync(user.Id, createModel);
 
@@ -169,10 +160,7 @@ public sealed class TodoItemsServiceTests
     {
         var expected = DefaultErrors.EntityNotFound<User>();
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = "text",
-        };
+        var createModel = new CreateTodoItemDto("text");
 
         var result = await _sut.CreateAsync(Guid.NewGuid(), createModel);
 
@@ -192,19 +180,13 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = text,
-        };
+        var createModel = new CreateTodoItemDto(text);
 
         var result = await _sut.CreateAsync(user.ChatId, createModel);
 
         result.IsSuccess.Should().BeTrue();
 
-        var dto = result.Value;
-        dto.TodoItems.Count.Should().Be(1);
-
-        var todoItem = dto.TodoItems[0];
+        var todoItem = result.Value;
 
         todoItem.Text.Should().Be(createModel.Text);
         todoItem.UserId.Should().Be(user.Id);
@@ -219,10 +201,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = "text",
-        };
+        var createModel = new CreateTodoItemDto("text");
 
         var result = await _sut.CreateAsync(user.ChatId, createModel);
 
@@ -240,10 +219,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = text,
-        };
+        var createModel = new CreateTodoItemDto(text);
 
         var result = await _sut.CreateAsync(user.ChatId, createModel);
 
@@ -257,10 +233,7 @@ public sealed class TodoItemsServiceTests
     {
         var expected = DefaultErrors.EntityNotFound<User>();
 
-        var createModel = new CreateTodoItemDto
-        {
-            Text = text,
-        };
+        var createModel = new CreateTodoItemDto(text);
 
         var result = await _sut.CreateAsync(chatId, createModel);
 

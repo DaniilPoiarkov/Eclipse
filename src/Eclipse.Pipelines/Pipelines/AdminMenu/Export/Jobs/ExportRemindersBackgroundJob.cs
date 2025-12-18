@@ -4,7 +4,7 @@ using Eclipse.Common.Background;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Jobs.OneOffs.ExportReminders;
+namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 internal sealed class ExportRemindersBackgroundJob : IBackgroundJob<ExportToUserBackgroundJobArgs>
 {

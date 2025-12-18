@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Pipelines.Jobs.OneOffs;
+﻿namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 internal class ExportToUserBackgroundJobArgs
 {

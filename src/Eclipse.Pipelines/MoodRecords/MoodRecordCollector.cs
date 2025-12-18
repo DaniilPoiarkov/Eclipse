@@ -12,7 +12,7 @@ using Microsoft.Extensions.Localization;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Jobs;
+namespace Eclipse.Pipelines.MoodRecords;
 
 internal sealed class MoodRecordCollector : IMoodRecordCollector
 {

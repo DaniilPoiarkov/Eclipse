@@ -119,7 +119,7 @@ public sealed class ImportRemindersValidatorTests
     public void ValidateAndSetErrors_WhenReminderAlreadyExists_ShouldReturnError()
     {
         var user = UserGenerator.Get();
-        var reminder = user.AddReminder("test", TimeOnly.FromDateTime(DateTime.UtcNow));
+        var reminder = user.AddReminder(Guid.NewGuid(), "test", TimeOnly.FromDateTime(DateTime.UtcNow));
 
         var reminders = new List<ImportReminderDto>
         {
