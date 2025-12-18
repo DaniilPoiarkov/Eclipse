@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.Reminders;
 
-public sealed class Reminder : Entity
+public sealed class Reminder : AggregateRoot
 {
     public Guid UserId { get; private set; }
 
@@ -25,5 +25,11 @@ public sealed class Reminder : Entity
     public void Link(Guid relatedItemId)
     {
         RelatedItemId = relatedItemId;
+    }
+
+    public void Reschedule(TimeOnly notifyAt)
+    {
+        NotifyAt = notifyAt;
+        AddEvent(new ReminderRescheduledDomainEvent(UserId, Id, notifyAt));
     }
 }

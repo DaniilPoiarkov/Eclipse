@@ -103,4 +103,28 @@ internal sealed class ReminderService : IReminderService
 
         return Result.Success();
     }
+
+    public async Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, DateTime notifyAt, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
+
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound<User>();
+        }
+
+        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
+
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
+        }
+
+        // TODO: Reschedule logic
+        
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return reminder.ToDto();
+    }
 }

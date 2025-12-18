@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Common.Caching;
+using Eclipse.Common.Clock;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
@@ -26,6 +27,8 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private readonly ICacheService _cacheService;
 
+    private readonly ITimeProvider _timeProvider;
+
     private readonly ILogger<ReceiveReminderPipeline> _logger;
 
     public ReceiveReminderPipeline(
@@ -33,12 +36,14 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         IReminderService reminderService,
         IMessageStore messageStore,
         ICacheService cacheService,
+        ITimeProvider timeProvider,
         ILogger<ReceiveReminderPipeline> logger)
     {
         _todoItemService = todoItemService;
         _reminderService = reminderService;
         _messageStore = messageStore;
         _cacheService = cacheService;
+        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -130,7 +135,13 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply.Action == ReminderReceivedReplyAction.Reschedule)
         {
-            // Reschedule reminder.
+            await _reminderService.RescheduleAsync(
+                reply.UserId,
+                reply.ReminderId,
+                _timeProvider.Now.NextDay(),
+                cancellationToken
+            );
+
             return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:RescheduleReminder"], message);
         }
 
