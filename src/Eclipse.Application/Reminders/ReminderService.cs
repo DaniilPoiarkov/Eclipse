@@ -120,8 +120,8 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<Reminder>();
         }
 
-        // TODO: Reschedule logic
-        
+        // TODO: Actual event not published.
+        reminder.Reschedule(notifyAt.GetTime());
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 

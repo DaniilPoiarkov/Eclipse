@@ -2,7 +2,6 @@
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Reminders;
-using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
 
@@ -12,8 +11,6 @@ namespace Eclipse.Application.Reminders;
 
 internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRescheduledDomainEvent>
 {
-    private readonly IUserRepository _userRepository;
-
     private readonly ISchedulerFactory _schedulerFactory;
 
     private readonly ITimeProvider _timeProvider;
@@ -21,12 +18,10 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
     private readonly ILogger<ReminderRescheduledEventHandler> _logger;
 
     public ReminderRescheduledEventHandler(
-        IUserRepository userRepository,
         ISchedulerFactory schedulerFactory,
         ITimeProvider timeProvider,
         ILogger<ReminderRescheduledEventHandler> logger)
     {
-        _userRepository = userRepository;
         _schedulerFactory = schedulerFactory;
         _timeProvider = timeProvider;
         _logger = logger;
@@ -34,30 +29,34 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
 
     public async Task Handle(ReminderRescheduledDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-
-        var key = $"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}";
-        var jobKey = new JobKey(key);
-
-        var jobDetail = await scheduler.GetJobDetail(jobKey, cancellationToken);
-        
-        if (jobDetail is not null)
+        try
         {
-            await scheduler.DeleteJob(jobKey, cancellationToken);
+            var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+
+            // =====
+            var key = $"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}";
+
+            var jobDetail = await scheduler.GetJobDetail(new JobKey(key), cancellationToken);
+            var jobTrigger = await scheduler.GetTrigger(new TriggerKey(key), cancellationToken);
+            // =====
+
+            var time = _timeProvider.Now.WithTime(@event.NotifyAt);
+
+            if (time < _timeProvider.Now)
+            {
+                time = time.NextDay();
+            }
+
+            var trigger = TriggerBuilder.Create()
+                .ForJob(new JobKey($"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}"))
+                .StartAt(time)
+                .Build();
+
+            await scheduler.ScheduleJob(trigger, cancellationToken);
         }
-
-        var time = _timeProvider.Now.WithTime(@event.NotifyAt);
-
-        if (time < _timeProvider.Now)
+        catch (Exception ex)
         {
-            time = time.NextDay();
+            _logger.LogError(ex, "Failed to reschedule reminder {ReminderId} for user {UserId}.", @event.ReminderId, @event.UserId);
         }
-
-        var trigger = TriggerBuilder.Create()
-            .ForJob(new JobKey(key))
-            .StartAt(time)
-            .Build();
-
-        await scheduler.RescheduleJob(new TriggerKey(key), trigger, cancellationToken);
     }
 }

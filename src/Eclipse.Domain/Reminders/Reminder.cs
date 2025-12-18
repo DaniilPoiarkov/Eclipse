@@ -10,6 +10,7 @@ public sealed class Reminder : AggregateRoot
 
     public string Text { get; private set; } = string.Empty;
 
+    // TODO: Migrate to use datetime?
     public TimeOnly NotifyAt { get; private set; }
 
     internal Reminder(Guid id, Guid userId, Guid? relatedItemId, string text, TimeOnly notifyAt) : base(id)
