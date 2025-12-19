@@ -135,15 +135,14 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply.Action == ReminderReceivedReplyAction.Reschedule)
         {
-            await _reminderService.RescheduleAsync(
-                reply.UserId,
-                reply.ReminderId,
-                new RescheduleReminderOptions(true, _timeProvider.Now.NextDay().GetTime()),
+            await _cacheService.SetForThreeDaysAsync(
+                $"pipelines-receive-reminder-reschedule-{context.ChatId}",
+                reply,
+                context.ChatId,
                 cancellationToken
             );
 
-            // TODO: Ask for new time.
-            //RegisterStage(RescheduleReminder);
+            RegisterStage(RescheduleReminder);
             return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:RescheduleReminder"], message);
         }
 
@@ -161,25 +160,35 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private async Task<IResult> RescheduleReminder(MessageContext context, CancellationToken cancellationToken)
     {
+        var payload = await _cacheService.GetOrCreateAsync(
+            $"pipelines-receive-reminder-reschedule-{context.ChatId}",
+            () => Task.FromResult<ReceivedReminderReply?>(null),
+            cancellationToken: cancellationToken
+        );
+
+        if (payload is null)
+        {
+            return Text(Localizer["Error"]);
+        }
+
         if (context.Value.Equals("/cancel"))
         {
-            return Menu(MainMenuButtons, "Deleted reminder etc.");
+            return Menu(MainMenuButtons, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Canceled"]);
         }
 
         if (!context.Value.TryParseAsTimeOnly(out var time))
         {
             RegisterStage(RescheduleReminder);
-            return Text("Write time or cancel etc.");
+            return Text(Localizer["Pipelines:Reminders:Receive:RescheduleReminder:InvalidTime"]);
         }
 
-        // TODO: Specify identifiers..
-        //await _reminderService.RescheduleAsync(
-        //    Guid.Empty,
-        //    Guid.Empty,
-        //    new RescheduleReminderOptions(true, time),
-        //    cancellationToken
-        //);
+        await _reminderService.RescheduleAsync(
+            payload.UserId,
+            payload.ReminderId,
+            new RescheduleReminderOptions(true, time),
+            cancellationToken
+        );
 
-        return Text("Good");
+        return Text(Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled"]);
     }
 }
