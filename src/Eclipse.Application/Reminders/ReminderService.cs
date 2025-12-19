@@ -105,7 +105,7 @@ internal sealed class ReminderService : IReminderService
         return Result.Success();
     }
 
-    public async Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, DateTime notifyAt, CancellationToken cancellationToken = default)
+    public async Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, RescheduleReminderOptions options, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
@@ -114,15 +114,20 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.RescheduleReminder(reminderId, notifyAt.GetTime());
-
-        if (!reminder.IsSuccess)
+        if (options.ReminderReceived)
         {
-            return reminder.Error;
+            user.ReceiveReminder(reminderId, false);
+        }
+
+        var reminder = user.RescheduleReminder(reminderId, options.NotifyAt.GetTime());
+
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
         }
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return reminder.Value.ToDto();
+        return reminder.ToDto();
     }
 }

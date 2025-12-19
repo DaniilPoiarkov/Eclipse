@@ -311,7 +311,7 @@ public class UserTests
         var sut = UserGenerator.Get();
         var expected = sut.AddReminder(Guid.CreateVersion7(), text, new());
 
-        var actual = sut.ReceiveReminder(expected.Id);
+        var actual = sut.ReceiveReminder(expected.Id, true);
 
         actual.Should().BeEquivalentTo(expected);
 
@@ -325,7 +325,7 @@ public class UserTests
     {
         var sut = UserGenerator.Get(newRegistered: false);
 
-        sut.ReceiveReminder(Guid.NewGuid()).Should().BeNull();
+        sut.ReceiveReminder(Guid.NewGuid(), true).Should().BeNull();
         sut.GetEvents().Should().BeEmpty();
     }
 }

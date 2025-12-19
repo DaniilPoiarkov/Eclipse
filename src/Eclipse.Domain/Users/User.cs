@@ -248,13 +248,13 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         }
     }
 
-    public Result<Reminder> RescheduleReminder(Guid reminderId, TimeOnly notifyAt)
+    public Reminder? RescheduleReminder(Guid reminderId, TimeOnly notifyAt)
     {
         var reminder = _reminders.FirstOrDefault(m => m.Id == reminderId);
         
         if (reminder is null)
         {
-            return DefaultErrors.EntityNotFound<Reminder>();
+            return null;
         }
 
         reminder.Reschedule(notifyAt.Add(Gmt * -1));

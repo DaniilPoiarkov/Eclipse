@@ -138,7 +138,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             await _reminderService.RescheduleAsync(
                 reply.UserId,
                 reply.ReminderId,
-                _timeProvider.Now.NextDay(),
+                new RescheduleReminderOptions(true, _timeProvider.Now.NextDay()),
                 cancellationToken
             );
 
