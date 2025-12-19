@@ -138,10 +138,12 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             await _reminderService.RescheduleAsync(
                 reply.UserId,
                 reply.ReminderId,
-                new RescheduleReminderOptions(true, _timeProvider.Now.NextDay()),
+                new RescheduleReminderOptions(true, _timeProvider.Now.NextDay().GetTime()),
                 cancellationToken
             );
 
+            // TODO: Ask for new time.
+            //RegisterStage(RescheduleReminder);
             return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:RescheduleReminder"], message);
         }
 
@@ -155,5 +157,29 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
 
         return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:TodoItemFinished"], message);
+    }
+
+    private async Task<IResult> RescheduleReminder(MessageContext context, CancellationToken cancellationToken)
+    {
+        if (context.Value.Equals("/cancel"))
+        {
+            return Menu(MainMenuButtons, "Deleted reminder etc.");
+        }
+
+        if (!context.Value.TryParseAsTimeOnly(out var time))
+        {
+            RegisterStage(RescheduleReminder);
+            return Text("Write time or cancel etc.");
+        }
+
+        // TODO: Specify identifiers..
+        //await _reminderService.RescheduleAsync(
+        //    Guid.Empty,
+        //    Guid.Empty,
+        //    new RescheduleReminderOptions(true, time),
+        //    cancellationToken
+        //);
+
+        return Text("Good");
     }
 }

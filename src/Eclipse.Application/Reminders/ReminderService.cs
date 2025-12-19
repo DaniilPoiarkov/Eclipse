@@ -118,7 +118,7 @@ internal sealed class ReminderService : IReminderService
             user.ReceiveReminder(reminderId, false);
         }
 
-        var reminder = user.RescheduleReminder(reminderId, options.NotifyAt.GetTime());
+        var reminder = user.RescheduleReminder(reminderId, options.NotifyAt);
 
         if (reminder is null)
         {
