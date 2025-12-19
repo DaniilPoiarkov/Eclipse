@@ -162,7 +162,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
 
         if (item is null)
         {
-            return UserDomainErrors.TodoItemNotFound();
+            return DefaultErrors.EntityNotFound<TodoItem>();
         }
 
         _todoItems.Remove(item);
@@ -210,15 +210,21 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         return new MoodRecord(Guid.CreateVersion7(), Id, state, createdAt.WithTime(0, 0));
     }
 
-    public Reminder? ReceiveReminder(Guid reminderId)
+    public Reminder? ReceiveReminder(Guid reminderId, bool remove)
     {
         var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
 
-        if (reminder is not null)
+        if (reminder is null)
+        {
+            return null;
+        }
+
+        if (remove)
         {
             _reminders.Remove(reminder);
-            AddEvent(new RemindersReceivedDomainEvent(Id));
         }
+
+        AddEvent(new RemindersReceivedDomainEvent(Id));
 
         return reminder;
     }

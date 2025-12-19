@@ -83,6 +83,7 @@ internal sealed class ReminderService : IReminderService
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
     }
 
+    // TODO: rename as ReceiveAsync with options whether to remove reminder or not.
     public async Task<Result> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
@@ -92,7 +93,7 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.ReceiveReminder(reminderId);
+        var reminder = user.ReceiveReminder(reminderId, true);
 
         if (reminder is null)
         {
