@@ -113,18 +113,15 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
+        var reminder = user.RescheduleReminder(reminderId, notifyAt.GetTime());
 
-        if (reminder is null)
+        if (!reminder.IsSuccess)
         {
-            return DefaultErrors.EntityNotFound<Reminder>();
+            return reminder.Error;
         }
-
-        // TODO: Actual event not published.
-        reminder.Reschedule(notifyAt.GetTime());
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return reminder.ToDto();
+        return reminder.Value.ToDto();
     }
 }

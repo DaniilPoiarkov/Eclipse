@@ -2,6 +2,7 @@
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
@@ -239,6 +240,22 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         {
             AddEvent(new UserDisabledDomainEvent(Id));
         }
+    }
+
+    public Result<Reminder> RescheduleReminder(Guid reminderId, TimeOnly notifyAt)
+    {
+        var reminder = _reminders.FirstOrDefault(m => m.Id == reminderId);
+        
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
+        }
+
+        reminder.Reschedule(notifyAt.Add(Gmt * -1));
+
+        AddEvent(new ReminderRescheduledDomainEvent(Id, reminder.Id, reminder.NotifyAt));
+
+        return reminder;
     }
 
     public override string ToString()

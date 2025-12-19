@@ -2,7 +2,7 @@
 
 namespace Eclipse.Domain.Reminders;
 
-public sealed class Reminder : AggregateRoot
+public sealed class Reminder : Entity
 {
     public Guid UserId { get; private set; }
 
@@ -10,7 +10,6 @@ public sealed class Reminder : AggregateRoot
 
     public string Text { get; private set; } = string.Empty;
 
-    // TODO: Migrate to use datetime?
     public TimeOnly NotifyAt { get; private set; }
 
     internal Reminder(Guid id, Guid userId, Guid? relatedItemId, string text, TimeOnly notifyAt) : base(id)
@@ -31,6 +30,5 @@ public sealed class Reminder : AggregateRoot
     public void Reschedule(TimeOnly notifyAt)
     {
         NotifyAt = notifyAt;
-        AddEvent(new ReminderRescheduledDomainEvent(UserId, Id, notifyAt));
     }
 }

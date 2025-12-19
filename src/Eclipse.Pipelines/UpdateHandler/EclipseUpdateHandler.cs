@@ -68,7 +68,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
     {
         if (!_allowedUpdateTypes.Contains(update.Type))
         {
-            _logger.LogWarning("Update of type {updateType} is not supported", update.Type);
+            _logger.LogWarning("Update of type {updateType} is not supported", update.Type);//Id = 8565470449 // 7520036487
             return;
         }
 

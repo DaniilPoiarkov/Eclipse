@@ -1,7 +1,7 @@
 ﻿using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
-using Eclipse.Domain.Reminders;
+using Eclipse.Domain.Users.Events;
 
 using Microsoft.Extensions.Logging;
 
