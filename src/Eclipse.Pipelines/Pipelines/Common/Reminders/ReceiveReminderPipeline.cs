@@ -190,6 +190,6 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             cancellationToken
         );
 
-        return Menu(MainMenuButtons, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled{Time}", time.ToShortTimeString()]);
+        return Menu(MainMenuButtons, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled"]);
     }
 }

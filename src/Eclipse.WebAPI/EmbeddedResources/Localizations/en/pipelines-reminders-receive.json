@@ -10,6 +10,6 @@
     "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Sure, write me time when you want to receive it. Use 24h format (e.g. 14:36) or press /cancel to just remove reminder",
     "Pipelines:Reminders:Receive:RescheduleReminder:Canceled": "🙂 Sure, I will just remove a reminder",
     "Pipelines:Reminders:Receive:RescheduleReminder:InvalidTime": "🤔 Hmm, unfortunately I cannot understand what you mean. Use 24h format (e.g. 21:54) or press /cancel to just remove reminder",
-    "Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled{Time}": "😊 Sure, I will remind you about this plan at {0}"
+    "Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled": "😊 Sure, I will remind you about this plan when time will come"
   }
 }
