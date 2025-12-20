@@ -2,4 +2,4 @@
 
 namespace Eclipse.Domain.Users.Events;
 
-internal sealed record ReminderRemovedDomainEvent(Guid UserId, Guid ReminderId) : IHasUserId, IDomainEvent;
+public sealed record ReminderRemovedDomainEvent(Guid UserId, Guid ReminderId) : IHasUserId, IDomainEvent;
