@@ -210,7 +210,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         return new MoodRecord(Guid.CreateVersion7(), Id, state, createdAt.WithTime(0, 0));
     }
 
-    public Reminder? ReceiveReminder(Guid reminderId, bool remove)
+    public Reminder? ReceiveReminder(Guid reminderId)
     {
         var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
 
@@ -219,12 +219,19 @@ public sealed class User : AggregateRoot, IHasCreatedAt
             return null;
         }
 
-        if (remove)
+        AddEvent(new RemindersReceivedDomainEvent(Id));
+
+        return reminder;
+    }
+
+    public Reminder? RemoveReminder(Guid reminderId)
+    {
+        var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
+        
+        if (reminder is not null)
         {
             _reminders.Remove(reminder);
         }
-
-        AddEvent(new RemindersReceivedDomainEvent(Id));
 
         return reminder;
     }
