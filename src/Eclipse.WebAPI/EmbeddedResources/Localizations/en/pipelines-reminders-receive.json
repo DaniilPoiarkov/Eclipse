@@ -7,6 +7,9 @@
     "Jobs:SendReminders:RelatedItem": "Hey there😊\n\rYou asked to remind you about this, have you finished your plan?🤔",
     "Pipelines:Reminders:Receive:InvalidAction": "😢 Not sure I understand what it means, I will remove reminder and leave item in your list",
     "Pipelines:Reminders:Receive:TodoItemFinished": "😊 Great job, I will remove this item from your list",
-    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Sure, I will remind you tommorow at this time"
+    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Sure, write me time when you want to receive it. Use 24h format (e.g. 14:36) or press /cancel to just remove reminder",
+    "Pipelines:Reminders:Receive:RescheduleReminder:Canceled": "🙂 Sure, I will just remove a reminder",
+    "Pipelines:Reminders:Receive:RescheduleReminder:InvalidTime": "🤔 Hmm, unfortunately I cannot understand what you mean. Use 24h format (e.g. 21:54) or press /cancel to just remove reminder",
+    "Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled{Time}": "😊 Sure, I will remind you about this plan at {0}"
   }
 }
