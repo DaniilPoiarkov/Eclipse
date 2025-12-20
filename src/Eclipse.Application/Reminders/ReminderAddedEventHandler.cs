@@ -51,7 +51,6 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
             .StartAt(time)
-            .WithIdentity(new TriggerKey($"{nameof(SendReminderJob)}-{notification.UserId}-{notification.ReminderId}"))
             .Build();
 
         await scheduler.ScheduleJob(job, trigger, cancellationToken);
