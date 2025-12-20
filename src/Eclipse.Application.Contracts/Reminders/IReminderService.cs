@@ -9,7 +9,7 @@ public interface IReminderService
 
     Task<Result<UserDto>> CreateAsync(long chatId, ReminderCreateDto model, CancellationToken cancellationToken = default);
 
-    Task<Result> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default);
+    Task<Result<ReminderDto>> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default);
 
     Task<Result<List<ReminderDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default);
 
@@ -18,4 +18,6 @@ public interface IReminderService
     Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, RescheduleReminderOptions options, CancellationToken cancellationToken = default);
 
     Task<Result<ReminderDto>> GetByRelatedItem(Guid userId, Guid relatedItemId, CancellationToken cancellationToken = default);
+
+    Task<Result<ReminderDto>> Receive(Guid userId, Guid reminderId, CancellationToken cancellationToken = default);
 }
