@@ -16,4 +16,6 @@ public interface IReminderService
     Task<Result<ReminderDto>> GetAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default);
 
     Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, RescheduleReminderOptions options, CancellationToken cancellationToken = default);
+
+    Task<Result<ReminderDto>> GetByRelatedItem(Guid userId, Guid relatedItemId, CancellationToken cancellationToken = default);
 }

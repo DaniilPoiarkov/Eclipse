@@ -129,4 +129,23 @@ internal sealed class ReminderService : IReminderService
 
         return reminder.ToDto();
     }
+
+    public async Task<Result<ReminderDto>> GetByRelatedItem(Guid userId, Guid relatedItemId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.FindAsync(userId, cancellationToken);
+        
+        if (user is null)
+        {
+            return DefaultErrors.EntityNotFound<User>();
+        }
+
+        var reminder = user.Reminders.FirstOrDefault(r => r.RelatedItemId == relatedItemId);
+
+        if (reminder is null)
+        {
+            return DefaultErrors.EntityNotFound<Reminder>();
+        }
+
+        return reminder.ToDto();
+    }
 }
