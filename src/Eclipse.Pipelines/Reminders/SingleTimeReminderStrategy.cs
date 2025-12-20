@@ -40,6 +40,7 @@ internal sealed class SingleTimeReminderStrategy : IReminderSenderStrategy
             cancellationToken: cancellationToken
         );
 
+        await _reminderService.Receive(arguments.UserId, arguments.ReminderId, cancellationToken);
         await _reminderService.DeleteAsync(arguments.UserId, arguments.ReminderId, cancellationToken);
     }
 }
