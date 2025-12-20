@@ -66,6 +66,8 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             return Empty();
         }
 
+        await _reminderService.Receive(payload.UserId, payload.ReminderId, cancellationToken);
+
         var finish = new ReceivedReminderReply(
             payload.ReminderId,
             payload.TodoItemId,
@@ -173,7 +175,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (context.Value.Equals("/cancel"))
         {
-            await _reminderService.DeleteAsync(payload.TodoItemId, payload.ReminderId, cancellationToken);
+            await _reminderService.DeleteAsync(payload.UserId, payload.ReminderId, cancellationToken);
             return Menu(MainMenuButtons, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Canceled"]);
         }
 
@@ -186,7 +188,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         await _reminderService.RescheduleAsync(
             payload.UserId,
             payload.ReminderId,
-            new RescheduleReminderOptions(true, time),
+            new RescheduleReminderOptions(time),
             cancellationToken
         );
 
