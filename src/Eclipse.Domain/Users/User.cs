@@ -2,6 +2,7 @@
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
@@ -161,7 +162,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
 
         if (item is null)
         {
-            return UserDomainErrors.TodoItemNotFound();
+            return DefaultErrors.EntityNotFound<TodoItem>();
         }
 
         _todoItems.Remove(item);
@@ -209,15 +210,21 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         return new MoodRecord(Guid.CreateVersion7(), Id, state, createdAt.WithTime(0, 0));
     }
 
-    public Reminder? ReceiveReminder(Guid reminderId)
+    public Reminder? ReceiveReminder(Guid reminderId, bool remove)
     {
         var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
 
-        if (reminder is not null)
+        if (reminder is null)
+        {
+            return null;
+        }
+
+        if (remove)
         {
             _reminders.Remove(reminder);
-            AddEvent(new RemindersReceivedDomainEvent(Id));
         }
+
+        AddEvent(new RemindersReceivedDomainEvent(Id));
 
         return reminder;
     }
@@ -239,6 +246,22 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         {
             AddEvent(new UserDisabledDomainEvent(Id));
         }
+    }
+
+    public Reminder? RescheduleReminder(Guid reminderId, TimeOnly notifyAt)
+    {
+        var reminder = _reminders.FirstOrDefault(m => m.Id == reminderId);
+        
+        if (reminder is null)
+        {
+            return null;
+        }
+
+        reminder.Reschedule(notifyAt.Add(Gmt * -1));
+
+        AddEvent(new ReminderRescheduledDomainEvent(Id, reminder.Id, reminder.NotifyAt));
+
+        return reminder;
     }
 
     public override string ToString()

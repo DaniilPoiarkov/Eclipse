@@ -81,6 +81,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>(options);
         AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>(options);
         AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);
+
+        /// <see cref="ReminderRescheduledDomainEvent"/>
+        AddJob<ReminderRescheduledDomainEvent, ReminderRescheduledEventHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)

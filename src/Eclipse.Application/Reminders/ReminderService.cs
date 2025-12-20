@@ -92,7 +92,7 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.ReceiveReminder(reminderId);
+        var reminder = user.ReceiveReminder(reminderId, true);
 
         if (reminder is null)
         {
@@ -104,7 +104,7 @@ internal sealed class ReminderService : IReminderService
         return Result.Success();
     }
 
-    public async Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, DateTime notifyAt, CancellationToken cancellationToken = default)
+    public async Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, RescheduleReminderOptions options, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
@@ -113,15 +113,17 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
+        if (options.ReminderReceived)
+        {
+            user.ReceiveReminder(reminderId, false);
+        }
+
+        var reminder = user.RescheduleReminder(reminderId, options.NotifyAt);
 
         if (reminder is null)
         {
             return DefaultErrors.EntityNotFound<Reminder>();
         }
-
-        // TODO: Actual event not published.
-        reminder.Reschedule(notifyAt.GetTime());
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 

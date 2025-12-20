@@ -1,7 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Common.Caching;
-using Eclipse.Common.Clock;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
@@ -27,8 +26,6 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private readonly ICacheService _cacheService;
 
-    private readonly ITimeProvider _timeProvider;
-
     private readonly ILogger<ReceiveReminderPipeline> _logger;
 
     public ReceiveReminderPipeline(
@@ -36,14 +33,12 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         IReminderService reminderService,
         IMessageStore messageStore,
         ICacheService cacheService,
-        ITimeProvider timeProvider,
         ILogger<ReceiveReminderPipeline> logger)
     {
         _todoItemService = todoItemService;
         _reminderService = reminderService;
         _messageStore = messageStore;
         _cacheService = cacheService;
-        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -51,6 +46,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
     {
         RegisterStage(SendReminder);
         RegisterStage(FinishTodoItem);
+        RegisterStage(RescheduleReminder);
     }
 
     private async Task<IResult> SendReminder(MessageContext context, CancellationToken cancellationToken)
@@ -135,14 +131,14 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply.Action == ReminderReceivedReplyAction.Reschedule)
         {
-            await _reminderService.RescheduleAsync(
-                reply.UserId,
-                reply.ReminderId,
-                _timeProvider.Now.NextDay(),
+            await _cacheService.SetForThreeDaysAsync(
+                $"pipelines-receive-reminder-reschedule-{context.ChatId}",
+                reply,
+                context.ChatId,
                 cancellationToken
             );
 
-            return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:RescheduleReminder"], message);
+            return RemoveInlineMenuAndSend(new ReplyKeyboardRemove(), Localizer["Pipelines:Reminders:Receive:RescheduleReminder"], message);
         }
 
         if (reply.Action != ReminderReceivedReplyAction.FinishTodoItem)
@@ -154,6 +150,46 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
         await _todoItemService.FinishAsync(context.ChatId, reply.TodoItemId, cancellationToken);
         await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
 
-        return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:TodoItemFinished"], message);
+        FinishPipeline();
+
+        return RemoveInlineMenuAndSend(
+            Localizer["Pipelines:Reminders:Receive:TodoItemFinished"],
+            message
+        );
+    }
+
+    private async Task<IResult> RescheduleReminder(MessageContext context, CancellationToken cancellationToken)
+    {
+        var payload = await _cacheService.GetOrCreateAsync(
+            $"pipelines-receive-reminder-reschedule-{context.ChatId}",
+            () => Task.FromResult<ReceivedReminderReply?>(null),
+            cancellationToken: cancellationToken
+        );
+
+        if (payload is null)
+        {
+            return Menu(MainMenuButtons, Localizer["Error"]);
+        }
+
+        if (context.Value.Equals("/cancel"))
+        {
+            await _reminderService.DeleteAsync(payload.TodoItemId, payload.ReminderId, cancellationToken);
+            return Menu(MainMenuButtons, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Canceled"]);
+        }
+
+        if (!context.Value.TryParseAsTimeOnly(out var time))
+        {
+            RegisterStage(RescheduleReminder);
+            return Text(Localizer["Pipelines:Reminders:Receive:RescheduleReminder:InvalidTime"]);
+        }
+
+        await _reminderService.RescheduleAsync(
+            payload.UserId,
+            payload.ReminderId,
+            new RescheduleReminderOptions(true, time),
+            cancellationToken
+        );
+
+        return Menu(MainMenuButtons, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled"]);
     }
 }

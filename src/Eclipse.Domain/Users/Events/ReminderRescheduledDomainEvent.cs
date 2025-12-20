@@ -1,6 +1,5 @@
 ﻿using Eclipse.Common.Events;
-using Eclipse.Domain.Users;
 
-namespace Eclipse.Domain.Reminders;
+namespace Eclipse.Domain.Users.Events;
 
 public sealed record ReminderRescheduledDomainEvent(Guid UserId, Guid ReminderId, TimeOnly NotifyAt) : IDomainEvent, IHasUserId;
