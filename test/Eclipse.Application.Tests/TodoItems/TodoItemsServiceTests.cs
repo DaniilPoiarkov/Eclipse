@@ -88,7 +88,7 @@ public sealed class TodoItemsServiceTests
 
         _repository.FindByChatIdAsync(user.ChatId).Returns(user);
 
-        var expected = DefaultErrors.EntityNotFound<User>();
+        var expected = DefaultErrors.EntityNotFound<TodoItem>();
 
         var result = await _sut.FinishAsync(user.ChatId, Guid.NewGuid());
 
