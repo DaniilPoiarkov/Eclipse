@@ -231,6 +231,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         if (reminder is not null)
         {
             _reminders.Remove(reminder);
+            AddEvent(new ReminderRemovedDomainEvent(Id, reminderId));
         }
 
         return reminder;
