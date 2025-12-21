@@ -1,5 +1,4 @@
-﻿using Eclipse.Application.Contracts.Users;
-using Eclipse.Core.Context;
+﻿using Eclipse.Core.Context;
 
 using Telegram.Bot.Types;
 

@@ -1,6 +1,4 @@
 ﻿using Eclipse.Common.Results;
-using Eclipse.Domain.Shared.Errors;
-using Eclipse.Domain.TodoItems;
 
 namespace Eclipse.Domain.Users;
 

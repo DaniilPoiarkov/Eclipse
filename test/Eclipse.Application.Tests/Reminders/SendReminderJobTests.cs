@@ -1,28 +1,4 @@
-﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Application.Reminders.Sendings;
-using Eclipse.Common.Results;
-using Eclipse.Domain.Reminders;
-using Eclipse.Domain.Shared.Errors;
-using Eclipse.Domain.Users.Events;
-using Eclipse.Localization.Culture;
-
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-
-using Newtonsoft.Json;
-
-using NSubstitute;
-
-using Quartz;
-
-using System.Globalization;
-
-using Telegram.Bot;
-using Telegram.Bot.Requests;
-
-using Xunit;
-
-namespace Eclipse.Application.Tests.Reminders;
+﻿namespace Eclipse.Application.Tests.Reminders;
 
 // TODO: FIX TESTS
 public sealed class SendReminderJobTests

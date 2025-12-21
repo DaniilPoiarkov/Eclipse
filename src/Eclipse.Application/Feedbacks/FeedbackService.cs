@@ -61,7 +61,7 @@ internal sealed class FeedbackService : IFeedbackService
     public async Task RequestAsync(CancellationToken cancellationToken = default)
     {
         var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
-        
+
         foreach (var user in users)
         {
             await _backgroundJobManager.EnqueueAsync<RequestFeedbackBackgroundJob, UserIdJobData>(

@@ -227,7 +227,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
     public Reminder? RemoveReminder(Guid reminderId)
     {
         var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
-        
+
         if (reminder is not null)
         {
             _reminders.Remove(reminder);
@@ -259,7 +259,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
     public Reminder? RescheduleReminder(Guid reminderId, TimeOnly notifyAt)
     {
         var reminder = _reminders.FirstOrDefault(m => m.Id == reminderId);
-        
+
         if (reminder is null)
         {
             return null;
