@@ -1,14 +1,8 @@
-﻿using Eclipse.Application.Contracts.Reminders;
-using Eclipse.Localization.Culture;
-
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
 using Quartz;
-
-using Telegram.Bot;
 
 namespace Eclipse.Application.Reminders.Sendings;
 

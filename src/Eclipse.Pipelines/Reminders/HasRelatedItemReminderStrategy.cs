@@ -24,7 +24,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
     private readonly IPipelineStore _pipelineStore;
 
     private readonly IPipelineProvider _pipelineProvider;
-    
+
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IStringLocalizer<ReminderSender> _localizer;

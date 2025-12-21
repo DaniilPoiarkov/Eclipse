@@ -126,7 +126,7 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
                     Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:NewItemAdded"])
                 ];
 
-            return Multiple([..actions]);
+            return Multiple([.. actions]);
         }
 
         return Multiple(message is null

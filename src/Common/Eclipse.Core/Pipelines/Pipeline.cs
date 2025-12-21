@@ -1,7 +1,5 @@
 ﻿using Eclipse.Core.Results;
 
-using System.Data.SqlTypes;
-
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
