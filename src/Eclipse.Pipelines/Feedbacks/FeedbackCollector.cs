@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 
 using Telegram.Bot;
 
-namespace Eclipse.Pipelines.Jobs;
+namespace Eclipse.Pipelines.Feedbacks;
 
 internal sealed class FeedbackCollector : IFeedbackCollector
 {

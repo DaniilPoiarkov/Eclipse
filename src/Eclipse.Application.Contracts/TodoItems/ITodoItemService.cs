@@ -5,7 +5,7 @@ namespace Eclipse.Application.Contracts.TodoItems;
 
 public interface ITodoItemService
 {
-    Task<Result<UserDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default);
+    Task<Result<TodoItemDto>> CreateAsync(long chatId, CreateTodoItemDto model, CancellationToken cancellationToken = default);
 
     Task<Result<TodoItemDto>> CreateAsync(Guid userId, CreateTodoItemDto model, CancellationToken cancellationToken = default);
 

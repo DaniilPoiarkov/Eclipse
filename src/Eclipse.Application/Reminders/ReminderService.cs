@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Reminders;
 using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Reminders.Processors;
 using Eclipse.Application.Users;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Reminders;
@@ -45,30 +46,11 @@ internal sealed class ReminderService : IReminderService
 
     private async Task<Result<Reminder>> CreateAsync(User user, ReminderCreateDto model, CancellationToken cancellationToken)
     {
-        var reminder = user.AddReminder(model.Text, model.NotifyAt);
+        var reminder = user.AddReminder(model.RelatedItemId, model.Text, model.NotifyAt);
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
         return reminder;
-    }
-
-    public async Task<Result<ReminderDto>> GetAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.FindAsync(userId, cancellationToken);
-
-        if (user is null)
-        {
-            return DefaultErrors.EntityNotFound<User>();
-        }
-
-        var reminder = user.Reminders.FirstOrDefault(r => r.Id == reminderId);
-
-        if (reminder is null)
-        {
-            return DefaultErrors.EntityNotFound<Reminder>();
-        }
-
-        return reminder.ToDto();
     }
 
     public async Task<Result<List<ReminderDto>>> GetListAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -83,7 +65,32 @@ internal sealed class ReminderService : IReminderService
         return user.Reminders.Select(reminder => reminder.ToDto()).ToList();
     }
 
-    public async Task<Result> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
+    public Task<Result<ReminderDto>> GetAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
+    {
+        return Process(userId, new GetReminderByIdProcessor(reminderId), cancellationToken);
+    }
+
+    public Task<Result<ReminderDto>> DeleteAsync(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
+    {
+        return Process(userId, new RemoveReminderProcessor(reminderId), cancellationToken);
+    }
+
+    public Task<Result<ReminderDto>> RescheduleAsync(Guid userId, Guid reminderId, RescheduleReminderOptions options, CancellationToken cancellationToken = default)
+    {
+        return Process(userId, new RescheduleReminderProcessor(reminderId, options), cancellationToken);
+    }
+
+    public Task<Result<ReminderDto>> GetByRelatedItem(Guid userId, Guid relatedItemId, CancellationToken cancellationToken = default)
+    {
+        return Process(userId, new GetReminderByRelatedItemIdProcessor(relatedItemId), cancellationToken);
+    }
+
+    public Task<Result<ReminderDto>> Receive(Guid userId, Guid reminderId, CancellationToken cancellationToken = default)
+    {
+        return Process(userId, new ReceiveReminderProcessor(reminderId), cancellationToken);
+    }
+
+    private async Task<Result<ReminderDto>> Process(Guid userId, IReminderProcessor processor, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.FindAsync(userId, cancellationToken);
 
@@ -92,7 +99,7 @@ internal sealed class ReminderService : IReminderService
             return DefaultErrors.EntityNotFound<User>();
         }
 
-        var reminder = user.ReceiveReminder(reminderId);
+        var reminder = processor.Process(user);
 
         if (reminder is null)
         {
@@ -101,6 +108,6 @@ internal sealed class ReminderService : IReminderService
 
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return Result.Success();
+        return reminder.ToDto();
     }
 }

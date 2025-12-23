@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Reminders;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users.Events;
 
@@ -40,7 +41,7 @@ public sealed class ReminderAddedEventHandlerTests
         var reminderId = Guid.NewGuid();
         var userId = Guid.NewGuid();
 
-        var notification = new ReminderAddedDomainEvent(reminderId, userId, new TimeSpan(), new TimeOnly(), text, culture, chatId);
+        var notification = new ReminderAddedDomainEvent(reminderId, userId, null, new TimeSpan(), new TimeOnly(), text, culture, chatId);
 
         await _sut.Handle(notification, CancellationToken.None);
 

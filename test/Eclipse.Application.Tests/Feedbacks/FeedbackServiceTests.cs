@@ -6,7 +6,6 @@ using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Domain.Feedbacks;
-using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Feedbacks;
 using Eclipse.Domain.Users;
 
@@ -38,7 +37,7 @@ public sealed class FeedbackServiceTests
         _userRepository = Substitute.For<IUserRepository>();
         _backgroundJobManager = Substitute.For<IBackgroundJobManager>();
         _timeProvider = Substitute.For<ITimeProvider>();
-        
+
         _sut = new FeedbackService(
             _feedbackRepository,
             _userRepository,
@@ -55,7 +54,7 @@ public sealed class FeedbackServiceTests
 
         var now = DateTime.UtcNow;
         _timeProvider.Now.Returns(now);
-        
+
         var result = await _sut.CreateAsync(userId, model);
 
         await _feedbackRepository.Received(1).CreateAsync(

@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Contracts.TodoItems;
+﻿using Eclipse.Application.Contracts.Reminders;
+using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
@@ -17,6 +18,8 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 {
     private readonly ITodoItemService _todoItemService;
 
+    private readonly IReminderService _reminderService;
+
     private readonly IUserService _userService;
 
     private readonly IMessageStore _messageStore;
@@ -25,9 +28,10 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 
     private static readonly string _errorMessage = $"{_pipelinePrefix}:Error";
 
-    public TodoItemsListPipeline(ITodoItemService todoItemService, IUserService userService, IMessageStore messageStore)
+    public TodoItemsListPipeline(ITodoItemService todoItemService, IReminderService reminderService, IUserService userService, IMessageStore messageStore)
     {
         _todoItemService = todoItemService;
+        _reminderService = reminderService;
         _userService = userService;
         _messageStore = messageStore;
     }
@@ -71,14 +75,14 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             return GoBackResult(message);
         }
 
-        var id = context.Value.ToGuid();
+        var todoItemId = context.Value.ToGuid();
 
-        if (id == Guid.Empty)
+        if (todoItemId == Guid.Empty)
         {
             return InvalidActionOrRedirect(context, message);
         }
 
-        var result = await _todoItemService.FinishAsync(context.ChatId, id, cancellationToken);
+        var result = await _todoItemService.FinishAsync(context.ChatId, todoItemId, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -87,6 +91,13 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 
         var user = result.Value;
         var items = user.TodoItems;
+
+        var reminder = await _reminderService.GetByRelatedItem(user.Id, todoItemId, cancellationToken);
+
+        if (reminder.IsSuccess)
+        {
+            await _reminderService.DeleteAsync(user.Id, reminder.Value.Id, cancellationToken);
+        }
 
         if (items.IsNullOrEmpty())
         {

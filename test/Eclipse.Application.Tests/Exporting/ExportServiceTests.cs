@@ -79,6 +79,7 @@ public sealed class ExportServiceTests
         for (int i = 0; i < count; i++)
         {
             user.AddReminder(
+                Guid.NewGuid(),
                 faker.Lorem.Sentence(),
                 faker.Date.BetweenTimeOnly(new TimeOnly(0, 0), new TimeOnly(23, 59))
             );

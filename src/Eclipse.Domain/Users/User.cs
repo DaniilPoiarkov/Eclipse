@@ -2,6 +2,7 @@
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.Reminders;
 using Eclipse.Domain.Shared.Entities;
+using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Shared.MoodRecords;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Domain.Shared.Users;
@@ -74,17 +75,17 @@ public sealed class User : AggregateRoot, IHasCreatedAt
     /// <param name="text">The text.</param>
     /// <param name="notifyAt">The notify at.</param>
     /// <returns>Created Reminder</returns>
-    public Reminder AddReminder(string text, TimeOnly notifyAt)
+    public Reminder AddReminder(Guid? relatedItemId, string text, TimeOnly notifyAt)
     {
-        return AddReminder(Guid.CreateVersion7(), text, notifyAt);
+        return AddReminder(Guid.CreateVersion7(), relatedItemId, text, notifyAt);
     }
 
-    public Reminder AddReminder(Guid id, string text, TimeOnly notifyAt)
+    public Reminder AddReminder(Guid id, Guid? relatedItemId, string text, TimeOnly notifyAt)
     {
-        var reminder = new Reminder(id, Id, text, notifyAt.Add(Gmt * -1));
+        var reminder = new Reminder(id, Id, relatedItemId, text, notifyAt.Add(Gmt * -1));
         _reminders.Add(reminder);
 
-        AddEvent(new ReminderAddedDomainEvent(id, Id, Gmt, reminder.NotifyAt, text, Culture, ChatId));
+        AddEvent(new ReminderAddedDomainEvent(reminder.Id, Id, relatedItemId, Gmt, reminder.NotifyAt, text, Culture, ChatId));
 
         return reminder;
     }
@@ -161,7 +162,7 @@ public sealed class User : AggregateRoot, IHasCreatedAt
 
         if (item is null)
         {
-            return UserDomainErrors.TodoItemNotFound();
+            return DefaultErrors.EntityNotFound<TodoItem>();
         }
 
         _todoItems.Remove(item);
@@ -213,10 +214,24 @@ public sealed class User : AggregateRoot, IHasCreatedAt
     {
         var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
 
+        if (reminder is null)
+        {
+            return null;
+        }
+
+        AddEvent(new RemindersReceivedDomainEvent(Id));
+
+        return reminder;
+    }
+
+    public Reminder? RemoveReminder(Guid reminderId)
+    {
+        var reminder = _reminders.FirstOrDefault(r => r.Id == reminderId);
+
         if (reminder is not null)
         {
             _reminders.Remove(reminder);
-            AddEvent(new RemindersReceivedDomainEvent(Id));
+            AddEvent(new ReminderRemovedDomainEvent(Id, reminderId));
         }
 
         return reminder;
@@ -239,6 +254,22 @@ public sealed class User : AggregateRoot, IHasCreatedAt
         {
             AddEvent(new UserDisabledDomainEvent(Id));
         }
+    }
+
+    public Reminder? RescheduleReminder(Guid reminderId, TimeOnly notifyAt)
+    {
+        var reminder = _reminders.FirstOrDefault(m => m.Id == reminderId);
+
+        if (reminder is null)
+        {
+            return null;
+        }
+
+        reminder.Reschedule(notifyAt.Add(Gmt * -1));
+
+        AddEvent(new ReminderRescheduledDomainEvent(Id, reminder.Id, reminder.NotifyAt));
+
+        return reminder;
     }
 
     public override string ToString()
