@@ -2,5 +2,5 @@
 
 public interface IPromotionService
 {
-    Task SendPromotion(SendPromotionRequest request, CancellationToken cancellationToken = default);
+    Task<PromotionDto> SendPromotion(SendPromotionRequest request, CancellationToken cancellationToken = default);
 }
