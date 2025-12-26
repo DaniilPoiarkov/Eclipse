@@ -23,6 +23,15 @@ internal sealed class PromotionService : IPromotionService
         _timeProvider = timeProvider;
     }
 
+    public async Task<PromotionDto> Create(CreatePromotionRequest request, CancellationToken cancellationToken = default)
+    {
+        var promotion = Promotion.Create(request.FromChatId, request.MessageId, request.InlineButtonText, _timeProvider.Now);
+
+        await _promotionsRepository.CreateAsync(promotion, cancellationToken);
+
+        return promotion.ToDto();
+    }
+
     public async Task<PromotionDto> SendPromotion(SendPromotionRequest request, CancellationToken cancellationToken = default)
     {
         var promotion = Promotion.Create(request.FromChatId, request.MessageId, null, _timeProvider.Now);
