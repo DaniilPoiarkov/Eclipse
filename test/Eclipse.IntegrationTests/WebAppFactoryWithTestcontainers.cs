@@ -17,13 +17,11 @@ namespace Eclipse.IntegrationTests;
 
 public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly CosmosDbContainer _dbContainer = new CosmosDbBuilder()
-        .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
+    private readonly CosmosDbContainer _dbContainer = new CosmosDbBuilder("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
         .WithName($"eclipse_cosmosdb_{Guid.NewGuid()}")
         .Build();
 
-    private readonly RedisContainer _redisContainer = new RedisBuilder()
-        .WithImage("redis/redis-stack-server:latest")
+    private readonly RedisContainer _redisContainer = new RedisBuilder("redis/redis-stack-server:latest")
         .WithName("eclipse_redis")
         .Build();
 

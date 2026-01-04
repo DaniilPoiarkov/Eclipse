@@ -3,5 +3,7 @@
 public enum PromotionStatus
 {
     Pending,
+    PublishingRequested,
+    InPublishing,
     Published
 }

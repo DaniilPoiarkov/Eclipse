@@ -6,6 +6,7 @@ using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report.Monthly;
 using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Application.Notifications.GoodMorning;
+using Eclipse.Application.Promotions;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Statistics.ReminderReceived;
 using Eclipse.Application.Statistics.TodoItemFinished;
@@ -15,6 +16,7 @@ using Eclipse.Application.Users.NewUserJoined;
 using Eclipse.Application.Users.Test;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Feedbacks;
+using Eclipse.Domain.Promotions;
 using Eclipse.Domain.Suggestions;
 using Eclipse.Domain.Users.Events;
 
@@ -87,6 +89,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 
         /// <see cref="ReminderRemovedDomainEvent"/>
         AddJob<ReminderRemovedDomainEvent, ReminderRemovedEventHandler>(options);
+
+        /// <see cref="PromotionPublishingRequestedDomainEvent"/>
+        AddJob<PromotionPublishingRequestedDomainEvent, PromotionPublishingRequestedEventHandler>(options);
     }
 
     private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
