@@ -35,7 +35,7 @@ public sealed class PromotionsController : ControllerBase
     {
         var result = await _promotionService.Publish(id, cancellationToken);
 
-        var url = Url.Link("api-promotions-find", id);
+        var url = Url.Link("api-promotions-find", new { id });
 
         return result.Match(promotion => Accepted(url, promotion), err => err.ToProblems(_localizer));
     }

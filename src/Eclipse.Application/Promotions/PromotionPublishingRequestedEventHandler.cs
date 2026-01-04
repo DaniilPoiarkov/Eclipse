@@ -63,6 +63,8 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
                 cancellationToken: cancellationToken
             );
 
+            await _botClient.CopyMessage(_options.Value.Chat, promotion.FromChatId, promotion.MessageId, cancellationToken: cancellationToken);
+
             return;
         }
 
@@ -95,6 +97,7 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
 
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
+            return;
         }
 
         await _botClient.SendMessage(_options.Value.Chat, $"✅ Successfully sent promotion to {user.GetReportingDisplayName()}.", cancellationToken: cancellationToken);
