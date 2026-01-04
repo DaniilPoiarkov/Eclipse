@@ -115,16 +115,22 @@ internal sealed class SendPromotionPostPipeline : AdminPipelineBase
 
         var messageId = await _cacheService.GetOrCreateAsync(
             $"promotions-post-message-{context.ChatId}",
-            () => Task.FromResult<int>(default),
+            () => Task.FromResult<int?>(null),
             cancellationToken: cancellationToken
         );
 
-        if (messageId == default)
+        if (!messageId.HasValue)
         {
             return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:MessageNotFound"]);
         }
 
-        await _promotionService.SendPromotion(new SendPromotionRequest(context.ChatId, messageId), cancellationToken);
+        var promotion = await _promotionService.Create(
+            new CreatePromotionRequest(context.ChatId, messageId.GetValueOrDefault(), string.Empty),
+            cancellationToken
+        );
+
+        // TODO: Extract to separate flow.
+        await _promotionService.Publish(promotion.Id, cancellationToken);
 
         return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:Promotions:Post:Confirmed"]);
     }
