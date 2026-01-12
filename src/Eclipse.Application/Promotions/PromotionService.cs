@@ -51,7 +51,7 @@ internal sealed class PromotionService : IPromotionService
         var promotions = await _promotionsRepository.GetByExpressionAsync(
             specification,
             request.GetSkipCount(),
-            request.Page,
+            request.PageSize,
             cancellationToken
         );
 
