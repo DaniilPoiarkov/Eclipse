@@ -24,7 +24,7 @@ internal sealed class PlotGenerator : IPlotGenerator
         var xValues = options.Bottom?.Values ?? [];
         var yValues = options.Left?.Values ?? [];
 
-        using var plot = _plotTemplateFactory.Create(PlotTemplateType.SansDark).Create();
+        using var plot = _plotTemplateFactory.Create(PlotTemplateType.SansLight).Create();
 
         plot.Axes.Bottom.TickGenerator = _dateTimeTickGeneratorFactory.Create(xValues);
         plot.Axes.Left.TickGenerator = new NumericFixedInterval(_tickInterval);
