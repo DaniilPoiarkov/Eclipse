@@ -12,6 +12,7 @@ internal static class PromotionExtensions
             promotion.FromChatId,
             promotion.MessageId,
             promotion.InlineButtonText,
+            promotion.TimesPublished,
             promotion.Status,
             promotion.CreatedAt
         );

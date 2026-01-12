@@ -11,7 +11,7 @@ public static class ObjectExtensions
             return guid;
         }
 
-        return default;
+        return Guid.Empty;
     }
 
     public static long ToLong(this object? obj)

@@ -6,6 +6,7 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
+using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types;
@@ -46,7 +47,7 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
 
     private async Task<IResult> ReadFeedbacks(MessageContext context, CancellationToken cancellationToken)
     {
-        int page = await GetPageAsync(context, cancellationToken);
+        int page = await _cacheService.GetListPageAsync($"pipelines-admin-feedbacks-read-{context.ChatId}", context.Value, cancellationToken);
 
         var request = new PaginationRequest<GetFeedbacksOptions>
         {
@@ -59,14 +60,14 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
         var users = await GetUsers(list, cancellationToken);
 
         var text = GetMessage(request, list, users.Items);
-        var buttons = GetButtons(page, list);
+        var buttons = GetPagingButtons(page, list);
 
         if (buttons.IsNullOrEmpty())
         {
             FinishPipeline();
         }
 
-        return Menu(buttons, text);
+        return Menu(new InlineKeyboardMarkup(buttons), text);
     }
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
@@ -81,7 +82,7 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
             return InvalidActionOrRedirect(message, context);
         }
 
-        int page = await GetPageAsync(context, cancellationToken);
+        int page = await _cacheService.GetListPageAsync($"pipelines-admin-feedbacks-read-{context.ChatId}", context.Value, cancellationToken);
 
         var request = new PaginationRequest<GetFeedbacksOptions>
         {
@@ -94,16 +95,16 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
         var users = await GetUsers(feedbacks, cancellationToken);
 
         var text = GetMessage(request, feedbacks, users.Items);
-        var buttons = GetButtons(page, feedbacks);
+        var buttons = GetPagingButtons(page, feedbacks);
 
         RegisterStage(HandleUpdate);
 
         if (message is null || message.ReplyMarkup is null)
         {
-            return Menu(buttons, text);
+            return Menu(new InlineKeyboardMarkup(buttons), text);
         }
 
-        return Edit(message.Id, text, buttons);
+        return Edit(message.Id, text, new InlineKeyboardMarkup(buttons));
     }
 
     private Task<PaginatedList<UserSlimDto>> GetUsers(PaginatedList<FeedbackDto> list, CancellationToken cancellationToken)
@@ -144,37 +145,6 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
         }
     }
 
-    private async Task<int> GetPageAsync(MessageContext context, CancellationToken cancellationToken)
-    {
-        var page = await _cacheService.GetOrCreateAsync(
-            $"pipelines-admin-feedbacks-read-{context.ChatId}",
-            () => Task.FromResult(1),
-            new CacheOptions { Expiration = CacheConsts.ThreeDays },
-            cancellationToken
-        );
-
-        page = context.Value switch
-        {
-            "◀️" => page - 1,
-            "▶️" => page + 1,
-            _ => page
-        };
-
-        if (page <= 0)
-        {
-            page = 1;
-        }
-
-        await _cacheService.SetAsync(
-            $"pipelines-admin-feedbacks-read-{context.ChatId}",
-            page,
-            new CacheOptions { Expiration = CacheConsts.ThreeDays },
-            cancellationToken
-        );
-
-        return page;
-    }
-
     private string GetMessage(PaginationRequest<GetFeedbacksOptions> request, PaginatedList<FeedbackDto> list, IEnumerable<UserSlimDto> users)
     {
         var skippedCount = request.GetSkipCount();
@@ -187,28 +157,5 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
             + Environment.NewLine
             + Environment.NewLine
             + feedbacks;
-    }
-
-    private List<List<InlineKeyboardButton>> GetButtons(int page, PaginatedList<FeedbackDto> list)
-    {
-        List<List<InlineKeyboardButton>> buttons = [];
-
-        if (page > 1 && page < list.Pages)
-        {
-            buttons.Add([InlineKeyboardButton.WithCallbackData("◀️"), InlineKeyboardButton.WithCallbackData("▶️")]);
-            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
-        }
-        if (page == 1 && list.Pages > 1)
-        {
-            buttons.Add([InlineKeyboardButton.WithCallbackData("▶️")]);
-            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
-        }
-        if (page == list.Pages && list.Pages > 1)
-        {
-            buttons.Add([InlineKeyboardButton.WithCallbackData("◀️")]);
-            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
-        }
-
-        return buttons;
     }
 }

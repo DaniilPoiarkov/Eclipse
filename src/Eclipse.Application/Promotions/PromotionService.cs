@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Promotions;
 using Eclipse.Common.Clock;
+using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
 using Eclipse.Domain.Promotions;
 using Eclipse.Domain.Shared.Errors;
@@ -39,6 +40,24 @@ internal sealed class PromotionService : IPromotionService
         }
 
         return promotion.ToDto();
+    }
+
+    public async Task<PaginatedList<PromotionDto>> GetList(PaginationRequest<GetPromotionsOptions> request, CancellationToken cancellationToken = default)
+    {
+        var specification = request.Options.ToSpecification();
+
+        var count = await _promotionsRepository.CountAsync(specification, cancellationToken);
+
+        var promotions = await _promotionsRepository.GetByExpressionAsync(
+            specification,
+            request.GetSkipCount(),
+            request.PageSize,
+            cancellationToken
+        );
+
+        var models = promotions.Select(p => p.ToDto());
+
+        return PaginatedList<PromotionDto>.Create(models, count, request.PageSize);
     }
 
     public async Task<Result<PromotionDto>> Publish(Guid id, CancellationToken cancellationToken = default)

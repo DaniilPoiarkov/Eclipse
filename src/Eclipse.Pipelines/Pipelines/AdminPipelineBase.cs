@@ -37,7 +37,7 @@ public abstract class AdminPipelineBase : EclipsePipelineBase
 
     protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> PromotionsButtons => new List<KeyboardButton[]>()
     {
-        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Promotions:Post"]) },
+        new[] { new KeyboardButton(Localizer["Menu:AdminMenu:Promotions:Post"]), new KeyboardButton(Localizer["Menu:AdminMenu:Promotions:Read"]) },
         new[] { new KeyboardButton(Localizer["Menu:AdminMenu"]) }
     };
 
