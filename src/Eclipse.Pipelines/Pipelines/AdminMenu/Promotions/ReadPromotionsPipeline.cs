@@ -116,7 +116,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, cancellationToken: cancellationToken);
 
-        return Redirect<ReadPromotionsPipeline>(
+        return Redirect<PublishPromotionPipeline>(
             MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Read:Publish:Ask"])
         );
     }
