@@ -3,6 +3,7 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot;
@@ -84,7 +85,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
             cancellationToken
         );
 
-        if (context.Value == "go_back")
+        if (!ContinuePromotionProcessing(context))
         {
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Okay"]);
         }
@@ -108,5 +109,11 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         return Redirect<PublishPromotionPipeline>(
             Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Create:Success"])
         );
+    }
+
+    private bool ContinuePromotionProcessing(MessageContext context)
+    {
+        return Localizer.TryConvertToLocalizableString(context.Value, out var localized)
+            && localized.Equals("Pipelines:Admin:Promotions:Create:Review:Continue");
     }
 }
