@@ -19,17 +19,6 @@
 
     "Pipelines:Admin:Export:Requested": "Exporting in progress",
 
-    "Pipelines:Admin:Promotions": "Promotions menu",
-    "Pipelines:Admin:Promotions:Post": "Post promotion post",
-    "Pipelines:Admin:Promotions:Post:Request": "Send a promotion post",
-    "Pipelines:Admin:Promotions:Post:Invalid": "Invalid message. Further processing cancelled.",
-    "Pipelines:Admin:Promotions:Post:Review": "Review please if everything is ok",
-    "Pipelines:Admin:Promotions:Post:Review:Continue": "Continue processing",
-    "Pipelines:Admin:Promotions:Post:Review:Cancel": "Cancel processing",
-    "Pipelines:Admin:Promotions:Post:Cancelled": "Cancelled promotion preparation.",
-    "Pipelines:Admin:Promotions:Post:Confirm{0}": "Send this code {0} to confirm post",
-    "Pipelines:Admin:Promotions:Post:Confirmed": "Successfully confirmed, post is now sending to the users",
-    "Pipelines:Admin:Promotions:Post:ConfirmationFailed": "Invalid code, post not sent.",
-    "Pipelines:Admin:Promotions:Post:MessageNotFound": "Message not found, post not sent."
+    "Pipelines:Admin:Promotions": "Promotions menu"
   }
 }

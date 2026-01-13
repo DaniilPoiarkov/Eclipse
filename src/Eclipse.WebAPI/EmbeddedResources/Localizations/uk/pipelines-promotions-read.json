@@ -1,0 +1,9 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Read:Publish": "Запостити",
+    "Pipelines:Admin:Promotions:Read:Publish:SuccessfullyPublished": "Успішно запрошено публікацію посту",
+    "Pipelines:Admin:Promotions:Read:Publish:FailedToPublish{Reason}": "Не вдалося запросити публікацію посту: {0}",
+    "Pipelines:Admin:Promotions:Read:Publish:Ask": "Ви впевнені, що хочете запостити цей рекламний пост?"
+  }
+}
