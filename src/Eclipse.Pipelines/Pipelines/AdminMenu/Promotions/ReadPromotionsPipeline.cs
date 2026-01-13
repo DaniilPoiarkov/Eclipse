@@ -43,12 +43,11 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
     {
         RegisterStage(ReadPromotions);
         RegisterStage(HandleUpdate);
-        RegisterStage(PublishPromotion);
     }
 
     private async Task<IResult> ReadPromotions(MessageContext context, CancellationToken cancellationToken)
     {
-        int page = await _cacheService.GetListPageAsync($"pipelines-admin-feedbacks-read-{context.ChatId}", context.Value, cancellationToken);
+        int page = await _cacheService.GetListPageAsync($"pipelines-admin-promotions-read-{context.ChatId}", context.Value, cancellationToken);
 
         var request = new PaginationRequest<GetPromotionsOptions>
         {
@@ -61,6 +60,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         var text = GetMessage(request, promotions);
 
+        // TODO: Buttons should be more descriptive.
         var buttons = promotions.Items
             .Select(p => InlineKeyboardButton.WithCallbackData($"{p.Id.ToString().Truncate(5)}..", p.Id.ToString()))
             .Chunk(2)
@@ -116,13 +116,14 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, cancellationToken: cancellationToken);
 
-        // TODO: Check which message is stored.
-        return MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Read:Publish:Ask"]);
+        return Redirect<ReadPromotionsPipeline>(
+            MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Read:Publish:Ask"])
+        );
     }
 
     private async Task<IResult> SendNextPage(MessageContext context, Message? message, CancellationToken cancellationToken)
     {
-        int page = await _cacheService.GetListPageAsync($"pipelines-admin-feedbacks-read-{context.ChatId}", context.Value, cancellationToken);
+        int page = await _cacheService.GetListPageAsync($"pipelines-admin-promotions-read-{context.ChatId}", context.Value, cancellationToken);
 
         var request = new PaginationRequest<GetPromotionsOptions>
         {
@@ -152,34 +153,6 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
         return Edit(message.Id, text, new InlineKeyboardMarkup(buttons));
     }
 
-    private async Task<IResult> PublishPromotion(MessageContext context, CancellationToken cancellationToken)
-    {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
-
-        if (context.Value == "go_back")
-        {
-            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Okay"]);
-        }
-
-        var promotionId = context.Value.ToGuid();
-
-        if (promotionId == Guid.Empty)
-        {
-            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"]);
-        }
-
-        var result = await _promotionService.Publish(promotionId, cancellationToken);
-
-        var text = result.IsSuccess
-            ? Localizer["Pipelines:Admin:Promotions:Read:Publish:SuccessfullyPublished"]
-            : Localizer["Pipelines:Admin:Promotions:Read:Publish:FailedToPublish{Reason}", result.Error.Description];
-
-        return MenuAndClearPrevious(PromotionsButtons, message, text);
-    }
-
     private IResult InvalidActionOrRedirect(Message? message, MessageContext context)
     {
         if (context.Value == "go_back")
@@ -193,7 +166,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
             return localized switch
             {
-                "Menu:AdminMenu:Promotions:Post" => RemoveMenuAndRedirect<SendPromotionPostPipeline>(message),
+                "Menu:AdminMenu:Promotions:Create" => RemoveMenuAndRedirect<CreatePromotionPostPipeline>(message),
                 "Menu:AdminMenu:Promotions:Read" => RemoveMenuAndRedirect<ReadPromotionsPipeline>(message),
                 "Menu:AdminMenu" => RemoveMenuAndRedirect<AdminModePipeline>(message),
                 _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
