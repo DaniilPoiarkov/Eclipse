@@ -1,13 +1,9 @@
 ﻿using Eclipse.Common.Linq;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
-using Eclipse.Domain.Promotions;
 
 using Microsoft.Extensions.Localization;
 
-using System.Collections.Generic;
-
-using Telegram.Bot.Requests.Abstractions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -56,16 +52,15 @@ public abstract class EclipsePipelineBase : PipelineBase
 
     protected IResult MenuAndClearPrevious(ReplyMarkup buttons, Message? message, string text)
     {
-        var menu = Menu(buttons, text);
-
         if (message is not { ReplyMarkup: { } })
         {
-            return menu;
+            return Menu(buttons, text);
         }
 
-        var edit = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
-
-        return Multiple(menu, edit);
+        return Multiple(
+            Edit(message.MessageId, InlineKeyboardMarkup.Empty()),
+            Menu(buttons, text)
+        );
     }
 
     protected List<IList<InlineKeyboardButton>> GetPagingButtons<T>(int page, PaginatedList<T> list)

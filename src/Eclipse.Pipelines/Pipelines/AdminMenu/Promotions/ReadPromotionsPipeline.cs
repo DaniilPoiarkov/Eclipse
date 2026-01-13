@@ -6,7 +6,6 @@ using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Pipelines.AdminMenu.Feedbacks;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot;
@@ -44,6 +43,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
     {
         RegisterStage(ReadPromotions);
         RegisterStage(HandleUpdate);
+        RegisterStage(PublishPromotion);
     }
 
     private async Task<IResult> ReadPromotions(MessageContext context, CancellationToken cancellationToken)
@@ -92,6 +92,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         if (context.Value is not ("◀️" or "▶️"))
         {
+            FinishPipeline();
             return InvalidActionOrRedirect(message, context);
         }
 
@@ -104,13 +105,19 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         if (!promotion.IsSuccess)
         {
+            FinishPipeline();
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["{0}NotFound", "Promotion"]);
         }
 
+        List<InlineKeyboardButton> buttons = [
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Read:Publish"], promotionId.ToString()),
+            InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back"),
+        ];
+
         await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, cancellationToken: cancellationToken);
 
-        // TODO: Localize message and send buttons [Publish] and [Cancel] with according further actions.
-        return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Selected promotion. Wanna publish?"]);
+        // TODO: Check which message is stored.
+        return MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Read:Publish:Ask"]);
     }
 
     private async Task<IResult> SendNextPage(MessageContext context, Message? message, CancellationToken cancellationToken)
@@ -145,6 +152,34 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
         return Edit(message.Id, text, new InlineKeyboardMarkup(buttons));
     }
 
+    private async Task<IResult> PublishPromotion(MessageContext context, CancellationToken cancellationToken)
+    {
+        var message = await _messageStore.GetOrDefaultAsync(
+            new MessageKey(context.ChatId),
+            cancellationToken
+        );
+
+        if (context.Value == "go_back")
+        {
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Okay"]);
+        }
+
+        var promotionId = context.Value.ToGuid();
+
+        if (promotionId == Guid.Empty)
+        {
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"]);
+        }
+
+        var result = await _promotionService.Publish(promotionId, cancellationToken);
+
+        var text = result.IsSuccess
+            ? Localizer["Pipelines:Admin:Promotions:Read:Publish:SuccessfullyPublished"]
+            : Localizer["Pipelines:Admin:Promotions:Read:Publish:FailedToPublish{Reason}", result.Error.Description];
+
+        return MenuAndClearPrevious(PromotionsButtons, message, text);
+    }
+
     private IResult InvalidActionOrRedirect(Message? message, MessageContext context)
     {
         if (context.Value == "go_back")
@@ -158,8 +193,8 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
             return localized switch
             {
-                "Menu:AdminMenu:Promotions:Post" => RemoveMenuAndRedirect<RequestFeedbackPipeline>(message),
-                "Menu:AdminMenu:Promotions:Read" => RemoveMenuAndRedirect<ReadFeedbacksPipeline>(message),
+                "Menu:AdminMenu:Promotions:Post" => RemoveMenuAndRedirect<SendPromotionPostPipeline>(message),
+                "Menu:AdminMenu:Promotions:Read" => RemoveMenuAndRedirect<ReadPromotionsPipeline>(message),
                 "Menu:AdminMenu" => RemoveMenuAndRedirect<AdminModePipeline>(message),
                 _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
             };
