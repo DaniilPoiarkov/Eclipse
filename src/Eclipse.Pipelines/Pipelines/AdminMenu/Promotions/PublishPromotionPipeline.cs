@@ -7,6 +7,7 @@ using Eclipse.Domain.Promotions;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Stores.Messages;
 
+using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
@@ -20,21 +21,62 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
 
     private readonly ICacheService _cacheService;
 
+    private readonly ITelegramBotClient _botClient;
+
     public PublishPromotionPipeline(
         IPromotionService promotionService,
         IMessageStore messageStore,
-        ICacheService cacheService)
+        ICacheService cacheService,
+        ITelegramBotClient botClient)
     {
         _promotionService = promotionService;
         _messageStore = messageStore;
         _cacheService = cacheService;
+        _botClient = botClient;
     }
 
     protected override void Initialize()
     {
-        RegisterStage(_ => Empty()); // TODO: Adjust redirection and remove.
+        RegisterStage(ShowPromotion);
         RegisterStage(SendConfirmationCodeAsync);
         RegisterStage(PublishPromotion);
+    }
+
+    private async Task<IResult> ShowPromotion(MessageContext context, CancellationToken cancellationToken)
+    {
+        var message = await _messageStore.GetOrDefaultAsync(
+            new MessageKey(context.ChatId),
+            cancellationToken
+        );
+
+        var promotionId = await _cacheService.GetOrCreateAsync(
+            $"admin-promotions-publish-{context.ChatId}",
+            () => Task.FromResult(Guid.Empty),
+            cancellationToken: cancellationToken
+        );
+
+        if (promotionId == Guid.Empty)
+        {
+            FinishPipeline();
+            return Menu(PromotionsButtons, Localizer["Error"]);
+        }
+
+        var promotion = await _promotionService.Find(promotionId, cancellationToken);
+
+        if (!promotion.IsSuccess)
+        {
+            FinishPipeline();
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["{0}NotFound", "Promotion"]);
+        }
+
+        List<InlineKeyboardButton> buttons = [
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Publish:Publish"]),
+            InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back"),
+        ];
+
+        await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, replyMarkup: new ReplyKeyboardRemove(), cancellationToken: cancellationToken);
+
+        return MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Publish:Ask"]);
     }
 
     private async Task<IResult> SendConfirmationCodeAsync(MessageContext context, CancellationToken cancellationToken)
@@ -53,7 +95,7 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
         if (!ContinuePromotionProcessing(context))
         {
             FinishPipeline();
-            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Publish:Cancelled"]);
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Pipelines:Admin:Promotions:Publish:Cancelled"]);
         }
 
         var confirmationCode = Enumerable.Range(0, 6)
@@ -72,7 +114,7 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
             cancellationToken
         );
 
-        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Publish:Confirm{0}", confirmationCode]);
+        return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Pipelines:Admin:Promotions:Publish:Confirm{0}", confirmationCode]);
     }
 
     private async Task<IResult> PublishPromotion(MessageContext context, CancellationToken cancellationToken)
@@ -93,7 +135,12 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
             cancellationToken
         );
 
-        var promotionId = context.Value.ToGuid();
+        // TODO: Fix promotion id retrieval.
+        var promotionId = await _cacheService.GetOrCreateAsync(
+            $"admin-promotions-publish-{context.ChatId}",
+            () => Task.FromResult(Guid.Empty),
+            cancellationToken: cancellationToken
+        );
 
         if (promotionId == Guid.Empty)
         {
@@ -103,8 +150,8 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
         var result = await _promotionService.Publish(promotionId, cancellationToken);
 
         var text = result.IsSuccess
-            ? Localizer["Pipelines:Admin:Promotions:Read:Publish:SuccessfullyPublished"]
-            : Localizer["Pipelines:Admin:Promotions:Read:Publish:FailedToPublish{Reason}", result.Error.Description];
+            ? Localizer["Pipelines:Admin:Promotions:Publish:SuccessfullyPublished"]
+            : Localizer["Pipelines:Admin:Promotions:Publish:FailedToPublish{Reason}", result.Error.Description];
 
         return MenuAndClearPrevious(PromotionsButtons, message, text);
     }
@@ -112,6 +159,6 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
     private bool ContinuePromotionProcessing(MessageContext context)
     {
         return Localizer.TryConvertToLocalizableString(context.Value, out var localized)
-            && localized.Equals("Pipelines:Admin:Promotions:Publish:Review:Continue");
+            && localized.Equals("Pipelines:Admin:Promotions:Publish:Publish");
     }
 }

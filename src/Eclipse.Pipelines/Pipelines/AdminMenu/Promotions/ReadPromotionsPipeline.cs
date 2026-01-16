@@ -8,7 +8,6 @@ using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Stores.Messages;
 
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -23,20 +22,16 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private readonly IMessageStore _messageStore;
 
-    private readonly ITelegramBotClient _botClient;
-
-    private static readonly int _pageSize = 15;
+    private static readonly int _pageSize = 16;
 
     public ReadPromotionsPipeline(
         IPromotionService promotionService,
         ICacheService cacheService,
-        IMessageStore messageStore,
-        ITelegramBotClient botClient)
+        IMessageStore messageStore)
     {
         _promotionService = promotionService;
         _cacheService = cacheService;
         _messageStore = messageStore;
-        _botClient = botClient;
     }
 
     protected override void Initialize()
@@ -109,15 +104,17 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["{0}NotFound", "Promotion"]);
         }
 
-        List<InlineKeyboardButton> buttons = [
-            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Read:Publish"], promotionId.ToString()),
-            InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back"),
-        ];
-
-        await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, cancellationToken: cancellationToken);
+        await _cacheService.SetForThreeDaysAsync(
+            $"admin-promotions-publish-{context.ChatId}",
+            promotion.Value.Id,
+            context.ChatId,
+            cancellationToken: cancellationToken
+        );
 
         return Redirect<PublishPromotionPipeline>(
-            MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Read:Publish:Ask"])
+            message is null
+                ? Empty()
+                : Edit(message.Id, InlineKeyboardMarkup.Empty())
         );
     }
 
