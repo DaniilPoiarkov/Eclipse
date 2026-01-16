@@ -135,7 +135,6 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
             cancellationToken
         );
 
-        // TODO: Fix promotion id retrieval.
         var promotionId = await _cacheService.GetOrCreateAsync(
             $"admin-promotions-publish-{context.ChatId}",
             () => Task.FromResult(Guid.Empty),
