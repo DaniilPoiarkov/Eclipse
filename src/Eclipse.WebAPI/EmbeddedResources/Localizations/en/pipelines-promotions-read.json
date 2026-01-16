@@ -1,9 +1,0 @@
-{
-  "Culture": "en",
-  "Texts": {
-    "Pipelines:Admin:Promotions:Read:Publish": "Publish",
-    "Pipelines:Admin:Promotions:Read:Publish:SuccessfullyPublished": "Successfully requested post publishing",
-    "Pipelines:Admin:Promotions:Read:Publish:FailedToPublish{Reason}": "Failed to request post publishing: {0}",
-    "Pipelines:Admin:Promotions:Read:Publish:Ask": "Are you sure you want to publish this promotion post?"
-  }
-}
