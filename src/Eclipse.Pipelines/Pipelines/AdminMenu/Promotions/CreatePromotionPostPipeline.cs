@@ -3,6 +3,7 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Domain.Promotions;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Stores.Messages;
 
@@ -106,8 +107,16 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
             cancellationToken
         );
 
+        await _botClient.CopyMessage(context.ChatId, promotion.FromChatId, promotion.MessageId, cancellationToken: cancellationToken);
+
+        List<InlineKeyboardButton> buttons = [
+            InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Read:Publish"], promotion.Id.ToString()),
+            InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back"),
+        ];
+
         return Redirect<PublishPromotionPipeline>(
-            Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Create:Success"])
+            Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Create:Success"]),
+            Menu(new InlineKeyboardMarkup(buttons), Localizer["Pipelines:Admin:Promotions:Read:Publish:Ask"])
         );
     }
 

@@ -25,7 +25,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private readonly ITelegramBotClient _botClient;
 
-    private static readonly int _pageSize = 2;
+    private static readonly int _pageSize = 15;
 
     public ReadPromotionsPipeline(
         IPromotionService promotionService,
