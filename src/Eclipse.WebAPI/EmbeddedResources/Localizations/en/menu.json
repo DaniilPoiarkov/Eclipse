@@ -34,7 +34,8 @@
     "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
 
     "Menu:AdminMenu:Promotions": "Promotions",
-    "Menu:AdminMenu:Promotions:Post": "Post promotion",
+    "Menu:AdminMenu:Promotions:Create": "Create promotion",
+    "Menu:AdminMenu:Promotions:Read": "Read promotions",
 
     "Menu:AdminMenu:Feedbacks": "Feedbacks",
     "Menu:AdminMenu:Feedbacks:Read": "Read feedbacks",

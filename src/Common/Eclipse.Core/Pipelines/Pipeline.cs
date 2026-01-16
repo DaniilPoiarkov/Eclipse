@@ -56,7 +56,7 @@ public abstract class Pipeline
         return new MenuResult(message, menu);
     }
 
-    protected static IResult Redirect<TPipeline>(params IEnumerable<IResult> results)
+    protected static IResult Redirect<TPipeline>(params IList<IResult> results)
         where TPipeline : Pipeline
     {
         return new RedirectResult(typeof(TPipeline), results);

@@ -1,0 +1,12 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Publish:Ask": "Ви впевнені, що хочете запостити цей рекламний пост?",
+    "Pipelines:Admin:Promotions:Publish:Publish": "Запостити",
+    "Pipelines:Admin:Promotions:Publish:Cancelled": "Скасовано підготовку посту.",
+    "Pipelines:Admin:Promotions:Publish:Confirm{0}": "Відправте цей код {0} аби підтвердити надсилання.",
+    "Pipelines:Admin:Promotions:Publish:ConfirmationFailed": "Неправильний код, пост не відправляється.",
+    "Pipelines:Admin:Promotions:Publish:SuccessfullyPublished": "Успішно запрошено публікацію посту",
+    "Pipelines:Admin:Promotions:Publish:FailedToPublish{Reason}": "Не вдалося запросити публікацію посту: {0}"
+  }
+}

@@ -14,21 +14,19 @@ public sealed class MultipleActionsResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
-        var messages = new List<Message?>(Results.Count);
+        var messages = new List<Message>(Results.Count);
 
         foreach (var result in Results.Cast<ResultBase>())
         {
             result.ChatId = ChatId;
-            messages.Add(await result.SendAsync(botClient, cancellationToken));
+            var message = await result.SendAsync(botClient, cancellationToken);
+
+            if (message is not null)
+            {
+                messages.Add(message);
+            }
         }
 
-        if (messages.Count == 0)
-        {
-            return null;
-        }
-
-        return messages
-            .Where(m => m is not null)
-            .LastOrDefault();
+        return messages.LastOrDefault();
     }
 }

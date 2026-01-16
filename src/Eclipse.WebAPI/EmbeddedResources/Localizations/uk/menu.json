@@ -34,7 +34,8 @@
     "Menu:AdminMenu:SwitchToUserMode": "Переключитись на режим користувача",
 
     "Menu:AdminMenu:Promotions": "Просування",
-    "Menu:AdminMenu:Promotions:Post": "Надіслати пост",
+    "Menu:AdminMenu:Promotions:Create": "Створити рекламний пост",
+    "Menu:AdminMenu:Promotions:Read": "Передивитись рекламні пости",
 
     "Menu:AdminMenu:Feedbacks": "Фідбеки",
     "Menu:AdminMenu:Feedbacks:Read": "Прочитати фідбеки",

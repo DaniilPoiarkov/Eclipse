@@ -1,0 +1,12 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Publish:Ask": "Are you sure you want to publish this promotion post?",
+    "Pipelines:Admin:Promotions:Publish:Publish": "Publish",
+    "Pipelines:Admin:Promotions:Publish:Cancelled": "Cancelled promotion preparation.",
+    "Pipelines:Admin:Promotions:Publish:Confirm{0}": "Send this code {0} to confirm post",
+    "Pipelines:Admin:Promotions:Publish:ConfirmationFailed": "Invalid code, post not sent.",
+    "Pipelines:Admin:Promotions:Publish:SuccessfullyPublished": "Successfully requested post publishing",
+    "Pipelines:Admin:Promotions:Publish:FailedToPublish{Reason}": "Failed to request post publishing: {0}"
+  }
+}

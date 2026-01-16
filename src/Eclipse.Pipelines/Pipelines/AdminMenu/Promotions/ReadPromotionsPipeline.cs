@@ -6,10 +6,8 @@ using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Pipelines.AdminMenu.Feedbacks;
 using Eclipse.Pipelines.Stores.Messages;
 
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -24,20 +22,16 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private readonly IMessageStore _messageStore;
 
-    private readonly ITelegramBotClient _botClient;
-
-    private static readonly int _pageSize = 2;
+    private static readonly int _pageSize = 16;
 
     public ReadPromotionsPipeline(
         IPromotionService promotionService,
         ICacheService cacheService,
-        IMessageStore messageStore,
-        ITelegramBotClient botClient)
+        IMessageStore messageStore)
     {
         _promotionService = promotionService;
         _cacheService = cacheService;
         _messageStore = messageStore;
-        _botClient = botClient;
     }
 
     protected override void Initialize()
@@ -48,7 +42,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private async Task<IResult> ReadPromotions(MessageContext context, CancellationToken cancellationToken)
     {
-        int page = await _cacheService.GetListPageAsync($"pipelines-admin-feedbacks-read-{context.ChatId}", context.Value, cancellationToken);
+        int page = await _cacheService.GetListPageAsync($"pipelines-admin-promotions-read-{context.ChatId}", context.Value, cancellationToken);
 
         var request = new PaginationRequest<GetPromotionsOptions>
         {
@@ -61,6 +55,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         var text = GetMessage(request, promotions);
 
+        // TODO: Buttons should be more descriptive.
         var buttons = promotions.Items
             .Select(p => InlineKeyboardButton.WithCallbackData($"{p.Id.ToString().Truncate(5)}..", p.Id.ToString()))
             .Chunk(2)
@@ -92,6 +87,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         if (context.Value is not ("◀️" or "▶️"))
         {
+            FinishPipeline();
             return InvalidActionOrRedirect(message, context);
         }
 
@@ -104,18 +100,27 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         if (!promotion.IsSuccess)
         {
+            FinishPipeline();
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["{0}NotFound", "Promotion"]);
         }
 
-        await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, cancellationToken: cancellationToken);
+        await _cacheService.SetForThreeDaysAsync(
+            $"admin-promotions-publish-{context.ChatId}",
+            promotion.Value.Id,
+            context.ChatId,
+            cancellationToken: cancellationToken
+        );
 
-        // TODO: Localize message and send buttons [Publish] and [Cancel] with according further actions.
-        return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Selected promotion. Wanna publish?"]);
+        return Redirect<PublishPromotionPipeline>(
+            message is null
+                ? Empty()
+                : Edit(message.Id, InlineKeyboardMarkup.Empty())
+        );
     }
 
     private async Task<IResult> SendNextPage(MessageContext context, Message? message, CancellationToken cancellationToken)
     {
-        int page = await _cacheService.GetListPageAsync($"pipelines-admin-feedbacks-read-{context.ChatId}", context.Value, cancellationToken);
+        int page = await _cacheService.GetListPageAsync($"pipelines-admin-promotions-read-{context.ChatId}", context.Value, cancellationToken);
 
         var request = new PaginationRequest<GetPromotionsOptions>
         {
@@ -158,8 +163,8 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
             return localized switch
             {
-                "Menu:AdminMenu:Promotions:Post" => RemoveMenuAndRedirect<RequestFeedbackPipeline>(message),
-                "Menu:AdminMenu:Promotions:Read" => RemoveMenuAndRedirect<ReadFeedbacksPipeline>(message),
+                "Menu:AdminMenu:Promotions:Create" => RemoveMenuAndRedirect<CreatePromotionPostPipeline>(message),
+                "Menu:AdminMenu:Promotions:Read" => RemoveMenuAndRedirect<ReadPromotionsPipeline>(message),
                 "Menu:AdminMenu" => RemoveMenuAndRedirect<AdminModePipeline>(message),
                 _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
             };

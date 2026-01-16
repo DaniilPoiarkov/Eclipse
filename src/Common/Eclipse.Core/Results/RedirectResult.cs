@@ -7,9 +7,9 @@ public sealed class RedirectResult : ResultBase
 {
     public Type PipelineType { get; }
 
-    private readonly IEnumerable<IResult> _results;
+    private readonly IList<IResult> _results;
 
-    public RedirectResult(Type type, IEnumerable<IResult> results)
+    public RedirectResult(Type type, IList<IResult> results)
     {
         PipelineType = type;
         _results = results;
@@ -17,12 +17,19 @@ public sealed class RedirectResult : ResultBase
 
     public override async Task<Message?> SendAsync(ITelegramBotClient botClient, CancellationToken cancellationToken = default)
     {
+        var messages = new List<Message>(_results.Count);
+
         foreach (var result in _results.Cast<ResultBase>())
         {
             result.ChatId = ChatId;
-            await result.SendAsync(botClient, cancellationToken);
+            var message = await result.SendAsync(botClient, cancellationToken);
+            
+            if (message is not null)
+            {
+                messages.Add(message);
+            }
         }
 
-        return null;
+        return messages.LastOrDefault();
     }
 }
