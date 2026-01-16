@@ -105,13 +105,13 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
         }
 
         await _cacheService.SetForThreeDaysAsync(
-            $"admin-promotions-publish-{context.ChatId}",
+            $"admin-promotions-promotion-{context.ChatId}",
             promotion.Value.Id,
             context.ChatId,
             cancellationToken: cancellationToken
         );
 
-        return Redirect<PublishPromotionPipeline>(
+        return Redirect<PromotionActionsPipeline>(
             message is null
                 ? Empty()
                 : Edit(message.Id, InlineKeyboardMarkup.Empty())

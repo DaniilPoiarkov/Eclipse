@@ -109,13 +109,13 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         );
 
         await _cacheService.SetForThreeDaysAsync(
-            $"admin-promotions-publish-{context.ChatId}",
+            $"admin-promotions-promotion-{context.ChatId}",
             promotion.Id,
             context.ChatId,
             cancellationToken: cancellationToken
         );
 
-        return Redirect<PublishPromotionPipeline>(
+        return Redirect<PromotionActionsPipeline>(
             Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Create:Success"])
         );
     }
