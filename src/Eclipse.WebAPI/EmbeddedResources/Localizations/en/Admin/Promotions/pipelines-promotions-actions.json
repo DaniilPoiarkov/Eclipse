@@ -3,6 +3,7 @@
   "Texts": {
     "Pipelines:Admin:Promotions:Actions:Delete": "Delete",
     "Pipelines:Admin:Promotions:Actions:Publish": "Publish",
+    "Pipelines:Admin:Promotions:Actions:UpdateTitle": "Update title",
     "Pipelines:Admin:Promotions:Actions:Message": "Actions with promotion post:"
   }
 }

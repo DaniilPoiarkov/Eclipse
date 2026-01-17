@@ -1,0 +1,10 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Admin:Promotions:UpdateTitle:Request": "Send a new title or press /cancel to return.",
+    "Pipelines:Admin:Promotions:UpdateTitle:Cancelled": "Title update cancelled",
+    "Pipelines:Admin:Promotions:UpdateTitle:Invalid": "Title cannot be empty, update is cancelled",
+    "Pipelines:Admin:Promotions:UpdateTitle:Success": "Successfully updated",
+    "Pipelines:Admin:Promotions:UpdateTitle:Failure{Reason}": "Update title failed: {0}"
+  }
+}
