@@ -9,6 +9,7 @@ internal static class PromotionExtensions
     {
         return new PromotionDto(
             promotion.Id,
+            promotion.Title,
             promotion.FromChatId,
             promotion.MessageId,
             promotion.InlineButtonText,

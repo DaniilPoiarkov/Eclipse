@@ -109,6 +109,11 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
             return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
         }
 
+        if (context.Value.IsNullOrEmpty())
+        {
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Invalid"]);
+        }
+
         var messageId = await _cacheService.GetOrCreateAsync(
             $"promotions-create-message-{context.ChatId}",
             () => Task.FromResult<int?>(null),
@@ -121,7 +126,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         }
 
         var promotion = await _promotionService.Create(
-            new CreatePromotionRequest(context.ChatId, messageId.GetValueOrDefault(), string.Empty), // TODO: Extend with human-friendly name.
+            new CreatePromotionRequest(context.Value, context.ChatId, messageId.GetValueOrDefault(), string.Empty),
             cancellationToken
         );
 
