@@ -1,12 +1,13 @@
 {
   "Culture": "uk",
   "Texts": {
-    "Pipelines:Admin:Promotions:Create:Request": "Відправте приклад повідомлення.",
+    "Pipelines:Admin:Promotions:Create:Request": "Відправте приклад повідомлення або натисніть /cancel для відміни операції.",
+    "Pipelines:Admin:Promotions:Create:Cancelled": "Скасоно створення рекламного посту.",
     "Pipelines:Admin:Promotions:Create:Invalid": "Некорректе повідомлення. Подальша обробка припинена.",
     "Pipelines:Admin:Promotions:Create:Review": "Перевірте чи все правильно",
     "Pipelines:Admin:Promotions:Create:Review:Continue": "Продовжити",
     "Pipelines:Admin:Promotions:Create:Review:Cancel": "Скасувати",
     "Pipelines:Admin:Promotions:Create:Success": "Пост успішно створено",
-    "Pipelines:Admin:Promotions:Create:MessageNotFound": "Повідомлення не знайдено, пост не відправляється."
+    "Pipelines:Admin:Promotions:Create:MessageNotFound": "Повідомлення не знайдено, рекламний пост не відправляється."
   }
 }
