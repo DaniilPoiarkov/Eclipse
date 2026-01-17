@@ -1,7 +1,8 @@
 {
   "Culture": "en",
   "Texts": {
-    "Pipelines:Admin:Promotions:Create:Request": "Send a promotion post",
+    "Pipelines:Admin:Promotions:Create:Request": "Send a promotion post or /cancel to cancel promotion creation.",
+    "Pipelines:Admin:Promotions:Create:Cancelled": "Cancelled promotion post creation.",
     "Pipelines:Admin:Promotions:Create:Invalid": "Invalid message. Further processing cancelled.",
     "Pipelines:Admin:Promotions:Create:Review": "Review please if everything is ok",
     "Pipelines:Admin:Promotions:Create:Review:Continue": "Continue processing",

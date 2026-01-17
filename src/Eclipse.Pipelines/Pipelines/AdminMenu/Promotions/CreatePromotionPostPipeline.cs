@@ -51,6 +51,12 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 
     private async Task<IResult> ReviewPostMessageAsync(MessageContext context, CancellationToken cancellationToken)
     {
+        if (context.Value.Equals("/cancel"))
+        {
+            FinishPipeline();
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
+        }
+
         if (Update.Message is not { })
         {
             FinishPipeline();
