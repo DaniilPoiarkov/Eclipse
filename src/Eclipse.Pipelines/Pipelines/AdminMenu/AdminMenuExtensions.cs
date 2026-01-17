@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Feedbacks;
+using Eclipse.Application.Contracts.Promotions;
 using Eclipse.Application.Contracts.Users;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
@@ -23,5 +24,30 @@ internal static class AdminMenuExtensions
         }
 
         return $"{feedback.Rate}";
+    }
+
+    internal static string GetReportingView(this PromotionDto promotion)
+    {
+        if (!promotion.Title.IsNullOrEmpty())
+        {
+            return $"{promotion.Title}. {promotion.Status}, published {promotion.TimesPublished} times.";
+        }
+
+        return $"{promotion.Id}. {promotion.Status}, published {promotion.TimesPublished} times.";
+    }
+
+    internal static string GetButtonName(this PromotionDto promotion)
+    {
+        if (promotion.Title.IsNullOrEmpty())
+        {
+            return promotion.Id.ToString().Truncate(15) + "..";
+        }
+
+        if (promotion.Title.Length <= 15)
+        {
+            return promotion.Title;
+        }
+
+        return $"{promotion.Title.Truncate(15)}..";
     }
 }

@@ -55,9 +55,8 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         var text = GetMessage(request, promotions);
 
-        // TODO: Buttons should be more descriptive.
         var buttons = promotions.Items
-            .Select(p => InlineKeyboardButton.WithCallbackData($"{p.Id.ToString().Truncate(5)}..", p.Id.ToString()))
+            .Select(p => InlineKeyboardButton.WithCallbackData(p.GetButtonName(), p.Id.ToString()))
             .Chunk(2)
             .Concat(
                 GetPagingButtons(page, promotions)
@@ -134,7 +133,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
         var text = GetMessage(request, promotions);
 
         var buttons = promotions.Items
-            .Select(p => InlineKeyboardButton.WithCallbackData($"{p.Id.ToString().Truncate(5)}..", p.Id.ToString()))
+            .Select(p => InlineKeyboardButton.WithCallbackData(p.GetButtonName(), p.Id.ToString()))
             .Chunk(2)
             .Concat(
                 GetPagingButtons(page, promotions)
@@ -179,8 +178,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
     {
         var skippedCount = request.GetSkipCount();
 
-        // TODO: Promotion should have human friendly representation.
-        var promotions = list.Items.Select((p, i) => $"{i + skippedCount + 1}. {p.Id}. {p.Status}, published {p.TimesPublished} times.")
+        var promotions = list.Items.Select((p, i) => $"{i + skippedCount + 1}. {p.GetReportingView()}")
             .Join(Environment.NewLine);
 
         return GetPagingMessage(request.Page, list.Pages, list.TotalCount, promotions);
