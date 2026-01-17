@@ -4,6 +4,7 @@ namespace Eclipse.Application.Contracts.Promotions;
 
 public sealed record PromotionDto(
     Guid Id,
+    string Title,
     long FromChatId,
     int MessageId,
     string? InlineButtonText,

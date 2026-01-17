@@ -7,6 +7,7 @@
     "Pipelines:Admin:Promotions:Create:Review": "Review please if everything is ok",
     "Pipelines:Admin:Promotions:Create:Review:Continue": "Continue processing",
     "Pipelines:Admin:Promotions:Create:Review:Cancel": "Cancel processing",
+    "Pipelines:Admin:Promotions:Create:Title": "Set promotion title or press /cancel to stop",
     "Pipelines:Admin:Promotions:Create:Success": "Successfully saved promotion post",
     "Pipelines:Admin:Promotions:Create:MessageNotFound": "Message not found, post not saved."
   }

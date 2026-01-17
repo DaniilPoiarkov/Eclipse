@@ -5,6 +5,8 @@ namespace Eclipse.Domain.Promotions;
 
 public sealed class Promotion : AggregateRoot, IHasCreatedAt
 {
+    public string Title { get; init; }
+
     public long FromChatId { get; init; }
 
     public int MessageId { get; private set; }
@@ -17,8 +19,9 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
 
     public DateTime CreatedAt { get; init; }
 
-    private Promotion(Guid id, long fromChatId, int messageId, string inlineButtonText, int timesPublished, PromotionStatus status, DateTime createdAt) : base(id)
+    private Promotion(Guid id, string title, long fromChatId, int messageId, string inlineButtonText, int timesPublished, PromotionStatus status, DateTime createdAt) : base(id)
     {
+        Title = title;
         FromChatId = fromChatId;
         MessageId = messageId;
         InlineButtonText = inlineButtonText;
@@ -27,9 +30,9 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
         CreatedAt = createdAt;
     }
 
-    public static Promotion Create(long fromChatId, int messageId, string inlineButtonText, DateTime createdAt)
+    public static Promotion Create(string title, long fromChatId, int messageId, string inlineButtonText, DateTime createdAt)
     {
-        return new Promotion(Guid.CreateVersion7(), fromChatId, messageId, inlineButtonText, 0, PromotionStatus.Pending, createdAt);
+        return new Promotion(Guid.CreateVersion7(), title, fromChatId, messageId, inlineButtonText, 0, PromotionStatus.Pending, createdAt);
     }
 
     public void SetInlineButton(string inlineButtonText)

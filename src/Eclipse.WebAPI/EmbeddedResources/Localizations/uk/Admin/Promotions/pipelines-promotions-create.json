@@ -7,6 +7,7 @@
     "Pipelines:Admin:Promotions:Create:Review": "Перевірте чи все правильно",
     "Pipelines:Admin:Promotions:Create:Review:Continue": "Продовжити",
     "Pipelines:Admin:Promotions:Create:Review:Cancel": "Скасувати",
+    "Pipelines:Admin:Promotions:Create:Title": "Вкажіть назву рекламного посту або натисніть /cancel аби скасувати",
     "Pipelines:Admin:Promotions:Create:Success": "Пост успішно створено",
     "Pipelines:Admin:Promotions:Create:MessageNotFound": "Повідомлення не знайдено, рекламний пост не відправляється."
   }
