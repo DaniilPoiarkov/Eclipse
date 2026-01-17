@@ -1,0 +1,9 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Delete:Confirm{0}": "Are you sure you want to delete promotion? It will result of deleting all related data. For confirmation send: {0}",
+    "Pipelines:Admin:Promotions:Delete:ConfirmationFailed": "Confirmation failed.",
+    "Pipelines:Admin:Promotions:Delete:Success": "Promotion deleted successfully.",
+    "Pipelines:Admin:Promotions:Delete:Failed{Reason}": "Failed to delete promotion. {0}"
+  }
+}

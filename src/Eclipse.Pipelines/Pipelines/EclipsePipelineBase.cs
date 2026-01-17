@@ -82,6 +82,11 @@ public abstract class EclipsePipelineBase : PipelineBase
             buttons.Add([InlineKeyboardButton.WithCallbackData("◀️")]);
             buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
         }
+        if (page > list.Pages)
+        {
+            buttons.Add([InlineKeyboardButton.WithCallbackData("◀️")]);
+            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
+        }
 
         return buttons;
     }

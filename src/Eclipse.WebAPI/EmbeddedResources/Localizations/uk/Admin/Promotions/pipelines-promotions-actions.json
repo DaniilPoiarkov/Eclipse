@@ -1,0 +1,8 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Actions:Delete": "Видалити",
+    "Pipelines:Admin:Promotions:Actions:Publish": "Опублікувати",
+    "Pipelines:Admin:Promotions:Actions:Message": "Дії з рекламним постом:"
+  }
+}

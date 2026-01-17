@@ -30,10 +30,16 @@ internal sealed class PromotionService : IPromotionService
         return promotion.ToDto();
     }
 
+    public async Task<Result> Delete(Guid id, CancellationToken cancellationToken = default)
+    {
+        await _promotionsRepository.DeleteAsync(id, cancellationToken);
+        return Result.Success();
+    }
+
     public async Task<Result<PromotionDto>> Find(Guid id, CancellationToken cancellationToken = default)
     {
         var promotion = await _promotionsRepository.FindAsync(id, cancellationToken);
-        
+
         if (promotion is null)
         {
             return DefaultErrors.EntityNotFound<Promotion>();

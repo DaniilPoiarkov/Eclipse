@@ -23,7 +23,7 @@ public sealed class RedirectResult : ResultBase
         {
             result.ChatId = ChatId;
             var message = await result.SendAsync(botClient, cancellationToken);
-            
+
             if (message is not null)
             {
                 messages.Add(message);

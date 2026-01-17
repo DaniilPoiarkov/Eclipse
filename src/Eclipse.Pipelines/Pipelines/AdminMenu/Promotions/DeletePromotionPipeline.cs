@@ -3,36 +3,32 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Domain.Promotions;
 using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
 
-[Route("", "/admin_promotions_publish")]
-internal sealed class PublishPromotionPipeline : AdminPipelineBase
+[Route("Menu:AdminMenu:Promotions:Delete", "/admin_promotions_delete")]
+internal sealed class DeletePromotionPipeline : AdminPipelineBase
 {
     private readonly IPromotionService _promotionService;
 
-    private readonly IMessageStore _messageStore;
-
     private readonly ICacheService _cacheService;
 
-    public PublishPromotionPipeline(
-        IPromotionService promotionService,
-        IMessageStore messageStore,
-        ICacheService cacheService)
+    private readonly IMessageStore _messageStore;
+
+    public DeletePromotionPipeline(IPromotionService promotionService, ICacheService cacheService, IMessageStore messageStore)
     {
         _promotionService = promotionService;
-        _messageStore = messageStore;
         _cacheService = cacheService;
+        _messageStore = messageStore;
     }
 
     protected override void Initialize()
     {
         RegisterStage(SendConfirmationCodeAsync);
-        RegisterStage(PublishPromotion);
+        RegisterStage(DeletePromotion);
     }
 
     private async Task<IResult> SendConfirmationCodeAsync(MessageContext context, CancellationToken cancellationToken)
@@ -52,34 +48,27 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
         };
 
         await _cacheService.SetAsync(
-            $"promotions-publish-confiramtion-code-{context.ChatId}",
+            $"promotions-delete-confiramtion-code-{context.ChatId}",
             confirmationCode,
             options,
             cancellationToken
         );
 
-        return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Pipelines:Admin:Promotions:Publish:Confirm{0}", confirmationCode]);
+        return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Pipelines:Admin:Promotions:Delete:Confirm{0}", confirmationCode]);
     }
 
-    private async Task<IResult> PublishPromotion(MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> DeletePromotion(MessageContext context, CancellationToken cancellationToken)
     {
-        if (context.Value.Equals("/cancel"))
-        {
-            FinishPipeline();
-            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Publish:Cancelled"]);
-        }
-
         var confirmationCode = await _cacheService.GetOrCreateAsync(
-            $"promotions-publish-confiramtion-code-{context.ChatId}",
+            $"promotions-delete-confiramtion-code-{context.ChatId}",
             () => Task.FromResult(string.Empty),
             cancellationToken: cancellationToken
         );
 
         if (!context.Value.Equals(confirmationCode))
         {
-            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Publish:ConfirmationFailed"]);
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Delete:ConfirmationFailed"]);
         }
-
         var message = await _messageStore.GetOrDefaultAsync(
             new MessageKey(context.ChatId),
             cancellationToken
@@ -96,11 +85,11 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"]);
         }
 
-        var result = await _promotionService.Publish(promotionId, cancellationToken);
+        var result = await _promotionService.Delete(promotionId, cancellationToken);
 
         var text = result.IsSuccess
-            ? Localizer["Pipelines:Admin:Promotions:Publish:SuccessfullyPublished"]
-            : Localizer["Pipelines:Admin:Promotions:Publish:FailedToPublish{Reason}", result.Error.Description];
+            ? Localizer["Pipelines:Admin:Promotions:Delete:Success"]
+            : Localizer["Pipelines:Admin:Promotions:Delete:Failed{Reason}", result.Error.Description];
 
         return MenuAndClearPrevious(PromotionsButtons, message, text);
     }
