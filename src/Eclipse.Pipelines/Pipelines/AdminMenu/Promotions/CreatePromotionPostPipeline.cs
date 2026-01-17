@@ -41,6 +41,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
     {
         RegisterStage(RequestPostMessage);
         RegisterStage(ReviewPostMessageAsync);
+        RegisterStage(SetPromotionName);
         RegisterStage(SavePromotionPostAsync);
     }
 
@@ -86,7 +87,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         );
     }
 
-    private async Task<IResult> SavePromotionPostAsync(MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> SetPromotionName(MessageContext context, CancellationToken cancellationToken)
     {
         var message = await _messageStore.GetOrDefaultAsync(
             new MessageKey(context.ChatId),
@@ -95,7 +96,17 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 
         if (!ContinuePromotionProcessing(context))
         {
-            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Okay"]);
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
+        }
+
+        return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Set name or press /cancel."]);
+    }
+
+    private async Task<IResult> SavePromotionPostAsync(MessageContext context, CancellationToken cancellationToken)
+    {
+        if (context.Value.Equals("/cancel"))
+        {
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
         }
 
         var messageId = await _cacheService.GetOrCreateAsync(
@@ -110,7 +121,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         }
 
         var promotion = await _promotionService.Create(
-            new CreatePromotionRequest(context.ChatId, messageId.GetValueOrDefault(), string.Empty),
+            new CreatePromotionRequest(context.ChatId, messageId.GetValueOrDefault(), string.Empty), // TODO: Extend with human-friendly name.
             cancellationToken
         );
 
