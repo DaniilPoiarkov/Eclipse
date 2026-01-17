@@ -3,6 +3,7 @@
   "Texts": {
     "Pipelines:Admin:Promotions:Actions:Delete": "Видалити",
     "Pipelines:Admin:Promotions:Actions:Publish": "Опублікувати",
+    "Pipelines:Admin:Promotions:Actions:UpdateTitle": "Змінити назву",
     "Pipelines:Admin:Promotions:Actions:Message": "Дії з рекламним постом:"
   }
 }

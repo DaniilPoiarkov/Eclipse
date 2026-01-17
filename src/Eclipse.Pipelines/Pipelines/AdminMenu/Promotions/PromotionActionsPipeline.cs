@@ -73,6 +73,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
                 InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Actions:Delete"])
             ],
             [
+                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Actions:UpdateTitle"]),
                 InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")
             ],
         ];
@@ -94,13 +95,21 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Okay"]);
         }
 
-        var localized = Localizer.ToLocalizableString(context.Value);
-
-        return localized switch
+        try
         {
-            "Pipelines:Admin:Promotions:Actions:Publish" => Redirect<PublishPromotionPipeline>(),
-            "Pipelines:Admin:Promotions:Actions:Delete" => Redirect<DeletePromotionPipeline>(),
-            _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
-        };
+            var localized = Localizer.ToLocalizableString(context.Value);
+
+            return localized switch
+            {
+                "Pipelines:Admin:Promotions:Actions:Publish" => Redirect<PublishPromotionPipeline>(),
+                "Pipelines:Admin:Promotions:Actions:Delete" => Redirect<DeletePromotionPipeline>(),
+                "Pipelines:Admin:Promotions:Actions:UpdateTitle" => Redirect<UpdatePromotionTitlePipeline>(),
+                _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
+            };
+        }
+        catch
+        {
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"]);
+        }
     }
 }

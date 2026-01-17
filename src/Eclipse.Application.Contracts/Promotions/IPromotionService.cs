@@ -14,4 +14,6 @@ public interface IPromotionService
     Task<PaginatedList<PromotionDto>> GetList(PaginationRequest<GetPromotionsOptions> request, CancellationToken cancellationToken = default);
 
     Task<Result> Delete(Guid id, CancellationToken cancellationToken = default);
+
+    Task<Result<PromotionDto>> Update(Guid id, UpdatePromotionRequest request, CancellationToken cancellationToken = default);
 }
