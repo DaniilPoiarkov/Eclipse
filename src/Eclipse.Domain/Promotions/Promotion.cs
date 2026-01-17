@@ -5,7 +5,7 @@ namespace Eclipse.Domain.Promotions;
 
 public sealed class Promotion : AggregateRoot, IHasCreatedAt
 {
-    public string Title { get; init; }
+    public string Title { get; private set; }
 
     public long FromChatId { get; init; }
 
@@ -87,5 +87,15 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
             PromotionStatus.Published => Status is PromotionStatus.InPublishing,
             _ => false
         };
+    }
+
+    public void SetTitle(string title)
+    {
+        if (title.IsNullOrEmpty())
+        {
+            throw new ArgumentException("Title is required.", nameof(title));
+        }
+
+        Title = title;
     }
 }

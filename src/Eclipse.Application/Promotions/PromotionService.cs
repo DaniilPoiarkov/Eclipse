@@ -86,4 +86,20 @@ internal sealed class PromotionService : IPromotionService
 
         return promotion.ToDto();
     }
+
+    public async Task<Result<PromotionDto>> Update(Guid id, UpdatePromotionRequest request, CancellationToken cancellationToken = default)
+    {
+        var promotion = await _promotionsRepository.FindAsync(id, cancellationToken);
+        
+        if (promotion is null)
+        {
+            return DefaultErrors.EntityNotFound<Promotion>();
+        }
+
+        promotion.SetTitle(request.Title);
+
+        await _promotionsRepository.UpdateAsync(promotion, cancellationToken);
+
+        return promotion.ToDto();
+    }
 }
