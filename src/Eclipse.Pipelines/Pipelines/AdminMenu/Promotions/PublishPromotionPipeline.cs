@@ -10,7 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
 
-[Route("Menu:AdminMenu:Promotions:Publish", "/admin_promotions_publish")]
+[Route("", "/admin_promotions_publish")]
 internal sealed class PublishPromotionPipeline : AdminPipelineBase
 {
     private readonly IPromotionService _promotionService;
@@ -63,6 +63,12 @@ internal sealed class PublishPromotionPipeline : AdminPipelineBase
 
     private async Task<IResult> PublishPromotion(MessageContext context, CancellationToken cancellationToken)
     {
+        if (context.Value.Equals("/cancel"))
+        {
+            FinishPipeline();
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Publish:Cancelled"]);
+        }
+
         var confirmationCode = await _cacheService.GetOrCreateAsync(
             $"promotions-publish-confiramtion-code-{context.ChatId}",
             () => Task.FromResult(string.Empty),

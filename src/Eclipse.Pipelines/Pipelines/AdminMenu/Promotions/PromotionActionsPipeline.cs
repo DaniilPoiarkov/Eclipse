@@ -56,7 +56,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
         if (promotionId == Guid.Empty)
         {
             FinishPipeline();
-            return Menu(PromotionsButtons, Localizer["Error"]);
+            return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"]);
         }
 
         var promotion = await _promotionService.Find(promotionId, cancellationToken);
@@ -69,8 +69,8 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
         List<IList<InlineKeyboardButton>> buttons = [
             [
-                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Page:Publish"]),
-                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Page:Delete"])
+                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Actions:Publish"]),
+                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Admin:Promotions:Actions:Delete"])
             ],
             [
                 InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")
@@ -79,7 +79,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
         await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, replyMarkup: new ReplyKeyboardRemove(), cancellationToken: cancellationToken);
 
-        return MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Publish:Ask"]);
+        return MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Actions:Message"]);
     }
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
@@ -98,8 +98,8 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
         return localized switch
         {
-            "Pipelines:Admin:Promotions:Page:Publish" => Redirect<PublishPromotionPipeline>(),
-            "Pipelines:Admin:Promotions:Page:Delete" => Redirect<DeletePromotionPipeline>(),
+            "Pipelines:Admin:Promotions:Actions:Publish" => Redirect<PublishPromotionPipeline>(),
+            "Pipelines:Admin:Promotions:Actions:Delete" => Redirect<DeletePromotionPipeline>(),
             _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
         };
     }
