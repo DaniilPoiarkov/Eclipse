@@ -126,7 +126,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         }
 
         var promotion = await _promotionService.Create(
-            new CreatePromotionRequest(context.Value, context.ChatId, messageId.GetValueOrDefault(), string.Empty),
+            new CreatePromotionRequest(context.Value, context.ChatId, messageId.GetValueOrDefault(), string.Empty, string.Empty),
             cancellationToken
         );
 

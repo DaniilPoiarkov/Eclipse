@@ -11,7 +11,8 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
 
     public int MessageId { get; private set; }
 
-    public string InlineButtonText { get; private set; }
+    public string InlineButtonText { get; init; }
+    public string InlineButtonLink { get; init; }
 
     public int TimesPublished { get; private set; }
 
@@ -19,30 +20,21 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
 
     public DateTime CreatedAt { get; init; }
 
-    private Promotion(Guid id, string title, long fromChatId, int messageId, string inlineButtonText, int timesPublished, PromotionStatus status, DateTime createdAt) : base(id)
+    private Promotion(Guid id, string title, long fromChatId, int messageId, string inlineButtonText, string inlineButtonLink, int timesPublished, PromotionStatus status, DateTime createdAt) : base(id)
     {
         Title = title;
         FromChatId = fromChatId;
         MessageId = messageId;
         InlineButtonText = inlineButtonText;
+        InlineButtonLink = inlineButtonLink;
         TimesPublished = timesPublished;
         Status = status;
         CreatedAt = createdAt;
     }
 
-    public static Promotion Create(string title, long fromChatId, int messageId, string inlineButtonText, DateTime createdAt)
+    public static Promotion Create(string title, long fromChatId, int messageId, string inlineButtonText, string inlineButtonLink, DateTime createdAt)
     {
-        return new Promotion(Guid.CreateVersion7(), title, fromChatId, messageId, inlineButtonText, 0, PromotionStatus.Pending, createdAt);
-    }
-
-    public void SetInlineButton(string inlineButtonText)
-    {
-        if (inlineButtonText.IsNullOrEmpty())
-        {
-            throw new ArgumentException("Inline button text is required.", nameof(inlineButtonText));
-        }
-
-        InlineButtonText = inlineButtonText;
+        return new Promotion(Guid.CreateVersion7(), title, fromChatId, messageId, inlineButtonText, inlineButtonLink, 0, PromotionStatus.Pending, createdAt);
     }
 
     public void RequestPublishing()
