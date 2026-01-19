@@ -8,6 +8,9 @@
     "Pipelines:Admin:Promotions:Create:Review:Continue": "Continue processing",
     "Pipelines:Admin:Promotions:Create:Review:Cancel": "Cancel processing",
     "Pipelines:Admin:Promotions:Create:Title": "Set promotion title or press /cancel to stop",
+    "Pipelines:Admin:Promotions:Create:InlineButton:Request": "Do you want to add inline button?",
+    "Pipelines:Admin:Promotions:Create:InlineButton:Text:Request": "Send button text",
+    "Pipelines:Admin:Promotions:Create:InlineButton:Link:Request": "Send button redirect url",
     "Pipelines:Admin:Promotions:Create:Success": "Successfully saved promotion post",
     "Pipelines:Admin:Promotions:Create:MessageNotFound": "Message not found, post not saved."
   }

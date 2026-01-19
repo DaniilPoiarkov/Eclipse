@@ -22,7 +22,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private readonly IMessageStore _messageStore;
 
-    private static readonly int _pageSize = 16;
+    private static readonly int _pageSize = 10;
 
     public ReadPromotionsPipeline(
         IPromotionService promotionService,

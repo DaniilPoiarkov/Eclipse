@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Application.Promotions;
 
@@ -75,7 +76,11 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
 
         var users = await _userRepository.GetByExpressionAsync(u => u.IsEnabled, cancellationToken);
 
-        await users.Select(u => SendPromotion(u, promotion.FromChatId, promotion.MessageId, cancellationToken)).WhenAll();
+        ReplyMarkup replyMarkup = promotion.HasInlineButton
+            ? new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl(promotion.InlineButtonText, promotion.InlineButtonLink))
+            : InlineKeyboardMarkup.Empty();
+
+        await users.Select(u => SendPromotion(u, promotion.FromChatId, promotion.MessageId, replyMarkup, cancellationToken)).WhenAll();
 
         promotion.FinishPublishing();
         await _promotionRepository.UpdateAsync(promotion, cancellationToken);
@@ -83,11 +88,11 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
         _logger.LogInformation("Finished publishing promotion {PromotionId}.", promotion.Id);
     }
 
-    private async Task SendPromotion(User user, long fromChatId, int messageId, CancellationToken cancellationToken)
+    private async Task SendPromotion(User user, long fromChatId, int messageId, ReplyMarkup replyMarkup, CancellationToken cancellationToken)
     {
         try
         {
-            await _botClient.CopyMessage(user.ChatId, fromChatId, messageId, cancellationToken: cancellationToken);
+            await _botClient.CopyMessage(user.ChatId, fromChatId, messageId, replyMarkup: replyMarkup, cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {

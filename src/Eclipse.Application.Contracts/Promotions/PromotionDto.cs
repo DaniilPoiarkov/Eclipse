@@ -7,7 +7,8 @@ public sealed record PromotionDto(
     string Title,
     long FromChatId,
     int MessageId,
-    string? InlineButtonText,
+    string InlineButtonText,
+    string InlineButtonLink,
     int TimesPublished,
     PromotionStatus Status,
     DateTime CreatedAt
