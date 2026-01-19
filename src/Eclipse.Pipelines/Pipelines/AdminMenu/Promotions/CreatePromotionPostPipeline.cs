@@ -42,7 +42,10 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         RegisterStage(RequestPostMessage);
         RegisterStage(ReviewPostMessageAsync);
         RegisterStage(SetPromotionTitle);
-        RegisterStage(SavePromotionPostAsync);
+        RegisterStage(AskToAddInlineButton);
+        RegisterStage(AskForInlineButtonText);
+        RegisterStage(AskForInlineButtonLink);
+        RegisterStage(ValidateRedirectUrlAndSave);
     }
 
     private IResult RequestPostMessage(MessageContext context)
@@ -102,7 +105,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
         return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Pipelines:Admin:Promotions:Create:Title"]);
     }
 
-    private async Task<IResult> SavePromotionPostAsync(MessageContext context, CancellationToken cancellationToken)
+    private async Task<IResult> AskToAddInlineButton(MessageContext context, CancellationToken cancellationToken)
     {
         if (context.Value.Equals("/cancel"))
         {
@@ -111,7 +114,97 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 
         if (context.Value.IsNullOrEmpty())
         {
+            FinishPipeline();
             return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Invalid"]);
+        }
+
+        await _cacheService.SetForThreeDaysAsync(
+            $"promotions-create-title-{context.ChatId}",
+            context.Value,
+            context.ChatId,
+            cancellationToken: cancellationToken
+        );
+
+        return Menu(
+            [
+                [ new KeyboardButton(Localizer["Yes"]) ],
+                [ new KeyboardButton(Localizer["No"]) ]
+            ],
+            Localizer["Pipelines:Admin:Promotions:Create:InlineButton:Request"]
+        );
+    }
+
+    private async Task<IResult> AskForInlineButtonText(MessageContext context, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var localized = Localizer.ToLocalizableString(context.Value);
+
+            if (localized.Equals("Yes"))
+            {
+                return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Create:InlineButton:Text:Request"]);
+            }
+
+            if (localized.Equals("No"))
+            {
+                FinishPipeline();
+                return await SavePromotionPostAsync(context, string.Empty, string.Empty, cancellationToken);
+            }
+
+            FinishPipeline();
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
+        }
+        catch
+        {
+            FinishPipeline();
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
+        }
+    }
+
+    private async Task<IResult> AskForInlineButtonLink(MessageContext context, CancellationToken cancellationToken)
+    {
+        if (context.Value.Equals("/cancel"))
+        {
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
+        }
+
+        if (context.Value.IsNullOrEmpty())
+        {
+            FinishPipeline();
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Invalid"]);
+        }
+
+        await _cacheService.SetForThreeDaysAsync(
+            $"promotions-create-inline-button-text-{context.ChatId}",
+            context.Value,
+            context.ChatId,
+            cancellationToken: cancellationToken
+        );
+
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Promotions:Create:InlineButton:Link:Request"]);
+    }
+
+    private async Task<IResult> ValidateRedirectUrlAndSave(MessageContext context, CancellationToken cancellationToken)
+    {
+        if (!Uri.TryCreate(context.Value, UriKind.Absolute, out _))
+        {
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Invalid"]);
+        }
+
+        var buttonText = await _cacheService.GetOrCreateAsync(
+            $"promotions-create-inline-button-text-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
+
+        return await SavePromotionPostAsync(context, buttonText, context.Value, cancellationToken);
+    }
+
+    private async Task<IResult> SavePromotionPostAsync(MessageContext context, string inlineButtonText, string inlineButtonLink, CancellationToken cancellationToken)
+    {
+        if (context.Value.Equals("/cancel"))
+        {
+            return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
         }
 
         var messageId = await _cacheService.GetOrCreateAsync(
@@ -125,8 +218,14 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
             return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:MessageNotFound"]);
         }
 
+        var title = await _cacheService.GetOrCreateAsync(
+            $"promotions-create-title-{context.ChatId}",
+            () => Task.FromResult(string.Empty),
+            cancellationToken: cancellationToken
+        );
+
         var promotion = await _promotionService.Create(
-            new CreatePromotionRequest(context.Value, context.ChatId, messageId.GetValueOrDefault(), string.Empty, string.Empty),
+            new CreatePromotionRequest(title, context.ChatId, messageId.GetValueOrDefault(), inlineButtonText, inlineButtonLink),
             cancellationToken
         );
 

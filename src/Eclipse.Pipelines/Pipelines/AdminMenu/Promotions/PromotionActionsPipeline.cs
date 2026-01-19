@@ -78,7 +78,19 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
             ],
         ];
 
-        await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, replyMarkup: new ReplyKeyboardRemove(), cancellationToken: cancellationToken);
+        try
+        {
+            ReplyMarkup replyMarkup = promotion.Value.InlineButtonText.IsNullOrEmpty()
+                ? new ReplyKeyboardRemove()
+                : new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl(promotion.Value.InlineButtonText, promotion.Value.InlineButtonLink));
+
+            await _botClient.CopyMessage(context.ChatId, promotion.Value.FromChatId, promotion.Value.MessageId, replyMarkup: replyMarkup, cancellationToken: cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            FinishPipeline();
+            return MenuAndClearPrevious(PromotionsButtons, message, ex.Message);
+        }
 
         return MenuAndClearPrevious(new InlineKeyboardMarkup(buttons), message, Localizer["Pipelines:Admin:Promotions:Actions:Message"]);
     }
