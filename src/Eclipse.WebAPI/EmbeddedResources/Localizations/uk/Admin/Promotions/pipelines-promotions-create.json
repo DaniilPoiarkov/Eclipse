@@ -8,6 +8,9 @@
     "Pipelines:Admin:Promotions:Create:Review:Continue": "Продовжити",
     "Pipelines:Admin:Promotions:Create:Review:Cancel": "Скасувати",
     "Pipelines:Admin:Promotions:Create:Title": "Вкажіть назву рекламного посту або натисніть /cancel аби скасувати",
+    "Pipelines:Admin:Promotions:Create:InlineButton:Request": "Чи хочете додати кнопку?",
+    "Pipelines:Admin:Promotions:Create:InlineButton:Text:Request": "Відправте текст кнопки",
+    "Pipelines:Admin:Promotions:Create:InlineButton:Link:Request": "Відправте посилання для кнопки",
     "Pipelines:Admin:Promotions:Create:Success": "Пост успішно створено",
     "Pipelines:Admin:Promotions:Create:MessageNotFound": "Повідомлення не знайдено, рекламний пост не відправляється."
   }
