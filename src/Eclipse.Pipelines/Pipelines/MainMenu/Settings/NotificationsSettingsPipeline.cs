@@ -10,7 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings;
 
-[FeatureFlag(false)]
+[FeatureFlag("Settings:Notifications")]
 [Route("Menu:Settings:Notifications", "/settings_notifications")]
 internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 {
