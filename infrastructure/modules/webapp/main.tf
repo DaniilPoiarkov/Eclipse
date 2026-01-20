@@ -11,6 +11,10 @@ resource "azurerm_service_plan" "service_plan_api" {
   }
 }
 
+locals {
+  app_settings = merge(var.features)
+}
+
 resource "azurerm_linux_web_app" "app" {
   service_plan_id     = azurerm_service_plan.service_plan_api.id
   resource_group_name = var.resource_group_name
@@ -49,7 +53,7 @@ resource "azurerm_linux_web_app" "app" {
     failed_request_tracing  = true
   }
 
-  app_settings = {
+  app_settings = merge({
     ASPNETCORE_ENVIRONMENT                     = var.environment
     APPLICATIONINSIGHTS_CONNECTION_STRING      = var.app_insights_connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
@@ -77,7 +81,7 @@ resource "azurerm_linux_web_app" "app" {
     AzureAd__Urls__Refresh                     = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
     AzureAd__Scopes__0__Name                   = "api://${var.azuread_client_id}/Default"
     AzureAd__Scopes__0__Description            = "Default scope without any delegations."
-  }
+  }, local.app_settings)
 
   sticky_settings {
     app_setting_names = [

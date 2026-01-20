@@ -1,6 +1,7 @@
 ﻿using Eclipse.Common.Linq;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
+using Eclipse.Pipelines.Validation;
 
 using Microsoft.Extensions.Localization;
 
@@ -9,6 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines;
 
+[FeatureFlag("Bot")]
 public abstract class EclipsePipelineBase : PipelineBase
 {
     private IStringLocalizer? _localizer;
