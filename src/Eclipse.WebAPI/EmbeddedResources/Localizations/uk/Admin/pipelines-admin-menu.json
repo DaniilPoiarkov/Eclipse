@@ -1,0 +1,24 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin": "Включено режим адміністратора",
+    "Pipelines:Admin:SendToUser:SendUserId": "Відправте ідентифікатор користовуча",
+    "Pipelines:Admin:SendToUser:UnableToParse": "Не вдалося обробити значення. Виконання припинено",
+    "Pipelines:Admin:SendToUser:ContentCannotBeEmpty": "Контент не може бути пустим. Виконання припинено",
+
+    "Pipelines:Admin:SendContent": "Відправте повідомлення",
+    "Pipelines:Admin:Confirm": "Відправте /confirm щоб відправити повідомлення або /cancel щоб повернутися назад",
+    "Pipelines:Admin:ConfirmationFailed": "Підтвердження скасовано",
+    "Pipelines:Admin:SentSuccessfully": "Успішно відправлено",
+    "Pipelines:Admin:Error": "Сталась помилка",
+    "Pipelines:Admin:UserMode": "Включено режим користувача",
+
+    "Pipelines:Admin:View": "Меню перегляду",
+    "Pipelines:Admin:Send": "Меню надсилань",
+    "Pipelines:Admin:Export": "Меню експортування",
+
+    "Pipelines:Admin:Export:Requested": "Експортування у процесі",
+
+    "Pipelines:Admin:Promotions": "Меню просувань"
+  }
+}

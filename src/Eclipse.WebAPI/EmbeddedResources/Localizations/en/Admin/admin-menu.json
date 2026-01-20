@@ -1,0 +1,29 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Menu:Admin": "Admin menu",
+
+    "Menu:Admin:View": "View",
+    "Menu:Admin:View:Suggestions": "View suggestions",
+    "Menu:Admin:View:Users": "View users",
+
+    "Menu:Admin:Send": "Send",
+    "Menu:Admin:Send:User": "Send to user",
+    "Menu:Admin:Send:All": "Send to all",
+
+    "Menu:Admin:Export": "Export",
+    "Menu:Admin:Export:Users": "Export users",
+    "Menu:Admin:Export:TodoItems": "Export todo items",
+    "Menu:Admin:Export:Reminders": "Export reminders",
+
+    "Menu:Admin:SwitchToUserMode": "Switch to user mode",
+
+    "Menu:Admin:Promotions": "Promotions",
+    "Menu:Admin:Promotions:Create": "Create promotion",
+    "Menu:Admin:Promotions:Read": "Read promotions",
+
+    "Menu:Admin:Feedbacks": "Feedbacks",
+    "Menu:Admin:Feedbacks:Read": "Read feedbacks",
+    "Menu:Admin:Feedbacks:Request": "Request feedback from users"
+  }
+}
