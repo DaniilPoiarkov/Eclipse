@@ -14,7 +14,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
 
-[Route("Menu:AdminMenu:Promotions:Create", "/admin_promotions_create")]
+[Route("Menu:Admin:Promotions:Create", "/admin_promotions_create")]
 internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 {
     private readonly ICacheService _cacheService;
@@ -99,6 +99,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 
         if (!ContinuePromotionProcessing(context))
         {
+            FinishPipeline();
             return MenuAndClearPrevious(PromotionsButtons, message, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
         }
 
@@ -109,6 +110,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
     {
         if (context.Value.Equals("/cancel"))
         {
+            FinishPipeline();
             return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
         }
 
@@ -165,6 +167,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
     {
         if (context.Value.Equals("/cancel"))
         {
+            FinishPipeline();
             return Menu(PromotionsButtons, Localizer["Pipelines:Admin:Promotions:Create:Cancelled"]);
         }
 

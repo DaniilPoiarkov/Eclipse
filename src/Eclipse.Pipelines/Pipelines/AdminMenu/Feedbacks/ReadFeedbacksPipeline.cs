@@ -14,7 +14,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Feedbacks;
 
-[Route("Menu:AdminMenu:Feedbacks:Read", "/admin_feedbacks_read")]
+[Route("Menu:Admin:Feedbacks:Read", "/admin_feedbacks_read")]
 internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
 {
     private readonly IFeedbackService _feedbackService;
@@ -133,9 +133,9 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
 
             return localized switch
             {
-                "Menu:AdminMenu:Feedbacks:Request" => RemoveMenuAndRedirect<RequestFeedbackPipeline>(message),
-                "Menu:AdminMenu:Feedbacks:Read" => RemoveMenuAndRedirect<ReadFeedbacksPipeline>(message),
-                "Menu:AdminMenu" => RemoveMenuAndRedirect<AdminModePipeline>(message),
+                "Menu:Admin:Feedbacks:Request" => RemoveMenuAndRedirect<RequestFeedbackPipeline>(message),
+                "Menu:Admin:Feedbacks:Read" => RemoveMenuAndRedirect<ReadFeedbacksPipeline>(message),
+                "Menu:Admin" => RemoveMenuAndRedirect<AdminModePipeline>(message),
                 _ => MenuAndClearPrevious(FeedbacksButtons, message, Localizer["Error"])
             };
         }

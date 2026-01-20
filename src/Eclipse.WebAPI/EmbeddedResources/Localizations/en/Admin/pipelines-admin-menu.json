@@ -1,0 +1,24 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Admin": "Switched to admin mode",
+    "Pipelines:Admin:SendToUser:SendUserId": "Send user chat Id",
+    "Pipelines:Admin:SendToUser:UnableToParse": "Unable to parse value. Pipeline interrupted",
+    "Pipelines:Admin:SendToUser:ContentCannotBeEmpty": "Content cannot be empty. All data rolled back",
+
+    "Pipelines:Admin:SendContent": "Send message content",
+    "Pipelines:Admin:Confirm": "Send /confirm to send message or /cancel to go back",
+    "Pipelines:Admin:ConfirmationFailed": "Confirmation failed",
+    "Pipelines:Admin:SentSuccessfully": "Sent successfully",
+    "Pipelines:Admin:Error": "Error occured",
+    "Pipelines:Admin:UserMode": "Switched to user mode",
+
+    "Pipelines:Admin:View": "View menu",
+    "Pipelines:Admin:Send": "Send menu",
+    "Pipelines:Admin:Export": "Exporting menu",
+
+    "Pipelines:Admin:Export:Requested": "Exporting in progress",
+
+    "Pipelines:Admin:Promotions": "Promotions menu"
+  }
+}

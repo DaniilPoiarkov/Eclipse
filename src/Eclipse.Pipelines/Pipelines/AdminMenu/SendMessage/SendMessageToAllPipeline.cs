@@ -11,7 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
-[Route("Menu:AdminMenu:Send:All", "/admin_send_all")]
+[Route("Menu:Admin:Send:All", "/admin_send_all")]
 internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 {
     private readonly IUserService _userService;
@@ -36,7 +36,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
     private IResult AskForMessage(MessageContext context)
     {
-        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:AdminMenu:SendContent"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:SendContent"]);
     }
 
     private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
@@ -44,7 +44,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
         if (context.Value.IsNullOrEmpty())
         {
             FinishPipeline();
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:SendToUser:ContentCannotBeEmpty"]);
         }
 
         var options = new CacheOptions
@@ -54,14 +54,14 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
         await _cacheService.SetAsync($"send-all-{context.ChatId}", context.Value, options, cancellationToken);
 
-        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:AdminMenu:Confirm"]);
+        return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:Admin:Confirm"]);
     }
 
     private async Task<IResult> InformUsers(MessageContext context, CancellationToken cancellationToken)
     {
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:ConfirmationFailed"]);
         }
 
         var message = await _cacheService.GetOrCreateAsync(
@@ -72,7 +72,7 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
         if (message.IsNullOrEmpty())
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:SendToUser:ContentCannotBeEmpty"]);
         }
 
         var options = new PaginationRequest<GetUsersRequest>
@@ -104,11 +104,11 @@ internal sealed class SendMessageToAllPipeline : AdminPipelineBase
 
         if (errors.IsNullOrEmpty())
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:SentSuccessfully"]);
         }
 
         return Menu(AdminMenuButtons,
-            $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{errors.Join(Environment.NewLine)}"
+            $"{Localizer["Pipelines:Admin:Error"]}:{Environment.NewLine}{errors.Join(Environment.NewLine)}"
         );
     }
 }

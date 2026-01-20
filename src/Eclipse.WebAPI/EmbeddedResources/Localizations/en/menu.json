@@ -16,31 +16,6 @@
     "Menu:Settings:Notifications": "Notifications 🔈",
     "Menu:Settings:SetGmt": "Set your current time 🌎",
 
-    "Menu:AdminMenu": "Admin menu",
-
-    "Menu:AdminMenu:View": "View",
-    "Menu:AdminMenu:View:Suggestions": "View suggestions",
-    "Menu:AdminMenu:View:Users": "View users",
-
-    "Menu:AdminMenu:Send": "Send",
-    "Menu:AdminMenu:Send:User": "Send to user",
-    "Menu:AdminMenu:Send:All": "Send to all",
-
-    "Menu:AdminMenu:Export": "Export",
-    "Menu:AdminMenu:Export:Users": "Export users",
-    "Menu:AdminMenu:Export:TodoItems": "Export todo items",
-    "Menu:AdminMenu:Export:Reminders": "Export reminders",
-
-    "Menu:AdminMenu:SwitchToUserMode": "Switch to user mode",
-
-    "Menu:AdminMenu:Promotions": "Promotions",
-    "Menu:AdminMenu:Promotions:Create": "Create promotion",
-    "Menu:AdminMenu:Promotions:Read": "Read promotions",
-
-    "Menu:AdminMenu:Feedbacks": "Feedbacks",
-    "Menu:AdminMenu:Feedbacks:Read": "Read feedbacks",
-    "Menu:AdminMenu:Feedbacks:Request": "Request feedback from users",
-
     "Menu:TodoItems:AddItem": "Add item ✏️",
     "Menu:TodoItems:List": "My list 🗒",
 

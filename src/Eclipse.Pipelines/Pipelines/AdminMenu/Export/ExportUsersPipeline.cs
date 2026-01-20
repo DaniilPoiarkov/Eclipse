@@ -6,7 +6,7 @@ using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export;
 
-[Route("Menu:AdminMenu:Export:Users", "/admin_export_users")]
+[Route("Menu:Admin:Export:Users", "/admin_export_users")]
 public sealed class ExportUsersPipeline : AdminPipelineBase
 {
     private readonly IBackgroundJobManager _jobManager;
