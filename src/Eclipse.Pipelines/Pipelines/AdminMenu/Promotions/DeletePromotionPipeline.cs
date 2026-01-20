@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
 
-[Route("Menu:AdminMenu:Promotions:Delete", "/admin_promotions_delete")]
+[Route("Menu:Admin:Promotions:Delete", "/admin_promotions_delete")]
 internal sealed class DeletePromotionPipeline : AdminPipelineBase
 {
     private readonly IPromotionService _promotionService;

@@ -7,7 +7,7 @@ using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
-[Route("Menu:AdminMenu:Send:User", "/admin_send_user")]
+[Route("Menu:Admin:Send:User", "/admin_send_user")]
 internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 {
     private readonly ITelegramService _telegramService;
@@ -30,7 +30,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
     private IResult AskUserId(MessageContext context)
     {
-        return Text(Localizer["Pipelines:AdminMenu:SendToUser:SendUserId"]);
+        return Text(Localizer["Pipelines:Admin:SendToUser:SendUserId"]);
     }
 
     private async Task<IResult> AskForMessage(MessageContext context, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
         if (!long.TryParse(context.Value, out var chatId))
         {
             FinishPipeline();
-            return Text(Localizer["Pipelines:AdminMenu:SendToUser:UnableToParse"]);
+            return Text(Localizer["Pipelines:Admin:SendToUser:UnableToParse"]);
         }
 
         var options = new CacheOptions
@@ -48,7 +48,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
         await _cacheService.SetAsync($"send-chat-{context.ChatId}", chatId, options, cancellationToken);
 
-        return Text(Localizer["Pipelines:AdminMenu:SendContent"]);
+        return Text(Localizer["Pipelines:Admin:SendContent"]);
     }
 
     private async Task<IResult> Confirm(MessageContext context, CancellationToken cancellationToken)
@@ -56,7 +56,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
         if (context.Value.IsNullOrEmpty())
         {
             FinishPipeline();
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:SendToUser:ContentCannotBeEmpty"]);
         }
 
         var options = new CacheOptions
@@ -71,14 +71,14 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
             cancellationToken
         );
 
-        return Text(Localizer["Pipelines:AdminMenu:Confirm"]);
+        return Text(Localizer["Pipelines:Admin:Confirm"]);
     }
 
     private async Task<IResult> SendMessage(MessageContext context, CancellationToken cancellationToken)
     {
         if (!context.Value.EqualsCurrentCultureIgnoreCase("/confirm"))
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:ConfirmationFailed"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:ConfirmationFailed"]);
         }
 
         var chatId = await _cacheService.GetOrCreateAsync(
@@ -95,7 +95,7 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
         if (message.IsNullOrEmpty() || chatId == default)
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SendToUser:ContentCannotBeEmpty"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:SendToUser:ContentCannotBeEmpty"]);
         }
 
         var model = new SendMessageModel
@@ -108,10 +108,10 @@ internal sealed class SendMessageToUserPipeline : AdminPipelineBase
 
         if (result.IsSuccess)
         {
-            return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu:SentSuccessfully"]);
+            return Menu(AdminMenuButtons, Localizer["Pipelines:Admin:SentSuccessfully"]);
         }
 
-        var text = $"{Localizer["Pipelines:AdminMenu:Error"]}:{Environment.NewLine}{Localizer.LocalizeError(result.Error)}";
+        var text = $"{Localizer["Pipelines:Admin:Error"]}:{Environment.NewLine}{Localizer.LocalizeError(result.Error)}";
 
         return Menu(AdminMenuButtons, text);
     }

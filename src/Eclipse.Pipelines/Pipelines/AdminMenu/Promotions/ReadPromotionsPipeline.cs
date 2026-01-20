@@ -13,7 +13,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
 
-[Route("Menu:AdminMenu:Promotions:Read", "/admin_promotions_read")]
+[Route("Menu:Admin:Promotions:Read", "/admin_promotions_read")]
 internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 {
     private readonly IPromotionService _promotionService;
@@ -162,9 +162,9 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
             return localized switch
             {
-                "Menu:AdminMenu:Promotions:Create" => RemoveMenuAndRedirect<CreatePromotionPostPipeline>(message),
-                "Menu:AdminMenu:Promotions:Read" => RemoveMenuAndRedirect<ReadPromotionsPipeline>(message),
-                "Menu:AdminMenu" => RemoveMenuAndRedirect<AdminModePipeline>(message),
+                "Menu:Admin:Promotions:Create" => RemoveMenuAndRedirect<CreatePromotionPostPipeline>(message),
+                "Menu:Admin:Promotions:Read" => RemoveMenuAndRedirect<ReadPromotionsPipeline>(message),
+                "Menu:Admin" => RemoveMenuAndRedirect<AdminModePipeline>(message),
                 _ => MenuAndClearPrevious(PromotionsButtons, message, Localizer["Error"])
             };
         }

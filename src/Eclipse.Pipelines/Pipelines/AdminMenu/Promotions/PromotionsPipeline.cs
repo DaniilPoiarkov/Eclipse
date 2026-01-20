@@ -2,7 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Promotions;
 
-[Route("Menu:AdminMenu:Promotions", "/admin_promotions")]
+[Route("Menu:Admin:Promotions", "/admin_promotions")]
 internal sealed class PromotionsPipeline : AdminPipelineBase
 {
     protected override void Initialize()

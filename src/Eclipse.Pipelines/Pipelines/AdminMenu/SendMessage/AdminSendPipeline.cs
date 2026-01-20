@@ -2,11 +2,11 @@
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.SendMessage;
 
-[Route("Menu:AdminMenu:Send", "/admin_send")]
+[Route("Menu:Admin:Send", "/admin_send")]
 internal sealed class AdminSendPipeline : AdminPipelineBase
 {
     protected override void Initialize()
     {
-        RegisterStage(_ => Menu(SendButtons, Localizer["Pipelines:AdminMenu:Send"]));
+        RegisterStage(_ => Menu(SendButtons, Localizer["Pipelines:Admin:Send"]));
     }
 }

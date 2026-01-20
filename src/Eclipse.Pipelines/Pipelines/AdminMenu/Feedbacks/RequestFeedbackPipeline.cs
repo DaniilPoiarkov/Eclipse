@@ -8,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Feedbacks;
 
-[Route("Menu:AdminMenu:Feedbacks:Request", "/admin_feedbacks_request")]
+[Route("Menu:Admin:Feedbacks:Request", "/admin_feedbacks_request")]
 internal sealed class RequestFeedbackPipeline : AdminPipelineBase
 {
     private readonly IFeedbackService _feedbackService;
