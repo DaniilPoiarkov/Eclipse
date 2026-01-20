@@ -193,5 +193,5 @@ variable "db_ip_range_filter" {
 
 variable "features" {
   description = "Defines map of feature app settings"
-  type = map(string)
+  type        = map(string)
 }

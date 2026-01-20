@@ -142,5 +142,5 @@ variable "log_analytics_workspace_id" {
 
 variable "features" {
   description = "Defines map of feature app settings"
-  type = map(string)
+  type        = map(string)
 }
