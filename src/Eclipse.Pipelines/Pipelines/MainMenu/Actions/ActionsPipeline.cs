@@ -2,6 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions;
 
+// TODO: Candidate for drop
 [Route("Menu:MainMenu:Actions", "/actions")]
 internal sealed class ActionsPipeline : ActionsPipelineBase
 {

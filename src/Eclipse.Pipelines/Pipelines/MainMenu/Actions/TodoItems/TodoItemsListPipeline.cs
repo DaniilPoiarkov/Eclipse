@@ -124,7 +124,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
             {
                 "Menu:TodoItems:List" => RemoveMenuAndRedirect<TodoItemsListPipeline>(message),
                 "Menu:TodoItems:AddItem" => RemoveMenuAndRedirect<AddTodoItemPipeline>(message),
-                "Menu:MainMenu:Actions" => RemoveMenuAndRedirect<ActionsPipeline>(message),
+                "Menu:MainMenu" => RemoveMenuAndRedirect<MainMenuPipeline>(message),
                 _ => InterruptedResult(message, Localizer[_errorMessage]),
             };
         }

@@ -2,6 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions;
 
+// TODO: Candidate for drop
 internal abstract class ActionsPipelineBase : EclipsePipelineBase
 {
     protected IReadOnlyList<IReadOnlyList<KeyboardButton>> ActionsMenuButtons => new List<KeyboardButton[]>
