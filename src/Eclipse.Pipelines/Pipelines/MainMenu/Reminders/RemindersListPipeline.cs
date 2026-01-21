@@ -6,7 +6,7 @@ using Eclipse.Core.Routing;
 
 using System.Globalization;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
 [Route("Menu:Reminders:List", "/reminders_list")]
 internal sealed class RemindersListPipeline : RemindersPipelineBase

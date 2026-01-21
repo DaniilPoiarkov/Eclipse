@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
 internal abstract class RemindersPipelineBase : EclipsePipelineBase
 {

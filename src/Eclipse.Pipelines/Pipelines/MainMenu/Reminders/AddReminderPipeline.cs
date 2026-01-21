@@ -6,7 +6,7 @@ using Eclipse.Core.Routing;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
 
 [Route("Menu:Reminders:Add", "/reminders_add")]
 internal sealed class AddReminderPipeline : RemindersPipelineBase

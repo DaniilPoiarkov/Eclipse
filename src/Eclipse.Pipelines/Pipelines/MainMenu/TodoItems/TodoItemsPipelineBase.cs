@@ -7,7 +7,7 @@ using System.Text;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {

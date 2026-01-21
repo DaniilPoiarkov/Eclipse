@@ -1,5 +1,6 @@
 ﻿using Eclipse.Core.Routing;
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
+
+namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:MainMenu:MyToDos", "/todos")]
 internal sealed class TodoItemsPipeline : TodoItemsPipelineBase

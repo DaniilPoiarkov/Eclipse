@@ -11,7 +11,7 @@ using System.Globalization;
 
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:TodoItems:List", "/todos_list")]
 internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
