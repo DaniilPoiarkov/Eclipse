@@ -2,7 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.Reminders;
 
-internal abstract class RemindersPipelineBase : ActionsPipelineBase
+internal abstract class RemindersPipelineBase : EclipsePipelineBase
 {
     protected IReadOnlyList<IReadOnlyList<KeyboardButton>> RemindersMenuButtons => new List<KeyboardButton[]>
     {

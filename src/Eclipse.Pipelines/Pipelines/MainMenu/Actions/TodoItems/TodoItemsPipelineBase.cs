@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
 
-internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
+internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
     protected static readonly string PipelinePrefix = "Pipelines:TodoItems";
 
