@@ -12,7 +12,7 @@ using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
 [Route("Menu:TodoItems:AddItem", "/todos_add")]
 internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase

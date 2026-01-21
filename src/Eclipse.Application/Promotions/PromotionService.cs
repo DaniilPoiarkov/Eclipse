@@ -90,7 +90,7 @@ internal sealed class PromotionService : IPromotionService
     public async Task<Result<PromotionDto>> Update(Guid id, UpdatePromotionRequest request, CancellationToken cancellationToken = default)
     {
         var promotion = await _promotionsRepository.FindAsync(id, cancellationToken);
-        
+
         if (promotion is null)
         {
             return DefaultErrors.EntityNotFound<Promotion>();

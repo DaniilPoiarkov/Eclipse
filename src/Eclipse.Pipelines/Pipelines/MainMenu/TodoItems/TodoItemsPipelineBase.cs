@@ -7,16 +7,16 @@ using System.Text;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.Actions.TodoItems;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;
 
-internal abstract class TodoItemsPipelineBase : ActionsPipelineBase
+internal abstract class TodoItemsPipelineBase : EclipsePipelineBase
 {
     protected static readonly string PipelinePrefix = "Pipelines:TodoItems";
 
     protected IEnumerable<IEnumerable<KeyboardButton>> TodoItemMenuButtons => new List<KeyboardButton[]>
     {
         new[] { new KeyboardButton(Localizer["Menu:TodoItems:List"]), new KeyboardButton(Localizer["Menu:TodoItems:AddItem"]) },
-        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Actions"]) }
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu"]) }
     };
 
     protected string BuildMessage(TimeSpan userTime, CultureInfo culture, IEnumerable<TodoItemDto> items)

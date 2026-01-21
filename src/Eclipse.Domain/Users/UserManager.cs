@@ -55,7 +55,9 @@ public sealed class UserManager
         }
 
         var alreadyExist = await _repository.ContainsAsync(
-            expression: u => u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty() && u.UserName == request.UserName),
+            expression: u => u.IsEnabled
+                && u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty()
+                && u.UserName == request.UserName),
             cancellationToken: cancellationToken
         );
 
