@@ -29,6 +29,25 @@ public static class SpecificationExtensions
     }
 
     /// <summary>
+    /// Ors if.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="left">The left.</param>
+    /// <param name="condition">The condition.</param>
+    /// <param name="condition">if set to <c>true</c> [condition].</param>
+    /// <param name="right">The right.</param>
+    /// <returns></returns>
+    public static Specification<T> OrIf<T>(this Specification<T> left, bool condition, Specification<T> right)
+    {
+        if (condition)
+        {
+            return left.Or(right);
+        }
+
+        return left;
+    }
+
+    /// <summary>
     /// Specifies that element should match left specification and not right specification
     ///   <br />
     /// </summary>

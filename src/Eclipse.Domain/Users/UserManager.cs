@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
+using Eclipse.Common.Specifications;
 using Eclipse.Domain.Shared.Repositories;
 
 namespace Eclipse.Domain.Users;
@@ -55,7 +56,9 @@ public sealed class UserManager
         }
 
         var alreadyExist = await _repository.ContainsAsync(
-            expression: u => u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty() && u.UserName == request.UserName),
+            expression: u => u.IsEnabled
+                && u.ChatId == request.ChatId || (!request.UserName.IsNullOrEmpty()
+                && u.UserName == request.UserName),
             cancellationToken: cancellationToken
         );
 
