@@ -1,6 +1,5 @@
 ﻿using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
-using Eclipse.Common.Specifications;
 using Eclipse.Domain.Shared.Repositories;
 
 namespace Eclipse.Domain.Users;

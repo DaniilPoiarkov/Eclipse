@@ -20,7 +20,7 @@ internal sealed class FeatureFlag : ContextValidationAttribute
     public override ValidationResult Validate(ValidationContext context)
     {
         var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
-        
+
         var options = configuration.GetSection($"Features:{_feature}")
             .Get<FeatureOptions>();
 
