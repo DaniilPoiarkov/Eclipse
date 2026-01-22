@@ -1,5 +1,6 @@
 ﻿using Eclipse.Common.Events;
 using Eclipse.Common.Extensions;
+using Eclipse.Domain.PromotionLogs;
 using Eclipse.Domain.Promotions;
 using Eclipse.Domain.Users;
 
@@ -19,6 +20,8 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
 
     private readonly IPromotionRepository _promotionRepository;
 
+    private readonly IPromotionLogRepository _promotionLogRepository;
+
     private readonly ILogger<PromotionPublishingRequestedEventHandler> _logger;
 
     private readonly IOptions<ApplicationOptions> _options;
@@ -27,12 +30,14 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
         ITelegramBotClient botClient,
         IUserRepository userRepository,
         IPromotionRepository promotionRepository,
+        IPromotionLogRepository promotionLogRepository,
         ILogger<PromotionPublishingRequestedEventHandler> logger,
         IOptions<ApplicationOptions> options)
     {
         _botClient = botClient;
         _userRepository = userRepository;
         _promotionRepository = promotionRepository;
+        _promotionLogRepository = promotionLogRepository;
         _logger = logger;
         _options = options;
     }
@@ -47,7 +52,7 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
 
             await _botClient.SendMessage(
                 _options.Value.Chat,
-                $"❌ Failed to send promotion {@event.PromotionId}.{Environment.NewLine}Promotion not found.",
+                $"❌ Failed to send promotion {@event.PromotionId}. Promotion not found.",
                 cancellationToken: cancellationToken
             );
 
@@ -60,7 +65,7 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
 
             await _botClient.SendMessage(
                 _options.Value.Chat,
-                $"❌ Failed to send promotion {@event.PromotionId}.{Environment.NewLine}Promotion cannot start publishing.",
+                $"❌ Failed to send promotion {@event.PromotionId}. Promotion cannot start publishing.",
                 cancellationToken: cancellationToken
             );
 
@@ -80,31 +85,46 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
             ? new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl(promotion.InlineButtonText, promotion.InlineButtonLink))
             : InlineKeyboardMarkup.Empty();
 
-        await users.Select(u => SendPromotion(u, promotion.FromChatId, promotion.MessageId, replyMarkup, cancellationToken)).WhenAll();
+        var logs = await users.Select(u => SendPromotion(u, promotion, replyMarkup, cancellationToken)).WhenAll();
 
         promotion.FinishPublishing();
+        
         await _promotionRepository.UpdateAsync(promotion, cancellationToken);
+        await _promotionLogRepository.CreateRangeAsync(logs, cancellationToken);
 
         _logger.LogInformation("Finished publishing promotion {PromotionId}.", promotion.Id);
+
+        await _botClient.SendMessage(_options.Value.Chat,
+            $"✅ Finished sending promotion: {promotion.Title}{Environment.NewLine}" +
+            $"👤 Users received: {logs.Count(l => l.ReceivedSuccessfully)}{Environment.NewLine}" +
+            $"📤 Total receivers: {logs.Count()}",
+            cancellationToken: cancellationToken
+        );
+
+        foreach (var chunk in logs.Chunk(25))
+        {
+            await _botClient.SendMessage(_options.Value.Chat,
+                chunk.Select(l => l.Message).Join(Environment.NewLine),
+                cancellationToken: cancellationToken
+            );
+        }
     }
 
-    private async Task SendPromotion(User user, long fromChatId, int messageId, ReplyMarkup replyMarkup, CancellationToken cancellationToken)
+    private async Task<PromotionLog> SendPromotion(User user, Promotion promotion, ReplyMarkup replyMarkup, CancellationToken cancellationToken)
     {
         try
         {
-            await _botClient.CopyMessage(user.ChatId, fromChatId, messageId, replyMarkup: replyMarkup, cancellationToken: cancellationToken);
+            await _botClient.CopyMessage(user.ChatId, promotion.FromChatId, promotion.MessageId, replyMarkup: replyMarkup, cancellationToken: cancellationToken);
+            return promotion.AddLog(user.Id, $"✅ Successfully sent promotion to {user.GetReportingDisplayName()}.", true);
         }
         catch (Exception ex)
         {
-            await _botClient.SendMessage(_options.Value.Chat, $"❌ Failed to send promotion to {user.GetReportingDisplayName()}.{Environment.NewLine}{ex}", cancellationToken: cancellationToken);
-
             _logger.LogError(ex, "Failed to send promotion to {UserId} ({UserName}). Disabling user.", user.Id, user.UserName);
 
             user.SetIsEnabled(false);
             await _userRepository.UpdateAsync(user, cancellationToken);
-            return;
-        }
 
-        await _botClient.SendMessage(_options.Value.Chat, $"✅ Successfully sent promotion to {user.GetReportingDisplayName()}.", cancellationToken: cancellationToken);
+            return promotion.AddLog(user.Id, $"❌ Failed to send promotion to {user.GetReportingDisplayName()}. {ex.Message}", false);
+        }
     }
 }
