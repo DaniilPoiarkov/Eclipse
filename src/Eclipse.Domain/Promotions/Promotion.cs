@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Shared.Entities;
+﻿using Eclipse.Domain.PromotionLogs;
+using Eclipse.Domain.Shared.Entities;
 using Eclipse.Domain.Shared.Promotions;
 
 namespace Eclipse.Domain.Promotions;
@@ -89,5 +90,10 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
         }
 
         Title = title;
+    }
+
+    public PromotionLog AddLog(Guid receiverId, string message, bool receivedSuccessfully)
+    {
+        return new PromotionLog(Guid.CreateVersion7(), Id, receiverId, message, receivedSuccessfully);
     }
 }

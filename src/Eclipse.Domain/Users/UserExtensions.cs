@@ -6,6 +6,6 @@ public static class UserExtensions
     {
         return user.UserName.IsNullOrWhiteSpace()
             ? $"{user.Name} {user.Surname} {user.ChatId}"
-            : $"{user.UserName} {user.ChatId}";
+            : $"@{user.UserName} {user.ChatId}";
     }
 }
