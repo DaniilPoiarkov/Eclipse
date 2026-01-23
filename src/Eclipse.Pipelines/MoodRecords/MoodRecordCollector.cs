@@ -70,8 +70,15 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
         {
             Message = new Message
             {
-                Text = "/href_mood_records_add"
-            }
+                Text = "/href_mood_records_add",
+                From = new User
+                {
+                    Id = user.ChatId,
+                    FirstName = user.Name,
+                    LastName = user.Surname,
+                    Username = user.UserName
+                }
+            },
         };
 
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);

@@ -11,6 +11,7 @@ internal static class UpdateExtensions
             { Message.From: { } } => update.Message.From,
             { CallbackQuery.From: { } } => update.CallbackQuery.From,
             { MyChatMember.From: { } } => update.MyChatMember.From,
+            { ChatMember.From: { } } => update.ChatMember.From,
             _ => throw new InvalidOperationException("Unsupported update type for extracting sender.")
         };
     }
