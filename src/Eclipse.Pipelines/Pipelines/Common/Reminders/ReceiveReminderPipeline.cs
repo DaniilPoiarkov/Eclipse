@@ -138,6 +138,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply.Action == ReminderReceivedReplyAction.RemoveReminder)
         {
+            FinishPipeline();
             await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
             return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:ReminderRemoved"], message);
         }
@@ -163,6 +164,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply.Action != ReminderReceivedReplyAction.FinishTodoItem)
         {
+            FinishPipeline();
             await _reminderService.DeleteAsync(reply.UserId, reply.ReminderId, cancellationToken);
             return RemoveInlineMenuAndSend(Localizer["Pipelines:Reminders:Receive:InvalidAction"], message);
         }
