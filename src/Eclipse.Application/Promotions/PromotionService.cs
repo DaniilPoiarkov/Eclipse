@@ -2,6 +2,7 @@
 using Eclipse.Common.Clock;
 using Eclipse.Common.Linq;
 using Eclipse.Common.Results;
+using Eclipse.Domain.PromotionLogs;
 using Eclipse.Domain.Promotions;
 using Eclipse.Domain.Shared.Errors;
 
@@ -11,13 +12,17 @@ internal sealed class PromotionService : IPromotionService
 {
     private readonly IPromotionRepository _promotionsRepository;
 
+    private readonly IPromotionLogRepository _promotionLogRepository;
+
     private readonly ITimeProvider _timeProvider;
 
     public PromotionService(
         IPromotionRepository promotionsRepository,
+        IPromotionLogRepository promotionLogRepository,
         ITimeProvider timeProvider)
     {
         _promotionsRepository = promotionsRepository;
+        _promotionLogRepository = promotionLogRepository;
         _timeProvider = timeProvider;
     }
 
@@ -33,6 +38,10 @@ internal sealed class PromotionService : IPromotionService
     public async Task<Result> Delete(Guid id, CancellationToken cancellationToken = default)
     {
         await _promotionsRepository.DeleteAsync(id, cancellationToken);
+        
+        var logs = await _promotionLogRepository.GetByExpressionAsync(l => l.PromotionId == id, cancellationToken);
+        await _promotionLogRepository.DeleteRangeAsync(logs, cancellationToken);
+
         return Result.Success();
     }
 
