@@ -100,7 +100,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
                 InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Reminders:Receive:Reschedule"], rescheduleKeyPayload)
             ],
             [
-                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Reminders:Receive:Remove"], finishKeyPayload),
+                InlineKeyboardButton.WithCallbackData(Localizer["Pipelines:Reminders:Receive:Remove"], removeKeyPayload),
             ]
         ];
 
@@ -193,15 +193,20 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             cancellationToken: cancellationToken
         );
 
+        var mainMenu = new ReplyKeyboardMarkup(MainMenuButtons)
+        {
+            ResizeKeyboard = true
+        };
+
         if (payload is null)
         {
-            return RemoveInlineMenuAndSend(new ReplyKeyboardMarkup(MainMenuButtons), Localizer["Error"], message);
+            return RemoveInlineMenuAndSend(mainMenu, Localizer["Error"], message);
         }
 
         if (context.Value.Equals("/cancel"))
         {
             await _reminderService.DeleteAsync(payload.UserId, payload.ReminderId, cancellationToken);
-            return RemoveInlineMenuAndSend(new ReplyKeyboardMarkup(MainMenuButtons), Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Canceled"], message);
+            return RemoveInlineMenuAndSend(mainMenu, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Canceled"], message);
         }
 
         if (!context.Value.TryParseAsTimeOnly(out var time))
@@ -217,6 +222,6 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             cancellationToken
         );
 
-        return RemoveInlineMenuAndSend(new ReplyKeyboardMarkup(MainMenuButtons), Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled"], message);
+        return RemoveInlineMenuAndSend(mainMenu, Localizer["Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled"], message);
     }
 }
