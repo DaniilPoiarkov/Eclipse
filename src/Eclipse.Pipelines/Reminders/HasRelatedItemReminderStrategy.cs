@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Contracts.Users;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Core.Context;
 using Eclipse.Core.Provider;
 using Eclipse.Localization.Culture;
@@ -7,6 +8,7 @@ using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
 
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -25,9 +27,13 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
 
     private readonly IPipelineProvider _pipelineProvider;
 
+    private readonly IUserService _userService;
+
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IStringLocalizer<ReminderSender> _localizer;
+
+    private readonly ILogger<HasRelatedItemReminderStrategy> _logger;
 
     public HasRelatedItemReminderStrategy(
         ITelegramBotClient client,
@@ -35,16 +41,20 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         IMessageStore messageStore,
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
+        IUserService userService,
         IServiceProvider serviceProvider,
-        IStringLocalizer<ReminderSender> localizer)
+        IStringLocalizer<ReminderSender> localizer,
+        ILogger<HasRelatedItemReminderStrategy> logger)
     {
         _client = client;
         _currentCulture = currentCulture;
         _messageStore = messageStore;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
+        _userService = userService;
         _serviceProvider = serviceProvider;
         _localizer = localizer;
+        _logger = logger;
     }
 
     public async Task Send(ReminderArguments arguments, CancellationToken cancellationToken = default)
@@ -52,13 +62,29 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         using var _ = _currentCulture.UsingCulture(arguments.Culture);
 
         var key = new PipelineKey(arguments.ChatId);
+
         await _pipelineStore.RemoveAsync(key, cancellationToken);
+        var user = await _userService.GetByIdAsync(arguments.UserId, cancellationToken);
+
+        if (!user.IsSuccess)
+        {
+            _logger.LogError("Cannot send reminder with related todo item. User not found.");
+            return;
+        }
 
         var update = new Update
         {
             Message = new Message
             {
-                Text = "/href_reminders_receive"
+                Text = "/href_reminders_receive",
+                From = new User
+                {
+                    Id = user.Value.ChatId,
+                    FirstName = user.Value.Name,
+                    LastName = user.Value.Surname,
+                    Username = user.Value.UserName,
+                    LanguageCode = user.Value.Culture
+                }
             }
         };
 
