@@ -14,7 +14,7 @@
     "Pipelines:Reminders:Receive:Reschedule:4PM": "🕔 16:00",
     "Pipelines:Reminders:Receive:Reschedule:7PM": "🕔 19:00",
 
-    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Звісно, напиши мені новий час коли відправити нагадування. Використовуй 24-годинний формат (наприклад 14:36) або натисни /cancel аби просто видалити його",
+    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Звісно, напиши мені новий час коли відправити нагадування. Використовуй 24-годинний формат (наприклад 14:36) або обери один з варіантів нижче, або натисни /cancel аби просто видалити його",
     "Pipelines:Reminders:Receive:RescheduleReminder:Canceled": "🙂 Добре, я приберу це нагадування",
     "Pipelines:Reminders:Receive:RescheduleReminder:InvalidTime": "🤔 Хмм, нажаль я не можу зрозуміти що ти маєш на увазі. Використовуй 24-годинний формат (наприклад 21:54) або натисни /cancel аби просто видалити нагадування",
     "Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled": "😊 Звісно, я відправлю нагадування коли прийде час"
