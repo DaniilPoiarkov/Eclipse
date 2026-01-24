@@ -75,6 +75,7 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
     {
         if (context.Value.Equals("/cancel"))
         {
+            FinishPipeline();
             return Menu(TodoItemMenuButtons, Localizer["Okay"]);
         }
 
