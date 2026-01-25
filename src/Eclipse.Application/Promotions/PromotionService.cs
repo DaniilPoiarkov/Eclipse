@@ -38,7 +38,7 @@ internal sealed class PromotionService : IPromotionService
     public async Task<Result> Delete(Guid id, CancellationToken cancellationToken = default)
     {
         await _promotionsRepository.DeleteAsync(id, cancellationToken);
-        
+
         var logs = await _promotionLogRepository.GetByExpressionAsync(l => l.PromotionId == id, cancellationToken);
         await _promotionLogRepository.DeleteRangeAsync(logs, cancellationToken);
 

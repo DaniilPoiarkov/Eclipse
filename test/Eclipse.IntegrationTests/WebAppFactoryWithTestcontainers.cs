@@ -35,19 +35,18 @@ public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Prog
         });
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await _dbContainer.StartAsync();
         await _redisContainer.StartAsync();
     }
 
-    async Task IAsyncLifetime.DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await _dbContainer.StopAsync();
         await _redisContainer.StopAsync();
+        await base.DisposeAsync();
     }
-
-    #region Services Configuration
 
     private void ConfigureRedis(IServiceCollection services)
     {
@@ -79,6 +78,4 @@ public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Prog
             new CosmosClient(_dbContainer.GetConnectionString(), clientOptions)
         );
     }
-
-    #endregion
 }
