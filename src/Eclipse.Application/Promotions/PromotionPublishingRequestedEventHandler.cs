@@ -88,7 +88,7 @@ internal sealed class PromotionPublishingRequestedEventHandler : IEventHandler<P
         var logs = await users.Select(u => SendPromotion(u, promotion, replyMarkup, cancellationToken)).WhenAll();
 
         promotion.FinishPublishing();
-        
+
         await _promotionRepository.UpdateAsync(promotion, cancellationToken);
         await _promotionLogRepository.CreateRangeAsync(logs, cancellationToken);
 

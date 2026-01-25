@@ -11,6 +11,7 @@ using NSubstitute;
 
 using Telegram.Bot;
 using Telegram.Bot.Requests;
+using Telegram.Bot.Requests.Abstractions;
 
 using Xunit;
 
@@ -43,19 +44,23 @@ public sealed class ImportRemindersBackgroundJobTests
     {
         var result = new ImportResult<ImportEntityBase>();
 
-        _importService.AddRemindersAsync(default!)
+        _importService.AddRemindersAsync(Arg.Any<MemoryStream>(), TestContext.Current.CancellationToken)
             .ReturnsForAnyArgs(
                 Task.FromResult(result)
             );
 
-        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(
+            new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") },
+            TestContext.Current.CancellationToken
+        );
 
         await _botClient.Received()
             .SendRequest(
-                Arg.Is<SendMessageRequest>(x => x.Text == "All reminders imported successfully." && x.ChatId == _options.Value.Chat)
+                Arg.Is<SendMessageRequest>(x => x.Text == "All reminders imported successfully." && x.ChatId == _options.Value.Chat),
+                TestContext.Current.CancellationToken
             );
 
-        await _importService.ReceivedWithAnyArgs().AddRemindersAsync(default!);
+        await _importService.ReceivedWithAnyArgs().AddRemindersAsync(Arg.Any<MemoryStream>(), TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -69,27 +74,32 @@ public sealed class ImportRemindersBackgroundJobTests
             ]
         };
 
-        _importService.AddRemindersAsync(default!)
+        _importService.AddRemindersAsync(Arg.Any<MemoryStream>(), TestContext.Current.CancellationToken)
             .ReturnsForAnyArgs(
                 Task.FromResult(result)
             );
 
-        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") });
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs() { BytesAsBase64 = TestsAssembly.ToBase64String("test") }, TestContext.Current.CancellationToken);
 
         await _botClient.Received()
             .SendRequest(
-                Arg.Is<SendDocumentRequest>(x => x.ChatId == _options.Value.Chat && x.Caption == "Failed to import following reminders")
+                Arg.Is<SendDocumentRequest>(x => x.ChatId == _options.Value.Chat && x.Caption == "Failed to import following reminders"),
+                TestContext.Current.CancellationToken
             );
 
-        await _importService.ReceivedWithAnyArgs().AddRemindersAsync(default!);
+        await _importService.ReceivedWithAnyArgs()
+            .AddRemindersAsync(Arg.Any<MemoryStream>(), TestContext.Current.CancellationToken);
     }
 
     [Fact]
     public async Task WhenBytesAreEmpty_ThenNoDependenciesCalled()
     {
-        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs());
+        await Sut.ExecuteAsync(new ImportEntitiesBackgroundJobArgs(), TestContext.Current.CancellationToken);
 
-        await _importService.DidNotReceiveWithAnyArgs().AddRemindersAsync(default!);
-        await _botClient.DidNotReceiveWithAnyArgs().SendRequest<SendMessageRequest>(default!);
+        await _importService.DidNotReceiveWithAnyArgs()
+            .AddRemindersAsync(Arg.Any<MemoryStream>(), TestContext.Current.CancellationToken);
+
+        await _botClient.DidNotReceiveWithAnyArgs()
+            .SendRequest(Arg.Any<IRequest<SendMessageRequest>>(), TestContext.Current.CancellationToken);
     }
 }
