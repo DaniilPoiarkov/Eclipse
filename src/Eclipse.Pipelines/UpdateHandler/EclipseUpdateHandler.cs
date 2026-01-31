@@ -1,6 +1,4 @@
 ﻿using Eclipse.Core.Context;
-using Eclipse.Core.Pipelines;
-using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.UpdateParsing;
@@ -29,11 +27,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUserStore _userStore;
 
-    private readonly IPipelineStore _pipelineStore;
+    private readonly IPipelineStoreV2 _pipelineStoreV2;
 
     private readonly IMessageStore _messageStore;
-
-    private readonly IPipelineProvider _pipelineProvider;
 
     private readonly IUpdateParser _updateParser;
 
@@ -48,16 +44,14 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     public EclipseUpdateHandler(
         ILogger<EclipseUpdateHandler> logger,
-        IPipelineStore pipelineStore,
-        IPipelineProvider pipelineProvider,
+        IPipelineStoreV2 pipelineStoreV2,
         IUserStore userStore,
         IUpdateParser updateParser,
         IMessageStore messageStore,
         IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
-        _pipelineStore = pipelineStore;
-        _pipelineProvider = pipelineProvider;
+        _pipelineStoreV2 = pipelineStoreV2;
         _userStore = userStore;
         _updateParser = updateParser;
         _messageStore = messageStore;
@@ -103,17 +97,15 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)
     {
-        var key = new PipelineKey(context.ChatId);
+        var pipeline = await _pipelineStoreV2.Get(update, cancellationToken) as EclipsePipelineBase
+            ?? new EclipseNotFoundPipeline();
 
-        var pipeline = await GetEclipsePipelineAsync(update, key);
-
-        await _pipelineStore.RemoveAsync(key, cancellationToken);
+        await _pipelineStoreV2.Remove(update, cancellationToken);
 
         pipeline.SetLocalizer(_localizer);
         pipeline.SetUpdate(update);
 
         var result = await pipeline.RunNext(context, cancellationToken);
-
         var message = await result.SendAsync(botClient, cancellationToken);
 
         if (message is not null)
@@ -123,27 +115,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (!pipeline.IsFinished)
         {
-            await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
+            await _pipelineStoreV2.Set(update, pipeline, cancellationToken);
         }
 
         return result;
-    }
-
-    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(Update update, PipelineKey key)
-    {
-        return await GetPipelineAsync(update, key) as EclipsePipelineBase
-            ?? new EclipseNotFoundPipeline();
-    }
-
-    private async Task<PipelineBase> GetPipelineAsync(Update update, PipelineKey key)
-    {
-        var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
-
-        if (pipeline is not null)
-        {
-            return pipeline;
-        }
-
-        return _pipelineProvider.Get(update);
     }
 }
