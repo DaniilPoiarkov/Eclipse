@@ -3,6 +3,7 @@ using Eclipse.Core.Pipelines;
 
 namespace Eclipse.Pipelines.Stores.Pipelines;
 
+[Obsolete("This PipelineStore is deprecated and will be removed in future versions.", DiagnosticId = "ECLIPSE1006")]
 internal sealed class PipelineStore : IPipelineStore
 {
     private readonly ICacheService _cacheService;
