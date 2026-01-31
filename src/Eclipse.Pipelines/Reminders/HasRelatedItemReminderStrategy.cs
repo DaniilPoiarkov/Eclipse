@@ -1,8 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Reminders.Sendings;
+using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Provider;
 using Eclipse.Localization.Culture;
+using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
@@ -23,11 +25,13 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
 
     private readonly IMessageStore _messageStore;
 
-    private readonly IPipelineStore _pipelineStore;
+    private readonly IPipelineStoreV2 _pipelineStore;
 
     private readonly IPipelineProvider _pipelineProvider;
 
     private readonly IUserService _userService;
+
+    private readonly ICacheService _cacheService;
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -39,9 +43,10 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         ITelegramBotClient client,
         ICurrentCulture currentCulture,
         IMessageStore messageStore,
-        IPipelineStore pipelineStore,
+        IPipelineStoreV2 pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserService userService,
+        ICacheService cacheService,
         IServiceProvider serviceProvider,
         IStringLocalizer<ReminderSender> localizer,
         ILogger<HasRelatedItemReminderStrategy> logger)
@@ -52,6 +57,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _userService = userService;
+        _cacheService = cacheService;
         _serviceProvider = serviceProvider;
         _localizer = localizer;
         _logger = logger;
@@ -60,10 +66,6 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
     public async Task Send(ReminderArguments arguments, CancellationToken cancellationToken = default)
     {
         using var _ = _currentCulture.UsingCulture(arguments.Culture);
-
-        var key = new PipelineKey(arguments.ChatId);
-
-        await _pipelineStore.RemoveAsync(key, cancellationToken);
         var user = await _userService.GetByIdAsync(arguments.UserId, cancellationToken);
 
         if (!user.IsSuccess)
@@ -88,6 +90,9 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
             }
         };
 
+        await _pipelineStore.Remove(update, cancellationToken);
+
+        // TODO: Try to get pipeline directly. Should be able to inject.
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
         pipeline.SetLocalizer(_localizer);
@@ -111,11 +116,18 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         var result = await pipeline.RunNext(messageContext, cancellationToken);
         var message = await result.SendAsync(_client, cancellationToken);
 
-        await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
+        await _pipelineStore.Set(update, pipeline, cancellationToken);
 
         if (message is not null)
         {
             await _messageStore.SetAsync(new MessageKey(arguments.ChatId), message, cancellationToken);
+            
+            await _cacheService.SetForThreeDaysAsync(
+                $"users-{arguments.UserId}-reminders-{arguments.ReminderId}-receive-message",
+                message,
+                arguments.ChatId,
+                cancellationToken
+            );
         }
     }
 }

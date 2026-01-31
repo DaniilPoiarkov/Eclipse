@@ -49,7 +49,7 @@ public static class EclipsePipelinesModule
             .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
             .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<IMessageStore, MessageStore>()
-            .AddTransient<IPipelineStore, PipelineStore>()
+            .AddTransient<IPipelineStoreV2, PipelineStoreV2>()
             .AddTransient<IUserStore, UserStore>()
             .AddTransient<ICultureTracker, CultureTracker>()
             .AddTransient<IReminderSender, ReminderSender>();
