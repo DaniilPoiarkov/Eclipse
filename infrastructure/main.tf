@@ -113,6 +113,7 @@ module "web-app" {
   azuread_client_id              = module.entraid.app_client_id
   tenant_id                      = local.tenant_id
   log_analytics_workspace_id     = module.monitoring.log_analytics_workspace_id
+  features                       = var.features
 
   depends_on = [
     azurerm_resource_group.resource_group_main,

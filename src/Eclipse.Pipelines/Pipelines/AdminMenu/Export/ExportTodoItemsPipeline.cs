@@ -6,7 +6,7 @@ using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export;
 
-[Route("Menu:AdminMenu:Export:TodoItems", "/admin_export_todoitems")]
+[Route("Menu:Admin:Export:TodoItems", "/admin_export_todoitems")]
 internal sealed class ExportTodoItemsPipeline : AdminPipelineBase
 {
     private readonly IBackgroundJobManager _jobManager;

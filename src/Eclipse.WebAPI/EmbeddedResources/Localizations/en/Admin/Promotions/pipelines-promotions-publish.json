@@ -1,0 +1,10 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Publish:Confirm{0}": "Send this code {0} to confirm publishing or press /cancel",
+    "Pipelines:Admin:Promotions:Publish:Cancelled": "Cancelled promotion publishing.",
+    "Pipelines:Admin:Promotions:Publish:ConfirmationFailed": "Invalid code, promotion not published.",
+    "Pipelines:Admin:Promotions:Publish:SuccessfullyPublished": "Successfully requested promotion publishing",
+    "Pipelines:Admin:Promotions:Publish:FailedToPublish{Reason}": "Failed to request prootion publishing: {0}"
+  }
+}

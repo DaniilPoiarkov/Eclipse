@@ -1,0 +1,12 @@
+﻿using Eclipse.Core.Routing;
+
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Reminders;
+
+[Route("Menu:MainMenu:Reminders", "/reminders")]
+internal sealed class RemindersPipeline : RemindersPipelineBase
+{
+    protected override void Initialize()
+    {
+        RegisterStage(_ => Menu(RemindersMenuButtons, Localizer["Pipelines:Reminders"]));
+    }
+}

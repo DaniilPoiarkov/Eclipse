@@ -124,4 +124,14 @@ public static class StringExtensions
 
         return $"{str}{expected}";
     }
+
+    public static string Truncate(this string str, int count)
+    {
+        if (str.Length <= count)
+        {
+            return str;
+        }
+
+        return str[..count];
+    }
 }

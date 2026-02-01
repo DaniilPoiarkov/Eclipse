@@ -5,9 +5,10 @@ using Eclipse.DataAccess.Feedbacks;
 using Eclipse.DataAccess.InboxMessages;
 using Eclipse.DataAccess.Interceptors;
 using Eclipse.DataAccess.Migrations;
-using Eclipse.DataAccess.Model;
 using Eclipse.DataAccess.MoodRecords;
 using Eclipse.DataAccess.OutboxMessages;
+using Eclipse.DataAccess.PromotionLogs;
+using Eclipse.DataAccess.Promotions;
 using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
@@ -15,6 +16,8 @@ using Eclipse.Domain.Feedbacks;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
 using Eclipse.Domain.OutboxMessages;
+using Eclipse.Domain.PromotionLogs;
+using Eclipse.Domain.Promotions;
 using Eclipse.Domain.Statistics;
 using Eclipse.Domain.Users;
 
@@ -50,6 +53,8 @@ public static class EclipseDataAccessModule
             .AddScoped<IMoodRecordRepository, MoodRecordRepository>()
             .AddScoped<IUserStatisticsRepository, UserStatisticsRepository>()
             .AddScoped<IFeedbackRepository, FeedbackRepository>()
+            .AddScoped<IPromotionRepository, PromotionRepository>()
+            .AddScoped<IPromotionLogRepository, PromotionLogRepository>()
             .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
 
         services
@@ -58,14 +63,9 @@ public static class EclipseDataAccessModule
             .Decorate<IInboxMessageRepository, CachedInboxMessageRepository>()
             .Decorate<IMoodRecordRepository, CachedMoodRecordRepository>()
             .Decorate<IUserStatisticsRepository, CachedUserStatisticsRepository>()
-            .Decorate<IFeedbackRepository, CachedFeedbackRepository>();
-
-        services.AddSingleton<IModelBuilderConfigurator, ModelBuilderConfigurator>();
-
-        services.Scan(tss => tss.FromAssemblies(typeof(EclipseDataAccessModule).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IEntityTypeConfiguration<>)), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithSingletonLifetime());
+            .Decorate<IFeedbackRepository, CachedFeedbackRepository>()
+            .Decorate<IPromotionRepository, CachedPromotionRepository>()
+            .Decorate<IPromotionLogRepository, CachedPromotionLogRepository>();
 
         return services;
     }

@@ -2,7 +2,7 @@
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Feedbacks;
 
-[Route("Menu:AdminMenu:Feedbacks", "/admin_feedbacks")]
+[Route("Menu:Admin:Feedbacks", "/admin_feedbacks")]
 internal sealed class FeedbacksPipeline : AdminPipelineBase
 {
     protected override void Initialize()

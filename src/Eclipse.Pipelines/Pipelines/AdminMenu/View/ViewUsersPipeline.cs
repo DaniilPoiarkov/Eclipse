@@ -5,7 +5,7 @@ using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.View;
 
-[Route("Menu:AdminMenu:View:Users", "/admin_view_users")]
+[Route("Menu:Admin:View:Users", "/admin_view_users")]
 internal sealed class ViewUsersPipeline : AdminPipelineBase
 {
     private readonly IUserService _userService;

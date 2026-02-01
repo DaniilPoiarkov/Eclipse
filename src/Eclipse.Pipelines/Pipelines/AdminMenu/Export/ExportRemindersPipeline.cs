@@ -6,7 +6,7 @@ using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu.Export;
 
-[Route("Menu:AdminMenu:Export:Reminders", "/admin_export_reminders")]
+[Route("Menu:Admin:Export:Reminders", "/admin_export_reminders")]
 internal sealed class ExportRemindersPipeline : AdminPipelineBase
 {
     private readonly IBackgroundJobManager _jobManager;

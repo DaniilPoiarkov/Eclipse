@@ -1,5 +1,7 @@
-﻿using Eclipse.Core.Pipelines;
+﻿using Eclipse.Common.Linq;
+using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
+using Eclipse.Pipelines.Validation;
 
 using Microsoft.Extensions.Localization;
 
@@ -8,6 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines;
 
+[FeatureFlag("Bot")]
 public abstract class EclipsePipelineBase : PipelineBase
 {
     private IStringLocalizer? _localizer;
@@ -15,8 +18,9 @@ public abstract class EclipsePipelineBase : PipelineBase
 
     protected IReadOnlyCollection<IReadOnlyCollection<KeyboardButton>> MainMenuButtons => new List<KeyboardButton[]>
     {
-        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Actions"]), new KeyboardButton(Localizer["Menu:MainMenu:Reports"]) },
-        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]), new KeyboardButton(Localizer["Menu:MainMenu:Settings"]) }
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:MyToDos"]), new KeyboardButton(Localizer["Menu:MainMenu:Reminders"]) },
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Reports"]), new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]) },
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Settings"]) }
     };
 
     internal void SetLocalizer(IStringLocalizer localizer)
@@ -39,15 +43,62 @@ public abstract class EclipsePipelineBase : PipelineBase
 
     protected IResult MenuAndClearPrevious(IEnumerable<IEnumerable<KeyboardButton>> buttons, Message? message, string text)
     {
-        var menu = Menu(buttons, text);
+        return MenuAndClearPrevious(
+            new ReplyKeyboardMarkup(buttons)
+            {
+                ResizeKeyboard = true
+            },
+            message,
+            text
+        );
+    }
 
-        if (message is null)
+    protected IResult MenuAndClearPrevious(ReplyMarkup buttons, Message? message, string text)
+    {
+        if (message is not { ReplyMarkup: { } })
         {
-            return menu;
+            return Menu(buttons, text);
         }
 
-        var edit = Edit(message.MessageId, InlineKeyboardMarkup.Empty());
+        return Multiple(
+            Edit(message.MessageId, InlineKeyboardMarkup.Empty()),
+            Menu(buttons, text)
+        );
+    }
 
-        return Multiple(menu, edit);
+    protected List<IList<InlineKeyboardButton>> GetPagingButtons<T>(int page, PaginatedList<T> list)
+    {
+        List<IList<InlineKeyboardButton>> buttons = [];
+
+        if (page > 1 && page < list.Pages)
+        {
+            buttons.Add([InlineKeyboardButton.WithCallbackData("◀️"), InlineKeyboardButton.WithCallbackData("▶️")]);
+            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
+        }
+        if (page == 1 && list.Pages > 1)
+        {
+            buttons.Add([InlineKeyboardButton.WithCallbackData("▶️")]);
+            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
+        }
+        if (page == list.Pages && list.Pages > 1)
+        {
+            buttons.Add([InlineKeyboardButton.WithCallbackData("◀️")]);
+            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
+        }
+        if (page > list.Pages)
+        {
+            buttons.Add([InlineKeyboardButton.WithCallbackData("◀️")]);
+            buttons.Add([InlineKeyboardButton.WithCallbackData(Localizer["GoBack"], "go_back")]);
+        }
+
+        return buttons;
+    }
+
+    protected string GetPagingMessage(int page, int pagesCount, int totalCount, string message)
+    {
+        return Localizer["PagingInformation{Page}{PagesCount}{TotalCount}", page, pagesCount, totalCount]
+            + Environment.NewLine
+            + Environment.NewLine
+            + message;
     }
 }

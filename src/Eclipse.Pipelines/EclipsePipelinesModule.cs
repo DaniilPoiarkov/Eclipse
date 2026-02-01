@@ -10,6 +10,7 @@ using Eclipse.Pipelines.Health;
 using Eclipse.Pipelines.MoodRecords;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
+using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Reminders;
 using Eclipse.Pipelines.Stores.Messages;
 using Eclipse.Pipelines.Stores.Pipelines;
@@ -75,6 +76,9 @@ public static class EclipsePipelinesModule
 
         services.AddTransient<IMoodRecordCollector, MoodRecordCollector>()
             .AddTransient<IFeedbackCollector, FeedbackCollector>();
+
+        services.Replace(ServiceDescriptor.Singleton(typeof(INotFoundPipeline), typeof(EclipseNotFoundPipeline)));
+        services.Replace(ServiceDescriptor.Scoped(typeof(IAccessDeniedPipeline), typeof(EclipseAccessDeniedPipeline)));
 
         return services;
     }

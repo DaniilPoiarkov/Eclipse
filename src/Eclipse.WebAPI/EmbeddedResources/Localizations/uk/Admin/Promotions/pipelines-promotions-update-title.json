@@ -1,0 +1,10 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin:Promotions:UpdateTitle:Request": "Відправте нову назву або натисніть /cancel аби повернутись.",
+    "Pipelines:Admin:Promotions:UpdateTitle:Cancelled": "Оновлення скасовано",
+    "Pipelines:Admin:Promotions:UpdateTitle:Invalid": "Назва не може бути пустою, оновленя скасовано",
+    "Pipelines:Admin:Promotions:UpdateTitle:Success": "Успішно оновлено",
+    "Pipelines:Admin:Promotions:UpdateTitle:Failure{Reason}": "Оновленя не вдалось: {0}"
+  }
+}

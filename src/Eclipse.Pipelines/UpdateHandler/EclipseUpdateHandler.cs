@@ -91,7 +91,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
                 Message = new Message
                 {
                     Text = command,
-                    From = update.Message?.From,
+                    From = update.ExtractSender(),
                 }
             };
 

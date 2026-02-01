@@ -17,13 +17,11 @@ namespace Eclipse.IntegrationTests;
 
 public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly CosmosDbContainer _dbContainer = new CosmosDbBuilder()
-        .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
+    private readonly CosmosDbContainer _dbContainer = new CosmosDbBuilder("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
         .WithName($"eclipse_cosmosdb_{Guid.NewGuid()}")
         .Build();
 
-    private readonly RedisContainer _redisContainer = new RedisBuilder()
-        .WithImage("redis/redis-stack-server:latest")
+    private readonly RedisContainer _redisContainer = new RedisBuilder("redis/redis-stack-server:latest")
         .WithName("eclipse_redis")
         .Build();
 
@@ -37,19 +35,18 @@ public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Prog
         });
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await _dbContainer.StartAsync();
         await _redisContainer.StartAsync();
     }
 
-    async Task IAsyncLifetime.DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await _dbContainer.StopAsync();
         await _redisContainer.StopAsync();
+        await base.DisposeAsync();
     }
-
-    #region Services Configuration
 
     private void ConfigureRedis(IServiceCollection services)
     {
@@ -81,6 +78,4 @@ public sealed class WebAppFactoryWithTestcontainers : WebApplicationFactory<Prog
             new CosmosClient(_dbContainer.GetConnectionString(), clientOptions)
         );
     }
-
-    #endregion
 }

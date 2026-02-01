@@ -4,7 +4,7 @@ using Eclipse.Core.Routing;
 
 namespace Eclipse.Pipelines.Pipelines.AdminMenu;
 
-[Route("Menu:AdminMenu", "/admin_mode")]
+[Route("Menu:Admin", "/admin_mode")]
 internal sealed class AdminModePipeline : AdminPipelineBase
 {
     protected override void Initialize()
@@ -14,6 +14,6 @@ internal sealed class AdminModePipeline : AdminPipelineBase
 
     private IResult SendAdminMenu(MessageContext context)
     {
-        return Menu(AdminMenuButtons, Localizer["Pipelines:AdminMenu"]);
+        return Menu(AdminMenuButtons, Localizer["Pipelines:Admin"]);
     }
 }

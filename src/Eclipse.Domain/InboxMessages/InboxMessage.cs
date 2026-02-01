@@ -7,9 +7,9 @@ public sealed class InboxMessage : Entity
 {
     public Guid OutboxMessageId { get; init; }
 
-    public string HandlerName { get; init; }
-    public string Payload { get; init; }
-    public string Type { get; init; }
+    public string HandlerName { get; init; } = string.Empty;
+    public string Payload { get; init; } = string.Empty;
+    public string Type { get; init; } = string.Empty;
 
     public string? Error { get; private set; }
 
@@ -28,9 +28,7 @@ public sealed class InboxMessage : Entity
         OccuredAt = occuredAt;
     }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private InboxMessage() { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     public static InboxMessage Create(Guid id, Guid outboxMessageId, string handlerName, string payload, string type, DateTime occuredAt)
     {

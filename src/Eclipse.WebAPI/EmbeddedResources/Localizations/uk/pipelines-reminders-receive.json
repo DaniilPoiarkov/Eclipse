@@ -3,11 +3,18 @@
   "Texts": {
     "Pipelines:Reminders:Receive:Finish": "✅ Завершити",
     "Pipelines:Reminders:Receive:Reschedule": "🕔 Відкласти",
+    "Pipelines:Reminders:Receive:Remove": "🗑 Прибрати нагадування",
 
     "Jobs:SendReminders:RelatedItem": "Привітик😊\n\rНагадую тобі за твій план, чи виконано воно?🤔",
     "Pipelines:Reminders:Receive:InvalidAction": "😢 Не можу щось зрозуміти, я приберу нагадування, але лишу цей план у тебе в списку",
     "Pipelines:Reminders:Receive:TodoItemFinished": "😊 Гарна робота, я приберу цей план з твого списку",
-    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Звісно, напиши мені новий час коли відправити нагадування. Використовуй 24-годинний формат (наприклад 14:36) або натисни /cancel аби просто видалити його",
+    "Pipelines:Reminders:Receive:ReminderRemoved": "✔️ Нагадування прибрано, план ще все знаходиться у твоєму списку",
+
+    "Pipelines:Reminders:Receive:Reschedule:12PM": "🕔 12:00",
+    "Pipelines:Reminders:Receive:Reschedule:4PM": "🕔 16:00",
+    "Pipelines:Reminders:Receive:Reschedule:7PM": "🕔 19:00",
+
+    "Pipelines:Reminders:Receive:RescheduleReminder": "🕔 Звісно, напиши мені новий час коли відправити нагадування. Використовуй 24-годинний формат (наприклад 14:36) або обери один з варіантів нижче, або натисни /cancel аби просто видалити його",
     "Pipelines:Reminders:Receive:RescheduleReminder:Canceled": "🙂 Добре, я приберу це нагадування",
     "Pipelines:Reminders:Receive:RescheduleReminder:InvalidTime": "🤔 Хмм, нажаль я не можу зрозуміти що ти маєш на увазі. Використовуй 24-годинний формат (наприклад 21:54) або натисни /cancel аби просто видалити нагадування",
     "Pipelines:Reminders:Receive:RescheduleReminder:Rescheduled": "😊 Звісно, я відправлю нагадування коли прийде час"

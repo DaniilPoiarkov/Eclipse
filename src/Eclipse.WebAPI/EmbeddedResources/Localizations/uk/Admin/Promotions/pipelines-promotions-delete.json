@@ -1,0 +1,9 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:Admin:Promotions:Delete:Confirm{0}": "Ви впевнені, що хочете видалити просування? Це призведе до видалення всіх пов'язаних з ним даних. Для підтвердження відправте код: {0}",
+    "Pipelines:Admin:Promotions:Delete:ConfirmationFailed": "Підтвердження не вдалося. Введений код не відповідає очікуваному.",
+    "Pipelines:Admin:Promotions:Delete:Success": "Просування успішно видалено.",
+    "Pipelines:Admin:Promotions:Delete:Failed{Reason}": "Не вдалося видалити просування. {0}"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Menu:Admin": "Меню адміністратора",
+
+    "Menu:Admin:View": "Перегляд",
+    "Menu:Admin:View:Suggestions": "Переглянути пропозиції",
+    "Menu:Admin:View:Users": "Переглянути користувачів",
+
+    "Menu:Admin:Send": "Відправити",
+    "Menu:Admin:Send:User": "Відправити користувачу",
+    "Menu:Admin:Send:All": "Відправити всім",
+
+    "Menu:Admin:Export": "Експорт",
+    "Menu:Admin:Export:Users": "Експортувати користувачів",
+    "Menu:Admin:Export:TodoItems": "Експортувати плани",
+    "Menu:Admin:Export:Reminders": "Експортувати нагадування",
+
+    "Menu:Admin:SwitchToUserMode": "Переключитись на режим користувача",
+
+    "Menu:Admin:Promotions": "Просування",
+    "Menu:Admin:Promotions:Create": "Створити рекламний пост",
+    "Menu:Admin:Promotions:Read": "Передивитись рекламні пости",
+
+    "Menu:Admin:Feedbacks": "Фідбеки",
+    "Menu:Admin:Feedbacks:Read": "Прочитати фідбеки",
+    "Menu:Admin:Feedbacks:Request": "Запросити фідбек від користувачів"
+  }
+}
