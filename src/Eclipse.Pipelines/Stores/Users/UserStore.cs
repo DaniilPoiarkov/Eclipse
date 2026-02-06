@@ -7,6 +7,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Eclipse.Pipelines.Stores.Users;
 
+// TODO: Refactor
 internal sealed class UserStore : IUserStore
 {
     private readonly IUserService _userService;
