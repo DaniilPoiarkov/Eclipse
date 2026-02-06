@@ -4,7 +4,7 @@ using Eclipse.Core.Results;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Pipelines.Common;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 using Eclipse.Pipelines.Tests.Fixture;
 using Eclipse.Tests.Generators;
 

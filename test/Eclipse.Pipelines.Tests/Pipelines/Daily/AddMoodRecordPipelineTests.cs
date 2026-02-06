@@ -2,7 +2,7 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Results;
 using Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 using Eclipse.Pipelines.Tests.Fixture;
 using Eclipse.Tests.Generators;
 
@@ -90,7 +90,7 @@ public class AddMoodRecordPipelineTests : PipelineTestFixture<AddMoodRecordPipel
             ReplyMarkup = new InlineKeyboardMarkup(new InlineKeyboardButton("test"))
         };
 
-        messageStore.GetOrDefaultAsync(default!).ReturnsForAnyArgs(message);
+        messageStore.GetLatestBotMessage(default!).ReturnsForAnyArgs(message);
         var context = GetContext("/href_mood_records_add");
 
         // First message act
