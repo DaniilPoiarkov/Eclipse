@@ -3,10 +3,10 @@ using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Provider;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;

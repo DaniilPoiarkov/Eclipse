@@ -2,9 +2,9 @@
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Core.Context;
 using Eclipse.Core.Provider;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Localization;
 

@@ -3,7 +3,7 @@ using Eclipse.Application.Localizations;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Pipelines.Stores;
+using Eclipse.Core.Stores;
 using Eclipse.Pipelines.Validation;
 
 using Telegram.Bot.Types.ReplyMarkups;

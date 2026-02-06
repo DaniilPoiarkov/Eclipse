@@ -3,8 +3,8 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Domain.Shared.MoodRecords;
-using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

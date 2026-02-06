@@ -3,7 +3,7 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Pipelines.Stores;
+using Eclipse.Core.Stores;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

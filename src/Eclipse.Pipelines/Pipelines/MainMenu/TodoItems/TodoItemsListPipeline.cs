@@ -4,8 +4,8 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Localizers;
-using Eclipse.Pipelines.Stores;
 
 using System.Globalization;
 

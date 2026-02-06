@@ -4,8 +4,8 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Logging;
 

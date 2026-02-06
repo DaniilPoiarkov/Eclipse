@@ -4,8 +4,8 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Domain.Shared.Feedbacks;
-using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

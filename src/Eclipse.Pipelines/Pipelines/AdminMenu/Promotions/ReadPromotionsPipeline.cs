@@ -4,9 +4,9 @@ using Eclipse.Common.Linq;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
