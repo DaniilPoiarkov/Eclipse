@@ -1,4 +1,6 @@
-﻿using Telegram.Bot.Types;
+﻿using Eclipse.Core.Stores;
+
+using Telegram.Bot.Types;
 
 namespace Eclipse.Pipelines.Stores.InMemory;
 
