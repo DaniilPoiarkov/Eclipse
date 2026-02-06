@@ -1,8 +1,8 @@
 ﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Results;
+using Eclipse.Core.Stores;
 using Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
-using Eclipse.Pipelines.Stores;
 using Eclipse.Pipelines.Tests.Fixture;
 using Eclipse.Tests.Generators;
 

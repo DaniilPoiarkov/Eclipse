@@ -1,10 +1,10 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Results;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Pipelines.Common;
-using Eclipse.Pipelines.Stores;
 using Eclipse.Pipelines.Tests.Fixture;
 using Eclipse.Tests.Generators;
 
