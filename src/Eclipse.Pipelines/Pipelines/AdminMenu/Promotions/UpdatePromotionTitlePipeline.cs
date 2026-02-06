@@ -3,7 +3,7 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -36,10 +36,7 @@ internal sealed class UpdatePromotionTitlePipeline : AdminPipelineBase
 
     private async Task<IResult> RequestNewTitle(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Pipelines:Admin:Promotions:UpdateTitle:Request"]);
     }

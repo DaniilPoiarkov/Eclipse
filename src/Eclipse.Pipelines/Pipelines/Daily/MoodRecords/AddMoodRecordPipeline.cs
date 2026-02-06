@@ -4,7 +4,7 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.MoodRecords;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -53,7 +53,7 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
             ]
         };
 
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:MoodRecords:Add:AskMood"]));
     }
@@ -75,7 +75,7 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
             _ => new MoodAnswer(null, "Pipelines:MoodRecords:Add:NotDefined")
         };
 
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         if (mood.State is null)
         {

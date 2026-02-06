@@ -5,7 +5,7 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.Feedbacks;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -54,14 +54,14 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
 
     private async Task<IResult> AskToRateExperience(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         return EditedOrDefaultResult(message, Menu(_buttons, Localizer["Pipelines:Feedback:Rate"]));
     }
 
     private async Task<IResult> AskForComment(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
         {

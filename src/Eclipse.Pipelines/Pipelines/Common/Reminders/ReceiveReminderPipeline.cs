@@ -5,16 +5,18 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common.Reminders;
 
+// TODO: idea to either use single message entity for processing reminder or understand the flow based on reminder itself when there're 2+ reminders at the same time.
 [Route("", "/href_reminders_receive")]
 internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 {
@@ -51,11 +53,6 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private async Task<IResult> SendReminder(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
-
         var payload = JsonConvert.DeserializeObject<ReminderReceivedPayload>(context.Value);
 
         if (payload is null)
@@ -104,16 +101,13 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             ]
         ];
 
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+
         return RemoveInlineMenuAndSend(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}", message);
     }
 
     private async Task<IResult> FinishTodoItem(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
-
         var cacheKey = await _cacheService.GetOrCreateAsync(
             context.Value,
             () => Task.FromResult(string.Empty),
@@ -122,7 +116,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (cacheKey.IsNullOrEmpty())
         {
-            return RemoveInlineMenuAndSend(Localizer["Error"], message);
+            return Text(Localizer["Error"]);
         }
 
         var reply = await _cacheService.GetOrCreateAsync(
@@ -133,8 +127,14 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         if (reply is null)
         {
-            return RemoveInlineMenuAndSend(Localizer["Error"], message);
+            return Text(Localizer["Error"]);
         }
+
+        var message = await _cacheService.GetOrCreateAsync(
+            $"users-{reply.UserId}-reminders-{reply.ReminderId}-receive-message",
+            () => Task.FromResult<Message?>(null),
+            cancellationToken: cancellationToken
+        );
 
         if (reply.Action == ReminderReceivedReplyAction.RemoveReminder)
         {
@@ -182,10 +182,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private async Task<IResult> RescheduleReminder(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         var payload = await _cacheService.GetOrCreateAsync(
             $"pipelines-receive-reminder-reschedule-{context.ChatId}",

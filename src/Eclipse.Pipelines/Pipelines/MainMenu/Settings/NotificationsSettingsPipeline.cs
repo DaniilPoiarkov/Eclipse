@@ -3,7 +3,7 @@ using Eclipse.Application.Localizations;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 using Eclipse.Pipelines.Validation;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -45,7 +45,7 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
     private async Task<IResult> EnableNotifications(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         var enable = context.Value.Equals("Enable");
 

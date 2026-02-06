@@ -6,7 +6,7 @@ using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -72,10 +72,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         var promotionId = context.Value.ToGuid();
 

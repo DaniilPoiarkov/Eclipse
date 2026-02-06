@@ -6,8 +6,7 @@ using Eclipse.Core.Provider;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Stores.Messages;
-using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -25,7 +24,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
 
     private readonly IMessageStore _messageStore;
 
-    private readonly IPipelineStoreV2 _pipelineStore;
+    private readonly IPipelineStore _pipelineStore;
 
     private readonly IPipelineProvider _pipelineProvider;
 
@@ -43,7 +42,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         ITelegramBotClient client,
         ICurrentCulture currentCulture,
         IMessageStore messageStore,
-        IPipelineStoreV2 pipelineStore,
+        IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserService userService,
         ICacheService cacheService,
@@ -90,7 +89,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
             }
         };
 
-        await _pipelineStore.Remove(update, cancellationToken);
+        await _pipelineStore.RemoveAll(user.Value.ChatId, cancellationToken);
 
         // TODO: Try to get pipeline directly. Should be able to inject.
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
@@ -109,19 +108,19 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         var messageContext = new MessageContext(
             arguments.ChatId,
             payload,
-            new TelegramUser(arguments.ChatId, string.Empty, string.Empty, string.Empty),
+            new TelegramUser(arguments.ChatId, user.Value.Name, user.Value.Surname, user.Value.UserName),
             _serviceProvider
         );
 
         var result = await pipeline.RunNext(messageContext, cancellationToken);
         var message = await result.SendAsync(_client, cancellationToken);
 
-        await _pipelineStore.Set(update, pipeline, cancellationToken);
+        await _pipelineStore.Set(user.Value.ChatId, pipeline, cancellationToken);
 
         if (message is not null)
         {
-            await _messageStore.SetAsync(new MessageKey(arguments.ChatId), message, cancellationToken);
-            
+            await _messageStore.Set(arguments.ChatId, message, cancellationToken);
+
             await _cacheService.SetForThreeDaysAsync(
                 $"users-{arguments.UserId}-reminders-{arguments.ReminderId}-receive-message",
                 message,

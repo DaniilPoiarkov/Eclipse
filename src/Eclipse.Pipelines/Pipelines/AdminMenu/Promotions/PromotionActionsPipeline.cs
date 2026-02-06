@@ -4,7 +4,7 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Localization.Localizers;
-using Eclipse.Pipelines.Stores.Messages;
+using Eclipse.Pipelines.Stores;
 
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -42,10 +42,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
     private async Task<IResult> ShowPromotion(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         var promotionId = await _cacheService.GetOrCreateAsync(
             $"admin-promotions-promotion-{context.ChatId}",
@@ -97,10 +94,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
         if (context.Value.Equals("go_back"))
         {

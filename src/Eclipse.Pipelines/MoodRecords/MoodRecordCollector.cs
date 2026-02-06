@@ -4,8 +4,7 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Provider;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Stores.Messages;
-using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Stores;
 
 using Microsoft.Extensions.Localization;
 
@@ -16,7 +15,7 @@ namespace Eclipse.Pipelines.MoodRecords;
 
 internal sealed class MoodRecordCollector : IMoodRecordCollector
 {
-    private readonly IPipelineStoreV2 _pipelineStore;
+    private readonly IPipelineStore _pipelineStore;
 
     private readonly IPipelineProvider _pipelineProvider;
 
@@ -33,7 +32,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
     private readonly ICurrentCulture _currentCulture;
 
     public MoodRecordCollector(
-        IPipelineStoreV2 pipelineStore,
+        IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         ITelegramBotClient botClient,
         IServiceProvider serviceProvider,
@@ -78,7 +77,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
             },
         };
 
-        await _pipelineStore.Remove(update, cancellationToken);
+        await _pipelineStore.RemoveAll(user.ChatId, cancellationToken);
 
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
@@ -96,11 +95,11 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
         var stage = await pipeline.RunNext(messageContext, cancellationToken);
         var message = await stage.SendAsync(_botClient, cancellationToken);
 
-        await _pipelineStore.Set(update, pipeline, cancellationToken);
+        await _pipelineStore.Set(user.ChatId, pipeline, cancellationToken);
 
         if (message is not null)
         {
-            await _messageStore.SetAsync(new MessageKey(message.Chat.Id), message, cancellationToken);
+            await _messageStore.Set(message.Chat.Id, message, cancellationToken);
         }
     }
 }
