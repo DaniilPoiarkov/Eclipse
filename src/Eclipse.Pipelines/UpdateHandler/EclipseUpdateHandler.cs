@@ -1,11 +1,12 @@
 ﻿using Eclipse.Core.Context;
+using Eclipse.Core.Pipelines;
+using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Stores.Messages;
-using Eclipse.Pipelines.Stores.Pipelines;
 using Eclipse.Pipelines.Stores.Users;
 
 using Microsoft.Extensions.Localization;
@@ -27,9 +28,11 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUserStore _userStore;
 
-    private readonly IPipelineStoreV2 _pipelineStoreV2;
+    private readonly IPipelineStore _pipelineStore;
 
     private readonly IMessageStore _messageStore;
+
+    private readonly IPipelineProvider _pipelineProvider;
 
     private readonly IUpdateParser _updateParser;
 
@@ -44,15 +47,17 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     public EclipseUpdateHandler(
         ILogger<EclipseUpdateHandler> logger,
-        IPipelineStoreV2 pipelineStoreV2,
+        IPipelineStore pipelineStore,
         IUserStore userStore,
         IUpdateParser updateParser,
+        IPipelineProvider pipelineProvider,
         IMessageStore messageStore,
         IStringLocalizer<EclipseUpdateHandler> localizer)
     {
         _logger = logger;
-        _pipelineStoreV2 = pipelineStoreV2;
+        _pipelineStore = pipelineStore;
         _userStore = userStore;
+        _pipelineProvider = pipelineProvider;
         _updateParser = updateParser;
         _messageStore = messageStore;
         _localizer = localizer;
@@ -97,10 +102,21 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)
     {
-        var pipeline = await _pipelineStoreV2.Get(update, cancellationToken) as EclipsePipelineBase
-            ?? new EclipseNotFoundPipeline();
+        // TODO: Refactor
+        // =================================
+        EclipsePipelineBase? pipeline = null;
 
-        await _pipelineStoreV2.Remove(update, cancellationToken);
+        if (update.TryExtractMessage(out var trigger))
+        {
+            pipeline = await _pipelineStore.Get(context.ChatId, trigger.Id, cancellationToken) as EclipsePipelineBase;
+        }
+
+        pipeline ??= await _pipelineStore.Get(context.ChatId, cancellationToken) as EclipsePipelineBase
+            ?? _pipelineProvider.Get(update) as EclipsePipelineBase
+            ?? new EclipseNotFoundPipeline();
+        // =================================
+
+        await _pipelineStore.Remove(context.ChatId, pipeline, cancellationToken);
 
         pipeline.SetLocalizer(_localizer);
         pipeline.SetUpdate(update);
@@ -110,14 +126,21 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (message is not null)
         {
-            await _messageStore.SetAsync(new MessageKey(context.ChatId), message, cancellationToken);
+            await _messageStore.Set(context.ChatId, message, cancellationToken);
         }
 
-        if (!pipeline.IsFinished)
+        if (pipeline.IsFinished)
         {
-            await _pipelineStoreV2.Set(update, pipeline, cancellationToken);
+            return result;
         }
 
+        if (pipeline.GetType().GetCustomAttribute<MappedToMessageAttribute>() is not null && trigger is not null)
+        {
+            await _pipelineStore.Set(context.ChatId, trigger.Id, pipeline, cancellationToken);
+            return result;
+        }
+
+        await _pipelineStore.Set(context.ChatId, pipeline, cancellationToken);
         return result;
     }
 }

@@ -4,6 +4,7 @@ using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Stores;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Feedbacks;
 using Eclipse.Pipelines.Health;
@@ -12,8 +13,7 @@ using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Reminders;
-using Eclipse.Pipelines.Stores.Messages;
-using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Stores.InMemory;
 using Eclipse.Pipelines.Stores.Users;
 using Eclipse.Pipelines.UpdateHandler;
 
@@ -48,11 +48,13 @@ public static class EclipsePipelinesModule
         services
             .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
             .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
-            .AddTransient<IMessageStore, MessageStore>()
-            .AddTransient<IPipelineStoreV2, PipelineStoreV2>()
-            .AddTransient<IUserStore, UserStore>()
             .AddTransient<ICultureTracker, CultureTracker>()
             .AddTransient<IReminderSender, ReminderSender>();
+
+        services
+            .AddTransient<IUserStore, UserStore>()
+            .AddTransient<IMessageStore, InMemoryMessageStore>()
+            .AddTransient<IPipelineStore, InMemoryPipelineStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
