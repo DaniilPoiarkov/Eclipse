@@ -1,6 +1,7 @@
 ﻿using Eclipse.Application.Contracts.MoodRecords;
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
+using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
@@ -11,6 +12,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
 
+[MappedToMessage]
 [Route("", "/href_mood_records_add")]
 public sealed class AddMoodRecordPipeline : EclipsePipelineBase
 {

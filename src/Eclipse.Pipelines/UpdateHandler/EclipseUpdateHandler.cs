@@ -17,6 +17,7 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.UpdateHandler;
 
@@ -104,43 +105,50 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
     {
         // TODO: Refactor
         // =================================
-        EclipsePipelineBase? pipeline = null;
+        PipelineBase? pipeline = null;
 
-        if (update.TryExtractMessage(out var trigger))
+        if (update is { CallbackQuery.Message: { } })
         {
-            pipeline = await _pipelineStore.Get(context.ChatId, trigger.Id, cancellationToken) as EclipsePipelineBase;
+            pipeline = await _pipelineStore.Get(context.ChatId, update.CallbackQuery.Message.Id, cancellationToken);
         }
 
-        pipeline ??= await _pipelineStore.Get(context.ChatId, cancellationToken) as EclipsePipelineBase
-            ?? _pipelineProvider.Get(update) as EclipsePipelineBase
+        pipeline ??= await _pipelineStore.Get(context.ChatId, cancellationToken)
+            ?? _pipelineProvider.Get(update)
             ?? new EclipseNotFoundPipeline();
         // =================================
 
         await _pipelineStore.Remove(context.ChatId, pipeline, cancellationToken);
 
-        pipeline.SetLocalizer(_localizer);
         pipeline.SetUpdate(update);
+
+        // TODO: Provide ability for pre-configuring. E.g. IPipelinePreConfigurator
+        if (pipeline is EclipsePipelineBase eclipsePipeline)
+        {
+            eclipsePipeline.SetLocalizer(_localizer);
+        }
 
         var result = await pipeline.RunNext(context, cancellationToken);
         var message = await result.SendAsync(botClient, cancellationToken);
 
         if (message is not null)
         {
+            // TODO: Need to clean messages that are not relevant anymore.
+            //       E.g. if user is in the middle of pipeline and we show him menu, then we need to delete previous menu message.
             await _messageStore.Set(context.ChatId, message, cancellationToken);
         }
 
         if (pipeline.IsFinished)
         {
+            // TODO: Check, maybe this is a place for cleanup for messages.
             return result;
         }
 
-        if (pipeline.GetType().GetCustomAttribute<MappedToMessageAttribute>() is not null && trigger is not null)
-        {
-            await _pipelineStore.Set(context.ChatId, trigger.Id, pipeline, cancellationToken);
-            return result;
-        }
+        var mappedToMessage = pipeline.GetType().GetCustomAttribute<MappedToMessageAttribute>() is not null;
 
-        await _pipelineStore.Set(context.ChatId, pipeline, cancellationToken);
+        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ } && mappedToMessage)
+            ? _pipelineStore.Set(context.ChatId, message.Id, pipeline, cancellationToken)
+            : _pipelineStore.Set(context.ChatId, pipeline, cancellationToken));
+
         return result;
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Eclipse.Core.Stores;
 
+using System.Collections.Concurrent;
+
 using Telegram.Bot.Types;
 
 namespace Eclipse.Pipelines.Stores.InMemory;
 
 internal sealed class InMemoryMessageStore : IMessageStore
 {
-    private static readonly Dictionary<long, List<Message>> _cache = [];
+    private static readonly ConcurrentDictionary<long, List<Message>> _cache = [];
 
     public Task<Message?> Get(long chatId, int messageId, CancellationToken cancellationToken = default)
     {
@@ -32,7 +34,7 @@ internal sealed class InMemoryMessageStore : IMessageStore
     {
         if (_cache.TryGetValue(chatId, out var messages))
         {
-            return Task.FromResult(messages.LastOrDefault(m => m.From is { IsBot: true }));
+            return Task.FromResult(messages.LastOrDefault());
         }
 
         return Task.FromResult<Message?>(null);
@@ -50,7 +52,7 @@ internal sealed class InMemoryMessageStore : IMessageStore
 
     public Task RemoveAsync(long chatId, CancellationToken cancellationToken = default)
     {
-        _cache.Remove(chatId);
+        _cache.Remove(chatId, out _);
         return Task.CompletedTask;
     }
 

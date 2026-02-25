@@ -7,6 +7,7 @@ using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Pipelines;
+using Eclipse.Pipelines.Pipelines.Common.Reminders;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -115,18 +116,22 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         var result = await pipeline.RunNext(messageContext, cancellationToken);
         var message = await result.SendAsync(_client, cancellationToken);
 
-        await _pipelineStore.Set(user.Value.ChatId, pipeline, cancellationToken);
-
-        if (message is not null)
+        if (message is null)
         {
-            await _messageStore.Set(arguments.ChatId, message, cancellationToken);
-
-            await _cacheService.SetForThreeDaysAsync(
-                $"users-{arguments.UserId}-reminders-{arguments.ReminderId}-receive-message",
-                message,
-                arguments.ChatId,
-                cancellationToken
-            );
+            _logger.LogWarning("{Pipeline} pipeline was initiated successfully, but sent message is null.", nameof(ReceiveReminderPipeline));
+            await _pipelineStore.Set(user.Value.ChatId, pipeline, cancellationToken);
+            return;
         }
+
+        await _pipelineStore.Set(user.Value.ChatId, message.Id, pipeline, cancellationToken);
+        await _messageStore.Set(arguments.ChatId, message, cancellationToken);
+
+        // Needed to remove menu for action step.
+        await _cacheService.SetForThreeDaysAsync(
+            $"users-{arguments.UserId}-reminders-{arguments.ReminderId}-receive-message",
+            message,
+            arguments.ChatId,
+            cancellationToken
+        );
     }
 }

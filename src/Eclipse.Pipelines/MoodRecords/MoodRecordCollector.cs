@@ -7,6 +7,7 @@ using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
 
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -31,6 +32,8 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
 
     private readonly ICurrentCulture _currentCulture;
 
+    private readonly ILogger<MoodRecordCollector> _logger;
+
     public MoodRecordCollector(
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
@@ -39,7 +42,8 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
         IStringLocalizer<MoodRecordCollector> localizer,
         IMessageStore messageStore,
         IUserService userService,
-        ICurrentCulture currentCulture)
+        ICurrentCulture currentCulture,
+        ILogger<MoodRecordCollector> logger)
     {
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
@@ -49,6 +53,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
         _messageStore = messageStore;
         _userService = userService;
         _currentCulture = currentCulture;
+        _logger = logger;
     }
 
     public async Task CollectAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -95,11 +100,14 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
         var stage = await pipeline.RunNext(messageContext, cancellationToken);
         var message = await stage.SendAsync(_botClient, cancellationToken);
 
-        await _pipelineStore.Set(user.ChatId, pipeline, cancellationToken);
-
-        if (message is not null)
+        if (message is null)
         {
-            await _messageStore.Set(message.Chat.Id, message, cancellationToken);
+            _logger.LogWarning("{Feature}. Sent message is null for user {UserId}", "Mood record collection", user.Id);
+            await _pipelineStore.Set(user.ChatId, pipeline, cancellationToken);
+            return;
         }
+
+        await _messageStore.Set(message.Chat.Id, message, cancellationToken);
+        await _pipelineStore.Set(user.ChatId, message.Id, pipeline, cancellationToken);
     }
 }

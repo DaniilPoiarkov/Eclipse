@@ -2,6 +2,7 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
+using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
@@ -16,7 +17,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common.Reminders;
 
-// TODO: idea to either use single message entity for processing reminder or understand the flow based on reminder itself when there're 2+ reminders at the same time.
+[MappedToMessage]
 [Route("", "/href_reminders_receive")]
 internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 {
@@ -103,7 +104,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
         var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
 
-        return RemoveInlineMenuAndSend(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}", message);
+        return RemoveInlineMenuAndSend(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}", null); // TODO: Check, maybe provide message.
     }
 
     private async Task<IResult> FinishTodoItem(MessageContext context, CancellationToken cancellationToken)

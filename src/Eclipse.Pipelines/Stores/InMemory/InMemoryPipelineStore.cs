@@ -1,11 +1,13 @@
 ﻿using Eclipse.Core.Pipelines;
 using Eclipse.Core.Stores;
 
+using System.Collections.Concurrent;
+
 namespace Eclipse.Pipelines.Stores.InMemory;
 
 internal sealed class InMemoryPipelineStore : IPipelineStore
 {
-    private static readonly Dictionary<long, List<PipelineInfo>> _cahce = [];
+    private static readonly ConcurrentDictionary<long, List<PipelineInfo>> _cahce = [];
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -16,7 +18,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
 
     public Task RemoveAll(long chatId, CancellationToken cancellationToken = default)
     {
-        _cahce.Remove(chatId);
+        _cahce.Remove(chatId, out _);
         return Task.CompletedTask;
     }
 
@@ -28,12 +30,8 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             _cahce[chatId] = pipelines;
         }
 
-        var type = pipeline.GetType();
-
-        if (!pipelines.Exists(p => p.PipelineType == type && p.StagesLeft == pipeline.StagesLeft))
-        {
-            pipelines.Add(new PipelineInfo(null, pipeline.StagesLeft, type));
-        }
+        pipelines.RemoveAll(p => !p.MessageId.HasValue);
+        pipelines.Add(new PipelineInfo(null, pipeline.StagesLeft, pipeline.GetType()));
 
         return Task.CompletedTask;
     }
@@ -59,21 +57,12 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             _cahce[chatId] = pipelines;
         }
 
-        var type = value.GetType();
-
-        var current = pipelines.Find(p => p.PipelineType == type);
-
-        if (current is not null)
-        {
-            pipelines.Remove(current);
-        }
-
-        pipelines.Add(new PipelineInfo(messageId, value.StagesLeft, type));
+        pipelines.Add(new PipelineInfo(messageId, value.StagesLeft, value.GetType()));
 
         return Task.CompletedTask;
     }
 
-    public Task<PipelineBase?> Get(long chatId, int messageId, CancellationToken token = default)
+    public Task<PipelineBase?> Get(long chatId, int messageId, CancellationToken cancellationToken = default)
     {
         if (!_cahce.TryGetValue(chatId, out var pipelines))
         {
@@ -107,7 +96,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             return Task.FromResult<PipelineBase?>(null);
         }
 
-        var pipelineInfo = pipelines.SingleOrDefault();
+        var pipelineInfo = pipelines.SingleOrDefault(p => !p.MessageId.HasValue);
 
         if (pipelineInfo is null)
         {
