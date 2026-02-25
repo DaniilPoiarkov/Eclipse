@@ -30,6 +30,8 @@ services:
       - 'Google__Credentials=<json file>'
       - Sheets__SheetId=<your sheet id>
       - Settings__IsGoogleEnabled=false
+      - AzureAd__TenantId=<your-tenant-id>
+      - AzureAd__ClientId=<your-client-id>
 
   ngrok:
     environment:
