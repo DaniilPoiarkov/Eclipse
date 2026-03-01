@@ -105,6 +105,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
     {
         // TODO: Refactor
         // =================================
+        // For potential input there can be only one active pipeline without message id even if previous message had an inline menu.
+        // E.g. Receive reminder => reschedule. There is an inline menu but also ability to enter value manually.
+        // For potential improvement we can update message text instead of sending new messages.
         PipelineBase? pipeline = null;
 
         if (update is { CallbackQuery.Message: { } })
@@ -143,9 +146,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return result;
         }
 
-        var mappedToMessage = pipeline.GetType().GetCustomAttribute<MappedToMessageAttribute>() is not null;
-
-        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ } && mappedToMessage)
+        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ } )
             ? _pipelineStore.Set(context.ChatId, message.Id, pipeline, cancellationToken)
             : _pipelineStore.Set(context.ChatId, pipeline, cancellationToken));
 

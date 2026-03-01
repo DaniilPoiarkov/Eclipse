@@ -30,8 +30,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             _cahce[chatId] = pipelines;
         }
 
-        pipelines.RemoveAll(p => !p.MessageId.HasValue);
-        pipelines.Add(new PipelineInfo(null, pipeline.StagesLeft, pipeline.GetType()));
+        pipelines.Add(new PipelineInfo(null, pipeline.StagesLeft, pipeline.GetType(), DateTime.UtcNow));
 
         return Task.CompletedTask;
     }
@@ -57,7 +56,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             _cahce[chatId] = pipelines;
         }
 
-        pipelines.Add(new PipelineInfo(messageId, value.StagesLeft, value.GetType()));
+        pipelines.Add(new PipelineInfo(messageId, value.StagesLeft, value.GetType(), DateTime.UtcNow));
 
         return Task.CompletedTask;
     }
@@ -96,7 +95,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             return Task.FromResult<PipelineBase?>(null);
         }
 
-        var pipelineInfo = pipelines.SingleOrDefault(p => !p.MessageId.HasValue);
+        var pipelineInfo = pipelines.MaxBy(p => p.CreatedAt);
 
         if (pipelineInfo is null)
         {
@@ -116,5 +115,5 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
         return Task.FromResult<PipelineBase?>(pipeline);
     }
 
-    private record PipelineInfo(int? MessageId, int StagesLeft, Type PipelineType);
+    private record PipelineInfo(int? MessageId, int StagesLeft, Type PipelineType, DateTime CreatedAt);
 }
