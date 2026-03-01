@@ -102,9 +102,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
             ]
         ];
 
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
-
-        return RemoveInlineMenuAndSend(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}", null); // TODO: Check, maybe provide message.
+        return Menu(menu, $"{Localizer["Jobs:SendReminders:RelatedItem"]}\n\r\n\r{payload.Text}");
     }
 
     private async Task<IResult> FinishTodoItem(MessageContext context, CancellationToken cancellationToken)
