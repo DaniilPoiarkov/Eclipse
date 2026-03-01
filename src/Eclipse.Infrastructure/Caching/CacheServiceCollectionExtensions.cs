@@ -3,10 +3,13 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
 using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Backplane;
+using ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis;
 using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
 
 namespace Eclipse.Infrastructure.Caching;
@@ -30,9 +33,17 @@ public static class CacheServiceCollectionExtensions
                 ?? throw new InvalidOperationException("Redis connection string is not provided");
         });
 
+        services.Configure<RedisBackplaneOptions>(options =>
+            options.Configuration = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Redis connection string is not provided")
+            );
+
+        services.AddSingleton<IFusionCacheBackplane, RedisBackplane>();
+
         services.AddFusionCache()
             .WithSerializer(serializer)
             .WithDistributedCache(sp => sp.GetRequiredService<IDistributedCache>())
+            .WithBackplane(sp => sp.GetRequiredService<IFusionCacheBackplane>())
             .AsHybridCache();
 
         services.AddSingleton<ICacheService, CacheService>();
