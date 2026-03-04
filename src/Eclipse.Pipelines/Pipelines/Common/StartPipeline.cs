@@ -71,7 +71,7 @@ public sealed class StartPipeline : EclipsePipelineBase
 
     private async Task<IResult> ConfigureGmt(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(StartPipeline), cancellationToken);
 
         if (!SupportedLanguage(context))
         {

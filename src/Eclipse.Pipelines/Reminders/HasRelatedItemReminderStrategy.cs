@@ -122,7 +122,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         }
 
         await _pipelineStore.Set(user.Value.ChatId, message.Id, pipeline, cancellationToken);
-        await _messageStore.Set(arguments.ChatId, message, cancellationToken);
+        await _messageStore.Set(arguments.ChatId, typeof(ReceiveReminderPipeline), message, cancellationToken);
 
         // Needed to remove menu for action step.
         await _cacheService.SetForThreeDaysAsync(

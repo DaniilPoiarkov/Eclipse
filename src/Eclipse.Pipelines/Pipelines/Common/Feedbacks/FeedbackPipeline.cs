@@ -56,14 +56,14 @@ internal sealed class FeedbackPipeline : EclipsePipelineBase
 
     private async Task<IResult> AskToRateExperience(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(FeedbackPipeline), cancellationToken);
 
         return EditedOrDefaultResult(message, Menu(_buttons, Localizer["Pipelines:Feedback:Rate"]));
     }
 
     private async Task<IResult> AskForComment(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(FeedbackPipeline), cancellationToken);
 
         if (context.Value.EqualsCurrentCultureIgnoreCase("/cancel"))
         {

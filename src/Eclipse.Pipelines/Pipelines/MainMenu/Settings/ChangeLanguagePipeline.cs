@@ -65,7 +65,7 @@ internal sealed class ChangeLanguagePipeline : SettingsPipelineBase
 
     private async Task<IResult> SetLanguage(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(ChangeLanguagePipeline), cancellationToken);
 
         if (!SupportedLanguage(context))
         {

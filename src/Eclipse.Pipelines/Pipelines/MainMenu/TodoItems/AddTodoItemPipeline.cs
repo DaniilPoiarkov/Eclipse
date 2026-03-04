@@ -114,7 +114,7 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> AskToScheduleReminder(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(AddTodoItemPipeline), cancellationToken);
 
         if (!context.Value.Equals("true"))
         {

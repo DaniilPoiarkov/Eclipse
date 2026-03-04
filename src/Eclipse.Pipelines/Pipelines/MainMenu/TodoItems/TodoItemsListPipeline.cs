@@ -68,7 +68,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(TodoItemsListPipeline), cancellationToken);
 
         if (context.Value.Equals("go_back"))
         {
