@@ -82,8 +82,6 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
             },
         };
 
-        await _pipelineStore.RemoveAll(user.ChatId, cancellationToken);
-
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
         using var _ = _currentCulture.UsingCulture(user.Culture);

@@ -30,14 +30,16 @@ internal sealed class InMemoryMessageStore : IMessageStore
         return Task.FromResult<IEnumerable<Message>>([]);
     }
 
+    // TODO: Rework, this approach not sutable. As an option - specify pipeline type.
     public Task<Message?> GetLatestBotMessage(long chatId, CancellationToken cancellationToken = default)
     {
-        if (_cache.TryGetValue(chatId, out var messages))
-        {
-            return Task.FromResult(messages.LastOrDefault());
-        }
-
         return Task.FromResult<Message?>(null);
+        //if (_cache.TryGetValue(chatId, out var messages))
+        //{
+        //    return Task.FromResult(messages.LastOrDefault());
+        //}
+
+        //return Task.FromResult<Message?>(null);
     }
 
     public Task Remove(long chatId, int messageId, CancellationToken cancellationToken = default)
