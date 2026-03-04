@@ -44,7 +44,7 @@ public abstract class PipelineStoreTests
 
         await _sut.Set(2, 1, pipeline);
 
-        var result = await _sut.Get(1, 1);
+        var result = await _sut.Get(2, 1);
 
         result.Should().NotBeNull();
         result!.StagesLeft.Should().Be(stagesLeft);

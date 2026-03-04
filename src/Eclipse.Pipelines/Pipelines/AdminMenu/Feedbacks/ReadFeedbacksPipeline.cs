@@ -72,7 +72,7 @@ internal sealed class ReadFeedbacksPipeline : AdminPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(ReadFeedbacksPipeline), cancellationToken);
 
         if (context.Value is not ("◀️" or "▶️"))
         {

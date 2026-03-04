@@ -55,7 +55,7 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
             ]
         };
 
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(AddMoodRecordPipeline), cancellationToken);
 
         return EditedOrDefaultResult(message, Menu(buttons, Localizer["Pipelines:MoodRecords:Add:AskMood"]));
     }
@@ -77,7 +77,7 @@ public sealed class AddMoodRecordPipeline : EclipsePipelineBase
             _ => new MoodAnswer(null, "Pipelines:MoodRecords:Add:NotDefined")
         };
 
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(AddMoodRecordPipeline), cancellationToken);
 
         if (mood.State is null)
         {

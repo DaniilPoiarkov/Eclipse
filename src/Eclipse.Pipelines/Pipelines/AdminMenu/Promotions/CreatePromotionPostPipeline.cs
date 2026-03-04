@@ -4,7 +4,6 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
-using Eclipse.Domain.Promotions;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
 
@@ -92,7 +91,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 
     private async Task<IResult> SetPromotionTitle(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(CreatePromotionPostPipeline), cancellationToken);
 
         if (!ContinuePromotionProcessing(context))
         {

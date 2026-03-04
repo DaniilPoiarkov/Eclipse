@@ -181,7 +181,7 @@ internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 
     private async Task<IResult> RescheduleReminder(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(ReceiveReminderPipeline), cancellationToken);
 
         var payload = await _cacheService.GetOrCreateAsync(
             $"pipelines-receive-reminder-reschedule-{context.ChatId}",

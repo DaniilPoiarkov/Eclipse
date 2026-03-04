@@ -5,6 +5,7 @@ using Eclipse.Core.Provider;
 using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Pipelines;
+using Eclipse.Pipelines.Pipelines.Daily.MoodRecords;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -105,7 +106,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
             return;
         }
 
-        await _messageStore.Set(message.Chat.Id, message, cancellationToken);
+        await _messageStore.Set(message.Chat.Id, typeof(AddMoodRecordPipeline), message, cancellationToken);
         await _pipelineStore.Set(user.ChatId, message.Id, pipeline, cancellationToken);
     }
 }

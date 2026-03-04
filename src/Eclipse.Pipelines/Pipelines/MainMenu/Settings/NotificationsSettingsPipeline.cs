@@ -45,7 +45,7 @@ internal sealed class NotificationsSettingsPipeline : SettingsPipelineBase
 
     private async Task<IResult> EnableNotifications(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(NotificationsSettingsPipeline), cancellationToken);
 
         var enable = context.Value.Equals("Enable");
 

@@ -90,7 +90,7 @@ public class AddMoodRecordPipelineTests : PipelineTestFixture<AddMoodRecordPipel
             ReplyMarkup = new InlineKeyboardMarkup(new InlineKeyboardButton("test"))
         };
 
-        messageStore.GetLatestBotMessage(default!).ReturnsForAnyArgs(message);
+        messageStore.GetLatestBotMessage(Arg.Any<long>(), Arg.Any<Type>()).ReturnsForAnyArgs(message);
         var context = GetContext("/href_mood_records_add");
 
         // First message act

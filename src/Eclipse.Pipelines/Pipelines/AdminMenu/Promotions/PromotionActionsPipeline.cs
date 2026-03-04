@@ -42,7 +42,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
     private async Task<IResult> ShowPromotion(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(ReadPromotionsPipeline), cancellationToken);
 
         var promotionId = await _cacheService.GetOrCreateAsync(
             $"admin-promotions-promotion-{context.ChatId}",
@@ -94,7 +94,7 @@ internal sealed class PromotionActionsPipeline : AdminPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(PromotionActionsPipeline), cancellationToken);
 
         if (context.Value.Equals("go_back"))
         {

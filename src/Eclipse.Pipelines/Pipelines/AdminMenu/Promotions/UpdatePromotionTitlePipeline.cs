@@ -36,7 +36,7 @@ internal sealed class UpdatePromotionTitlePipeline : AdminPipelineBase
 
     private async Task<IResult> RequestNewTitle(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetLatestBotMessage(context.ChatId, cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(PromotionActionsPipeline), cancellationToken);
 
         return MenuAndClearPrevious(new ReplyKeyboardRemove(), message, Localizer["Pipelines:Admin:Promotions:UpdateTitle:Request"]);
     }
