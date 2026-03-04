@@ -90,8 +90,6 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
             }
         };
 
-        await _pipelineStore.RemoveAll(user.Value.ChatId, cancellationToken);
-
         // TODO: Try to get pipeline directly. Should be able to inject.
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
