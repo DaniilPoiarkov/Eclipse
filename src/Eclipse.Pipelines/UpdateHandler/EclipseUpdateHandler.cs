@@ -7,7 +7,7 @@ using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Stores.Users;
+using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;

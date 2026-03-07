@@ -83,6 +83,7 @@ internal sealed class MoodRecordCollector : IMoodRecordCollector
             },
         };
 
+        // TODO: Potentially inject pipeline itself instead of provider and remove this cast
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
         using var _ = _currentCulture.UsingCulture(user.Culture);

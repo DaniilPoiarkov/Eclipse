@@ -3,7 +3,7 @@ using Eclipse.Core.Stores;
 
 using System.Collections.Concurrent;
 
-namespace Eclipse.Pipelines.Stores.InMemory;
+namespace Eclipse.Core.Stores.InMemory;
 
 internal sealed class InMemoryPipelineStore : IPipelineStore
 {
