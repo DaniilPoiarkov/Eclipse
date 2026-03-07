@@ -6,9 +6,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Eclipse.Core.Builder;
 
+/// <summary>
+/// Builder for Core module.
+/// </summary>
 public sealed class CoreBuilder
 {
     private readonly IServiceCollection _services;
+
+    internal CoreOptions Options { get; set; } = new();
 
     public CoreBuilder(IServiceCollection services)
     {
@@ -70,6 +75,17 @@ public sealed class CoreBuilder
         where TMessageStore : class, IMessageStore
     {
         _services.AddScoped<IMessageStore, TMessageStore>();
+        return this;
+    }
+
+    /// <summary>
+    /// Configures the options.
+    /// </summary>
+    /// <param name="configure">The configure.</param>
+    /// <returns></returns>
+    public CoreBuilder ConfigureOptions(Action<CoreOptions> configure)
+    {
+        configure(Options);
         return this;
     }
 }

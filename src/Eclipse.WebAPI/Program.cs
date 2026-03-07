@@ -21,9 +21,10 @@ var configuration = builder.Configuration;
 builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
-    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>()
+    .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
         .UseInMemoryStores()
+        .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))
     )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()

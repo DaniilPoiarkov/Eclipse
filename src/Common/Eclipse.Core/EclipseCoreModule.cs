@@ -24,6 +24,10 @@ public static class EclipseCoreModule
 
         builder?.Invoke(coreBuilder);
 
+        ArgumentNullException.ThrowIfNull(coreBuilder.Options, nameof(coreBuilder.Options));
+
+        services.ConfigureOptions(coreBuilder.Options);
+
         services
             .AddScoped<IPipelineProvider, PipelineProvider>()
             .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
