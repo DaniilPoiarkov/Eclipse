@@ -1,8 +1,9 @@
 ﻿using Eclipse.Core.Stores;
+using Eclipse.Core.Stores.InMemory;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Eclipse.Pipelines.Tests.Stores;
+namespace Eclipse.Core.Tests.Stores;
 
 public sealed class InMemoryPipelineStoreTests : PipelineStoreTests
 {

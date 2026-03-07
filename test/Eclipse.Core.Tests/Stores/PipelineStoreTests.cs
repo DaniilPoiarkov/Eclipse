@@ -5,7 +5,7 @@ using FluentAssertions;
 
 using Xunit;
 
-namespace Eclipse.Pipelines.Tests.Stores;
+namespace Eclipse.Core.Tests.Stores;
 
 public abstract class PipelineStoreTests
 {

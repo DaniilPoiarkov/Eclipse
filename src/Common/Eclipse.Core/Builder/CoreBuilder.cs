@@ -13,8 +13,6 @@ public sealed class CoreBuilder
 {
     private readonly IServiceCollection _services;
 
-    internal CoreOptions Options { get; set; } = new();
-
     public CoreBuilder(IServiceCollection services)
     {
         _services = services;
@@ -85,7 +83,7 @@ public sealed class CoreBuilder
     /// <returns></returns>
     public CoreBuilder ConfigureOptions(Action<CoreOptions> configure)
     {
-        configure(Options);
+        _services.Configure(configure);
         return this;
     }
 }

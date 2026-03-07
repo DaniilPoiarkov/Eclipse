@@ -1,6 +1,7 @@
 ﻿using Eclipse.Core.Builder;
 using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
+using Eclipse.Core.Stores.InMemory;
 using Eclipse.Core.Tests.Decorations;
 using Eclipse.Core.Tests.Pipelines;
 
@@ -31,7 +32,7 @@ public class PipelineBaseTests
     public PipelineBaseTests()
     {
         _services = new ServiceCollection()
-            .AddCoreModule()
+            .AddCoreModule(c => c.UseInMemoryStores())
             .AddTransient<PipelineBase, Test1Pipeline>()
             .AddTransient<PipelineBase, Test2Pipeline>();
     }
