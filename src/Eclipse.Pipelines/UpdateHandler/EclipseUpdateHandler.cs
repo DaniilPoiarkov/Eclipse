@@ -1,4 +1,5 @@
-﻿using Eclipse.Core.Context;
+﻿using Eclipse.Core.Builder;
+using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
@@ -11,6 +12,7 @@ using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using System.Reflection;
 
@@ -39,6 +41,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
 
+    private readonly IOptions<CoreOptions> _options;
+
     private static readonly UpdateType[] _allowedUpdateTypes =
     [
         UpdateType.Message,
@@ -53,7 +57,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         IUpdateParser updateParser,
         IPipelineProvider pipelineProvider,
         IMessageStore messageStore,
-        IStringLocalizer<EclipseUpdateHandler> localizer)
+        IStringLocalizer<EclipseUpdateHandler> localizer,
+        IOptions<CoreOptions> options)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
@@ -62,6 +67,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         _updateParser = updateParser;
         _messageStore = messageStore;
         _localizer = localizer;
+        _options = options;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -135,14 +141,16 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (message is not null)
         {
-            // TODO: Need to clean messages that are not relevant anymore.
-            //       E.g. if user is in the middle of pipeline and we show him menu, then we need to delete previous menu message.
             await _messageStore.Set(context.ChatId, pipeline.GetType(), message, cancellationToken);
         }
 
+        await _messageStore.RemoveOlderThan(context.ChatId,
+            DateTime.UtcNow.AddDays(-_options.Value.MessagePersistanceInDays),
+            cancellationToken
+        );
+
         if (pipeline.IsFinished)
         {
-            // TODO: Check, maybe this is a place for cleanup for messages.
             return result;
         }
 

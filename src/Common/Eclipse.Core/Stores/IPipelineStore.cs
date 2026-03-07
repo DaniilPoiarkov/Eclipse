@@ -12,7 +12,5 @@ public interface IPipelineStore
 
     Task<PipelineBase?> Get(long chatId, CancellationToken cancellationToken = default);
 
-    Task RemoveAll(long chatId, CancellationToken cancellationToken = default);
-
     Task Remove(long chatId, PipelineBase pipeline, CancellationToken cancellationToken = default);
 }

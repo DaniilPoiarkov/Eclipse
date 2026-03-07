@@ -4,13 +4,13 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Provider.Handlers;
 using Eclipse.Core.Stores;
-using Eclipse.Core.Stores.InMemory;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 using Eclipse.Core.UpdateParsing.Strategies;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Eclipse.Core;
 
@@ -19,6 +19,8 @@ namespace Eclipse.Core;
 /// </summary>
 public static class EclipseCoreModule
 {
+    private const int DefaultMessagesPersistanceInDays = 3;
+
     public static IServiceCollection AddCoreModule(this IServiceCollection services, Action<CoreBuilder>? builder = null)
     {
         var coreBuilder = new CoreBuilder(services);
@@ -42,8 +44,18 @@ public static class EclipseCoreModule
             .AddScoped<IRouteHandler, MyChatMemberHandler>()
             .AddScoped<IRouteHandler, UnknownHandler>();
 
-        AddIfNotRegistered<IPipelineStore, InMemoryPipelineStore>(services);
-        AddIfNotRegistered<IMessageStore, InMemoryMessageStore>(services);
+        if (!AreStoresRegistered(services))
+        {
+            throw new ArgumentException("Stores are not configured. Call CoreBuilder.UseInMemoryStores(); if no other provider is registered.", nameof(services));
+        }
+
+        if (!services.Any(s => s.ServiceType == typeof(IOptions<CoreOptions>)))
+        {
+            services.Configure<CoreOptions>(options =>
+            {
+                options.MessagePersistanceInDays = DefaultMessagesPersistanceInDays;
+            });
+        }
 
         services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
         services.TryAddSingleton<INotFoundPipeline, NotFoundPipeline>();
@@ -52,13 +64,9 @@ public static class EclipseCoreModule
         return services;
     }
 
-    private static void AddIfNotRegistered<TService, TImplementation>(this IServiceCollection services)
-        where TService : class
-        where TImplementation : class, TService
+    private static bool AreStoresRegistered(this IServiceCollection services)
     {
-        if (!services.Any(s => s.ServiceType == typeof(TService)))
-        {
-            services.AddTransient<TService, TImplementation>();
-        }
+        return services.Any(s => s.ServiceType == typeof(IPipelineStore))
+            && services.Any(s => s.ServiceType == typeof(IMessageStore));
     }
 }
