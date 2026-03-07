@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
-using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
@@ -17,7 +16,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common.Reminders;
 
-[MappedToMessage]
 [Route("", "/href_reminders_receive")]
 internal sealed class ReceiveReminderPipeline : EclipsePipelineBase
 {

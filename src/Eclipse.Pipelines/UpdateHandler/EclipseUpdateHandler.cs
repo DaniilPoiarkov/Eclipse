@@ -146,7 +146,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return result;
         }
 
-        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ } )
+        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ })
             ? _pipelineStore.Set(context.ChatId, message.Id, pipeline, cancellationToken)
             : _pipelineStore.Set(context.ChatId, pipeline, cancellationToken));
 

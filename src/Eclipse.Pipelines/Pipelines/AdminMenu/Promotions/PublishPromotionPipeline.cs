@@ -4,7 +4,6 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
-using Eclipse.Domain.Promotions;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
