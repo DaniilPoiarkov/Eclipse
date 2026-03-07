@@ -1,5 +1,4 @@
 ﻿using Eclipse.Core.Stores;
-using Eclipse.Pipelines.Stores.InMemory;
 
 using Microsoft.Extensions.DependencyInjection;
 

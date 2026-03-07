@@ -1,5 +1,4 @@
 ﻿using Eclipse.Core.Pipelines;
-using Eclipse.Core.Stores;
 
 using System.Collections.Concurrent;
 
@@ -14,12 +13,6 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
     public InMemoryPipelineStore(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-    }
-
-    public Task RemoveAll(long chatId, CancellationToken cancellationToken = default)
-    {
-        _cahce.Remove(chatId, out _);
-        return Task.CompletedTask;
     }
 
     public Task Set(long chatId, PipelineBase pipeline, CancellationToken cancellationToken = default)

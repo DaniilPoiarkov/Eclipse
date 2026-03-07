@@ -4,7 +4,6 @@ using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Background;
 using Eclipse.Core.Pipelines;
-using Eclipse.Core.Stores;
 using Eclipse.Pipelines.Culture;
 using Eclipse.Pipelines.Feedbacks;
 using Eclipse.Pipelines.Health;
@@ -13,7 +12,6 @@ using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Reminders;
-using Eclipse.Pipelines.Stores.InMemory;
 using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.Pipelines.Users;
 
@@ -49,12 +47,8 @@ public static class EclipsePipelinesModule
             .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
             .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<ICultureTracker, CultureTracker>()
-            .AddTransient<IReminderSender, ReminderSender>();
-
-        services
-            .AddTransient<IUserStore, UserStore>()
-            .AddTransient<IMessageStore, InMemoryMessageStore>()
-            .AddTransient<IPipelineStore, InMemoryPipelineStore>();
+            .AddTransient<IReminderSender, ReminderSender>()
+            .AddTransient<IUserStore, UserStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
             .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)

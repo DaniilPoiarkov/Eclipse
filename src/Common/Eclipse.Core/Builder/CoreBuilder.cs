@@ -1,4 +1,5 @@
 ﻿using Eclipse.Core.Keywords;
+using Eclipse.Core.Stores;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -41,6 +42,34 @@ public sealed class CoreBuilder
         where TKeywordMapper : class, IKeywordMapper
     {
         _services.TryAdd(new ServiceDescriptor(typeof(IKeywordMapper), typeof(TKeywordMapper), lifetime));
+        return this;
+    }
+
+    /// <summary>
+    /// Registeres implementation of <a href="IPipelineStore"/> to store pipelines.
+    /// By default, no implementation is registered, so you need to register it yourself.
+    /// If no implementation is registered, the pipeline will be stored in memory, which is not recommended for production use.
+    /// </summary>
+    /// <typeparam name="TPipelineStore">The type of the pipeline store.</typeparam>
+    /// <returns></returns>
+    public CoreBuilder UsePipelineStore<TPipelineStore>()
+        where TPipelineStore : class, IPipelineStore
+    {
+        _services.AddScoped<IPipelineStore, TPipelineStore>();
+        return this;
+    }
+
+    /// <summary>
+    /// Registeres implementation of <a href="IMessageStore"/> to store messages.
+    /// By default, no implementation is registered, so you need to register it yourself.
+    /// If no implementation is registered, the pipeline will be stored in memory, which is not recommended for production use.
+    /// </summary>
+    /// <typeparam name="TPipelineStore">The type of the pipeline store.</typeparam>
+    /// <returns></returns>
+    public CoreBuilder UseMessageStore<TMessageStore>()
+        where TMessageStore : class, IMessageStore
+    {
+        _services.AddScoped<IMessageStore, TMessageStore>();
         return this;
     }
 }

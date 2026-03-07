@@ -1,5 +1,6 @@
 using Eclipse.Application;
 using Eclipse.Core;
+using Eclipse.Core.Stores.InMemory;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
 using Eclipse.Infrastructure;
@@ -22,6 +23,7 @@ builder.Services
     .AddDomainModule()
     .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
+        .UseInMemoryStores()
     )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()

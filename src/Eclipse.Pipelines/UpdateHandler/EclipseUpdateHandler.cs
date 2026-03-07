@@ -135,14 +135,14 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         if (message is not null)
         {
-            // TODO: Need to clean messages that are not relevant anymore.
-            //       E.g. if user is in the middle of pipeline and we show him menu, then we need to delete previous menu message.
             await _messageStore.Set(context.ChatId, pipeline.GetType(), message, cancellationToken);
         }
 
+        // TODO: extract configuration.
+        await _messageStore.RemoveOlderThan(context.ChatId, DateTime.UtcNow.AddDays(-3), cancellationToken);
+
         if (pipeline.IsFinished)
         {
-            // TODO: Check, maybe this is a place for cleanup for messages.
             return result;
         }
 

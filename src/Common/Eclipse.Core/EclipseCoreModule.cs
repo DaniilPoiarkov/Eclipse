@@ -4,7 +4,6 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Provider.Handlers;
 using Eclipse.Core.Stores;
-using Eclipse.Core.Stores.InMemory;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 using Eclipse.Core.UpdateParsing.Strategies;
@@ -42,8 +41,10 @@ public static class EclipseCoreModule
             .AddScoped<IRouteHandler, MyChatMemberHandler>()
             .AddScoped<IRouteHandler, UnknownHandler>();
 
-        AddIfNotRegistered<IPipelineStore, InMemoryPipelineStore>(services);
-        AddIfNotRegistered<IMessageStore, InMemoryMessageStore>(services);
+        if (!AreStoresRegistered(services))
+        {
+            throw new ArgumentException("Stores are not configured. Call CoreBuilder.UseInMemoryStores(); if no other provider is registered.", nameof(services));
+        }
 
         services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
         services.TryAddSingleton<INotFoundPipeline, NotFoundPipeline>();
@@ -52,13 +53,9 @@ public static class EclipseCoreModule
         return services;
     }
 
-    private static void AddIfNotRegistered<TService, TImplementation>(this IServiceCollection services)
-        where TService : class
-        where TImplementation : class, TService
+    private static bool AreStoresRegistered(this IServiceCollection services)
     {
-        if (!services.Any(s => s.ServiceType == typeof(TService)))
-        {
-            services.AddTransient<TService, TImplementation>();
-        }
+        return services.Any(s => s.ServiceType == typeof(IPipelineStore))
+            && services.Any(s => s.ServiceType == typeof(IMessageStore));
     }
 }
