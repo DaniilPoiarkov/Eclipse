@@ -1,4 +1,6 @@
-﻿namespace Eclipse.Core.Builder;
+﻿using Telegram.Bot.Types.Enums;
+
+namespace Eclipse.Core.Builder;
 
 public sealed class CoreOptions
 {
@@ -7,4 +9,9 @@ public sealed class CoreOptions
     /// Default is 3 days.
     /// </summary>
     public int MessagePersistanceInDays { get; set; } = 3;
+
+    /// <summary>
+    /// Gets the allowed update types.
+    /// </summary>
+    public List<UpdateType> AllowedUpdateTypes { get; init; } = [];
 }

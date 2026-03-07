@@ -6,11 +6,9 @@ using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Users;
 
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +16,6 @@ using System.Reflection;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.UpdateHandler;
@@ -39,16 +36,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
-    private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
-
     private readonly IOptions<CoreOptions> _options;
 
-    private static readonly UpdateType[] _allowedUpdateTypes =
-    [
-        UpdateType.Message,
-        UpdateType.CallbackQuery,
-        UpdateType.MyChatMember
-    ];
+    private readonly IEnumerable<IPipelinePreConfigurator> _configurators;
 
     public EclipseUpdateHandler(
         ILogger<EclipseUpdateHandler> logger,
@@ -57,8 +47,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         IUpdateParser updateParser,
         IPipelineProvider pipelineProvider,
         IMessageStore messageStore,
-        IStringLocalizer<EclipseUpdateHandler> localizer,
-        IOptions<CoreOptions> options)
+        IOptions<CoreOptions> options,
+        IEnumerable<IPipelinePreConfigurator> configurators)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
@@ -66,13 +56,13 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         _pipelineProvider = pipelineProvider;
         _updateParser = updateParser;
         _messageStore = messageStore;
-        _localizer = localizer;
         _options = options;
+        _configurators = configurators;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (!_allowedUpdateTypes.Contains(update.Type))
+        if (!_options.Value.AllowedUpdateTypes.Contains(update.Type))
         {
             _logger.LogWarning("Update of type {updateType} is not supported", update.Type);
             return;
@@ -130,10 +120,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
         pipeline.SetUpdate(update);
 
-        // TODO: Provide ability for pre-configuring. E.g. IPipelinePreConfigurator
-        if (pipeline is EclipsePipelineBase eclipsePipeline)
+        foreach (var configurator in _configurators)
         {
-            eclipsePipeline.SetLocalizer(_localizer);
+            configurator.Configure(update, pipeline);
         }
 
         var result = await pipeline.RunNext(context, cancellationToken);

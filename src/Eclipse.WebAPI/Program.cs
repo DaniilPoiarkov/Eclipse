@@ -6,6 +6,7 @@ using Eclipse.Domain;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
+using Eclipse.Pipelines.Configurators;
 using Eclipse.Pipelines.Localization;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
@@ -25,6 +26,7 @@ builder.Services
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
         .UseInMemoryStores()
         .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))
+        .AddPreConfigurator<SetLocalizerConfigurator>()
     )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
