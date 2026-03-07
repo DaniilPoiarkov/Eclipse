@@ -2,7 +2,7 @@
 
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Stores.Users;
+namespace Eclipse.Pipelines.Users;
 
 internal interface IUserStore
 {

@@ -14,8 +14,8 @@ using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Reminders;
 using Eclipse.Pipelines.Stores.InMemory;
-using Eclipse.Pipelines.Stores.Users;
 using Eclipse.Pipelines.UpdateHandler;
+using Eclipse.Pipelines.Users;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

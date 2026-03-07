@@ -10,8 +10,6 @@ using Eclipse.Core.Stores;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Pipelines.Caching;
 
-using System.Threading;
-
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.TodoItems;

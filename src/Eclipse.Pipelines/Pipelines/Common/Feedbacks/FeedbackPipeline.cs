@@ -2,7 +2,6 @@
 using Eclipse.Application.Contracts.Users;
 using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
-using Eclipse.Core.Pipelines;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
@@ -13,7 +12,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.Common.Feedbacks;
 
-[MappedToMessage]
 [Route("Menu:Feedback", "/feedback")]
 internal sealed class FeedbackPipeline : EclipsePipelineBase
 {

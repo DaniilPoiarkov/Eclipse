@@ -7,7 +7,7 @@ using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Stores.Users;
+using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -146,7 +146,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return result;
         }
 
-        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ } )
+        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ })
             ? _pipelineStore.Set(context.ChatId, message.Id, pipeline, cancellationToken)
             : _pipelineStore.Set(context.ChatId, pipeline, cancellationToken));
 

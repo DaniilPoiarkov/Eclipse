@@ -3,6 +3,8 @@ using Eclipse.Core.Keywords;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Provider.Handlers;
+using Eclipse.Core.Stores;
+using Eclipse.Core.Stores.InMemory;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 using Eclipse.Core.UpdateParsing.Strategies;
@@ -40,10 +42,23 @@ public static class EclipseCoreModule
             .AddScoped<IRouteHandler, MyChatMemberHandler>()
             .AddScoped<IRouteHandler, UnknownHandler>();
 
+        AddIfNotRegistered<IPipelineStore, InMemoryPipelineStore>(services);
+        AddIfNotRegistered<IMessageStore, InMemoryMessageStore>(services);
+
         services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
         services.TryAddSingleton<INotFoundPipeline, NotFoundPipeline>();
         services.TryAddScoped<IAccessDeniedPipeline, AccessDeniedPipeline>();
 
         return services;
+    }
+
+    private static void AddIfNotRegistered<TService, TImplementation>(this IServiceCollection services)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        if (!services.Any(s => s.ServiceType == typeof(TService)))
+        {
+            services.AddTransient<TService, TImplementation>();
+        }
     }
 }

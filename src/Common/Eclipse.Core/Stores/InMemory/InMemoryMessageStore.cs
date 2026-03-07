@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Stores.InMemory;
+namespace Eclipse.Core.Stores.InMemory;
 
 internal sealed class InMemoryMessageStore : IMessageStore
 {
@@ -24,7 +24,7 @@ internal sealed class InMemoryMessageStore : IMessageStore
     {
         if (_cache.TryGetValue(chatId, out var messages))
         {
-            return Task.FromResult<IEnumerable<Message>>(messages.Select(x => x.Message));
+            return Task.FromResult(messages.Select(x => x.Message));
         }
 
         return Task.FromResult<IEnumerable<Message>>([]);
