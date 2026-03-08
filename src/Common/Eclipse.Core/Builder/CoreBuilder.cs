@@ -1,4 +1,5 @@
 ﻿using Eclipse.Core.Keywords;
+using Eclipse.Core.Pipelines;
 using Eclipse.Core.Stores;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -84,6 +85,18 @@ public sealed class CoreBuilder
     public CoreBuilder ConfigureOptions(Action<CoreOptions> configure)
     {
         _services.Configure(configure);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds the pre configurator.
+    /// </summary>
+    /// <typeparam name="TPipelinePreConfigurator">The type of the pipeline pre configurator.</typeparam>
+    /// <returns></returns>
+    public CoreBuilder AddPreConfigurator<TPipelinePreConfigurator>()
+        where TPipelinePreConfigurator : class, IPipelinePreConfigurator
+    {
+        _services.AddTransient<IPipelinePreConfigurator, TPipelinePreConfigurator>();
         return this;
     }
 }

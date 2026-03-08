@@ -7,6 +7,7 @@ using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Localization;
+using Eclipse.Pipelines.Users;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
 
@@ -22,9 +23,11 @@ builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
     .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
+        .Decorate<UserTrackerDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
         .UseInMemoryStores()
         .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))
+        .AddPreConfigurator<SetLocalizerConfigurator>()
     )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
