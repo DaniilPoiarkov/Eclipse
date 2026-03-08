@@ -23,7 +23,7 @@ builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
     .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
-        .Decorate<UserTrackerDecoration>()
+        .Decorate<UserTrackerDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
         .UseInMemoryStores()
         .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))

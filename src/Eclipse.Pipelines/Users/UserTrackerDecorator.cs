@@ -5,13 +5,13 @@ using Eclipse.Core.Updates;
 
 namespace Eclipse.Pipelines.Users;
 
-public sealed class UserTrackerDecoration : IPipelineExecutionDecorator
+public sealed class UserTrackerDecorator : IPipelineExecutionDecorator
 {
     private readonly IUserStore _userStore;
 
     private readonly IUpdateAccessor _updateAccessor;
 
-    public UserTrackerDecoration(IUserStore userStore, IUpdateAccessor updateAccessor)
+    public UserTrackerDecorator(IUserStore userStore, IUpdateAccessor updateAccessor)
     {
         _userStore = userStore;
         _updateAccessor = updateAccessor;
