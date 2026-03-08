@@ -7,6 +7,7 @@ using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 using Eclipse.Core.UpdateParsing.Strategies;
+using Eclipse.Core.Updates;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -29,7 +30,8 @@ public static class EclipseCoreModule
 
         services
             .AddScoped<IPipelineProvider, PipelineProvider>()
-            .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
+            .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>()
+            .AddScoped<IUpdateAccessor, UpdateAccessor>();
 
         services
             .AddTransient<IUpdateParser, UpdateParser>()

@@ -6,8 +6,8 @@ using Eclipse.Domain;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
-using Eclipse.Pipelines.Configurators;
 using Eclipse.Pipelines.Localization;
+using Eclipse.Pipelines.Users;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
 
@@ -23,6 +23,7 @@ builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
     .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
+        .Decorate<UserTrackerDecoration>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
         .UseInMemoryStores()
         .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))

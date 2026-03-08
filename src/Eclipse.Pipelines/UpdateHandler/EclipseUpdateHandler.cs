@@ -6,8 +6,8 @@ using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
+using Eclipse.Core.Updates;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Users;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,8 +26,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly ILogger<EclipseUpdateHandler> _logger;
 
-    private readonly IUserStore _userStore;
-
     private readonly IPipelineStore _pipelineStore;
 
     private readonly IMessageStore _messageStore;
@@ -36,6 +34,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
+    private readonly IUpdateAccessor _updateAccessor;
+
     private readonly IOptions<CoreOptions> _options;
 
     private readonly IEnumerable<IPipelinePreConfigurator> _configurators;
@@ -43,8 +43,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
     public EclipseUpdateHandler(
         ILogger<EclipseUpdateHandler> logger,
         IPipelineStore pipelineStore,
-        IUserStore userStore,
         IUpdateParser updateParser,
+        IUpdateAccessor updateAccessor,
         IPipelineProvider pipelineProvider,
         IMessageStore messageStore,
         IOptions<CoreOptions> options,
@@ -52,9 +52,9 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
-        _userStore = userStore;
         _pipelineProvider = pipelineProvider;
         _updateParser = updateParser;
+        _updateAccessor = updateAccessor;
         _messageStore = messageStore;
         _options = options;
         _configurators = configurators;
@@ -76,6 +76,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             return;
         }
 
+        _updateAccessor.Set(update);
+
         var result = await HandleAndGetResultAsync(botClient, update, context, cancellationToken);
 
         if (result is RedirectResult redirect)
@@ -93,8 +95,6 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
             await HandleAndGetResultAsync(botClient, redirectUpdate, context, cancellationToken);
         }
-
-        await _userStore.CreateOrUpdateAsync(context.User, update, cancellationToken);
     }
 
     private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)

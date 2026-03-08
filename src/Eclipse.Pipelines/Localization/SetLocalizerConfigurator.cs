@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Configurators;
+namespace Eclipse.Pipelines.Localization;
 
 public sealed class SetLocalizerConfigurator : IPipelinePreConfigurator
 {
