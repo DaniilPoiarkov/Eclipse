@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Context;
+﻿using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Stages;
 

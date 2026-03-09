@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Context;
+﻿using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Results;

@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types.Enums;
 
-namespace Eclipse.Core.Builder;
+namespace Eclipse.Core;
 
 public sealed class CoreOptions
 {

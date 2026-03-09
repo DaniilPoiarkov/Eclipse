@@ -1,5 +1,4 @@
 ﻿using Eclipse.Core.Handlers;
-using Eclipse.Pipelines.UpdateHandler;
 
 namespace Eclipse.WebAPI.Models;
 

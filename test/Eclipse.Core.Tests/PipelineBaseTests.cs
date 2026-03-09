@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Context;
+﻿using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Stores.InMemory;
 using Eclipse.Core.Tests.Decorations;
