@@ -13,17 +13,17 @@ internal sealed class MessageHandler : IRouteHandler
 {
     public UpdateType Type => UpdateType.Message;
 
-    private readonly IEnumerable<PipelineBase> _pipelines;
+    private readonly IEnumerable<IPipeline> _pipelines;
 
     private readonly IKeywordMapper _keywordMapper;
 
-    public MessageHandler(IEnumerable<PipelineBase> pipelines, IKeywordMapper keywordMapper)
+    public MessageHandler(IEnumerable<IPipeline> pipelines, IKeywordMapper keywordMapper)
     {
         _pipelines = pipelines;
         _keywordMapper = keywordMapper;
     }
 
-    public PipelineBase? Get(Update update)
+    public IPipeline? Get(Update update)
     {
         var message = update.Message
             ?? throw new InvalidOperationException("Message is null.");

@@ -6,7 +6,7 @@ namespace Eclipse.Core.Builder;
 public interface IPipelineExecutionDecorator
 {
     /// <summary>
-    /// Decorates <a cref="Pipelines.PipelineBase.RunNext(MessageContext, CancellationToken)"></a> execution
+    /// Decorates <a cref="Pipelines.IPipeline.RunNext(MessageContext, CancellationToken)"></a> execution
     /// </summary>
     /// <param name="execution">Next execution step</param>
     /// <param name="context">Execution context</param>

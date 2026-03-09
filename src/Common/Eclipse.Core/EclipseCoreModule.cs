@@ -1,4 +1,5 @@
 ﻿using Eclipse.Core.Builder;
+using Eclipse.Core.Handlers;
 using Eclipse.Core.Keywords;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
@@ -34,6 +35,8 @@ public static class EclipseCoreModule
             .AddScoped<IUpdateAccessor, UpdateAccessor>();
 
         services
+            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+            .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
             .AddTransient<IParseStrategy, CallbackQueryParseStrategy>()

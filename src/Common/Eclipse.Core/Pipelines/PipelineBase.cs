@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Eclipse.Core.Pipelines;
 
-public abstract class PipelineBase : Pipeline
+public abstract class PipelineBase : Pipeline, IPipeline
 {
     public bool IsFinished => StagesLeft == 0;
 

@@ -3,9 +3,9 @@
 namespace Eclipse.Core.Pipelines;
 
 /// <summary>
-/// Use this interface to override default implementation. You also MUST inherit from <a cref="PipelineBase"></a> class.
+/// Use this interface to override default implementation.
 /// </summary>
-public interface IAccessDeniedPipeline
+public interface IAccessDeniedPipeline : IPipeline
 {
     void SetResults(IEnumerable<ValidationResult> results);
 }
