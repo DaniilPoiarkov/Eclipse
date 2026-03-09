@@ -12,7 +12,6 @@ using Eclipse.Pipelines.Pipelines;
 using Eclipse.Pipelines.Pipelines.AdminMenu.Export.Jobs;
 using Eclipse.Pipelines.Pipelines.EdgeCases;
 using Eclipse.Pipelines.Reminders;
-using Eclipse.Pipelines.UpdateHandler;
 using Eclipse.Pipelines.Users;
 
 using Microsoft.AspNetCore.Builder;
@@ -41,18 +40,16 @@ public static class EclipsePipelinesModule
     {
         services.Configure(options);
 
-        services.RemoveAll<PipelineBase>();
+        services.RemoveAll<IPipeline>();
 
         services
-            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
-            .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<ICultureTracker, CultureTracker>()
             .AddTransient<IReminderSender, ReminderSender>()
             .AddTransient<IUserStore, UserStore>();
 
         services.Scan(tss => tss.FromAssemblyOf<EclipsePipelineBase>()
-            .AddClasses(c => c.AssignableTo<PipelineBase>(), publicOnly: false)
-            .As<PipelineBase>()
+            .AddClasses(c => c.AssignableTo<IPipeline>(), publicOnly: false)
+            .As<IPipeline>()
             .AsSelf()
             .WithScopedLifetime());
 

@@ -16,7 +16,7 @@ public sealed class SetLocalizerConfigurator : IPipelinePreConfigurator
         _stringLocalizer = stringLocalizer;
     }
 
-    public void Configure(Update update, PipelineBase pipeline)
+    public void Configure(Update update, IPipeline pipeline)
     {
         if (pipeline is EclipsePipelineBase eclipsePipeline)
         {
