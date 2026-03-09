@@ -1,12 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Telegram.Bot.Types;
 
-using Telegram.Bot.Types;
+namespace Eclipse.Core.Updates;
 
-namespace Eclipse.Pipelines.UpdateHandler;
-
-internal static class UpdateExtensions
+public static class UpdateExtensions
 {
-    internal static User ExtractSender(this Update update)
+    /// <summary>
+    /// Extracts the sender.
+    /// </summary>
+    /// <param name="update">The update.</param>
+    /// <returns></returns>
+    public static User ExtractSender(this Update update)
     {
         return update switch
         {
@@ -18,17 +21,5 @@ internal static class UpdateExtensions
             { ChatMember.From: { } } => update.ChatMember.From,
             _ => throw new InvalidOperationException("Unsupported update type for extracting sender.")
         };
-    }
-
-    internal static bool TryExtractMessage(this Update update, [NotNullWhen(true)] out Message? message)
-    {
-        message = update switch
-        {
-            { Message: { } tgMessage } => tgMessage,
-            { CallbackQuery.Message: { } tgMessage } => tgMessage,
-            _ => null
-        };
-
-        return message is not null;
     }
 }

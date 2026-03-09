@@ -9,5 +9,5 @@ internal interface IRouteHandler
 {
     UpdateType Type { get; }
 
-    PipelineBase? Get(Update update);
+    IPipeline? Get(Update update);
 }

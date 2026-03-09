@@ -7,5 +7,5 @@ namespace Eclipse.Core.Pipelines;
 /// </summary>
 public interface IPipelinePreConfigurator
 {
-    void Configure(Update update, PipelineBase pipeline);
+    void Configure(Update update, IPipeline pipeline);
 }

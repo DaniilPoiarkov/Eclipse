@@ -10,16 +10,16 @@ namespace Eclipse.Core.Provider.Handlers;
 
 internal sealed class MyChatMemberHandler : IRouteHandler
 {
-    private readonly IEnumerable<PipelineBase> _pipelines;
+    private readonly IEnumerable<IPipeline> _pipelines;
 
-    public MyChatMemberHandler(IEnumerable<PipelineBase> pipelines)
+    public MyChatMemberHandler(IEnumerable<IPipeline> pipelines)
     {
         _pipelines = pipelines;
     }
 
     public UpdateType Type => UpdateType.MyChatMember;
 
-    public PipelineBase? Get(Update update)
+    public IPipeline? Get(Update update)
     {
         return _pipelines.FirstOrDefault(p =>
             p.GetType()

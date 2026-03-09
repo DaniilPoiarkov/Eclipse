@@ -1,5 +1,4 @@
-﻿using Eclipse.Core.Builder;
-using Eclipse.Core.Context;
+﻿using Eclipse.Core.Context;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
@@ -7,7 +6,6 @@ using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.Updates;
-using Eclipse.Pipelines.Pipelines.EdgeCases;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +16,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.UpdateHandler;
+namespace Eclipse.Core.Handlers;
 
 internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 {
@@ -104,7 +102,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         // For potential input there can be only one active pipeline without message id even if previous message had an inline menu.
         // E.g. Receive reminder => reschedule. There is an inline menu but also ability to enter value manually.
         // For potential improvement we can update message text instead of sending new messages.
-        PipelineBase? pipeline = null;
+        IPipeline? pipeline = null;
 
         if (update is { CallbackQuery.Message: { } })
         {
@@ -112,8 +110,7 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
         }
 
         pipeline ??= await _pipelineStore.Get(context.ChatId, cancellationToken)
-            ?? _pipelineProvider.Get(update)
-            ?? new EclipseNotFoundPipeline();
+            ?? _pipelineProvider.Get(update);
         // =================================
 
         await _pipelineStore.Remove(context.ChatId, pipeline, cancellationToken);

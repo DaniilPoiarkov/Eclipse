@@ -1,6 +1,4 @@
-﻿using Eclipse.Core.Builder;
-
-namespace Eclipse.Core.Stores.InMemory;
+﻿namespace Eclipse.Core.Stores.InMemory;
 
 public static class InMemoryStoresConfiguration
 {

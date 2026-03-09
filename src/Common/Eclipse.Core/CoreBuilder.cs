@@ -5,7 +5,7 @@ using Eclipse.Core.Stores;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Eclipse.Core.Builder;
+namespace Eclipse.Core;
 
 /// <summary>
 /// Builder for Core module.

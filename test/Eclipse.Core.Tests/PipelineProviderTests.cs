@@ -21,10 +21,10 @@ public class PipelineProviderTests
     {
         var serviceProvider = new ServiceCollection()
             .AddCoreModule(c => c.UseInMemoryStores())
-            .AddSingleton<PipelineBase, Test1Pipeline>()
-            .AddSingleton<PipelineBase, Test2Pipeline>()
-            .AddSingleton<PipelineBase, TestAccessFailsPipeline>()
-            .AddSingleton<PipelineBase, TestAccessPassedPipeline>()
+            .AddSingleton<IPipeline, Test1Pipeline>()
+            .AddSingleton<IPipeline, Test2Pipeline>()
+            .AddSingleton<IPipeline, TestAccessFailsPipeline>()
+            .AddSingleton<IPipeline, TestAccessPassedPipeline>()
             .AddSingleton<IAccessDeniedPipeline, AccessDeniedPipeline>()
             .AddSingleton<INotFoundPipeline, NotFoundPipeline>()
             .BuildServiceProvider();

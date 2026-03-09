@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.UpdateHandler;
+namespace Eclipse.Core.Handlers;
 
 public sealed class DisabledUpdateHandler : IEclipseUpdateHandler
 {

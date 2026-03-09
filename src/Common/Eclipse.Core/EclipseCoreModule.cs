@@ -1,4 +1,4 @@
-﻿using Eclipse.Core.Builder;
+﻿using Eclipse.Core.Handlers;
 using Eclipse.Core.Keywords;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
@@ -22,6 +22,13 @@ public static class EclipseCoreModule
 {
     private const int DefaultMessagesPersistanceInDays = 3;
 
+    /// <summary>
+    /// Adds the core module.
+    /// </summary>
+    /// <param name="services">The services.</param>
+    /// <param name="builder">The builder.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">Stores are not configured. Call CoreBuilder.UseInMemoryStores(); if no other provider is registered. - services</exception>
     public static IServiceCollection AddCoreModule(this IServiceCollection services, Action<CoreBuilder>? builder = null)
     {
         var coreBuilder = new CoreBuilder(services);
@@ -34,6 +41,8 @@ public static class EclipseCoreModule
             .AddScoped<IUpdateAccessor, UpdateAccessor>();
 
         services
+            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+            .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
             .AddTransient<IParseStrategy, CallbackQueryParseStrategy>()

@@ -15,7 +15,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
         _serviceProvider = serviceProvider;
     }
 
-    public Task Set(long chatId, PipelineBase pipeline, CancellationToken cancellationToken = default)
+    public Task Set(long chatId, IPipeline pipeline, CancellationToken cancellationToken = default)
     {
         if (!_cahce.TryGetValue(chatId, out var pipelines))
         {
@@ -28,7 +28,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
         return Task.CompletedTask;
     }
 
-    public Task Remove(long chatId, PipelineBase pipeline, CancellationToken cancellationToken = default)
+    public Task Remove(long chatId, IPipeline pipeline, CancellationToken cancellationToken = default)
     {
         var type = pipeline.GetType();
 
@@ -41,7 +41,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
         return Task.CompletedTask;
     }
 
-    public Task Set(long chatId, int messageId, PipelineBase value, CancellationToken cancellationToken = default)
+    public Task Set(long chatId, int messageId, IPipeline value, CancellationToken cancellationToken = default)
     {
         if (!_cahce.TryGetValue(chatId, out var pipelines))
         {
@@ -54,23 +54,23 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
         return Task.CompletedTask;
     }
 
-    public Task<PipelineBase?> Get(long chatId, int messageId, CancellationToken cancellationToken = default)
+    public Task<IPipeline?> Get(long chatId, int messageId, CancellationToken cancellationToken = default)
     {
         if (!_cahce.TryGetValue(chatId, out var pipelines))
         {
-            return Task.FromResult<PipelineBase?>(null);
+            return Task.FromResult<IPipeline?>(null);
         }
 
         var pipelineInfo = pipelines.Find(p => p.MessageId == messageId);
 
         if (pipelineInfo is null)
         {
-            return Task.FromResult<PipelineBase?>(null);
+            return Task.FromResult<IPipeline?>(null);
         }
 
-        if (_serviceProvider.GetService(pipelineInfo.PipelineType) is not PipelineBase pipeline)
+        if (_serviceProvider.GetService(pipelineInfo.PipelineType) is not IPipeline pipeline)
         {
-            return Task.FromResult<PipelineBase?>(null);
+            return Task.FromResult<IPipeline?>(null);
         }
 
         while (pipeline.StagesLeft != pipelineInfo.StagesLeft)
@@ -78,26 +78,26 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             pipeline.SkipStage();
         }
 
-        return Task.FromResult<PipelineBase?>(pipeline);
+        return Task.FromResult<IPipeline?>(pipeline);
     }
 
-    public Task<PipelineBase?> Get(long chatId, CancellationToken cancellationToken = default)
+    public Task<IPipeline?> Get(long chatId, CancellationToken cancellationToken = default)
     {
         if (!_cahce.TryGetValue(chatId, out var pipelines))
         {
-            return Task.FromResult<PipelineBase?>(null);
+            return Task.FromResult<IPipeline?>(null);
         }
 
         var pipelineInfo = pipelines.MaxBy(p => p.CreatedAt);
 
         if (pipelineInfo is null)
         {
-            return Task.FromResult<PipelineBase?>(null);
+            return Task.FromResult<IPipeline?>(null);
         }
 
-        if (_serviceProvider.GetService(pipelineInfo.PipelineType) is not PipelineBase pipeline)
+        if (_serviceProvider.GetService(pipelineInfo.PipelineType) is not IPipeline pipeline)
         {
-            return Task.FromResult<PipelineBase?>(null);
+            return Task.FromResult<IPipeline?>(null);
         }
 
         while (pipeline.StagesLeft != pipelineInfo.StagesLeft)
@@ -105,7 +105,7 @@ internal sealed class InMemoryPipelineStore : IPipelineStore
             pipeline.SkipStage();
         }
 
-        return Task.FromResult<PipelineBase?>(pipeline);
+        return Task.FromResult<IPipeline?>(pipeline);
     }
 
     private record PipelineInfo(int? MessageId, int StagesLeft, Type PipelineType, DateTime CreatedAt);

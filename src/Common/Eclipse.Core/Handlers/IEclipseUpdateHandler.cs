@@ -1,7 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.UpdateHandler;
+namespace Eclipse.Core.Handlers;
 
 public interface IEclipseUpdateHandler
 {
