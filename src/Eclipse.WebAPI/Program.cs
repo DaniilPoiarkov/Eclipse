@@ -1,6 +1,6 @@
 using Eclipse.Application;
 using Eclipse.Core;
-using Eclipse.Core.Stores.InMemory;
+using Eclipse.Core.Stores.Cosmos;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
 using Eclipse.Infrastructure;
@@ -25,7 +25,7 @@ builder.Services
     .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
         .Decorate<UserTrackerDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
-        .UseInMemoryStores()
+        .UseCosmosStores(options => builder.Configuration.GetSection("Stores").Bind(options))
         .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))
         .AddPreConfigurator<SetLocalizerConfigurator>()
     )

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.6.33723.286
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0F046F49-A55E-40D4-8D5F-220772FFEE28}"
 EndProject
@@ -53,6 +53,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Core", "src\Common\Eclipse.Core\Eclipse.Core.csproj", "{0E3BA2BE-67B1-4F32-A70C-CB5FDC84AE0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Localization", "src\Common\Eclipse.Localization\Eclipse.Localization.csproj", "{6C9E34B2-F4C1-4A81-9DAF-9942A114A955}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eclipse.Core.Stores.Cosmos", "src\Common\Eclipse.Core.Stores.Cosmos\Eclipse.Core.Stores.Cosmos.csproj", "{8EE0CB78-850B-447C-975C-F50C2AFC0F5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -136,6 +138,10 @@ Global
 		{6C9E34B2-F4C1-4A81-9DAF-9942A114A955}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C9E34B2-F4C1-4A81-9DAF-9942A114A955}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C9E34B2-F4C1-4A81-9DAF-9942A114A955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EE0CB78-850B-447C-975C-F50C2AFC0F5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EE0CB78-850B-447C-975C-F50C2AFC0F5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EE0CB78-850B-447C-975C-F50C2AFC0F5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EE0CB78-850B-447C-975C-F50C2AFC0F5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +167,7 @@ Global
 		{44F3684D-8EE5-47DD-940C-63A52B900DA1} = {0FC28111-ACAB-4630-9D8C-D11A76358875}
 		{0E3BA2BE-67B1-4F32-A70C-CB5FDC84AE0E} = {F6D163E5-32EB-48AF-8416-53E47ACF2E56}
 		{6C9E34B2-F4C1-4A81-9DAF-9942A114A955} = {F6D163E5-32EB-48AF-8416-53E47ACF2E56}
+		{8EE0CB78-850B-447C-975C-F50C2AFC0F5E} = {F6D163E5-32EB-48AF-8416-53E47ACF2E56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F191F42F-E73C-400D-B0EF-2E6CD7145C57}
