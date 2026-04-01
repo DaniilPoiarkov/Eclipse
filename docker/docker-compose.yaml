@@ -61,7 +61,7 @@ services:
       - Stores__Database=eclipse
       - Stores__Container=Aggregates
       - Stores__ConnectionType=ConnectionString
-      - Stores__PartitionKey=/id
+      - Stores__PartitionKey=Id
       - Stores__CreateDatabaseAndContainerIfNotExists=true
       - Stores__Throughput=1000
     ports:

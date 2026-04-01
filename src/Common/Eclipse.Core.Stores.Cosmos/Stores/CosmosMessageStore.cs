@@ -1,6 +1,4 @@
-﻿using Eclipse.Core.Stores.Cosmos.Containers;
-
-using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Cosmos;
 
 using Newtonsoft.Json;
 
@@ -10,13 +8,11 @@ namespace Eclipse.Core.Stores.Cosmos.Stores;
 
 internal sealed class CosmosMessageStore : IMessageStore
 {
-    private const int MaxItemsCountForLatestMessageQuery = 1;
+    private readonly ICosmosStore _cosmosStore;
 
-    private readonly IContainerResolver _containerResolver;
-
-    public CosmosMessageStore(IContainerResolver containerResolver)
+    public CosmosMessageStore(ICosmosStore cosmosStore)
     {
-        _containerResolver = containerResolver;
+        _cosmosStore = cosmosStore;
     }
 
     public async Task<Message?> GetLatestBotMessage(long chatId, Type pipelineType, CancellationToken cancellationToken = default)
@@ -31,14 +27,9 @@ internal sealed class CosmosMessageStore : IMessageStore
             .WithParameter("@ChatId", chatId)
             .WithParameter("@PipelineType", pipelineType.AssemblyQualifiedName);
 
-        using var iterator = _containerResolver.Container.GetItemQueryIterator<MessageInfo>(query, requestOptions: new QueryRequestOptions
-        {
-            MaxItemCount = MaxItemsCountForLatestMessageQuery
-        });
+        var messageInfo = await _cosmosStore.Get<MessageInfo>(query, cancellationToken);
 
-        var messageInfo = await iterator.ReadNextAsync(cancellationToken);
-
-        return messageInfo.Resource.FirstOrDefault()?.Message;
+        return messageInfo?.Message;
     }
 
     public async Task RemoveOlderThan(long chatId, DateTime date, CancellationToken cancellationToken = default)
@@ -52,39 +43,22 @@ internal sealed class CosmosMessageStore : IMessageStore
             .WithParameter("@ChatId", chatId)
             .WithParameter("@Date", date);
 
-        List<string> messageIds = [];
+        var messages = await _cosmosStore.GetAll<MessageInfo>(query, cancellationToken);
 
-        using var iterator = _containerResolver.Container.GetItemQueryIterator<MessageInfo>(query);
-
-        while (iterator.HasMoreResults)
-        {
-            var response = await iterator.ReadNextAsync(cancellationToken);
-            messageIds.AddRange(response.Resource.Select(mi => mi.Id));
-        }
-
-        var removals = messageIds.Select(messageInfoId => _containerResolver.Container.DeleteItemAsync<MessageInfo>(
-            messageInfoId,
-            new PartitionKey(messageInfoId),
-            cancellationToken: cancellationToken
-        ));
+        var removals = messages.Select(messageInfo => _cosmosStore.Remove(messageInfo, cancellationToken));
 
         await Task.WhenAll(removals);
     }
 
-    public async Task Set(long chatId, Type pipelineType, Message message, CancellationToken cancellationToken = default)
+    public Task Set(long chatId, Type pipelineType, Message message, CancellationToken cancellationToken = default)
     {
-        var id = Guid.CreateVersion7().ToString();
+        var messageInfo = new MessageInfo(Guid.CreateVersion7().ToString(), chatId, pipelineType.AssemblyQualifiedName ?? string.Empty, message);
 
-        var messageInfo = new MessageInfo(id, chatId, pipelineType.AssemblyQualifiedName ?? string.Empty, message);
-
-        await _containerResolver.Container.UpsertItemAsync(messageInfo,
-            new PartitionKey(messageInfo.Id.ToString()),
-            cancellationToken: cancellationToken
-        );
+        return _cosmosStore.Set(messageInfo, cancellationToken);
     }
 }
 
-file sealed record MessageInfo
+file sealed record MessageInfo : IStoreModel
 {
     [JsonProperty("id")]
     public string Id { get; init; }
@@ -100,5 +74,17 @@ file sealed record MessageInfo
         PipelineType = pipelineType;
         Message = message;
         Discriminator = discriminator;
+    }
+
+    public Dictionary<string, object?> ToDictionary()
+    {
+        return new Dictionary<string, object?>
+        {
+            ["id"] = Id,
+            [nameof(ChatId)] = ChatId,
+            [nameof(PipelineType)] = PipelineType,
+            [nameof(Message)] = Message,
+            [nameof(Discriminator)] = Discriminator
+        };
     }
 }

@@ -1,26 +1,28 @@
 ﻿using Eclipse.Core.Pipelines;
-using Eclipse.Core.Stores.Cosmos.Containers;
 
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
-
-using System.Net;
 
 namespace Eclipse.Core.Stores.Cosmos.Stores;
 
 internal sealed class CosmosPipelineStore : IPipelineStore
 {
-    private const int MaxItemsCount = 1;
-
-    private readonly IContainerResolver _containerResolver;
-
     private readonly IServiceProvider _serviceProvider;
 
-    public CosmosPipelineStore(IContainerResolver containerResolver, IServiceProvider serviceProvider)
+    private readonly ICosmosStore _cosmosStore;
+
+    private readonly ILogger<CosmosPipelineStore> _logger;
+
+    public CosmosPipelineStore(
+        IServiceProvider serviceProvider,
+        ICosmosStore cosmosStore,
+        ILogger<CosmosPipelineStore> logger)
     {
-        _containerResolver = containerResolver;
         _serviceProvider = serviceProvider;
+        _cosmosStore = cosmosStore;
+        _logger = logger;
     }
 
     public Task<IPipeline?> Get(long chatId, int messageId, CancellationToken cancellationToken = default)
@@ -53,19 +55,7 @@ internal sealed class CosmosPipelineStore : IPipelineStore
 
     private async Task<IPipeline?> Get(QueryDefinition query, CancellationToken cancellationToken)
     {
-        using var iterator = _containerResolver.Container.GetItemQueryIterator<PipelineInfo>(query, requestOptions: new QueryRequestOptions
-        {
-            MaxItemCount = MaxItemsCount
-        });
-
-        var response = await iterator.ReadNextAsync(cancellationToken);
-
-        if (response.StatusCode != HttpStatusCode.OK)
-        {
-            return null;
-        }
-
-        var pipelineInfo = response.Resource.FirstOrDefault();
+        var pipelineInfo = await _cosmosStore.Get<PipelineInfo>(query, cancellationToken);
 
         if (pipelineInfo is null)
         {
@@ -94,47 +84,37 @@ internal sealed class CosmosPipelineStore : IPipelineStore
 
     public async Task Remove(long chatId, IPipeline pipeline, CancellationToken cancellationToken = default)
     {
-        var type = pipeline.GetType();
+        _logger.LogInformation("Entered removing pipeline for chat {ChatId} with {StagesLeft} stages left", chatId, pipeline.StagesLeft);
 
         var query = new QueryDefinition("""
                 select * from c
-                where c.Discriminator = 'PipelineInfo'
+                where c.Discriminator = @Discriminator
                     and c.ChatId = @ChatId
                     and c.PipelineType = @PipelineType
                     and c.StagesLeft = @StagesLeft
                 order by c.CreatedAt desc
             """)
+            .WithParameter("@Discriminator", nameof(PipelineInfo))
             .WithParameter("@ChatId", chatId)
-            .WithParameter("@PipelineType", type.FullName)
+            .WithParameter("@PipelineType", pipeline.GetType().AssemblyQualifiedName)
             .WithParameter("@StagesLeft", pipeline.StagesLeft);
 
-        using var iterator = _containerResolver.Container.GetItemQueryIterator<PipelineInfo>(query, requestOptions: new QueryRequestOptions
-        {
-            MaxItemCount = MaxItemsCount
-        });
-
-        var response = await iterator.ReadNextAsync(cancellationToken);
-
-        var pipelineInfo = response.Resource.FirstOrDefault();
+        var pipelineInfo = await _cosmosStore.Get<PipelineInfo>(query, cancellationToken);
 
         if (pipelineInfo is null)
         {
+            _logger.LogWarning("Pipeline for chat {ChatId} with {StagesLeft} stages left not found.", chatId, pipeline.StagesLeft);
             return;
         }
 
-        await _containerResolver.Container.DeleteItemAsync<PipelineInfo>(
-            pipelineInfo.Id.ToString(),
-            new PartitionKey(pipelineInfo.Id.ToString()),
-            cancellationToken: cancellationToken
-        );
+        _logger.LogInformation("Removing pipeline id {Id} for chat {ChatId} with {StagesLeft} stages left..", pipelineInfo.Id, chatId, pipeline.StagesLeft);
+        await _cosmosStore.Remove(pipelineInfo, cancellationToken);
     }
 
-    public async Task Set(long chatId, int messageId, IPipeline value, CancellationToken cancellationToken = default)
+    public Task Set(long chatId, int messageId, IPipeline value, CancellationToken cancellationToken = default)
     {
-        var id = Guid.CreateVersion7().ToString();
-
         var pipelineInfo = new PipelineInfo(
-            id,
+            Guid.CreateVersion7().ToString(),
             chatId,
             messageId,
             value.StagesLeft,
@@ -142,18 +122,13 @@ internal sealed class CosmosPipelineStore : IPipelineStore
             DateTime.UtcNow
         );
 
-        await _containerResolver.Container.CreateItemAsync(pipelineInfo,
-            new PartitionKey(pipelineInfo.Id.ToString()),
-            cancellationToken: cancellationToken
-        );
+        return _cosmosStore.Set(pipelineInfo, cancellationToken);
     }
 
-    public async Task Set(long chatId, IPipeline value, CancellationToken cancellationToken = default)
+    public Task Set(long chatId, IPipeline value, CancellationToken cancellationToken = default)
     {
-        var id = Guid.CreateVersion7().ToString();
-
         var pipelineInfo = new PipelineInfo(
-            id,
+            Guid.CreateVersion7().ToString(),
             chatId,
             null,
             value.StagesLeft,
@@ -161,23 +136,20 @@ internal sealed class CosmosPipelineStore : IPipelineStore
             DateTime.UtcNow
         );
 
-        await _containerResolver.Container.CreateItemAsync(pipelineInfo,
-            new PartitionKey(pipelineInfo.Id.ToString()),
-            cancellationToken: cancellationToken
-        );
+        return _cosmosStore.Set(pipelineInfo, cancellationToken);
     }
 }
 
-file record PipelineInfo
+file record PipelineInfo : IStoreModel
 {
     [JsonProperty("id")]
-    public string Id { get; init; }
+    public string Id { get; init; } = string.Empty;
     public long ChatId { get; init; }
     public int? MessageId { get; init; }
     public int StagesLeft { get; init; }
-    public string PipelineType { get; init; }
+    public string PipelineType { get; init; } = string.Empty;
     public DateTime CreatedAt { get; init; }
-    public string Discriminator { get; init; }
+    public string Discriminator { get; init; } = string.Empty;
 
     public PipelineInfo(string id, long chatId, int? messageId, int stagesLeft, string pipelineType, DateTime createdAt, string discriminator = nameof(PipelineInfo))
     {
@@ -188,5 +160,19 @@ file record PipelineInfo
         PipelineType = pipelineType;
         CreatedAt = createdAt;
         Discriminator = discriminator;
+    }
+
+    public Dictionary<string, object?> ToDictionary()
+    {
+        return new Dictionary<string, object?>
+        {
+            ["id"] = $"{Discriminator}|{Id}",
+            [nameof(ChatId)] = ChatId,
+            [nameof(MessageId)] = MessageId,
+            [nameof(StagesLeft)] = StagesLeft,
+            [nameof(PipelineType)] = PipelineType,
+            [nameof(CreatedAt)] = CreatedAt,
+            [nameof(Discriminator)] = Discriminator
+        };
     }
 }
