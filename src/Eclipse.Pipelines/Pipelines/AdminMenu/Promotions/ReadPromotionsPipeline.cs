@@ -53,6 +53,12 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         var promotions = await _promotionService.GetList(request, cancellationToken);
 
+        if (promotions.Items.IsNullOrEmpty())
+        {
+            FinishPipeline();
+            return MenuAndClearPrevious(PromotionsButtons, null, Localizer["Pipelines:Admin:Promotions:Read:Empty"]);
+        }
+
         var text = GetMessage(request, promotions);
 
         var buttons = promotions.Items
