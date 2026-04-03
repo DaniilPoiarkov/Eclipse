@@ -14,6 +14,11 @@ public sealed class CoreBuilder
 {
     private readonly IServiceCollection _services;
 
+    /// <summary>
+    /// Gets the services.
+    /// </summary>
+    public IServiceCollection Services => _services;
+
     public CoreBuilder(IServiceCollection services)
     {
         _services = services;
