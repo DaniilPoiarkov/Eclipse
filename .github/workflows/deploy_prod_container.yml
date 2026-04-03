@@ -37,13 +37,13 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore dependencies
-        run: dotnet restore ./Eclipse.WebAPI.sln
+        run: dotnet restore ./Eclipse.WebAPI.slnx
 
       - name: Build
-        run: dotnet build ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
+        run: dotnet build ./Eclipse.WebAPI.slnx --configuration ${{ env.DOTNET_CONFIGURATION }} --no-restore
         
       - name: Run tests
-        run: dotnet test ./Eclipse.WebAPI.sln --configuration ${{ env.DOTNET_CONFIGURATION }} --no-build
+        run: dotnet test ./Eclipse.WebAPI.slnx --configuration ${{ env.DOTNET_CONFIGURATION }} --no-build
 
   build-image:
     runs-on: ubuntu-latest
