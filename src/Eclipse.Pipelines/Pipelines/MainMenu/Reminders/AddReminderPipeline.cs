@@ -93,7 +93,7 @@ internal sealed class AddReminderPipeline : RemindersPipelineBase
         var result = await _reminderService.CreateAsync(chatId, createModel, cancellationToken);
 
         var message = result.IsSuccess
-            ? Localizer[$"{_pipelinePrefix}:Created{{Time}}{{Text}}", time, text]
+            ? Localizer[$"{_pipelinePrefix}:Created{{Time}}{{Text}}", context.Value, text]
             : Localizer["Error"];
 
         return Menu(RemindersMenuButtons, message);
