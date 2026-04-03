@@ -3,10 +3,9 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
-using Eclipse.Domain.Promotions;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -92,10 +91,7 @@ internal sealed class CreatePromotionPostPipeline : AdminPipelineBase
 
     private async Task<IResult> SetPromotionTitle(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(CreatePromotionPostPipeline), cancellationToken);
 
         if (!ContinuePromotionProcessing(context))
         {

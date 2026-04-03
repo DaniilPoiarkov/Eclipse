@@ -3,31 +3,26 @@ using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
-using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Pipelines.EdgeCases;
-using Eclipse.Pipelines.Stores.Messages;
-using Eclipse.Pipelines.Stores.Pipelines;
-using Eclipse.Pipelines.Stores.Users;
+using Eclipse.Core.Updates;
 
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using System.Reflection;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.UpdateHandler;
+namespace Eclipse.Core.Handlers;
 
 internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 {
     public HandlerType Type => HandlerType.Active;
 
     private readonly ILogger<EclipseUpdateHandler> _logger;
-
-    private readonly IUserStore _userStore;
 
     private readonly IPipelineStore _pipelineStore;
 
@@ -37,36 +32,35 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
     private readonly IUpdateParser _updateParser;
 
-    private readonly IStringLocalizer<EclipseUpdateHandler> _localizer;
+    private readonly IUpdateAccessor _updateAccessor;
 
-    private static readonly UpdateType[] _allowedUpdateTypes =
-    [
-        UpdateType.Message,
-        UpdateType.CallbackQuery,
-        UpdateType.MyChatMember
-    ];
+    private readonly IOptions<CoreOptions> _options;
+
+    private readonly IEnumerable<IPipelinePreConfigurator> _configurators;
 
     public EclipseUpdateHandler(
         ILogger<EclipseUpdateHandler> logger,
         IPipelineStore pipelineStore,
-        IPipelineProvider pipelineProvider,
-        IUserStore userStore,
         IUpdateParser updateParser,
+        IUpdateAccessor updateAccessor,
+        IPipelineProvider pipelineProvider,
         IMessageStore messageStore,
-        IStringLocalizer<EclipseUpdateHandler> localizer)
+        IOptions<CoreOptions> options,
+        IEnumerable<IPipelinePreConfigurator> configurators)
     {
         _logger = logger;
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
-        _userStore = userStore;
         _updateParser = updateParser;
+        _updateAccessor = updateAccessor;
         _messageStore = messageStore;
-        _localizer = localizer;
+        _options = options;
+        _configurators = configurators;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        if (!_allowedUpdateTypes.Contains(update.Type))
+        if (!_options.Value.AllowedUpdateTypes.Contains(update.Type))
         {
             _logger.LogWarning("Update of type {updateType} is not supported", update.Type);
             return;
@@ -79,6 +73,8 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
             _logger.LogWarning("Context is null after parsing update of type {updateType}", update.Type);
             return;
         }
+
+        _updateAccessor.Set(update);
 
         var result = await HandleAndGetResultAsync(botClient, update, context, cancellationToken);
 
@@ -97,53 +93,57 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
 
             await HandleAndGetResultAsync(botClient, redirectUpdate, context, cancellationToken);
         }
-
-        await _userStore.CreateOrUpdateAsync(context.User, update, cancellationToken);
     }
 
     private async Task<IResult> HandleAndGetResultAsync(ITelegramBotClient botClient, Update update, MessageContext context, CancellationToken cancellationToken)
     {
-        var key = new PipelineKey(context.ChatId);
+        // TODO: Refactor
+        // =================================
+        // For potential input there can be only one active pipeline without message id even if previous message had an inline menu.
+        // E.g. Receive reminder => reschedule. There is an inline menu but also ability to enter value manually.
+        // For potential improvement we can update message text instead of sending new messages.
+        IPipeline? pipeline = null;
 
-        var pipeline = await GetEclipsePipelineAsync(update, key);
+        if (update is { CallbackQuery.Message: { } })
+        {
+            pipeline = await _pipelineStore.Get(context.ChatId, update.CallbackQuery.Message.Id, cancellationToken);
+        }
 
-        await _pipelineStore.RemoveAsync(key, cancellationToken);
+        pipeline ??= await _pipelineStore.Get(context.ChatId, cancellationToken)
+            ?? _pipelineProvider.Get(update);
+        // =================================
 
-        pipeline.SetLocalizer(_localizer);
+        await _pipelineStore.Remove(context.ChatId, pipeline, cancellationToken);
+
         pipeline.SetUpdate(update);
 
-        var result = await pipeline.RunNext(context, cancellationToken);
+        foreach (var configurator in _configurators)
+        {
+            configurator.Configure(update, pipeline);
+        }
 
+        var result = await pipeline.RunNext(context, cancellationToken);
         var message = await result.SendAsync(botClient, cancellationToken);
 
         if (message is not null)
         {
-            await _messageStore.SetAsync(new MessageKey(context.ChatId), message, cancellationToken);
+            await _messageStore.Set(context.ChatId, pipeline.GetType(), message, cancellationToken);
         }
 
-        if (!pipeline.IsFinished)
+        await _messageStore.RemoveOlderThan(context.ChatId,
+            DateTime.UtcNow.AddDays(-_options.Value.MessagePersistanceInDays),
+            cancellationToken
+        );
+
+        if (pipeline.IsFinished)
         {
-            await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
+            return result;
         }
+
+        await ((message is { ReplyMarkup: InlineKeyboardMarkup _ })
+            ? _pipelineStore.Set(context.ChatId, message.Id, pipeline, cancellationToken)
+            : _pipelineStore.Set(context.ChatId, pipeline, cancellationToken));
 
         return result;
-    }
-
-    private async Task<EclipsePipelineBase> GetEclipsePipelineAsync(Update update, PipelineKey key)
-    {
-        return await GetPipelineAsync(update, key) as EclipsePipelineBase
-            ?? new EclipseNotFoundPipeline();
-    }
-
-    private async Task<PipelineBase> GetPipelineAsync(Update update, PipelineKey key)
-    {
-        var pipeline = await _pipelineStore.GetOrDefaultAsync(key);
-
-        if (pipeline is not null)
-        {
-            return pipeline;
-        }
-
-        return _pipelineProvider.Get(update);
     }
 }

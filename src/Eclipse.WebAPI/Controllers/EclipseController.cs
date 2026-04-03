@@ -1,4 +1,4 @@
-﻿using Eclipse.Pipelines.UpdateHandler;
+﻿using Eclipse.Core.Handlers;
 using Eclipse.WebAPI.Filters;
 
 using Microsoft.AspNetCore.Mvc;

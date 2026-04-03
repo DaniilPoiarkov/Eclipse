@@ -2,9 +2,9 @@
 
 using Telegram.Bot.Types;
 
-namespace Eclipse.Pipelines.Stores.Users;
+namespace Eclipse.Pipelines.Users;
 
-internal interface IUserStore
+public interface IUserStore
 {
     Task CreateOrUpdateAsync(TelegramUser telegramUser, Update update, CancellationToken cancellationToken = default);
 }

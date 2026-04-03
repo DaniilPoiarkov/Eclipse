@@ -1,11 +1,13 @@
 ﻿using Eclipse.Application.Contracts.Users;
 using Eclipse.Application.Reminders.Sendings;
+using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Provider;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
+using Eclipse.Pipelines.Caching;
 using Eclipse.Pipelines.Pipelines;
-using Eclipse.Pipelines.Stores.Messages;
-using Eclipse.Pipelines.Stores.Pipelines;
+using Eclipse.Pipelines.Pipelines.Common.Reminders;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -29,6 +31,8 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
 
     private readonly IUserService _userService;
 
+    private readonly ICacheService _cacheService;
+
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IStringLocalizer<ReminderSender> _localizer;
@@ -42,6 +46,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         IPipelineStore pipelineStore,
         IPipelineProvider pipelineProvider,
         IUserService userService,
+        ICacheService cacheService,
         IServiceProvider serviceProvider,
         IStringLocalizer<ReminderSender> localizer,
         ILogger<HasRelatedItemReminderStrategy> logger)
@@ -52,6 +57,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         _pipelineStore = pipelineStore;
         _pipelineProvider = pipelineProvider;
         _userService = userService;
+        _cacheService = cacheService;
         _serviceProvider = serviceProvider;
         _localizer = localizer;
         _logger = logger;
@@ -60,10 +66,6 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
     public async Task Send(ReminderArguments arguments, CancellationToken cancellationToken = default)
     {
         using var _ = _currentCulture.UsingCulture(arguments.Culture);
-
-        var key = new PipelineKey(arguments.ChatId);
-
-        await _pipelineStore.RemoveAsync(key, cancellationToken);
         var user = await _userService.GetByIdAsync(arguments.UserId, cancellationToken);
 
         if (!user.IsSuccess)
@@ -88,6 +90,7 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
             }
         };
 
+        // TODO: Try to get pipeline directly. Should be able to inject.
         var pipeline = (EclipsePipelineBase)_pipelineProvider.Get(update);
 
         pipeline.SetLocalizer(_localizer);
@@ -104,18 +107,29 @@ internal sealed class HasRelatedItemReminderStrategy : IReminderSenderStrategy
         var messageContext = new MessageContext(
             arguments.ChatId,
             payload,
-            new TelegramUser(arguments.ChatId, string.Empty, string.Empty, string.Empty),
+            new TelegramUser(arguments.ChatId, user.Value.Name, user.Value.Surname, user.Value.UserName),
             _serviceProvider
         );
 
         var result = await pipeline.RunNext(messageContext, cancellationToken);
         var message = await result.SendAsync(_client, cancellationToken);
 
-        await _pipelineStore.SetAsync(key, pipeline, cancellationToken);
-
-        if (message is not null)
+        if (message is null)
         {
-            await _messageStore.SetAsync(new MessageKey(arguments.ChatId), message, cancellationToken);
+            _logger.LogWarning("{Pipeline} pipeline was initiated successfully, but sent message is null.", nameof(ReceiveReminderPipeline));
+            await _pipelineStore.Set(user.Value.ChatId, pipeline, cancellationToken);
+            return;
         }
+
+        await _pipelineStore.Set(user.Value.ChatId, message.Id, pipeline, cancellationToken);
+        await _messageStore.Set(arguments.ChatId, typeof(ReceiveReminderPipeline), message, cancellationToken);
+
+        // Needed to remove menu for action step.
+        await _cacheService.SetForThreeDaysAsync(
+            $"users-{arguments.UserId}-reminders-{arguments.ReminderId}-receive-message",
+            message,
+            arguments.ChatId,
+            cancellationToken
+        );
     }
 }

@@ -1,11 +1,13 @@
 using Eclipse.Application;
 using Eclipse.Core;
+using Eclipse.Core.Stores.InMemory;
 using Eclipse.DataAccess;
 using Eclipse.Domain;
 using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Localization;
+using Eclipse.Pipelines.Users;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
 
@@ -20,8 +22,12 @@ var configuration = builder.Configuration;
 builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
-    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>()
+    .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
+        .Decorate<UserTrackerDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
+        .UseInMemoryStores()
+        .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))
+        .AddPreConfigurator<SetLocalizerConfigurator>()
     )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()

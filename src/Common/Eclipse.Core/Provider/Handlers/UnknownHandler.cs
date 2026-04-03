@@ -9,5 +9,5 @@ internal sealed class UnknownHandler : IRouteHandler
 {
     public UpdateType Type => UpdateType.Unknown;
 
-    public PipelineBase? Get(Update update) => null;
+    public IPipeline? Get(Update update) => null;
 }

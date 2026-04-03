@@ -4,8 +4,8 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Localizers;
-using Eclipse.Pipelines.Stores.Messages;
 
 using System.Globalization;
 
@@ -68,7 +68,7 @@ internal sealed class TodoItemsListPipeline : TodoItemsPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(TodoItemsListPipeline), cancellationToken);
 
         if (context.Value.Equals("go_back"))
         {

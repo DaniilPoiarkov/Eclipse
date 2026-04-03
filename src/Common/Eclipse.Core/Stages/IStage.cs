@@ -4,7 +4,7 @@ using Eclipse.Core.Results;
 namespace Eclipse.Core.Stages;
 
 /// <summary>
-/// Defines one step of specific <a cref="Pipelines.PipelineBase"></a>
+/// Defines one step of specific <a cref="Pipelines.IPipeline"></a>
 /// </summary>
 public interface IStage
 {

@@ -1,7 +1,7 @@
 ﻿using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 
-namespace Eclipse.Core.Builder;
+namespace Eclipse.Core.Pipelines;
 
 internal sealed class NullPipelineExecutionDecorator : IPipelineExecutionDecorator
 {

@@ -1,4 +1,4 @@
-﻿namespace Eclipse.Pipelines.UpdateHandler;
+﻿namespace Eclipse.Core.Handlers;
 
 public enum HandlerType
 {
