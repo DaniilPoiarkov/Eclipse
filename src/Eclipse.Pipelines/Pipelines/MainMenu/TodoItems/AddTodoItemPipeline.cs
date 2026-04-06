@@ -179,6 +179,6 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 
         await _reminderService.CreateAsync(user.Value.Id, model, cancellationToken);
 
-        return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:ReminderAdded"]);
+        return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:ReminderAdded{{Text}}{{Time}}", text, time.ToString("HH:mm")]);
     }
 }

@@ -20,6 +20,6 @@
     "Pipelines:TodoItems:AddItem:AskToScheduleReminder": "Do you want to get a reminder?🤔",
     "Pipelines:TodoItems:AddItem:AskForReminderTime": "Great! Send me time in 24h HH:mm format (e.g. 18:45) when to send reminder to you😊\n\rOr press /cancel to skip this step",
     "Pipelines:TodoItems:AddItem:InvalidTime": "Oh, I cannot understand this format, ensure you specify it in 24h HH:mm format (e.g. 16:15 or 9:25) or press /cancel to skip this step",
-    "Pipelines:TodoItems:AddItem:ReminderAdded": "Good, I will send you a reminder when time will come😊"
+    "Pipelines:TodoItems:AddItem:ReminderAdded{Text}{Time}": "Good, I will remind you to {0} at {1}😊"
   }
 }
