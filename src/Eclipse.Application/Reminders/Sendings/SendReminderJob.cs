@@ -8,6 +8,8 @@ namespace Eclipse.Application.Reminders.Sendings;
 
 internal sealed class SendReminderJob : IJob
 {
+    internal static readonly JobKey Key = new(nameof(SendReminderJob));
+
     private readonly ILogger<SendReminderJob> _logger;
 
     private readonly IReminderSender _reminderSender;
