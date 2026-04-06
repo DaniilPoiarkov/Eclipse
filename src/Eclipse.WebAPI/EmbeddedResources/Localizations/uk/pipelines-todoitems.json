@@ -20,6 +20,6 @@
     "Pipelines:TodoItems:AddItem:AskToScheduleReminder": "Хочеш я тобі нагадаю про це?🤔",
     "Pipelines:TodoItems:AddItem:AskForReminderTime": "Класно! Відправ мені час у форматі 24 годин ГГ:хх (наприклад 18:45) коли ти хочеш отримати нагадування😊\n\rАбо натисни /cancel аби пропустити цей крок",
     "Pipelines:TodoItems:AddItem:InvalidTime": "Оу, я не можу зрозуміти цей формат. Відправ будь-ласка час у форматі 24 годин ГГ:хх (наприклад 16:15 або 9:25) або натисни /cancel аби пропустити цей крок",
-    "Pipelines:TodoItems:AddItem:ReminderAdded": "Добре, я відправлю тобі нагадування, коли прийде час😊"
+    "Pipelines:TodoItems:AddItem:ReminderAdded{Text}{Time}": "Добре, нагадування '{0}' встановлено на {1}😊"
   }
 }
