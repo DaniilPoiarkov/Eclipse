@@ -4,15 +4,19 @@ using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
 
+using Quartz;
+
 using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.MoodRecords.Collection;
 
-internal sealed class CollectMoodRecordJob : JobWithArgs<UserIdJobData>
+internal sealed class CollectMoodRecordJob : JobWithArgs<UserIdJobData>, IJobWithKey
 {
     private readonly IMoodRecordCollector _collector;
 
     private readonly IUserRepository _userRepository;
+
+    public static JobKey Key => new(nameof(CollectMoodRecordJob), "mood-records");
 
     public CollectMoodRecordJob(
         IMoodRecordCollector collector,
