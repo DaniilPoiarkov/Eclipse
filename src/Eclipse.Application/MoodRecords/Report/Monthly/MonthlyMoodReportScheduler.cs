@@ -19,12 +19,7 @@ internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<Monthl
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(MonthlyMoodReportJob)}-{options.UserId}");
-
-        var job = JobBuilder.Create<MonthlyMoodReportJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
-            .Build();
+        var job = await scheduler.GetJob<MonthlyMoodReportJob>(cancellationToken);
 
         var time = _timeProvider.Now.LastDayOfTheMonth()
             .WithTime(NotificationConsts.Evening830PM)
@@ -37,6 +32,8 @@ internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<Monthl
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(MonthlyMoodReportJob)}-{options.UserId}", options.UserId.ToString()))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInMonths(NotificationConsts.OneUnit))
             .StartAt(time)
             .Build();
@@ -46,7 +43,9 @@ internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<Monthl
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(MonthlyMoodReportJob)}-{options.UserId}");
-        return scheduler.DeleteJob(key, cancellationToken);
+        return scheduler.UnscheduleJob(
+            new TriggerKey($"{nameof(MonthlyMoodReportJob)}-{options.UserId}", options.UserId.ToString()),
+            cancellationToken
+        );
     }
 }

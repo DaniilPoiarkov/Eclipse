@@ -19,12 +19,7 @@ internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyM
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(WeeklyMoodReportJob)}-{options.UserId}");
-
-        var job = JobBuilder.Create<WeeklyMoodReportJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
-            .Build();
+        var job = await scheduler.GetJob<WeeklyMoodReportJob>(cancellationToken);
 
         var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)
             .WithTime(NotificationConsts.Evening730PM)
@@ -37,6 +32,8 @@ internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyM
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(WeeklyMoodReportJob)}-{options.UserId}", options.UserId.ToString()))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInWeeks(NotificationConsts.OneUnit))
             .StartAt(time)
             .Build();
@@ -46,7 +43,9 @@ internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyM
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(WeeklyMoodReportJob)}-{options.UserId}");
-        return scheduler.DeleteJob(key, cancellationToken);
+        return scheduler.UnscheduleJob(
+            new TriggerKey($"{nameof(WeeklyMoodReportJob)}-{options.UserId}", options.UserId.ToString()),
+            cancellationToken
+        );
     }
 }

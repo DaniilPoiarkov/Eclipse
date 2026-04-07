@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users;
@@ -51,20 +52,19 @@ internal sealed class RescheduleRemindersHandler : IEventHandler<UserEnabledDoma
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
+        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
+
         foreach (var (reminder, notifyAt) in remidners)
         {
-            var key = new JobKey($"{nameof(SendReminderJob)}-{user.Id}-{reminder.ReminderId}");
-
-            var job = JobBuilder.Create<SendReminderJob>()
-                .WithIdentity(key)
-                .UsingJobData("data", JsonConvert.SerializeObject(reminder))
-                .Build();
+            var key = new TriggerKey($"{nameof(SendReminderJob)}-{user.Id}-{reminder.ReminderId}", user.Id.ToString());
 
             var time = _timeProvider.Now
                 .WithTime(notifyAt);
 
             var trigger = TriggerBuilder.Create()
                 .ForJob(job)
+                .WithIdentity(key)
+                .UsingJobData("data", JsonConvert.SerializeObject(reminder))
                 .StartAt(time)
                 .Build();
 

@@ -19,12 +19,7 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(GoodMorningJob)}-{options.UserId}");
-
-        var job = JobBuilder.Create<GoodMorningJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
-            .Build();
+        var job = await scheduler.GetJob<GoodMorningJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Morning9AM)
             .Add(-options.Gmt);
@@ -36,6 +31,8 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(GoodMorningJob)}-{options.UserId}", options.UserId.ToString()))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithSimpleSchedule(schedule => schedule
                 .WithIntervalInHours(NotificationConsts.OneDayInHours)
                 .RepeatForever()
@@ -48,7 +45,9 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(GoodMorningJob)}-{options.UserId}");
-        return scheduler.DeleteJob(key, cancellationToken);
+        return scheduler.UnscheduleJob(
+            new TriggerKey($"{nameof(GoodMorningJob)}-{options.UserId}", options.UserId.ToString()),
+            cancellationToken
+        );
     }
 }

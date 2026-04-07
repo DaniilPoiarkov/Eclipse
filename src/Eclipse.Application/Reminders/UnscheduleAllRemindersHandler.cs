@@ -37,9 +37,9 @@ internal sealed class UnscheduleAllRemindersHandler : IEventHandler<UserDisabled
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
         var keys = user.Reminders
-            .Select(r => JobKey.Create($"{nameof(SendReminderJob)}-{user.Id}-{r.Id}"))
+            .Select(r => new TriggerKey($"{nameof(SendReminderJob)}-{user.Id}-{r.Id}", r.UserId.ToString()))
             .ToArray();
 
-        await scheduler.DeleteJobs(keys, cancellationToken);
+        await scheduler.UnscheduleJobs(keys, cancellationToken);
     }
 }

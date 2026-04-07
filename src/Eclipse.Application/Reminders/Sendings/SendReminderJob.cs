@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Eclipse.Application.Jobs;
+
+using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
@@ -6,8 +8,10 @@ using Quartz;
 
 namespace Eclipse.Application.Reminders.Sendings;
 
-internal sealed class SendReminderJob : IJob
+internal sealed class SendReminderJob : IJob, IJobWithKey
 {
+    public static JobKey Key => new(nameof(SendReminderJob), "reminders");
+
     private readonly ILogger<SendReminderJob> _logger;
 
     private readonly IReminderSender _reminderSender;

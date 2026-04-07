@@ -6,12 +6,14 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Quartz;
+
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Notifications.GoodMorning;
 
-internal sealed class GoodMorningJob : JobWithArgs<UserIdJobData>
+internal sealed class GoodMorningJob : JobWithArgs<UserIdJobData>, IJobWithKey
 {
     private readonly ICurrentCulture _currentCulture;
 
@@ -20,6 +22,8 @@ internal sealed class GoodMorningJob : JobWithArgs<UserIdJobData>
     private readonly ITelegramBotClient _client;
 
     private readonly IUserRepository _userRepository;
+
+    public static JobKey Key => new(nameof(GoodMorningJob), "notifications");
 
     public GoodMorningJob(
         ICurrentCulture currentCulture,
