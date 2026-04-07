@@ -6,12 +6,14 @@ using Eclipse.Localization.Culture;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
+using Quartz;
+
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.TodoItems.Finish;
 
-internal sealed class FinishTodoItemsJob : JobWithArgs<UserIdJobData>
+internal sealed class FinishTodoItemsJob : JobWithArgs<UserIdJobData>, IJobWithKey
 {
     private readonly IStringLocalizer<FinishTodoItemsJob> _localizer;
 
@@ -20,6 +22,8 @@ internal sealed class FinishTodoItemsJob : JobWithArgs<UserIdJobData>
     private readonly ITelegramBotClient _client;
 
     private readonly IUserRepository _userRepository;
+
+    public static JobKey Key => new(nameof(FinishTodoItemsJob), "todo-items");
 
     public FinishTodoItemsJob(
         IStringLocalizer<FinishTodoItemsJob> localizer,
