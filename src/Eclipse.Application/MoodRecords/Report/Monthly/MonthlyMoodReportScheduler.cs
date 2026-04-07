@@ -19,7 +19,7 @@ internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<Monthl
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var job = await scheduler.GetJob<MonthlyMoodReportJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<MonthlyMoodReportJob>(cancellationToken);
 
         var time = _timeProvider.Now.LastDayOfTheMonth()
             .WithTime(NotificationConsts.Evening830PM)
@@ -38,7 +38,7 @@ internal sealed class MonthlyMoodReportScheduler : INotificationScheduler<Monthl
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)

@@ -19,7 +19,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var job = await scheduler.GetJob<CollectMoodRecordJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<CollectMoodRecordJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening7PM)
             .Add(-options.Gmt);
@@ -40,7 +40,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)

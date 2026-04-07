@@ -39,7 +39,7 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
             )
         ));
 
-        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<SendReminderJob>(cancellationToken);
 
         foreach (var (reminder, notifyAt) in reminders)
         {
@@ -53,7 +53,7 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
                 .StartAt(time)
                 .Build();
 
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken);
         }
     }
 }

@@ -19,7 +19,7 @@ internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyM
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var job = await scheduler.GetJob<WeeklyMoodReportJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<WeeklyMoodReportJob>(cancellationToken);
 
         var time = _timeProvider.Now.NextDayOfWeek(DayOfWeek.Sunday, true)
             .WithTime(NotificationConsts.Evening730PM)
@@ -38,7 +38,7 @@ internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyM
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)

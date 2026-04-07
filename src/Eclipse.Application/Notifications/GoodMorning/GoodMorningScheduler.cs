@@ -19,7 +19,7 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var job = await scheduler.GetJob<GoodMorningJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<GoodMorningJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Morning9AM)
             .Add(-options.Gmt);
@@ -40,7 +40,7 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
