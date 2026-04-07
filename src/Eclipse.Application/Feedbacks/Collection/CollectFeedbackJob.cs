@@ -4,15 +4,19 @@ using Eclipse.Domain.Users;
 
 using Microsoft.Extensions.Logging;
 
+using Quartz;
+
 using Telegram.Bot.Exceptions;
 
 namespace Eclipse.Application.Feedbacks.Collection;
 
-internal sealed class CollectFeedbackJob : JobWithArgs<UserIdJobData>
+internal sealed class CollectFeedbackJob : JobWithArgs<UserIdJobData>, IJobWithKey
 {
     private readonly IUserRepository _userRepository;
 
     private readonly IFeedbackCollector _collector;
+
+    public static JobKey Key => new(nameof(CollectFeedbackJob), "feedback");
 
     public CollectFeedbackJob(ILogger<CollectFeedbackJob> logger, IUserRepository userRepository, IFeedbackCollector collector) : base(logger)
     {
