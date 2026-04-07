@@ -26,7 +26,15 @@ internal sealed class ReminderRemovedEventHandler : IEventHandler<ReminderRemove
 
         try
         {
-            await scheduler.DeleteJob(new JobKey($"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}"), cancellationToken);
+            var removedSuccessfully = await scheduler.UnscheduleJob(
+                new TriggerKey($"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}", @event.UserId.ToString()),
+                cancellationToken
+            );
+
+            if (!removedSuccessfully)
+            {
+                _logger.LogWarning("Cannot unschedule {Job} after reminder was removed for user {UserId} and reminder {ReminderId}", nameof(SendReminderJob), @event.UserId, @event.ReminderId);
+            }
         }
         catch (Exception ex)
         {

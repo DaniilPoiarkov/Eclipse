@@ -25,11 +25,7 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var job = await scheduler.GetJobDetail(SendReminderJob.Key, cancellationToken);
-
-        job ??= JobBuilder.Create<SendReminderJob>()
-            .WithIdentity(SendReminderJob.Key)
-            .Build();
+        var job = await scheduler.GetSendReminderJob(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(notification.NotifyAt);
 
@@ -40,6 +36,7 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(SendReminderJob)}-{notification.UserId}-{notification.ReminderId}", notification.UserId.ToString()))
             .UsingJobData("data", JsonConvert.SerializeObject(
                 new SendReminderJobData(
                     notification.UserId,

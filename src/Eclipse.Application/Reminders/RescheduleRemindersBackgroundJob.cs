@@ -38,20 +38,17 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
             )
         ));
 
+        var job = await scheduler.GetSendReminderJob(cancellationToken);
+
         foreach (var (reminder, notifyAt) in reminders)
         {
-            var key = new JobKey($"{nameof(SendReminderJob)}-{reminder.UserId}-{reminder.ReminderId}");
-
-            var job = JobBuilder.Create<SendReminderJob>()
-                .WithIdentity(key)
-                .UsingJobData("data", JsonConvert.SerializeObject(reminder))
-                .Build();
-
             var time = _timeProvider.Now
                 .WithTime(notifyAt);
 
             var trigger = TriggerBuilder.Create()
                 .ForJob(job)
+                .WithIdentity(new TriggerKey($"{nameof(SendReminderJob)}-{reminder.UserId}-{reminder.ReminderId}", reminder.UserId.ToString()))
+                .UsingJobData("data", JsonConvert.SerializeObject(reminder))
                 .StartAt(time)
                 .Build();
 
