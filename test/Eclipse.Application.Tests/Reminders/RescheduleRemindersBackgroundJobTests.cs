@@ -53,6 +53,6 @@ public sealed class RescheduleRemindersBackgroundJobTests
 
         await _sut.Execute();
 
-        await scheduler.Received(2).ScheduleJob(Arg.Any<IJobDetail>(), Arg.Any<ITrigger>());
+        await scheduler.Received(2).ScheduleJob(Arg.Any<ITrigger>());
     }
 }
