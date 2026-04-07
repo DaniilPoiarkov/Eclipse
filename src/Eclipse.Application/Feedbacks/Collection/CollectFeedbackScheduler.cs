@@ -19,7 +19,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var job = await scheduler.GetJob<CollectFeedbackJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<CollectFeedbackJob>(cancellationToken);
 
         var time = _timeProvider.Now.NextMonth()
             .WithTime(NotificationConsts.Day130PM)
@@ -40,7 +40,7 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)

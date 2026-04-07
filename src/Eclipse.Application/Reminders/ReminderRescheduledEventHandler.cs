@@ -55,7 +55,7 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<SendReminderJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(@event.NotifyAt);
 
@@ -82,7 +82,7 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
 
         try
         {
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken);
         }
         catch (Exception ex)
         {

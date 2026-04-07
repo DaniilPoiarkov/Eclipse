@@ -52,7 +52,7 @@ internal sealed class RescheduleRemindersHandler : IEventHandler<UserEnabledDoma
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<SendReminderJob>(cancellationToken);
 
         foreach (var (reminder, notifyAt) in remidners)
         {
@@ -68,7 +68,7 @@ internal sealed class RescheduleRemindersHandler : IEventHandler<UserEnabledDoma
                 .StartAt(time)
                 .Build();
 
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken);
         }
     }
 }

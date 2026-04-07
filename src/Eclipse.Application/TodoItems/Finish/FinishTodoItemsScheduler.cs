@@ -19,7 +19,7 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var job = await scheduler.GetJob<FinishTodoItemsJob>(cancellationToken);
+        var job = await scheduler.GetOrAddDurableJob<FinishTodoItemsJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening6PM)
             .Add(-options.Gmt);
@@ -40,7 +40,7 @@ internal sealed class FinishTodoItemsScheduler : INotificationScheduler<FinishTo
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
