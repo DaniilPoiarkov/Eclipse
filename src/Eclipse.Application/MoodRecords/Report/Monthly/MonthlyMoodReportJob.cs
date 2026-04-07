@@ -4,13 +4,17 @@ using Eclipse.Common.Clock;
 
 using Microsoft.Extensions.Logging;
 
+using Quartz;
+
 namespace Eclipse.Application.MoodRecords.Report.Monthly;
 
-internal sealed class MonthlyMoodReportJob : JobWithArgs<UserIdJobData>
+internal sealed class MonthlyMoodReportJob : JobWithArgs<UserIdJobData>, IJobWithKey
 {
     private readonly IMoodReportSender _sender;
 
     private readonly ITimeProvider _timeProvider;
+
+    public static JobKey Key => new(nameof(MonthlyMoodReportJob), "mood-records");
 
     public MonthlyMoodReportJob(
         IMoodReportSender sender,
