@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
@@ -25,7 +26,7 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var job = await scheduler.GetSendReminderJob(cancellationToken);
+        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(notification.NotifyAt);
 

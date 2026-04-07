@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
@@ -38,7 +39,7 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
             )
         ));
 
-        var job = await scheduler.GetSendReminderJob(cancellationToken);
+        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
 
         foreach (var (reminder, notifyAt) in reminders)
         {

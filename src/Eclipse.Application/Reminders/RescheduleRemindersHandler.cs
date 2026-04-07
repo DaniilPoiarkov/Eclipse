@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users;
@@ -51,7 +52,7 @@ internal sealed class RescheduleRemindersHandler : IEventHandler<UserEnabledDoma
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var job = await scheduler.GetSendReminderJob(cancellationToken);
+        var job = await scheduler.GetJob<SendReminderJob>(cancellationToken);
 
         foreach (var (reminder, notifyAt) in remidners)
         {
