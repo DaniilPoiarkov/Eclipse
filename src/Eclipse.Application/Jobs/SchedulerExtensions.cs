@@ -12,7 +12,7 @@ internal static class SchedulerExtensions
         job ??= JobBuilder.Create<TJob>()
             .WithIdentity(TJob.Key)
             .Build();
-        
+
         return job;
     }
 }
