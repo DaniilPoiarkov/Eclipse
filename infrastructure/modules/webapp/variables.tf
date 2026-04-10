@@ -100,7 +100,7 @@ variable "app_insights_connection_string" {
 
   validation {
     error_message = "Application Insights connection string must be provided"
-    condition     = (var.app_insights_connection_string != null
+    condition = (var.app_insights_connection_string != null
       && var.app_insights_connection_string != ""
     )
   }
