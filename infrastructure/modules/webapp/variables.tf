@@ -94,9 +94,16 @@ variable "docker_password" {
 }
 
 variable "app_insights_connection_string" {
-  description = "AppInsights connection string"
+  description = "Application Insights connection string"
   type        = string
   sensitive   = true
+
+  validation {
+    error_message = "Application Insights connection string must be provided"
+    condition     = (var.app_insights_connection_string != null
+      && var.app_insights_connection_string != ""
+    )
+  }
 }
 
 variable "app_insights_id" {
