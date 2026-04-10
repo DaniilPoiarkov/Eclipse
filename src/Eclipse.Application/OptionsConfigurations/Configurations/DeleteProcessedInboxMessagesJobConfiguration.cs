@@ -10,7 +10,7 @@ internal sealed class DeleteProcessedInboxMessagesJobConfiguration : IJobConfigu
 
     public void Schedule(QuartzOptions options)
     {
-        var jobKey = JobKey.Create(nameof(DeleteProcessedInboxMessagesJob));
+        var jobKey = JobKey.Create(nameof(DeleteProcessedInboxMessagesJob), "events-processing");
 
         options.AddJob<DeleteProcessedInboxMessagesJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger
