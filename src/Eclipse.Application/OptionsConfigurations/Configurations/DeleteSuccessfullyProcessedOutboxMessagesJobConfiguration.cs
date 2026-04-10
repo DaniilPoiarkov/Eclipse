@@ -10,7 +10,7 @@ internal sealed class DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration 
 
     public void Schedule(QuartzOptions options)
     {
-        var jobKey = JobKey.Create(nameof(DeleteSuccessfullyProcessedOutboxMessagesJob));
+        var jobKey = JobKey.Create(nameof(DeleteSuccessfullyProcessedOutboxMessagesJob), "events-processing");
 
         options.AddJob<DeleteSuccessfullyProcessedOutboxMessagesJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger

@@ -74,7 +74,10 @@ public static class EclipseWebApiModule
             .ConfigureOptions<AzureMonitorOptionsConfiguration>()
             .ConfigureOptions<AuthorizationConfiguration>();
 
-        services.AddOpenTelemetry().UseAzureMonitor();
+        if (configuration.GetValue<bool>("Settings:IsApplicationInsightsEnabled"))
+        {
+            services.AddOpenTelemetry().UseAzureMonitor();
+        }
 
         services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
             .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)

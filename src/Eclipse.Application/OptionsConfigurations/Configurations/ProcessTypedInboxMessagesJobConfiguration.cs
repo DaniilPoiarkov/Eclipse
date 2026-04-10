@@ -99,7 +99,9 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
         where TEventHanlder : IEventHandler<TEvent>
     {
         var jobKey = JobKey.Create(typeof(ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>).FullName
-            ?? throw new InvalidOperationException($"Cannot schedule processing for {typeof(TEvent).Name} type"));
+            ?? throw new InvalidOperationException($"Cannot schedule processing for {typeof(TEvent).Name} type"),
+            "events-processing"
+        );
 
         options.AddJob<ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger

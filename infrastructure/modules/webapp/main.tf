@@ -71,6 +71,7 @@ resource "azurerm_linux_web_app" "app" {
     Sheets__SheetId                             = var.sheets_id
     Sheets__SuggestionsRange                    = var.sheets_range
     Settings__IsRedisEnabled                    = var.settings_use_redis
+    Settings_IsApplicationInsightsEnabled       = true
     Azure__CosmosOptions__Endpoint              = var.cosmos_endpoint
     Azure__CosmosOptions__DatabaseId            = var.cosmos_database_id
     Azure__CosmosOptions__Container             = var.cosmos_database_container
