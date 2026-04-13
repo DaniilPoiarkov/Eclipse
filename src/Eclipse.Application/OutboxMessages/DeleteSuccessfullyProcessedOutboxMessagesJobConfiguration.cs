@@ -1,8 +1,8 @@
-﻿using Eclipse.Application.OutboxMessages;
+﻿using Eclipse.Application.OptionsConfigurations;
 
 using Quartz;
 
-namespace Eclipse.Application.OptionsConfigurations.Configurations;
+namespace Eclipse.Application.OutboxMessages;
 
 internal sealed class DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration : IJobConfiguration
 {

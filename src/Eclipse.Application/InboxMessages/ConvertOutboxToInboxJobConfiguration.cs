@@ -1,8 +1,8 @@
-﻿using Eclipse.Application.InboxMessages;
+﻿using Eclipse.Application.OptionsConfigurations;
 
 using Quartz;
 
-namespace Eclipse.Application.OptionsConfigurations.Configurations;
+namespace Eclipse.Application.InboxMessages;
 
 internal sealed class ConvertOutboxToInboxJobConfiguration : IJobConfiguration
 {

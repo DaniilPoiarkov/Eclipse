@@ -1,11 +1,11 @@
 ﻿using Eclipse.Application.Feedbacks;
 using Eclipse.Application.Feedbacks.Collection;
-using Eclipse.Application.InboxMessages;
 using Eclipse.Application.Jobs;
 using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report.Monthly;
 using Eclipse.Application.MoodRecords.Report.Weekly;
 using Eclipse.Application.Notifications.GoodMorning;
+using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.Promotions;
 using Eclipse.Application.Reminders;
 using Eclipse.Application.Statistics.ReminderReceived;
@@ -22,7 +22,7 @@ using Eclipse.Domain.Users.Events;
 
 using Quartz;
 
-namespace Eclipse.Application.OptionsConfigurations.Configurations;
+namespace Eclipse.Application.InboxMessages;
 
 internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfiguration
 {
