@@ -17,14 +17,9 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
         _timeProvider = timeProvider;
     }
 
-    public Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var jobKey = JobKey.Create($"{nameof(CollectFeedbackJob)}-{options.UserId}");
-
-        var job = JobBuilder.Create<CollectFeedbackJob>()
-            .WithIdentity(jobKey)
-            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
-            .Build();
+        var job = await scheduler.GetOrAddDurableJob<CollectFeedbackJob>(cancellationToken);
 
         var time = _timeProvider.Now.NextMonth()
             .WithTime(NotificationConsts.Day130PM)
@@ -37,18 +32,22 @@ internal sealed class CollectFeedbackScheduler : INotificationScheduler<CollectF
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(CollectFeedbackJob)}-{options.UserId}", options.UserId.ToString()))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithCalendarIntervalSchedule(schedule =>
                 schedule.WithIntervalInMonths(NotificationConsts.OneUnit)
             )
             .StartAt(time)
             .Build();
 
-        return scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var jobKey = JobKey.Create($"{nameof(CollectFeedbackJob)}-{options.UserId}");
-        return scheduler.DeleteJob(jobKey, cancellationToken);
+        return scheduler.UnscheduleJob(
+            new TriggerKey($"{nameof(CollectFeedbackJob)}-{options.UserId}", options.UserId.ToString()),
+            cancellationToken
+        );
     }
 }

@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Eclipse.Application.Contracts/Eclipse.Application.Contracts.csproj" />
+    <Project Path="src/Eclipse.Application/Eclipse.Application.csproj" />
+    <Project Path="src/Eclipse.DataAccess/Eclipse.DataAccess.csproj" />
+    <Project Path="src/Eclipse.Domain.Shared/Eclipse.Domain.Shared.csproj" />
+    <Project Path="src/Eclipse.Domain/Eclipse.Domain.csproj" />
+    <Project Path="src/Eclipse.Infrastructure/Eclipse.Infrastructure.csproj" />
+    <Project Path="src/Eclipse.Pipelines/Eclipse.Pipelines.csproj" />
+    <Project Path="src/Eclipse.WebAPI/Eclipse.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/src/Common/">
+    <Project Path="src/Common/Eclipse.Common/Eclipse.Common.csproj" />
+    <Project Path="src/Common/Eclipse.Core/Eclipse.Core.csproj" />
+    <Project Path="src/Common/Eclipse.Localization/Eclipse.Localization.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Eclipse.Application.Tests/Eclipse.Application.Tests.csproj" />
+    <Project Path="test/Eclipse.Common.Tests/Eclipse.Common.Tests.csproj" />
+    <Project Path="test/Eclipse.Core.Tests/Eclipse.Core.Tests.csproj" />
+    <Project Path="test/Eclipse.Domain.Tests/Eclipse.Domain.Tests.csproj" />
+    <Project Path="test/Eclipse.IntegrationTests/Eclipse.IntegrationTests.csproj" />
+    <Project Path="test/Eclipse.Localization.Tests/Eclipse.Localization.Tests.csproj" />
+    <Project Path="test/Eclipse.Pipelines.Tests/Eclipse.Pipelines.Tests.csproj" />
+    <Project Path="test/Eclipse.Tests/Eclipse.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -3,9 +3,9 @@ using Eclipse.Application.Contracts.Users;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Culture;
 using Eclipse.Pipelines.Culture;
-using Eclipse.Pipelines.Stores.Messages;
 
 using Microsoft.Extensions.Options;
 
@@ -71,7 +71,7 @@ public sealed class StartPipeline : EclipsePipelineBase
 
     private async Task<IResult> ConfigureGmt(MessageContext context, CancellationToken cancellationToken = default)
     {
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId), cancellationToken);
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(StartPipeline), cancellationToken);
 
         if (!SupportedLanguage(context))
         {

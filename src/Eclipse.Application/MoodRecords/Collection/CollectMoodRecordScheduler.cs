@@ -19,12 +19,7 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
 
     public async Task Schedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
-
-        var job = JobBuilder.Create<CollectMoodRecordJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
-            .Build();
+        var job = await scheduler.GetOrAddDurableJob<CollectMoodRecordJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(NotificationConsts.Evening7PM)
             .Add(-options.Gmt);
@@ -36,6 +31,8 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(CollectMoodRecordJob)}-{options.UserId}", options.UserId.ToString()))
+            .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithSimpleSchedule(schedule => schedule
                 .WithIntervalInHours(NotificationConsts.OneDayInHours)
                 .RepeatForever()
@@ -43,12 +40,14 @@ internal sealed class CollectMoodRecordScheduler : INotificationScheduler<Collec
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 
     public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        var key = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
-        return scheduler.DeleteJob(key, cancellationToken);
+        return scheduler.UnscheduleJob(
+            new TriggerKey($"{nameof(CollectMoodRecordJob)}-{options.UserId}", options.UserId.ToString()),
+            cancellationToken
+        );
     }
 }

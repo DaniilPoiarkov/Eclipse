@@ -1,4 +1,6 @@
-﻿using Eclipse.Application.Contracts.Configuration;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+
+using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Common.Background;
 using Eclipse.Localization;
 using Eclipse.WebAPI.Background;
@@ -64,15 +66,18 @@ public static class EclipseWebApiModule
             .AddMvc()
             .AddApiExplorer();
 
-        services.AddApplicationInsightsTelemetry();
-
         services
             .ConfigureOptions<ApiExplorerConfiguration>()
             .ConfigureOptions<ApiVersioningConfiguration>()
             .ConfigureOptions<SwaggerUIConfiguration>()
             .ConfigureOptions<SwaggerGenConfiguration>()
-            .ConfigureOptions<ApplicationInsightsConfiguration>()
+            .ConfigureOptions<AzureMonitorOptionsConfiguration>()
             .ConfigureOptions<AuthorizationConfiguration>();
+
+        if (configuration.GetValue<bool>("Settings:IsApplicationInsightsEnabled"))
+        {
+            services.AddOpenTelemetry().UseAzureMonitor();
+        }
 
         services.Scan(tss => tss.FromAssemblyOf<ImportEntitiesBackgroundJobArgs>()
             .AddClasses(c => c.AssignableTo(typeof(IBackgroundJob<>)), publicOnly: false)

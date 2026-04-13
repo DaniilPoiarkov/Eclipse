@@ -1,14 +1,17 @@
-﻿using Eclipse.Core.Builder;
+﻿using Eclipse.Core.Handlers;
 using Eclipse.Core.Keywords;
 using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
 using Eclipse.Core.Provider.Handlers;
+using Eclipse.Core.Stores;
 using Eclipse.Core.UpdateParsing;
 using Eclipse.Core.UpdateParsing.Implementations;
 using Eclipse.Core.UpdateParsing.Strategies;
+using Eclipse.Core.Updates;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Eclipse.Core;
 
@@ -17,6 +20,15 @@ namespace Eclipse.Core;
 /// </summary>
 public static class EclipseCoreModule
 {
+    private const int DefaultMessagesPersistanceInDays = 3;
+
+    /// <summary>
+    /// Adds the core module.
+    /// </summary>
+    /// <param name="services">The services.</param>
+    /// <param name="builder">The builder.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException">Stores are not configured. Call CoreBuilder.UseInMemoryStores(); if no other provider is registered. - services</exception>
     public static IServiceCollection AddCoreModule(this IServiceCollection services, Action<CoreBuilder>? builder = null)
     {
         var coreBuilder = new CoreBuilder(services);
@@ -25,9 +37,12 @@ public static class EclipseCoreModule
 
         services
             .AddScoped<IPipelineProvider, PipelineProvider>()
-            .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>();
+            .AddScoped<IPipelineExecutionDecorator, NullPipelineExecutionDecorator>()
+            .AddScoped<IUpdateAccessor, UpdateAccessor>();
 
         services
+            .AddTransient<IEclipseUpdateHandler, EclipseUpdateHandler>()
+            .AddTransient<IEclipseUpdateHandler, DisabledUpdateHandler>()
             .AddTransient<IUpdateParser, UpdateParser>()
             .AddTransient<IParseStrategyProvider, ParseStrategyProvider>()
             .AddTransient<IParseStrategy, CallbackQueryParseStrategy>()
@@ -40,10 +55,29 @@ public static class EclipseCoreModule
             .AddScoped<IRouteHandler, MyChatMemberHandler>()
             .AddScoped<IRouteHandler, UnknownHandler>();
 
+        if (!AreStoresRegistered(services))
+        {
+            throw new ArgumentException("Stores are not configured. Call CoreBuilder.UseInMemoryStores(); if no other provider is registered.", nameof(services));
+        }
+
+        if (!services.Any(s => s.ServiceType == typeof(IOptions<CoreOptions>)))
+        {
+            services.Configure<CoreOptions>(options =>
+            {
+                options.MessagePersistanceInDays = DefaultMessagesPersistanceInDays;
+            });
+        }
+
         services.TryAddSingleton<IKeywordMapper, NullKeywordMapper>();
         services.TryAddSingleton<INotFoundPipeline, NotFoundPipeline>();
         services.TryAddScoped<IAccessDeniedPipeline, AccessDeniedPipeline>();
 
         return services;
+    }
+
+    private static bool AreStoresRegistered(this IServiceCollection services)
+    {
+        return services.Any(s => s.ServiceType == typeof(IPipelineStore))
+            && services.Any(s => s.ServiceType == typeof(IMessageStore));
     }
 }

@@ -44,11 +44,15 @@ public sealed class RescheduleRemindersBackgroundJobTests
         _userRepository.GetByExpressionAsync(Arg.Any<Expression<Func<User, bool>>>()).Returns([user]);
 
         var scheduler = Substitute.For<IScheduler>();
+        var jobDetail = Substitute.For<IJobDetail>();
+        jobDetail.Key.Returns(new JobKey("Test", "Reminders"));
+
+        scheduler.GetJobDetail(Arg.Any<JobKey>()).Returns(jobDetail);
 
         _schedulerFactory.GetScheduler().Returns(scheduler);
 
         await _sut.Execute();
 
-        await scheduler.Received(2).ScheduleJob(Arg.Any<IJobDetail>(), Arg.Any<ITrigger>());
+        await scheduler.Received(2).ScheduleJob(Arg.Any<ITrigger>());
     }
 }

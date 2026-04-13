@@ -1,0 +1,8 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Notifications:Donations:Request": "👋 <b>Hello, glad to see you here!</b>\nI hope you like the service. Now it lives by developers initiative and we pay for it from our own pocket, if you want to support it you can find card number and support account below.\nThank you🌘 \n\n🔗 <b>Support:</b> https://send.monobank.ua/jar/4Nojrf6mfF \n💳 <b>Card:</b> 4874 1000 2764 1664",
+    "Notifications:Donations:ButtonText": "Support 💛",
+    "Notifications:Donations:ButtonUrl": "https://send.monobank.ua/jar/4Nojrf6mfF"
+  }
+}

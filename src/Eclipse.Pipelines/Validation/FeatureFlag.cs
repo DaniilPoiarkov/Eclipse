@@ -1,6 +1,6 @@
-﻿using Eclipse.Core.Validation;
+﻿using Eclipse.Core.Updates;
+using Eclipse.Core.Validation;
 using Eclipse.Localization.Culture;
-using Eclipse.Pipelines.UpdateHandler;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users.Events;
@@ -25,21 +26,7 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var key = new JobKey($"{nameof(SendReminderJob)}-{notification.UserId}-{notification.ReminderId}");
-
-        var job = JobBuilder.Create<SendReminderJob>()
-            .WithIdentity(key)
-            .UsingJobData("data", JsonConvert.SerializeObject(
-                new SendReminderJobData(
-                    notification.UserId,
-                    notification.ReminderId,
-                    notification.RelatedItemId,
-                    notification.ChatId,
-                    notification.Culture,
-                    notification.Text
-                ))
-            )
-            .Build();
+        var job = await scheduler.GetOrAddDurableJob<SendReminderJob>(cancellationToken);
 
         var time = _timeProvider.Now.WithTime(notification.NotifyAt);
 
@@ -50,9 +37,20 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(SendReminderJob)}-{notification.UserId}-{notification.ReminderId}", notification.UserId.ToString()))
+            .UsingJobData("data", JsonConvert.SerializeObject(
+                new SendReminderJobData(
+                    notification.UserId,
+                    notification.ReminderId,
+                    notification.RelatedItemId,
+                    notification.ChatId,
+                    notification.Culture,
+                    notification.Text
+                ))
+            )
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken);
     }
 }

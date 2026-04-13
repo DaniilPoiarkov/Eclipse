@@ -6,14 +6,14 @@ namespace Eclipse.Domain.Promotions;
 
 public sealed class Promotion : AggregateRoot, IHasCreatedAt
 {
-    public string Title { get; private set; }
+    public string Title { get; private set; } = string.Empty;
 
     public long FromChatId { get; init; }
 
     public int MessageId { get; private set; }
 
-    public string InlineButtonText { get; init; }
-    public string InlineButtonLink { get; init; }
+    public string InlineButtonText { get; init; } = string.Empty;
+    public string InlineButtonLink { get; init; } = string.Empty;
 
     public int TimesPublished { get; private set; }
 
@@ -32,6 +32,8 @@ public sealed class Promotion : AggregateRoot, IHasCreatedAt
         Status = status;
         CreatedAt = createdAt;
     }
+
+    private Promotion() { }
 
     public static Promotion Create(string title, long fromChatId, int messageId, string inlineButtonText, string inlineButtonLink, DateTime createdAt)
     {

@@ -4,9 +4,9 @@ using Eclipse.Common.Linq;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Localization.Localizers;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -53,6 +53,12 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
         var promotions = await _promotionService.GetList(request, cancellationToken);
 
+        if (promotions.Items.IsNullOrEmpty())
+        {
+            FinishPipeline();
+            return MenuAndClearPrevious(PromotionsButtons, null, Localizer["Pipelines:Admin:Promotions:Read:Empty"]);
+        }
+
         var text = GetMessage(request, promotions);
 
         var buttons = promotions.Items
@@ -72,10 +78,7 @@ internal sealed class ReadPromotionsPipeline : AdminPipelineBase
 
     private async Task<IResult> HandleUpdate(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(
-            new MessageKey(context.ChatId),
-            cancellationToken
-        );
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(ReadPromotionsPipeline), cancellationToken);
 
         var promotionId = context.Value.ToGuid();
 

@@ -1,5 +1,6 @@
 ﻿using Eclipse.Core.Pipelines;
 using Eclipse.Core.Provider;
+using Eclipse.Core.Stores.InMemory;
 using Eclipse.Core.Tests.Pipelines;
 
 using FluentAssertions;
@@ -19,11 +20,11 @@ public class PipelineProviderTests
     public PipelineProviderTests()
     {
         var serviceProvider = new ServiceCollection()
-            .AddCoreModule()
-            .AddSingleton<PipelineBase, Test1Pipeline>()
-            .AddSingleton<PipelineBase, Test2Pipeline>()
-            .AddSingleton<PipelineBase, TestAccessFailsPipeline>()
-            .AddSingleton<PipelineBase, TestAccessPassedPipeline>()
+            .AddCoreModule(c => c.UseInMemoryStores())
+            .AddSingleton<IPipeline, Test1Pipeline>()
+            .AddSingleton<IPipeline, Test2Pipeline>()
+            .AddSingleton<IPipeline, TestAccessFailsPipeline>()
+            .AddSingleton<IPipeline, TestAccessPassedPipeline>()
             .AddSingleton<IAccessDeniedPipeline, AccessDeniedPipeline>()
             .AddSingleton<INotFoundPipeline, NotFoundPipeline>()
             .BuildServiceProvider();

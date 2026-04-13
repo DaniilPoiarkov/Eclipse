@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Events;
 using Eclipse.Domain.Users;
@@ -54,10 +55,18 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        var key = $"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}";
+        var job = await scheduler.GetOrAddDurableJob<SendReminderJob>(cancellationToken);
 
-        var job = JobBuilder.Create<SendReminderJob>()
-            .WithIdentity(key)
+        var time = _timeProvider.Now.WithTime(@event.NotifyAt);
+
+        if (time < _timeProvider.Now)
+        {
+            time = time.NextDay();
+        }
+
+        var trigger = TriggerBuilder.Create()
+            .ForJob(job)
+            .WithIdentity(new TriggerKey($"{nameof(SendReminderJob)}-{@event.UserId}-{@event.ReminderId}", @event.UserId.ToString()))
             .UsingJobData("data", JsonConvert.SerializeObject(
                 new SendReminderJobData(
                     reminder.UserId,
@@ -68,23 +77,12 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
                     reminder.Text
                 ))
             )
-            .Build();
-
-        var time = _timeProvider.Now.WithTime(@event.NotifyAt);
-
-        if (time < _timeProvider.Now)
-        {
-            time = time.NextDay();
-        }
-
-        var trigger = TriggerBuilder.Create()
-            .ForJob(key)
             .StartAt(time)
             .Build();
 
         try
         {
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken);
         }
         catch (Exception ex)
         {

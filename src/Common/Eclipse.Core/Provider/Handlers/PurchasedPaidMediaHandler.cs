@@ -10,16 +10,16 @@ namespace Eclipse.Core.Provider.Handlers;
 
 internal sealed class PurchasedPaidMediaHandler : IRouteHandler
 {
-    private readonly IEnumerable<PipelineBase> _pipelines;
+    private readonly IEnumerable<IPipeline> _pipelines;
 
-    public PurchasedPaidMediaHandler(IEnumerable<PipelineBase> pipelines)
+    public PurchasedPaidMediaHandler(IEnumerable<IPipeline> pipelines)
     {
         _pipelines = pipelines;
     }
 
     public UpdateType Type => UpdateType.PurchasedPaidMedia;
 
-    public PipelineBase? Get(Update update)
+    public IPipeline? Get(Update update)
     {
         return _pipelines.FirstOrDefault(p => p.GetType()
             .GetCustomAttribute<PurchasedPaidMediaPipelineAttribute>() is not null

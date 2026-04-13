@@ -30,21 +30,21 @@ public sealed class CollectMoodRecordSchedulerTests
         var scheduler = Substitute.For<IScheduler>();
         var options = new SchedulerOptions(Guid.NewGuid(), TimeSpan.FromHours(2));
 
-        var currentTime = DateTime.UtcNow;
+        var jobDetail = Substitute.For<IJobDetail>();
+        jobDetail.Key.Returns(new JobKey("Test"));
 
-        _timeProvider.Now.Returns(currentTime);
+        scheduler.GetJobDetail(Arg.Any<JobKey>()).Returns(jobDetail);
 
-        var expectedJobKey = JobKey.Create($"{nameof(CollectMoodRecordJob)}-{options.UserId}");
+        _timeProvider.Now.Returns(DateTime.UtcNow);
+
         var expectedData = JsonConvert.SerializeObject(new UserIdJobData(options.UserId));
 
         await _sut.Schedule(scheduler, options);
 
         await scheduler.Received().ScheduleJob(
-            Arg.Is<IJobDetail>(job =>
-                job.Key.Equals(expectedJobKey) &&
-                job.JobDataMap.GetString("data") == expectedData
-            ),
-            Arg.Is<ITrigger>(trigger => trigger.JobKey.Equals(expectedJobKey))
+            Arg.Is<ITrigger>(trigger => trigger.JobKey.Equals(jobDetail.Key)
+                && trigger.JobDataMap.GetString("data") == expectedData
+            )
         );
     }
 
@@ -55,6 +55,6 @@ public sealed class CollectMoodRecordSchedulerTests
         var options = new SchedulerOptions(Guid.NewGuid(), default);
 
         await _sut.Unschedule(scheduler, options);
-        await scheduler.Received().DeleteJob(Arg.Is<JobKey>(k => k.Name == $"{nameof(CollectMoodRecordJob)}-{options.UserId}"));
+        await scheduler.Received().UnscheduleJob(Arg.Is<TriggerKey>(k => k.Name == $"{nameof(CollectMoodRecordJob)}-{options.UserId}"));
     }
 }

@@ -38,6 +38,11 @@ public sealed class ReminderAddedEventHandlerTests
     {
         _timeProvider.Now.Returns(DateTime.UtcNow);
 
+        var jobDetail = Substitute.For<IJobDetail>();
+        jobDetail.Key.Returns(new JobKey("Test", "Reminders"));
+
+        _scheduler.GetJobDetail(Arg.Any<JobKey>()).Returns(jobDetail);
+
         var reminderId = Guid.NewGuid();
         var userId = Guid.NewGuid();
 
@@ -48,7 +53,7 @@ public sealed class ReminderAddedEventHandlerTests
         await _schedulerFactory.Received().GetScheduler();
 
         await _scheduler.ScheduleJob(
-            Arg.Is<IJobDetail>(detail => detail.Key.Name == $"{nameof(SendReminderJob)}-{userId}-{reminderId}"),
+            Arg.Is<IJobDetail>(detail => detail.Key.Name == jobDetail.Key.Name),
             Arg.Is<ITrigger>(trigger => trigger.JobKey.Name == $"{nameof(SendReminderJob)}-{userId}-{reminderId}")
         );
     }

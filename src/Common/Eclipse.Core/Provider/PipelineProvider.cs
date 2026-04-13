@@ -33,22 +33,21 @@ internal sealed class PipelineProvider : IPipelineProvider
         _handlers = handlers.ToDictionary(h => h.Type);
     }
 
-    public PipelineBase Get(Update update)
+    public IPipeline Get(Update update)
     {
         if (!_handlers.TryGetValue(update.Type, out var handler))
         {
             handler = new UnknownHandler();
         }
 
-        var pipeline = handler.Get(update)
-            ?? (PipelineBase)_notFoundPipeline;
+        var pipeline = handler.Get(update) ?? _notFoundPipeline;
 
-        pipeline.Update = update;
+        pipeline.SetUpdate(update);
 
         return ValidOrAccessDenied(pipeline, update);
     }
 
-    private PipelineBase ValidOrAccessDenied(PipelineBase pipeline, Update update)
+    private IPipeline ValidOrAccessDenied(IPipeline pipeline, Update update)
     {
         if (IsContextValid(pipeline, update, out var results))
         {
@@ -57,10 +56,10 @@ internal sealed class PipelineProvider : IPipelineProvider
 
         _accessDeniedPipeline.SetResults(results);
 
-        return (PipelineBase)_accessDeniedPipeline;
+        return _accessDeniedPipeline;
     }
 
-    private bool IsContextValid(PipelineBase pipeline, Update update, out ValidationResult[] results)
+    private bool IsContextValid(IPipeline pipeline, Update update, out ValidationResult[] results)
     {
         var validationAttributes = pipeline.GetType()
             .GetCustomAttributes<ContextValidationAttribute>()

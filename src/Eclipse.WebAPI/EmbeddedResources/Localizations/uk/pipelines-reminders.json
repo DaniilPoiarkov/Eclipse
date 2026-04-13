@@ -5,7 +5,7 @@
     "Pipelines:Reminders:AskForText": "Опиши що мені нагадати або натисни /cancel аби повернутись",
     "Pipelines:Reminders:ValueCannotBeEmpty": "Я не можу тобі нагадати це😢\r\nПоки що я розумію лише текст, тому напиши будь-ласка, або натисни /cancel аби повернутись",
     "Pipelines:Reminders:AskForTime": "Угу, напиши ще будь-ласка час у форматі 'гг:хх' або натисни /cancel аби повернутись",
-    "Pipelines:Reminders:Created": "Хмм..так!\r\nКоли прийде час я тобі надішлю нагадування😊",
+    "Pipelines:Reminders:Created{Text}{Time}": "Нагадування '{0}' встановлено на {1}😊",
     "Pipelines:Reminders:CannotParseTime": "Оуу, я не можу зрозуміти коли тобі відправити нагадування😔\r\nНапиши час у форматі 'гг:хх' або натисни /cancel аби повернутись",
 
     "Pipelines:Reminders:List:Empty": "У тебе нема запланованих нагадувань! Хочеш додати?😊",

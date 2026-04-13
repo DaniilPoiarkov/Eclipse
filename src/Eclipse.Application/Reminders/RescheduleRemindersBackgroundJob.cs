@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.Reminders.Sendings;
+﻿using Eclipse.Application.Jobs;
+using Eclipse.Application.Reminders.Sendings;
 using Eclipse.Common.Background;
 using Eclipse.Common.Clock;
 using Eclipse.Domain.Users;
@@ -38,24 +39,21 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
             )
         ));
 
+        var job = await scheduler.GetOrAddDurableJob<SendReminderJob>(cancellationToken);
+
         foreach (var (reminder, notifyAt) in reminders)
         {
-            var key = new JobKey($"{nameof(SendReminderJob)}-{reminder.UserId}-{reminder.ReminderId}");
-
-            var job = JobBuilder.Create<SendReminderJob>()
-                .WithIdentity(key)
-                .UsingJobData("data", JsonConvert.SerializeObject(reminder))
-                .Build();
-
             var time = _timeProvider.Now
                 .WithTime(notifyAt);
 
             var trigger = TriggerBuilder.Create()
                 .ForJob(job)
+                .WithIdentity(new TriggerKey($"{nameof(SendReminderJob)}-{reminder.UserId}-{reminder.ReminderId}", reminder.UserId.ToString()))
+                .UsingJobData("data", JsonConvert.SerializeObject(reminder))
                 .StartAt(time)
                 .Build();
 
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken);
         }
     }
 }

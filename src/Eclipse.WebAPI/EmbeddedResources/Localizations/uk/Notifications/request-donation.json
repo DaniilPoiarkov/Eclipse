@@ -1,0 +1,8 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Notifications:Donations:Request": "👋 <b>Привіт, приємно тебе тут бачити!</b>\nЯ сподіваюсь тобі подобається сервіс. Зараз він існує на ініціативі розробника і всі витрати йдуть з власної кишені, тож якщо хочеш підтримати, знизу є посилання на банку.\nДякую🌘 \n\n🔗 <b>Банка:</b> https://send.monobank.ua/jar/4Nojrf6mfF \n💳 <b>Картка:</b> 4874 1000 2764 1664",
+    "Notifications:Donations:ButtonText": "Підтримати 💛",
+    "Notifications:Donations:ButtonUrl": "https://send.monobank.ua/jar/4Nojrf6mfF"
+  }
+}

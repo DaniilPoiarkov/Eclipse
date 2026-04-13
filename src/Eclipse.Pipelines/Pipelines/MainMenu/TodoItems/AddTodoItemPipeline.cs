@@ -6,9 +6,9 @@ using Eclipse.Common.Caching;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Core.Stores;
 using Eclipse.Domain.Shared.TodoItems;
 using Eclipse.Pipelines.Caching;
-using Eclipse.Pipelines.Stores.Messages;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -110,9 +110,9 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
         return Menu(buttons, Localizer[$"{_pipelinePrefix}:AskToScheduleReminder"]);
     }
 
-    private async Task<IResult> AskToScheduleReminder(MessageContext context)
+    private async Task<IResult> AskToScheduleReminder(MessageContext context, CancellationToken cancellationToken)
     {
-        var message = await _messageStore.GetOrDefaultAsync(new MessageKey(context.ChatId));
+        var message = await _messageStore.GetLatestBotMessage(context.ChatId, typeof(AddTodoItemPipeline), cancellationToken);
 
         if (!context.Value.Equals("true"))
         {
@@ -179,6 +179,6 @@ internal sealed class AddTodoItemPipeline : TodoItemsPipelineBase
 
         await _reminderService.CreateAsync(user.Value.Id, model, cancellationToken);
 
-        return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:ReminderAdded"]);
+        return Menu(TodoItemMenuButtons, Localizer[$"{_pipelinePrefix}:ReminderAdded{{Text}}{{Time}}", text, time.ToString("HH:mm")]);
     }
 }

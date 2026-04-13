@@ -6,10 +6,10 @@ using Eclipse.Infrastructure;
 using Eclipse.Localization;
 using Eclipse.Pipelines;
 using Eclipse.Pipelines.Localization;
+using Eclipse.Pipelines.Stores;
+using Eclipse.Pipelines.Users;
 using Eclipse.WebAPI;
 using Eclipse.WebAPI.Options;
-
-using Microsoft.ApplicationInsights.Extensibility;
 
 using Serilog;
 
@@ -20,8 +20,12 @@ var configuration = builder.Configuration;
 builder.Services
     .AddApplicationModule(options => configuration.GetSection("Application").Bind(options))
     .AddDomainModule()
-    .AddCoreModule(builder => builder.Decorate<LocalizationDecorator>()
+    .AddCoreModule(core => core.Decorate<LocalizationDecorator>()
+        .Decorate<UserTrackerDecorator>()
         .UseKeywordMapper<LocalizedKeywordMapper>(ServiceLifetime.Transient)
+        .UseCacheStores()
+        .ConfigureOptions(options => builder.Configuration.GetSection("CoreOptions").Bind(options))
+        .AddPreConfigurator<SetLocalizerConfigurator>()
     )
     .AddPipelinesModule(options => configuration.GetSection("Telegram").Bind(options))
     .AddWebApiModule()
@@ -45,14 +49,8 @@ builder.Services.AddLocalization(localization =>
 });
 
 builder.Host.UseSerilog((context, sp, config) =>
-{
     config.ReadFrom.Configuration(configuration)
-        .WriteTo.Async(sink => sink.Console())
-        .WriteTo.Async(sink => sink.ApplicationInsights(
-            sp.GetRequiredService<TelemetryConfiguration>(),
-            TelemetryConverter.Traces))
-        .Enrich.FromLogContext();
-});
+);
 
 var app = builder.Build();
 

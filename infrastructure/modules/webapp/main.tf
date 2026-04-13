@@ -54,33 +54,35 @@ resource "azurerm_linux_web_app" "app" {
   }
 
   app_settings = merge({
-    ASPNETCORE_ENVIRONMENT                     = var.environment
-    APPLICATIONINSIGHTS_CONNECTION_STRING      = var.app_insights_connection_string
-    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
-    XDT_MicrosoftApplicationInsights_Mode      = "Recommended"
-    App__SelfUrl                               = "https://${var.app_name}-${var.environment}-app.azurewebsites.net"
-    ConnectionStrings__ApplicationInsights     = var.app_insights_connection_string
-    Application__Chat                          = var.chat_id
-    Telegram__Chat                             = var.chat_id
-    Telegram__Token                            = var.bot_token
-    Telegram__SecretToken                      = var.secret_token
-    Authorization__JwtBearer__Key              = var.authorization_key
-    Authorization__JwtBearer__Audience         = var.app_name
-    Authorization__JwtBearer__Issuer           = var.app_name
-    Google__Credentials                        = var.google_credentials
-    Sheets__SheetId                            = var.sheets_id
-    Sheets__SuggestionsRange                   = var.sheets_range
-    Settings__IsRedisEnabled                   = var.settings_use_redis
-    Azure__CosmosOptions__Endpoint             = var.cosmos_endpoint
-    Azure__CosmosOptions__DatabaseId           = var.cosmos_database_id
-    Azure__CosmosOptions__Container            = var.cosmos_database_container
-    AzureAd__ClientId                          = var.azuread_client_id
-    AzureAd__TenantId                          = var.tenant_id
-    AzureAd__Urls__Authorization               = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/authorize"
-    AzureAd__Urls__Token                       = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
-    AzureAd__Urls__Refresh                     = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
-    AzureAd__Scopes__0__Name                   = "api://${var.azuread_client_id}/Default"
-    AzureAd__Scopes__0__Description            = "Default scope without any delegations."
+    ASPNETCORE_ENVIRONMENT                      = var.environment
+    APPLICATIONINSIGHTS_CONNECTION_STRING       = var.app_insights_connection_string
+    ApplicationInsightsAgent_EXTENSION_VERSION  = "~3"
+    XDT_MicrosoftApplicationInsights_Mode       = "Recommended"
+    App__SelfUrl                                = "https://${var.app_name}-${var.environment}-app.azurewebsites.net"
+    ConnectionStrings__ApplicationInsights      = var.app_insights_connection_string
+    Application__Chat                           = var.chat_id
+    Telegram__Chat                              = var.chat_id
+    Telegram__Token                             = var.bot_token
+    Telegram__SecretToken                       = var.secret_token
+    Authorization__JwtBearer__Key               = var.authorization_key
+    Authorization__JwtBearer__Audience          = var.app_name
+    Authorization__JwtBearer__Issuer            = var.app_name
+    Google__Credentials                         = var.google_credentials
+    Sheets__SheetId                             = var.sheets_id
+    Sheets__SuggestionsRange                    = var.sheets_range
+    Settings__IsRedisEnabled                    = var.settings_use_redis
+    Settings_IsApplicationInsightsEnabled       = true
+    Azure__CosmosOptions__Endpoint              = var.cosmos_endpoint
+    Azure__CosmosOptions__DatabaseId            = var.cosmos_database_id
+    Azure__CosmosOptions__Container             = var.cosmos_database_container
+    AzureAd__ClientId                           = var.azuread_client_id
+    AzureAd__TenantId                           = var.tenant_id
+    AzureAd__Urls__Authorization                = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/authorize"
+    AzureAd__Urls__Token                        = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
+    AzureAd__Urls__Refresh                      = "https://login.microsoftonline.com/${var.tenant_id}/oauth2/v2.0/token"
+    AzureAd__Scopes__0__Name                    = "api://${var.azuread_client_id}/Default"
+    AzureAd__Scopes__0__Description             = "Default scope without any delegations."
+    Serilog__WriteTo__1__Args__connectionString = var.app_insights_connection_string
   }, local.app_settings)
 
   sticky_settings {
