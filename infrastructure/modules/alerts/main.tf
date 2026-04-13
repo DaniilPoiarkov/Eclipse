@@ -99,9 +99,9 @@ resource "azurerm_logic_app_action_http" "http_call" {
   method       = "POST"
   uri          = "https://api.telegram.org/bot${var.tg_allert_bot_token}/sendMessage"
   body         = <<EOT
-    { 
+    {
       "chat_id": "${var.tg_alerts_chat}",
-      "text": "⚠️@{triggerBody()?['data']?['essentials']?['alertRule']}\n🕑Triggered at: @{triggerBody()?['data']?['essentials']?['firedDateTime']}\nMetric value: @{triggerBody()?['data']?['alertContext']?['condition']?['allOf'][0]?['metricValue']}"
+      "text": "⚠️@{triggerBody()?['data']?['essentials']?['alertRule']}\n🕑Triggered at: @{triggerBody()?['data']?['essentials']?['firedDateTime']}\n🌐Resource: @{triggerBody()?['data']?['alertContext']?['SearchResults']?['dataSources'][0]?['resourceId']}\n📈Metric value: @{triggerBody()?['data']?['alertContext']?['ResultCount']}\n🔎Query: @{triggerBody()?['data']?['alertContext']?['SearchQuery']}\n\n🔗Investigation link: @{triggerBody()?['data']?['essentials']?['investigationLink']}"
     }
     EOT
 }
