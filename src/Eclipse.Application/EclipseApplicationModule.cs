@@ -28,6 +28,7 @@ using Eclipse.Application.MoodRecords.Collection;
 using Eclipse.Application.MoodRecords.Report;
 using Eclipse.Application.MoodRecords.Report.Monthly;
 using Eclipse.Application.MoodRecords.Report.Weekly;
+using Eclipse.Application.Notifications.Donations;
 using Eclipse.Application.Notifications.GoodMorning;
 using Eclipse.Application.OptionsConfigurations;
 using Eclipse.Application.OptionsConfigurations.Registrators.Events;
@@ -174,5 +175,8 @@ public static class EclipseApplicationModule
 
         await manager.EnqueueAsync<JobRescheduler<CollectFeedbackJob>>(cancellationToken);
         logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(CollectFeedbackJob));
+
+        await manager.EnqueueAsync<JobRescheduler<RequestDonationsJob>>(cancellationToken);
+        logger.LogInformation("Enqueued rescheduling for {Job} job.", nameof(RequestDonationsJob));
     }
 }

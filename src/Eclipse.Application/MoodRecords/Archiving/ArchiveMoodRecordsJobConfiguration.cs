@@ -1,8 +1,8 @@
-﻿using Eclipse.Application.MoodRecords.Archiving;
+﻿using Eclipse.Application.OptionsConfigurations;
 
 using Quartz;
 
-namespace Eclipse.Application.OptionsConfigurations.Configurations;
+namespace Eclipse.Application.MoodRecords.Archiving;
 
 internal sealed class ArchiveMoodRecordsJobConfiguration : IJobConfiguration
 {
