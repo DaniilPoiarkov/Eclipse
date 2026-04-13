@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Application.Notifications.Donations;
 
@@ -39,7 +41,12 @@ internal sealed class RequestDonationsJob : UserProcessingJob, IJobWithKey
 
         await _client.SendMessage(
             chatId: user.ChatId,
-            text: _localizer["Jobs:Donations:Request"],
+            text: _localizer["Notifications:Donations:Request"],
+            replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl(
+                text: _localizer["Notifications:Donations:ButtonText"],
+                url: _localizer["Notifications:Donations:ButtonUrl"]
+            )),
+            parseMode: ParseMode.Html,
             cancellationToken: cancellationToken
         );
     }
