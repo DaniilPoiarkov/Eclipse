@@ -79,15 +79,15 @@ internal sealed class CachePipelineStore : IPipelineStore
 
     public Task Set(long chatId, int messageId, IPipeline value, CancellationToken cancellationToken = default)
     {
-        return Set(chatId, messageId, value, cancellationToken);
+        return SetInternal(chatId, messageId, value, cancellationToken);
     }
 
     public Task Set(long chatId, IPipeline value, CancellationToken cancellationToken = default)
     {
-        return Set(chatId, null, value, cancellationToken);
+        return SetInternal(chatId, null, value, cancellationToken);
     }
 
-    private async Task Set(long chatId, int? messageId, IPipeline value, CancellationToken cancellationToken = default)
+    private async Task SetInternal(long chatId, int? messageId, IPipeline value, CancellationToken cancellationToken = default)
     {
         var pipelineInfo = new PipelineInfo(messageId, value.GetType().AssemblyQualifiedName ?? string.Empty, value.StagesLeft, DateTime.UtcNow);
 
@@ -118,7 +118,7 @@ internal sealed class CachePipelineStore : IPipelineStore
         return new CacheOptions
         {
             Tags = [$"stores:pipeline:{chatId}"],
-            Expiration = CacheConsts.ThreeDays
+            Expiration = CacheConsts.ThreeDays,
         };
     }
 
