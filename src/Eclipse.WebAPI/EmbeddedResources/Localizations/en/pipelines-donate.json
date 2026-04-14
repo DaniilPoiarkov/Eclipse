@@ -1,0 +1,8 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:Donations:Message": "🌘 <b>Thank you for support!</b>\nYour donation helps me develop and provide new features for you!\n\n🔗 <b>Support:</b> https://send.monobank.ua/jar/4Nojrf6mfF \n💳 <b>Card:</b> 4874 1000 2764 1664",
+    "Pipelines:Donations:ButtonText": "Support project 💛",
+    "Pipelines:Donations:ButtonUrl": "https://send.monobank.ua/jar/4Nojrf6mfF"
+  }
+}
