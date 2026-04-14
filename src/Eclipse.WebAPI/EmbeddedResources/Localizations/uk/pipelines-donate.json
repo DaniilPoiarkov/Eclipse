@@ -2,7 +2,7 @@
   "Culture": "uk",
   "Texts": {
     "Pipelines:Donations:Message": "🌘 <b>Дякую за підтримку!</b>\nТвій донат допомагає розвиватись і створювати для тебе новий функціонал!\n\n🔗 <b>Банка:</b> https://send.monobank.ua/jar/4Nojrf6mfF \n💳 <b>Картка:</b> 4874 1000 2764 1664",
-    "Pipelines:Donations:ButtonText": "Підтримати 💛",
+    "Pipelines:Donations:ButtonText": "Підтримати проект 💛",
     "Pipelines:Donations:ButtonUrl": "https://send.monobank.ua/jar/4Nojrf6mfF"
   }
 }

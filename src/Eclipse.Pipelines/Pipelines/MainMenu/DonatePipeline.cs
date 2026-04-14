@@ -8,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu;
 
-[Route("Menu:Donate", "/support")]
+[Route("Menu:MainMenu:Donate", "/support")]
 internal sealed class DonatePipeline : EclipsePipelineBase
 {
     private readonly ITelegramBotClient _client;

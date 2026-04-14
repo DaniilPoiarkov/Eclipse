@@ -21,7 +21,7 @@ public abstract class EclipsePipelineBase : PipelineBase
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:MyToDos"]), new KeyboardButton(Localizer["Menu:MainMenu:Reminders"]) },
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Reports"]), new KeyboardButton(Localizer["Menu:MainMenu:Suggest"]) },
         new[] { new KeyboardButton(Localizer["Menu:MainMenu:Settings"]) },
-        new[] { new KeyboardButton(Localizer["Menu:Donate"]) }
+        new[] { new KeyboardButton(Localizer["Menu:MainMenu:Donate"]) }
     };
 
     internal void SetLocalizer(IStringLocalizer localizer)
