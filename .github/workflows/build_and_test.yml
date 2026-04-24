@@ -11,7 +11,7 @@ on:
       - 'src/**'
       - 'test/**'
       - '**.props'
-      - '**.sln'
+      - '**.slnx'
   workflow_dispatch:
 
 jobs:

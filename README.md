@@ -84,7 +84,7 @@ Basically solution follows Clean Architecture. **WebAPI** is a presentation laye
 Nevertheless there're some assemblies which worth to mention separatelly.
 
 ### Core
-In general represents some sort of mini-framework for building multiple-actions pipelines which requires user interaction with bunch of additional setup.
+In general represents some sort of mini-framework for building multiple-actions pipelines which requires user interaction with bunch of additional setup. Allows creation of different providers for stores.
 
 ### Pipelines
 Contain logic with telegram interaction. In other words it is available for end user functionality. This assembly uses **Core** for building new features.

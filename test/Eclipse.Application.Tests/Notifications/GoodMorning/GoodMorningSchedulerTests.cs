@@ -45,7 +45,7 @@ public sealed class GoodMorningSchedulerTests
 
         await scheduler.Received().ScheduleJob(
             Arg.Is<ITrigger>(trigger => trigger.JobKey.Equals(jobDetail.Key)
-                && trigger.JobDataMap.Get("data").Equals(expectedData)
+                && trigger.JobDataMap["data"].Equals(expectedData)
             )
         );
     }
