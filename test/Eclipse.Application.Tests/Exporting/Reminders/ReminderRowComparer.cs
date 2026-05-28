@@ -12,6 +12,6 @@ internal sealed class ReminderRowComparer : IExportRowComparer<Reminder, Exporte
             && row.UserId == entity.UserId
             && row.Text == entity.Text
             && !row.NotifyAt.IsNullOrEmpty()
-            && TimeOnly.Parse(row.NotifyAt) == notifyAt;
+            && TimeOnly.Parse(row.NotifyAt).ToShortTimeString() == notifyAt.ToShortTimeString();
     }
 }
