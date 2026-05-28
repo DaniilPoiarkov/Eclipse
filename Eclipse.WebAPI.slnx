@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/mcp/">
+    <Project Path="mcp/Eclipse.MCP/Eclipse.MCP.csproj" Id="545ca801-bcd1-4e52-b044-501ec7e29fbf" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
