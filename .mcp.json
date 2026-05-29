@@ -6,13 +6,11 @@
       "command": "dotnet",
       "args": [
         "run",
-        "--no-build",
         "--project",
         "./mcp/Eclipse.MCP/Eclipse.MCP.csproj"
       ],
       "env": {
-        "ECLIPSE_TEST_MESSAGE": "Oh wow, my first mcp server with C#/.NET",
-        "ECLIPSE_API_TOKEN": "test"
+        "ECLIPSE_API_TOKEN": "eclp_077345b0d444c5058784df5e9e422889a91658528907adae60b2509e3b3d463c"
       }
     }
   }

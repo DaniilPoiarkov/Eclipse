@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables()
     .AddUserSecrets<Program>();
 
@@ -30,9 +30,11 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
 });
 
 builder.Services.AddScoped<PingTools>();
+builder.Services.AddScoped<HealthTools>();
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()
-    .WithTools<PingTools>();
+    .WithTools<PingTools>()
+    .WithTools<HealthTools>();
 
 await builder.Build().RunAsync();

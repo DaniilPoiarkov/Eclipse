@@ -8,8 +8,15 @@ using System.ComponentModel;
 
 namespace Eclipse.MCP.Tools;
 
-public sealed class PingTools(IEclipseClient client)
+public sealed class PingTools
 {
+    private readonly IEclipseClient _client;
+
+    public PingTools(IEclipseClient client)
+    {
+        _client = client;
+    }
+
     [McpServerTool(Name = "eclipse_ping")]
     [Description("Calls ping request for Eclipse app to check minimal availability.\n" +
         "Use when user asks to ping or check whether Eclipse application is running.\n" +
@@ -20,7 +27,7 @@ public sealed class PingTools(IEclipseClient client)
     ]
     public async Task<ToolResponse<string>> PingAsync(CancellationToken cancellationToken = default)
     {
-        var response = await client.PingAsync(cancellationToken);
+        var response = await _client.PingAsync(cancellationToken);
         return response.ToToolResponse();
     }
 }
