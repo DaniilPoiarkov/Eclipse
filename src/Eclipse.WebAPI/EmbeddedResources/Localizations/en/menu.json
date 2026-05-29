@@ -25,6 +25,7 @@
     "Menu:Reports:Mood": "Mood swings chart 🤔",
     "Menu:Reports:Statistics": "Statistics 📈",
 
+    "Menu:ApiTokens:Create": "Create API token 🔑",
     "Menu:ApiTokens:List": "API tokens 🔑"
   }
 }

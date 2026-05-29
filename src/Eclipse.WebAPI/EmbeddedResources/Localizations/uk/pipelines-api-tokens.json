@@ -3,6 +3,9 @@
   "Texts": {
     "Pipelines:ApiTokens:List:Empty": "У вас ще немає API токенів.",
     "Pipelines:ApiTokens:List:ClickToRevoke": "Натисніть, щоб відкликати",
-    "Pipelines:ApiTokens:List:Revoked": "Токен успішно відкликано ✅"
+    "Pipelines:ApiTokens:List:Revoked": "Токен успішно відкликано ✅",
+
+    "Pipelines:ApiTokens:Create:EnterName": "Введіть назву для нового токена або /cancel, щоб повернутись",
+    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Токен створено!\n\n🔑 {0}\n\n⚠️ Збережіть цей токен зараз — він більше не буде показаний.\nЗакінчується: {1}"
   }
 }

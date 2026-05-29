@@ -25,6 +25,7 @@
     "Menu:Reports:Mood": "Графік змін настрою 🤔",
     "Menu:Reports:Statistics": "Статистика 📈",
 
+    "Menu:ApiTokens:Create": "Створити API токен 🔑",
     "Menu:ApiTokens:List": "API токени 🔑"
   }
 }
