@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Eclipse.MCP.Tools;
 
-public sealed class PingTools(IHttpClientFactory httpClientFactory)
+public sealed class PingTools(IEclipseClient eclipseClient)
 {
     [McpServerTool(Name = "eclipse_ping")]
     [Description("Calls ping request for Eclipse app to check minimal availability.\n" +
@@ -14,14 +14,5 @@ public sealed class PingTools(IHttpClientFactory httpClientFactory)
         "<sample2>Is the Eclipse app running?</sample2>\n" +
         "<sample3>Ping Eclipse pls</sample3>\n")
     ]
-    public async Task<PingResponse> PingAsync()
-    {
-        using var httpClient = httpClientFactory.CreateClient("eclipse");
-        var response = await httpClient.GetAsync("/api/v2/ping");
-        var content = await response.Content.ReadAsStringAsync();
-
-        return response.IsSuccessStatusCode
-            ? new PingResponse(content, false)
-            : new PingResponse($"Error with status {response.StatusCode}: {content}", true);
-    }
+    public Task<PingResponse> PingAsync() => eclipseClient.PingAsync();
 }

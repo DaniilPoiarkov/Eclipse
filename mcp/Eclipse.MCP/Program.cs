@@ -1,3 +1,4 @@
+using Eclipse.MCP;
 using Eclipse.MCP.Tools;
 
 using Microsoft.Extensions.Configuration;
@@ -19,7 +20,7 @@ builder.Services.AddOptions<EclipseOptions>()
     .Bind(builder.Configuration.GetSection("Eclipse"))
     .ValidateOnStart();
 
-builder.Services.AddHttpClient("eclipse", (sp, client) =>
+builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
 {
     var options = sp.GetRequiredService<IOptions<EclipseOptions>>();
     var configuration = sp.GetRequiredService<IConfiguration>();
