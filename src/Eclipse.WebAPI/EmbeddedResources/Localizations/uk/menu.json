@@ -23,6 +23,8 @@
     "Menu:Reminders:List": "Заплановані нагадування 🕑",
 
     "Menu:Reports:Mood": "Графік змін настрою 🤔",
-    "Menu:Reports:Statistics": "Статистика 📈"
+    "Menu:Reports:Statistics": "Статистика 📈",
+
+    "Menu:ApiTokens:List": "API токени 🔑"
   }
 }

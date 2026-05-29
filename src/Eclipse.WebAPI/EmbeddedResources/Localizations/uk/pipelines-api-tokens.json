@@ -1,0 +1,8 @@
+{
+  "Culture": "uk",
+  "Texts": {
+    "Pipelines:ApiTokens:List:Empty": "У вас ще немає API токенів.",
+    "Pipelines:ApiTokens:List:ClickToRevoke": "Натисніть, щоб відкликати",
+    "Pipelines:ApiTokens:List:Revoked": "Токен успішно відкликано ✅"
+  }
+}

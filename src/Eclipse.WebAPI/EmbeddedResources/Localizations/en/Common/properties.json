@@ -2,6 +2,7 @@
   "culture": "en",
   "texts": {
     "Name": "Name",
-    "UserName": "User name"
+    "UserName": "User name",
+    "ExpiresAt": "Expires"
   }
 }

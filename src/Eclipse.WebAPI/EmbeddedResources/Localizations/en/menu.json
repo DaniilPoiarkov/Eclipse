@@ -23,6 +23,8 @@
     "Menu:Reminders:List": "Pending reminders 🕑",
 
     "Menu:Reports:Mood": "Mood swings chart 🤔",
-    "Menu:Reports:Statistics": "Statistics 📈"
+    "Menu:Reports:Statistics": "Statistics 📈",
+
+    "Menu:ApiTokens:List": "API tokens 🔑"
   }
 }
