@@ -12,7 +12,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Eclipse.Pipelines.Pipelines.MainMenu.ApiTokens;
 
 [Route("Menu:ApiTokens:List", "/api_tokens_list")]
-internal sealed class ApiTokensListPipeline : EclipsePipelineBase
+internal sealed class ApiTokensListPipeline : ApiTokensPipelineBase
 {
     private readonly IApiTokenService _apiTokenService;
 
@@ -42,7 +42,7 @@ internal sealed class ApiTokensListPipeline : EclipsePipelineBase
         if (!userResult.IsSuccess)
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer["Error"]);
+            return Menu(ApiTokensMenuButtons, Localizer["Error"]);
         }
 
         var tokensResult = await _apiTokenService.GetListAsync(userResult.Value.Id, cancellationToken);
@@ -50,7 +50,7 @@ internal sealed class ApiTokensListPipeline : EclipsePipelineBase
         if (!tokensResult.IsSuccess)
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer["Error"]);
+            return Menu(ApiTokensMenuButtons, Localizer["Error"]);
         }
 
         var tokens = tokensResult.Value.Take(MaxTokensToShow).ToList();
@@ -58,7 +58,7 @@ internal sealed class ApiTokensListPipeline : EclipsePipelineBase
         if (tokens.Count == 0)
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer["Pipelines:ApiTokens:List:Empty"]);
+            return Menu(ApiTokensMenuButtons, Localizer["Pipelines:ApiTokens:List:Empty"]);
         }
 
         return Menu(new InlineKeyboardMarkup(BuildButtons(tokens)), BuildMessage(tokens));
@@ -77,21 +77,21 @@ internal sealed class ApiTokensListPipeline : EclipsePipelineBase
 
         if (tokenId == Guid.Empty)
         {
-            return MenuAndClearPrevious(MainMenuButtons, message, Localizer["Error"]);
+            return MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]);
         }
 
         var userResult = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
 
         if (!userResult.IsSuccess)
         {
-            return MenuAndClearPrevious(MainMenuButtons, message, Localizer["Error"]);
+            return MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]);
         }
 
         var revokeResult = await _apiTokenService.RevokeAsync(userResult.Value.Id, tokenId, cancellationToken);
 
         if (!revokeResult.IsSuccess)
         {
-            return MenuAndClearPrevious(MainMenuButtons, message, Localizer["Error"]);
+            return MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]);
         }
 
         var tokensResult = await _apiTokenService.GetListAsync(userResult.Value.Id, cancellationToken);
@@ -102,7 +102,7 @@ internal sealed class ApiTokensListPipeline : EclipsePipelineBase
 
         if (tokens.Count == 0)
         {
-            return MenuAndClearPrevious(MainMenuButtons, message, Localizer["Pipelines:ApiTokens:List:Revoked"]);
+            return MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Pipelines:ApiTokens:List:Revoked"]);
         }
 
         RegisterStage(HandleUpdate);

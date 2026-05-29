@@ -27,6 +27,6 @@
 
     "Menu:ApiTokens": "API токени 🔑",
     "Menu:ApiTokens:Create": "Створити API токен 🔑",
-    "Menu:ApiTokens:List": "API токени 🔑"
+    "Menu:ApiTokens:List": "Список токенів 🔑"
   }
 }

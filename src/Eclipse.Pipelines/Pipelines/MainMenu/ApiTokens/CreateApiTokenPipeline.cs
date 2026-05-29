@@ -10,7 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace Eclipse.Pipelines.Pipelines.MainMenu.ApiTokens;
 
 [Route("Menu:ApiTokens:Create", "/api_tokens_create")]
-internal sealed class CreateApiTokenPipeline : EclipsePipelineBase
+internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
 {
     private readonly IApiTokenService _apiTokenService;
 
@@ -38,7 +38,7 @@ internal sealed class CreateApiTokenPipeline : EclipsePipelineBase
         if (context.Value.Equals("/cancel"))
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer["Okay"]);
+            return Menu(ApiTokensMenuButtons, Localizer["Okay"]);
         }
 
         var userResult = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
@@ -46,7 +46,7 @@ internal sealed class CreateApiTokenPipeline : EclipsePipelineBase
         if (!userResult.IsSuccess)
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer["Error"]);
+            return Menu(ApiTokensMenuButtons, Localizer["Error"]);
         }
 
         var result = await _apiTokenService.CreateAsync(userResult.Value.Id, new CreateApiTokenDto { Name = context.Value }, cancellationToken);
@@ -54,13 +54,13 @@ internal sealed class CreateApiTokenPipeline : EclipsePipelineBase
         if (!result.IsSuccess)
         {
             FinishPipeline();
-            return Menu(MainMenuButtons, Localizer.LocalizeError(result.Error));
+            return Menu(ApiTokensMenuButtons, Localizer.LocalizeError(result.Error));
         }
 
         var created = result.Value;
 
         return Menu(
-            MainMenuButtons,
+            ApiTokensMenuButtons,
             Localizer["Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}", created.Plaintext, created.Token.ExpiresAt.ToString("yyyy-MM-dd")]
         );
     }

@@ -27,6 +27,6 @@
 
     "Menu:ApiTokens": "API tokens 🔑",
     "Menu:ApiTokens:Create": "Create API token 🔑",
-    "Menu:ApiTokens:List": "API tokens 🔑"
+    "Menu:ApiTokens:List": "List API tokens 🔑"
   }
 }
