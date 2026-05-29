@@ -1,16 +1,21 @@
-using Eclipse.MCP.Tools;
-
 namespace Eclipse.MCP;
 
-internal sealed class EclipseClient(HttpClient httpClient) : IEclipseClient
+internal sealed class EclipseClient : IEclipseClient
 {
-    public async Task<PingResponse> PingAsync()
-    {
-        var response = await httpClient.GetAsync("/api/v2/ping");
-        var content = await response.Content.ReadAsStringAsync();
+    private readonly HttpClient _httpClient;
 
-        return response.IsSuccessStatusCode
-            ? new PingResponse(content, false)
-            : new PingResponse($"Error with status {response.StatusCode}: {content}", true);
+    public EclipseClient(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
+    public async Task<T> SendRequestAsync<T>(IRequest<T> request, CancellationToken cancellationToken = default)
+    {
+        using var httpRequest = request.Build();
+        using var response = await _httpClient.SendAsync(httpRequest, cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+
+        return await request.ParseAsync(response.Content, cancellationToken);
     }
 }

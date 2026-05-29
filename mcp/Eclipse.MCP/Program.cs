@@ -1,5 +1,6 @@
 using Eclipse.MCP;
 using Eclipse.MCP.Tools;
+using Eclipse.MCP.Tools.Ping;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

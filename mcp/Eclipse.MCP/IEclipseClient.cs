@@ -1,8 +1,6 @@
-using Eclipse.MCP.Tools;
-
 namespace Eclipse.MCP;
 
 public interface IEclipseClient
 {
-    Task<PingResponse> PingAsync();
+    Task<T> SendRequestAsync<T>(IRequest<T> request, CancellationToken cancellationToken = default);
 }
