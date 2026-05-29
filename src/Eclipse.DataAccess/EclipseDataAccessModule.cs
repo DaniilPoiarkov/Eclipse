@@ -1,5 +1,6 @@
 ﻿using Azure.Identity;
 
+using Eclipse.DataAccess.ApiTokens;
 using Eclipse.DataAccess.Cosmos;
 using Eclipse.DataAccess.Feedbacks;
 using Eclipse.DataAccess.InboxMessages;
@@ -12,6 +13,7 @@ using Eclipse.DataAccess.Promotions;
 using Eclipse.DataAccess.Repositories.Caching;
 using Eclipse.DataAccess.Statistics;
 using Eclipse.DataAccess.Users;
+using Eclipse.Domain.ApiTokens;
 using Eclipse.Domain.Feedbacks;
 using Eclipse.Domain.InboxMessages;
 using Eclipse.Domain.MoodRecords;
@@ -47,6 +49,7 @@ public static class EclipseDataAccessModule
         services.AddSingleton<IExpressionHashStore, ExpressionHashStore>();
 
         services
+            .AddScoped<IApiTokenRepository, ApiTokenRepository>()
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IOutboxMessageRepository, OutboxMessageRepository>()
             .AddScoped<IInboxMessageRepository, InboxMessageRepository>()

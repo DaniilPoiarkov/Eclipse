@@ -23,6 +23,10 @@
     "Menu:Reminders:List": "Заплановані нагадування 🕑",
 
     "Menu:Reports:Mood": "Графік змін настрою 🤔",
-    "Menu:Reports:Statistics": "Статистика 📈"
+    "Menu:Reports:Statistics": "Статистика 📈",
+
+    "Menu:ApiTokens": "API токени 🔑",
+    "Menu:ApiTokens:Create": "Створити API токен 🔑",
+    "Menu:ApiTokens:List": "Список токенів 🔑"
   }
 }
