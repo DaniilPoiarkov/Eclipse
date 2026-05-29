@@ -1,3 +1,5 @@
+using Eclipse.MCP.Core.Client;
+
 namespace Eclipse.MCP.Requests.Ping;
 
 internal sealed class PingRequest : IRequest<string>

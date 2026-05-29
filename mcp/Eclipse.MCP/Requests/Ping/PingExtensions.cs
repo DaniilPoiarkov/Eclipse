@@ -1,4 +1,6 @@
-﻿namespace Eclipse.MCP.Requests.Ping;
+﻿using Eclipse.MCP.Core.Client;
+
+namespace Eclipse.MCP.Requests.Ping;
 
 internal static class PingExtensions
 {

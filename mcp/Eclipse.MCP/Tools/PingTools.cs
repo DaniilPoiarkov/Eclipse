@@ -1,3 +1,5 @@
+using Eclipse.MCP.Core.Client;
+using Eclipse.MCP.Core.Tools;
 using Eclipse.MCP.Requests.Ping;
 
 using ModelContextProtocol.Server;
@@ -6,7 +8,7 @@ using System.ComponentModel;
 
 namespace Eclipse.MCP.Tools;
 
-public sealed class PingTools(IEclipseClient eclipseClient)
+public sealed class PingTools(IEclipseClient client)
 {
     [McpServerTool(Name = "eclipse_ping")]
     [Description("Calls ping request for Eclipse app to check minimal availability.\n" +
@@ -18,12 +20,7 @@ public sealed class PingTools(IEclipseClient eclipseClient)
     ]
     public async Task<ToolResponse<string>> PingAsync(CancellationToken cancellationToken = default)
     {
-        var message = await eclipseClient.PingAsync(cancellationToken);
-
-        return message.IsError
-            ? ToolResponse<string>.Failure(
-                [Error.Uncertain($"Eclipse app is not responding: {message.Content}")]
-            )
-            : ToolResponse<string>.Success(message.Content);
+        var response = await client.PingAsync(cancellationToken);
+        return response.ToToolResponse();
     }
 }

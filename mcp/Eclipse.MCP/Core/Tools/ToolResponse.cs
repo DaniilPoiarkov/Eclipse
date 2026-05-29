@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Eclipse.MCP;
+namespace Eclipse.MCP.Core.Tools;
 
 public sealed class ToolResponse<T>
     where T : class
@@ -10,7 +10,7 @@ public sealed class ToolResponse<T>
 
     public bool IsError => Errors.Any();
 
-    public IEnumerable<Error> Errors { get; init; } = [];
+    public IEnumerable<Error> Errors { get; init; }
 
     private ToolResponse(T? data, IEnumerable<Error> errors)
     {

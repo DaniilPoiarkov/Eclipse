@@ -1,4 +1,4 @@
-namespace Eclipse.MCP;
+namespace Eclipse.MCP.Core.Client;
 
 public readonly struct None
 {

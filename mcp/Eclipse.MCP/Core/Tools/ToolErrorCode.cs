@@ -1,4 +1,4 @@
-namespace Eclipse.MCP;
+namespace Eclipse.MCP.Core.Tools;
 
 public enum ToolErrorCode
 {

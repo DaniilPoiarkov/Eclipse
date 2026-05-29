@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
-namespace Eclipse.MCP;
+namespace Eclipse.MCP.Core.Client;
 
 public sealed class EclipseResponse<T>
     where T : class

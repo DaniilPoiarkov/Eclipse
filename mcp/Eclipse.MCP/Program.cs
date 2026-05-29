@@ -1,4 +1,4 @@
-using Eclipse.MCP;
+using Eclipse.MCP.Core.Client;
 using Eclipse.MCP.Tools;
 
 using Microsoft.Extensions.Configuration;
