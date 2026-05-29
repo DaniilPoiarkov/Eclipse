@@ -34,6 +34,16 @@ builder.Services.AddScoped<HealthTools>();
 builder.Services.AddScoped<TodoItemTools>();
 builder.Services.AddScoped<ReminderTools>();
 builder.Services.AddScoped<MoodRecordTools>();
+builder.Services.AddScoped<CacheTools>();
+builder.Services.AddScoped<CommandTools>();
+builder.Services.AddScoped<ConfigurationTools>();
+builder.Services.AddScoped<FeedbackTools>();
+builder.Services.AddScoped<InboxMessageTools>();
+builder.Services.AddScoped<PromotionTools>();
+builder.Services.AddScoped<SuggestionTools>();
+builder.Services.AddScoped<TelegramTools>();
+builder.Services.AddScoped<UserStatisticsTools>();
+builder.Services.AddScoped<UserTools>();
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()
@@ -41,6 +51,16 @@ builder.Services.AddMcpServer()
     .WithTools<HealthTools>()
     .WithTools<TodoItemTools>()
     .WithTools<ReminderTools>()
-    .WithTools<MoodRecordTools>();
+    .WithTools<MoodRecordTools>()
+    .WithTools<CacheTools>()
+    .WithTools<CommandTools>()
+    .WithTools<ConfigurationTools>()
+    .WithTools<FeedbackTools>()
+    .WithTools<InboxMessageTools>()
+    .WithTools<PromotionTools>()
+    .WithTools<SuggestionTools>()
+    .WithTools<TelegramTools>()
+    .WithTools<UserStatisticsTools>()
+    .WithTools<UserTools>();
 
 await builder.Build().RunAsync();
