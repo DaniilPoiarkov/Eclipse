@@ -2,6 +2,7 @@
   "culture": "uk",
   "texts": {
     "Name": "Ім'я'",
-    "UserName": "Юзернейм"
+    "UserName": "Юзернейм",
+    "ExpiresAt": "Закінчується"
   }
 }

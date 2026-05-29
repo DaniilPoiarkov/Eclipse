@@ -1,0 +1,12 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:ApiTokens": "Manage your API tokens",
+    "Pipelines:ApiTokens:List:Empty": "You don't have any API tokens yet.",
+    "Pipelines:ApiTokens:List:ClickToRevoke": "Click to revoke",
+    "Pipelines:ApiTokens:List:Revoked": "Token revoked successfully ✅",
+
+    "Pipelines:ApiTokens:Create:EnterName": "Enter a name for the new token, or /cancel to return",
+    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Token created!\n\n🔑 {0}\n\n⚠️ Save this token now — it will not be shown again.\nExpires: {1}"
+  }
+}
