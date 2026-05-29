@@ -4,7 +4,7 @@ using ModelContextProtocol.Server;
 
 using System.ComponentModel;
 
-namespace Eclipse.MCP.Tools.Ping;
+namespace Eclipse.MCP.Tools;
 
 public sealed class PingTools(IEclipseClient eclipseClient)
 {
@@ -16,16 +16,14 @@ public sealed class PingTools(IEclipseClient eclipseClient)
         "<sample2>Is the Eclipse app running?</sample2>\n" +
         "<sample3>Ping Eclipse pls</sample3>\n")
     ]
-    public async Task<PingResponse> PingAsync(CancellationToken cancellationToken = default)
+    public async Task<ToolResponse<string>> PingAsync(CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var message = await eclipseClient.SendRequestAsync(new PingRequest(), cancellationToken);
-            return new PingResponse(message, false);
-        }
-        catch (Exception ex)
-        {
-            return new PingResponse($"Error occured: {ex}", true);
-        }
+        var message = await eclipseClient.PingAsync(cancellationToken);
+
+        return message.IsError
+            ? ToolResponse<string>.Failure(
+                [Error.Uncertain($"Eclipse app is not responding: {message.Content}")]
+            )
+            : ToolResponse<string>.Success(message.Content);
     }
 }

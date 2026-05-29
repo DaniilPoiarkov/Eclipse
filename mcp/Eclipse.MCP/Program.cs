@@ -1,6 +1,5 @@
 using Eclipse.MCP;
 using Eclipse.MCP.Tools;
-using Eclipse.MCP.Tools.Ping;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,11 +30,9 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
 });
 
 builder.Services.AddScoped<PingTools>();
-builder.Services.AddScoped<TestTools>();
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()
-    .WithTools<PingTools>()
-    .WithTools<TestTools>();
+    .WithTools<PingTools>();
 
 await builder.Build().RunAsync();

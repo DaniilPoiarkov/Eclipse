@@ -9,13 +9,23 @@ internal sealed class EclipseClient : IEclipseClient
         _httpClient = httpClient;
     }
 
-    public async Task<T> SendRequestAsync<T>(IRequest<T> request, CancellationToken cancellationToken = default)
+    public async Task<EclipseResponse<T>> SendRequestAsync<T>(IRequest<T> request, CancellationToken cancellationToken = default)
+        where T : class
     {
         using var httpRequest = request.Build();
         using var response = await _httpClient.SendAsync(httpRequest, cancellationToken);
 
-        response.EnsureSuccessStatusCode();
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        return await request.ParseAsync(response.Content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            return EclipseResponse<T>.Failure(content, response.StatusCode);
+        }
+
+        return EclipseResponse<T>.Success(
+            await request.ParseAsync(response.Content, cancellationToken),
+            content,
+            response.StatusCode
+        );
     }
 }
