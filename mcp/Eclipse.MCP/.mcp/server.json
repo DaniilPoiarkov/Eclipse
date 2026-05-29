@@ -12,7 +12,30 @@
         "type": "stdio"
       },
       "packageArguments": [],
-      "environmentVariables": []
+      "environmentVariables": [
+        {
+          "name": "ECLIPSE_TEST_MESSAGE",
+          "value": "{test_message}",
+          "variables": {
+            "test_message": {
+              "description": "A test message to demonstrate environment variable substitution.",
+              "isRequired": true,
+              "isSecret": false
+            }
+          }
+        },
+        {
+          "name": "ECLIPSE_API_TOKEN",
+          "value": "{eclipse_api_token}",
+          "variables": {
+            "eclipse_api_token": {
+              "description": "API token for authenticating with Eclipse services.",
+              "isRequired": true,
+              "isSecret": true
+            }
+          }
+        }
+      ]
     }
   ],
   "repository": {
