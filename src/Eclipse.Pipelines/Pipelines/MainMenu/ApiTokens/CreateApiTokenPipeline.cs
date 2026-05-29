@@ -49,7 +49,7 @@ internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
             return Menu(ApiTokensMenuButtons, Localizer["Error"]);
         }
 
-        var result = await _apiTokenService.CreateAsync(userResult.Value.Id, new CreateApiTokenDto { Name = context.Value }, cancellationToken);
+        var result = await _apiTokenService.CreateAsync(userResult.Value.Id, new CreateApiTokenDto(context.Value), cancellationToken);
 
         if (!result.IsSuccess)
         {
