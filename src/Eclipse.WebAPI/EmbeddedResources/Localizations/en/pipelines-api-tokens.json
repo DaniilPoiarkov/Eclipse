@@ -1,6 +1,7 @@
 {
   "Culture": "en",
   "Texts": {
+    "Pipelines:ApiTokens": "Manage your API tokens",
     "Pipelines:ApiTokens:List:Empty": "You don't have any API tokens yet.",
     "Pipelines:ApiTokens:List:ClickToRevoke": "Click to revoke",
     "Pipelines:ApiTokens:List:Revoked": "Token revoked successfully ✅",
