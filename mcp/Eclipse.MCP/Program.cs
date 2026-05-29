@@ -31,10 +31,16 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
 
 builder.Services.AddScoped<PingTools>();
 builder.Services.AddScoped<HealthTools>();
+builder.Services.AddScoped<TodoItemTools>();
+builder.Services.AddScoped<ReminderTools>();
+builder.Services.AddScoped<MoodRecordTools>();
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()
     .WithTools<PingTools>()
-    .WithTools<HealthTools>();
+    .WithTools<HealthTools>()
+    .WithTools<TodoItemTools>()
+    .WithTools<ReminderTools>()
+    .WithTools<MoodRecordTools>();
 
 await builder.Build().RunAsync();

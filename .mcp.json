@@ -10,7 +10,7 @@
         "./mcp/Eclipse.MCP/Eclipse.MCP.csproj"
       ],
       "env": {
-        "ECLIPSE_API_TOKEN": "eclp_077345b0d444c5058784df5e9e422889a91658528907adae60b2509e3b3d463c"
+        "ECLIPSE_API_TOKEN": ""
       }
     }
   }

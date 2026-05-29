@@ -11,7 +11,7 @@ namespace Eclipse.MCP.Tools;
 public sealed class HealthTools
 {
     private readonly IEclipseClient _client;
-    
+
     public HealthTools(IEclipseClient client)
     {
         _client = client;

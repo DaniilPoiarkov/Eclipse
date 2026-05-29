@@ -11,7 +11,7 @@ public enum ToolErrorCode
     /// The business rule violation error which should not be retried without changing the request parameters (e.g. not eligable, duplicate, insufficient balance).
     /// </summary>
     Business,
-    
+
     /// <summary>
     /// The validation error which occurs when the input data does not meet the required criteria.
     /// </summary>
