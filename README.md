@@ -3,6 +3,7 @@
 - [Take an action](#take-an-action)
 - [Getting started](#getting-started)
   - [Build solution in docker](#build-solution-in-docker)
+  - [MCP](#mcp)
 - [Diagrams](#diagrams)
   - [Infrastructure](#infrastructure)
   - [Outbox and Inbox messages processing](#outbox-and-inbox-messages-processing)
@@ -54,6 +55,64 @@ It will take a few minutes to start web api as cosmosdb emulator takes a while t
 Check _eclipse-webapi_ container logs.
 
 Run _.\stop.ps1_ script to stop container. It will also remove the image.
+
+### MCP
+
+Eclipse exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that lets AI assistants like Claude manage your todo items, reminders, mood records, and more directly through conversation.
+
+#### 1. Create an API token
+
+API tokens are created through the Eclipse Telegram bot:
+
+1. Open [@eclipse_app_bot](https://t.me/eclipse_app_bot)
+2. Navigate to `Settings ⚙️` → `API Tokens` → `Create`
+3. Enter a name for the token (e.g. `Claude Desktop`)
+4. The bot will send you the token — **copy it immediately**, it is only shown once
+
+**Token format:** `eclp_` followed by 64 lowercase hex characters
+
+```
+eclp_12w4a8f3b1c9e7d2a5f0b3c6e9d1a4f7b2c5e8d0a3f6b9c2e5d8a1f4b7c0e3d6
+```
+
+**Expiration:** tokens are valid for **90 days** from creation. Generate a new one before it expires and update your MCP configuration.
+
+#### 2. Configure your MCP client
+
+**Claude Desktop** — add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "eclipse": {
+      "command": "dnx",
+      "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
+      "env": {
+        "ECLIPSE_API_TOKEN": "eclp_<your-token>"
+      }
+    }
+  }
+}
+```
+
+**VS Code** — add to `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "eclipse": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
+      "env": {
+        "ECLIPSE_API_TOKEN": "eclp_<your-token>"
+      }
+    }
+  }
+}
+```
+
+See [mcp/Eclipse.MCP/README.md](mcp/Eclipse.MCP/README.md) for the full list of available tools and additional configuration options.
 
 ## Diagrams
 ### Infrastructure
