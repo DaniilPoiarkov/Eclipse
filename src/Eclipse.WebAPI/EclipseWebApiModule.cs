@@ -100,6 +100,10 @@ public static class EclipseWebApiModule
             configuration.GetSection("AzureAd")
         );
 
+        services.Configure<ApiTokenAuthenticationOptions>(
+            configuration.GetSection("Authentication:ApiTokens")
+        );
+
         services.Configure<CultureList>(
             configuration.GetSection(nameof(CultureList))
         );

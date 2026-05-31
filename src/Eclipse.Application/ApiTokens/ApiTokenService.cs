@@ -2,6 +2,7 @@ using Eclipse.Application.Contracts.ApiTokens;
 using Eclipse.Common.Clock;
 using Eclipse.Common.Results;
 using Eclipse.Domain.ApiTokens;
+using Eclipse.Domain.Shared.ApiTokens;
 using Eclipse.Domain.Shared.Errors;
 using Eclipse.Domain.Users;
 
@@ -43,6 +44,11 @@ internal sealed class ApiTokenService : IApiTokenService
         }
 
         var existing = await _apiTokenRepository.GetByUserIdAsync(userId, cancellationToken);
+
+        if (existing.Count >= ApiTokensConsts.MaxCount)
+        {
+            return Error.Validation("ApiToken.LimitReached", "ApiToken:LimitReached", ApiTokensConsts.MaxCount);
+        }
 
         if (existing.Any(t => t.Name == create.Name))
         {

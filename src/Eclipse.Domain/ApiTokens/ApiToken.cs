@@ -1,11 +1,10 @@
+using Eclipse.Domain.Shared.ApiTokens;
 using Eclipse.Domain.Shared.Entities;
 
 namespace Eclipse.Domain.ApiTokens;
 
 public sealed class ApiToken : AggregateRoot, IHasCreatedAt
 {
-    public static readonly TimeSpan DefaultExpiration = TimeSpan.FromDays(90);
-
     public Guid UserId { get; private set; }
 
     public string Name { get; private set; } = string.Empty;
@@ -38,7 +37,7 @@ public sealed class ApiToken : AggregateRoot, IHasCreatedAt
             name,
             ApiTokenGenerator.Hash(plaintext),
             createdAt,
-            createdAt.Add(DefaultExpiration)
+            createdAt.Add(ApiTokensConsts.DefaultExpiration)
         );
 
         return (token, plaintext);
