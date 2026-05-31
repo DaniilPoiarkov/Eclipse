@@ -13,47 +13,39 @@ public sealed class ApiTokenAuthenticationHandler : AuthenticationHandler<Authen
 {
     public const string SchemeName = "ApiToken";
 
-    private const string HeaderName = "X-MCP-Token";
-
-    private const string TokenPrefix = "eclp_";
-
-    private static readonly string[] ExcludedPaths =
-    [
-        "/api/account",
-        "/api/api-tokens",
-        "/api/import",
-        "/api/export",
-    ];
-
     private readonly IApiTokenService _apiTokenService;
+
+    private readonly ApiTokenAuthenticationOptions _authOptions;
 
     public ApiTokenAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        IApiTokenService apiTokenService)
+        IApiTokenService apiTokenService,
+        IOptions<ApiTokenAuthenticationOptions> authOptions)
         : base(options, logger, encoder)
     {
         _apiTokenService = apiTokenService;
+        _authOptions = authOptions.Value;
     }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var path = Request.Path.Value ?? string.Empty;
 
-        if (ExcludedPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+        if (_authOptions.ExcludedPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
         {
             return AuthenticateResult.NoResult();
         }
 
-        if (!Request.Headers.TryGetValue(HeaderName, out var token) || token.IsNullOrEmpty())
+        if (!Request.Headers.TryGetValue(_authOptions.HeaderName, out var token) || token.IsNullOrEmpty())
         {
             return AuthenticateResult.NoResult();
         }
 
         var plaintext = token.ToString();
 
-        if (!plaintext.StartsWith(TokenPrefix, StringComparison.Ordinal))
+        if (!plaintext.StartsWith(_authOptions.TokenPrefix, StringComparison.Ordinal))
         {
             return AuthenticateResult.Fail("Invalid API token format.");
         }
