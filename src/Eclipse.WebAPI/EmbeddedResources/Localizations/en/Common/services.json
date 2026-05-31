@@ -32,6 +32,7 @@
     "{0}AlreadyExists{1}{2}": "{0} with {1} '{2}' already exists.",
     "InvalidField{0}{1}": "Invalid field {0} {1}",
 
-    "ApiToken:NameDuplicate": "You already have a token named '{0}'. Please choose a different name."
+    "ApiToken:NameDuplicate": "You already have a token named '{0}'. Please choose a different name.",
+    "ApiToken:LimitReached": "You have reached the maximum of {0} API tokens. Please revoke an existing token before creating a new one."
   }
 }

@@ -17,6 +17,14 @@ public sealed class ApiTokenAuthenticationHandler : AuthenticationHandler<Authen
 
     private const string TokenPrefix = "eclp_";
 
+    private static readonly string[] ExcludedPaths =
+    [
+        "/api/account",
+        "/api/api-tokens",
+        "/api/import",
+        "/api/export",
+    ];
+
     private readonly IApiTokenService _apiTokenService;
 
     public ApiTokenAuthenticationHandler(
@@ -31,6 +39,13 @@ public sealed class ApiTokenAuthenticationHandler : AuthenticationHandler<Authen
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        var path = Request.Path.Value ?? string.Empty;
+
+        if (ExcludedPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+        {
+            return AuthenticateResult.NoResult();
+        }
+
         if (!Request.Headers.TryGetValue(HeaderName, out var token) || token.IsNullOrEmpty())
         {
             return AuthenticateResult.NoResult();
