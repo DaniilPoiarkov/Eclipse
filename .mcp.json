@@ -9,9 +9,10 @@
        "--project",
        "./mcp/Eclipse.MCP/Eclipse.MCP.csproj"
      ],
-     "env": {
-       "ECLIPSE_API_TOKEN": ""
-     }
+      "env": {
+        "ECLIPSE_API_TOKEN": "",
+        "ECLIPSE_MODE": ""
+      }
     }
   }
 }
