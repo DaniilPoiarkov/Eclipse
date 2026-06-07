@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.ApiTokens;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings.ApiTokens;
 
 [Route("Menu:ApiTokens", "/api_tokens")]
 internal sealed class ApiTokensPipeline : ApiTokensPipelineBase

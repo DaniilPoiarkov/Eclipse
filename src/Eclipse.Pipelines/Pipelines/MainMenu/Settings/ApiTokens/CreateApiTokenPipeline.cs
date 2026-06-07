@@ -7,7 +7,7 @@ using Eclipse.Core.Routing;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.ApiTokens;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings.ApiTokens;
 
 [Route("Menu:ApiTokens:Create", "/api_tokens_create")]
 internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
