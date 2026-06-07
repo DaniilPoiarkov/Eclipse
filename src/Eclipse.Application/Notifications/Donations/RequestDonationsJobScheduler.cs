@@ -23,14 +23,16 @@ internal sealed class RequestDonationsJobScheduler : INotificationScheduler<Requ
     {
         var job = await scheduler.GetOrAddDurableJob<RequestDonationsJob>(cancellationToken);
 
-        var time = _timeProvider.Now.NextMonth()
+        var time = _timeProvider.Now.FirstDayOfTheMonth()
             .AddDays(DayOfMonth)
             .WithTime(NotificationConsts.Day130PM)
             .Add(-options.Gmt);
 
         if (time < _timeProvider.Now)
         {
-            time = time.NextDay();
+            time = time.NextMonth()
+                .WithTime(NotificationConsts.Day130PM)
+                .Add(-options.Gmt);
         }
 
         var trigger = TriggerBuilder.Create()
