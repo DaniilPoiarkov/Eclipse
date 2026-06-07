@@ -1,12 +1,12 @@
 {
   "Culture": "uk",
   "Texts": {
-    "Pipelines:ApiTokens": "Керуйте своїми API токенами",
-    "Pipelines:ApiTokens:List:Empty": "У вас ще немає API токенів.",
-    "Pipelines:ApiTokens:List:ClickToRevoke": "Натисніть, щоб відкликати",
+    "Pipelines:ApiTokens": "🔐 *API Токени*\n\nAPI токени дозволяють зовнішнім сервісам та інструментам взаємодіяти з Eclipse _від вашого імені_ — без розкриття облікових даних вашого акаунту.\n\n⚠️ *Ставтеся до токенів як до паролів:*\n• Ніколи не публікуйте їх у відкритому доступі\n• Відкликайте токени, якими більше не користуєтесь\n• Скомпрометований токен надає _повний доступ_ до вашого акаунту\n\n*Керуй своїми API токенами відповідально!*",
+    "Pipelines:ApiTokens:List:Empty": "У тебе ще немає API токенів.",
+    "Pipelines:ApiTokens:List:ClickToRevoke": "Натисни, щоб відкликати",
     "Pipelines:ApiTokens:List:Revoked": "Токен успішно відкликано ✅",
 
-    "Pipelines:ApiTokens:Create:EnterName": "Введіть назву для нового токена або /cancel, щоб повернутись",
-    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Токен створено!\n\n🔑 {0}\n\n⚠️ Збережіть цей токен зараз — він більше не буде показаний.\nЗакінчується: {1}"
+    "Pipelines:ApiTokens:Create:EnterName": "Введи назву для нового токена або /cancel, щоб повернутись",
+    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Токен створено!\n\n🔑 {0}\n\n⚠️ Збережи цей токен зараз — він більше не буде показаний.\nЗакінчується: {1}"
   }
 }

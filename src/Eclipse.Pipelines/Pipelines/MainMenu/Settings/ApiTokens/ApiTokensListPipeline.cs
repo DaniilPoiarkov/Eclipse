@@ -11,7 +11,7 @@ using System.Text;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace Eclipse.Pipelines.Pipelines.MainMenu.ApiTokens;
+namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings.ApiTokens;
 
 [Route("Menu:ApiTokens:List", "/api_tokens_list")]
 internal sealed class ApiTokensListPipeline : ApiTokensPipelineBase
@@ -127,7 +127,7 @@ internal sealed class ApiTokensListPipeline : ApiTokensPipelineBase
             {
                 "Menu:ApiTokens:List" => RemoveMenuAndRedirect<ApiTokensListPipeline>(message),
                 "Menu:ApiTokens:Create" => RemoveMenuAndRedirect<CreateApiTokenPipeline>(message),
-                "Menu:MainMenu" => RemoveMenuAndRedirect<MainMenuPipeline>(message),
+                "Menu:MainMenu:Settings" => RemoveMenuAndRedirect<SettingsPipeline>(message),
                 _ => MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]),
             };
         }
