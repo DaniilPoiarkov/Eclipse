@@ -30,7 +30,7 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
         : options.Value.StandardUrl;
 
     client.BaseAddress = new Uri(url);
-    client.DefaultRequestHeaders.Add("X-MCP-Token", configuration["ECLIPSE_API_TOKEN"]);
+    client.DefaultRequestHeaders.Add("X-Api-Token", configuration["ECLIPSE_API_TOKEN"]);
 });
 
 builder.Services.AddScoped<PingTools>()
