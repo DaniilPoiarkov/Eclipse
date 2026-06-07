@@ -4,9 +4,11 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Core.Stores;
+using Eclipse.Localization.Localizers;
 
 using System.Text;
 
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.ApiTokens;
@@ -77,7 +79,7 @@ internal sealed class ApiTokensListPipeline : ApiTokensPipelineBase
 
         if (tokenId == Guid.Empty)
         {
-            return MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]);
+            return InvalidActionOrRedirect(context, message);
         }
 
         var userResult = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
@@ -113,6 +115,26 @@ internal sealed class ApiTokensListPipeline : ApiTokensPipelineBase
         }
 
         return Edit(message.MessageId, BuildMessage(tokens), new InlineKeyboardMarkup(BuildButtons(tokens)));
+    }
+
+    private IResult InvalidActionOrRedirect(MessageContext context, Message? message)
+    {
+        try
+        {
+            var localized = Localizer.ToLocalizableString(context.Value);
+
+            return localized switch
+            {
+                "Menu:ApiTokens:List" => RemoveMenuAndRedirect<ApiTokensListPipeline>(message),
+                "Menu:ApiTokens:Create" => RemoveMenuAndRedirect<CreateApiTokenPipeline>(message),
+                "Menu:MainMenu" => RemoveMenuAndRedirect<MainMenuPipeline>(message),
+                _ => MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]),
+            };
+        }
+        catch
+        {
+            return MenuAndClearPrevious(ApiTokensMenuButtons, message, Localizer["Error"]);
+        }
     }
 
     private string BuildMessage(List<ApiTokenDto> tokens)
