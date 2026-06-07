@@ -45,16 +45,16 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Resolved version: $VERSION"
 
-    - name: Commit version bump
-      run: |
-        VERSION="${{ steps.version.outputs.version }}"
-        sed -i "s|<PackageVersion>.*</PackageVersion>|<PackageVersion>${VERSION}</PackageVersion>|" ${{ env.PROJECT_PATH }}
-        jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' ${{ env.SERVER_JSON_PATH }} > /tmp/server.json && mv /tmp/server.json ${{ env.SERVER_JSON_PATH }}
-        git config user.name "github-actions[bot]"
-        git config user.email ${{ secrets.EMAIL }}
-        git add ${{ env.PROJECT_PATH }} ${{ env.SERVER_JSON_PATH }}
-        git diff --staged --quiet || git commit -m "chore: bump package version to ${VERSION} [skip ci]"
-        git push origin ${{ github.ref_name }}
+    # - name: Commit version bump
+    #   run: |
+    #     VERSION="${{ steps.version.outputs.version }}"
+    #     sed -i "s|<PackageVersion>.*</PackageVersion>|<PackageVersion>${VERSION}</PackageVersion>|" ${{ env.PROJECT_PATH }}
+    #     jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' ${{ env.SERVER_JSON_PATH }} > /tmp/server.json && mv /tmp/server.json ${{ env.SERVER_JSON_PATH }}
+    #     git config user.name "github-actions[bot]"
+    #     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    #     git add ${{ env.PROJECT_PATH }} ${{ env.SERVER_JSON_PATH }}
+    #     git diff --staged --quiet || git commit -m "chore: bump package version to ${VERSION} [skip ci]"
+    #     git push origin ${{ github.ref_name }}
 
     - name: Set up dependency caching
       uses: actions/cache@v4
