@@ -1,7 +1,7 @@
 {
   "Culture": "en",
   "Texts": {
-    "Pipelines:ApiTokens": "Manage your API tokens",
+    "Pipelines:ApiTokens": "🔐 *API Tokens*\n\nAPI tokens allow external services and tools to interact with Eclipse _on your behalf_ — without exposing your account credentials.\n\n⚠️ *Treat tokens like passwords:*\n• Never share them publicly\n• Revoke any token you no longer use\n• A leaked token gives _full access_ to your account\n\n*Manage your API tokens responsibly!*",
     "Pipelines:ApiTokens:List:Empty": "You don't have any API tokens yet.",
     "Pipelines:ApiTokens:List:ClickToRevoke": "Click to revoke",
     "Pipelines:ApiTokens:List:Revoked": "Token revoked successfully ✅",
