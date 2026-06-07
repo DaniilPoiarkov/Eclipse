@@ -13,6 +13,9 @@ on:
     paths:
       - 'mcp/**'
   workflow_dispatch:
+  
+permissions:
+  contents: write
 
 jobs:
   publish:
