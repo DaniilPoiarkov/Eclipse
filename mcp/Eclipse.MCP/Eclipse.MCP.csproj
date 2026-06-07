@@ -20,8 +20,8 @@
 
     <!-- Set recommended package metadata -->
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageId>Eclipse</PackageId>
-    <PackageVersion>0.1.5-beta</PackageVersion>
+    <PackageId>DaniilP.Eclipse</PackageId>
+    <PackageVersion>0.1.1-beta</PackageVersion>
     <PackageTags>AI; MCP; server; stdio</PackageTags>
     <Description>An MCP server using the MCP C# SDK.</Description>
     <UserSecretsId>bba0946d-5ec1-4934-8ee1-2ca0cc0911b1</UserSecretsId>

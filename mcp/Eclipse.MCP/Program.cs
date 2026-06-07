@@ -25,25 +25,29 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
     var options = sp.GetRequiredService<IOptions<EclipseOptions>>();
     var configuration = sp.GetRequiredService<IConfiguration>();
 
-    client.BaseAddress = new Uri(options.Value.Url);
+    var url = configuration["ECLIPSE_MODE"] == "TESTING"
+        ? options.Value.TestingUrl
+        : options.Value.StandardUrl;
+
+    client.BaseAddress = new Uri(url);
     client.DefaultRequestHeaders.Add("X-MCP-Token", configuration["ECLIPSE_API_TOKEN"]);
 });
 
-builder.Services.AddScoped<PingTools>();
-builder.Services.AddScoped<HealthTools>();
-builder.Services.AddScoped<TodoItemTools>();
-builder.Services.AddScoped<ReminderTools>();
-builder.Services.AddScoped<MoodRecordTools>();
-builder.Services.AddScoped<CacheTools>();
-builder.Services.AddScoped<CommandTools>();
-builder.Services.AddScoped<ConfigurationTools>();
-builder.Services.AddScoped<FeedbackTools>();
-builder.Services.AddScoped<InboxMessageTools>();
-builder.Services.AddScoped<PromotionTools>();
-builder.Services.AddScoped<SuggestionTools>();
-builder.Services.AddScoped<TelegramTools>();
-builder.Services.AddScoped<UserStatisticsTools>();
-builder.Services.AddScoped<UserTools>();
+builder.Services.AddScoped<PingTools>()
+    .AddScoped<HealthTools>()
+    .AddScoped<TodoItemTools>()
+    .AddScoped<ReminderTools>()
+    .AddScoped<MoodRecordTools>()
+    .AddScoped<CacheTools>()
+    .AddScoped<CommandTools>()
+    .AddScoped<ConfigurationTools>()
+    .AddScoped<FeedbackTools>()
+    .AddScoped<InboxMessageTools>()
+    .AddScoped<PromotionTools>()
+    .AddScoped<SuggestionTools>()
+    .AddScoped<TelegramTools>()
+    .AddScoped<UserStatisticsTools>()
+    .AddScoped<UserTools>();
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()

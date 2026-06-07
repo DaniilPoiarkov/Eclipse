@@ -7,7 +7,10 @@ Built with the [ModelContextProtocol C# SDK](https://modelcontextprotocol.github
 
 ## Prerequisites
 
-An `ECLIPSE_API_TOKEN` is required to authenticate with the Eclipse API. Set it as an environment variable when configuring the server.
+Two environment variables are required when configuring the server:
+
+- `ECLIPSE_API_TOKEN` — API token for authenticating with the Eclipse API.
+- `ECLIPSE_MODE` — Selects the target environment. Must be the string `"STANDARD"` for production. Set to `"TESTING"` only when connecting to the development environment.
 
 ## Tools
 
@@ -116,7 +119,8 @@ Add to `claude_desktop_config.json`:
       "command": "dnx",
       "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
       "env": {
-        "ECLIPSE_API_TOKEN": "<your-token>"
+        "ECLIPSE_API_TOKEN": "<your-token>",
+        "ECLIPSE_MODE": "STANDARD"
       }
     }
   }
@@ -135,7 +139,8 @@ Create `.vscode/mcp.json` in your workspace:
       "command": "dnx",
       "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
       "env": {
-        "ECLIPSE_API_TOKEN": "<your-token>"
+        "ECLIPSE_API_TOKEN": "<your-token>",
+        "ECLIPSE_MODE": "STANDARD"
       }
     }
   }
@@ -154,7 +159,8 @@ Create `.mcp.json` in your solution directory:
       "command": "dnx",
       "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
       "env": {
-        "ECLIPSE_API_TOKEN": "<your-token>"
+        "ECLIPSE_API_TOKEN": "<your-token>",
+        "ECLIPSE_MODE": "STANDARD"
       }
     }
   }
@@ -171,7 +177,8 @@ Create `.mcp.json` in your solution directory:
       "command": "dotnet",
       "args": ["run", "--project", "<path-to>/mcp/Eclipse.MCP"],
       "env": {
-        "ECLIPSE_API_TOKEN": "<your-token>"
+        "ECLIPSE_API_TOKEN": "<your-token>",
+        "ECLIPSE_MODE": "STANDARD"
       }
     }
   }

@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "description": "Eclipse MCP server",
   "name": "io.github.DaniilPoiarkov/Eclipse",
-  "version": "0.1.5-beta",
+  "version": "0.1.1-beta",
   "packages": [
     {
       "registryType": "nuget",
-      "identifier": "Eclipse",
-      "version": "0.1.5-beta",
+      "identifier": "DaniilP.Eclipse",
+      "version": "0.1.1-beta",
       "transport": {
         "type": "stdio"
       },
@@ -21,6 +21,17 @@
               "description": "API token for authenticating with Eclipse services.",
               "isRequired": true,
               "isSecret": true
+            }
+          }
+        },
+        {
+          "name": "ECLIPSE_MODE",
+          "value": "{eclipse_mode}",
+          "variables": {
+            "eclipse_mode": {
+              "description": "Controls which Eclipse environment the MCP server connects to. Use \"STANDARD\" for production (default) or \"TESTING\" for the development environment.",
+              "isRequired": true,
+              "isSecret": false
             }
           }
         }
