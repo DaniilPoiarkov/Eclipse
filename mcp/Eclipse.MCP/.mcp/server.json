@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "description": "Eclipse MCP server",
   "name": "io.github.DaniilPoiarkov/Eclipse",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "packages": [
     {
       "registryType": "nuget",
       "identifier": "DaniilP.Eclipse",
-      "version": "0.1.4",
+      "version": "0.1.6",
       "transport": {
         "type": "stdio"
       },

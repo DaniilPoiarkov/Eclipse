@@ -117,7 +117,7 @@ Add to `claude_desktop_config.json`:
   "mcpServers": {
     "eclipse": {
       "command": "dnx",
-      "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
+      "args": ["DaniilP.Eclipse", "--version", "<version>", "--yes"],
       "env": {
         "ECLIPSE_API_TOKEN": "<your-token>",
         "ECLIPSE_MODE": "STANDARD"
@@ -137,7 +137,7 @@ Create `.vscode/mcp.json` in your workspace:
     "eclipse": {
       "type": "stdio",
       "command": "dnx",
-      "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
+      "args": ["DaniilP.Eclipse", "--version", "<version>", "--yes"],
       "env": {
         "ECLIPSE_API_TOKEN": "<your-token>",
         "ECLIPSE_MODE": "STANDARD"
@@ -157,7 +157,7 @@ Create `.mcp.json` in your solution directory:
     "eclipse": {
       "type": "stdio",
       "command": "dnx",
-      "args": ["Eclipse", "--version", "0.1.5-beta", "--yes"],
+      "args": ["DaniilP.Eclipse", "--version", "<version>", "--yes"],
       "env": {
         "ECLIPSE_API_TOKEN": "<your-token>",
         "ECLIPSE_MODE": "STANDARD"
@@ -197,7 +197,7 @@ Or manually:
 
 ```powershell
 dotnet pack mcp/Eclipse.MCP/Eclipse.MCP.csproj -c Release -o mcp/Eclipse.MCP/nupkg
-dotnet nuget push mcp/Eclipse.MCP/nupkg/Eclipse.0.1.5-beta.nupkg --api-key <key> --source https://api.nuget.org/v3/index.json
+dotnet nuget push mcp/Eclipse.MCP/nupkg/DaniilP.Eclipse.0.1.5.nupkg --api-key <key> --source https://api.nuget.org/v3/index.json
 ```
 
 ## Supported Platforms
@@ -211,6 +211,3 @@ The package ships self-contained binaries for:
 ## Links
 
 - [Eclipse Repository](https://github.com/DaniilPoiarkov/Eclipse)
-- [MCP C# SDK](https://modelcontextprotocol.github.io/csharp-sdk)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
-- [NuGet Publishing Guide](https://aka.ms/nuget/mcp/guide)
