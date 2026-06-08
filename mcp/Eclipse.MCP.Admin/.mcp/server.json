@@ -1,0 +1,45 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "description": "Eclipse Admin MCP server",
+  "name": "io.github.DaniilPoiarkov/Eclipse.Admin",
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "nuget",
+      "identifier": "DaniilP.Eclipse.Admin",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [],
+      "environmentVariables": [
+        {
+          "name": "ECLIPSE_API_TOKEN",
+          "value": "{eclipse_api_token}",
+          "variables": {
+            "eclipse_api_token": {
+              "description": "API token for authenticating with Eclipse services.",
+              "isRequired": true,
+              "isSecret": true
+            }
+          }
+        },
+        {
+          "name": "ECLIPSE_MODE",
+          "value": "{eclipse_mode}",
+          "variables": {
+            "eclipse_mode": {
+              "description": "Controls which Eclipse environment the MCP server connects to. Use \"STANDARD\" for production (default) or \"TESTING\" for the development environment.",
+              "isRequired": true,
+              "isSecret": false
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/DaniilPoiarkov/Eclipse",
+    "source": "github"
+  }
+}
