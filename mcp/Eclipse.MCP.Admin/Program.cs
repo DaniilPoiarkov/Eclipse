@@ -1,3 +1,4 @@
+using Eclipse.MCP.Admin.Tools;
 using Eclipse.MCP.Core.Client;
 
 using Microsoft.Extensions.Configuration;
@@ -32,7 +33,28 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
     client.DefaultRequestHeaders.Add("X-Api-Token", configuration["ECLIPSE_API_TOKEN"]);
 });
 
+builder.Services.AddScoped<CacheTools>()
+    .AddScoped<CommandTools>()
+    .AddScoped<FeedbackTools>()
+    .AddScoped<HealthTools>()
+    .AddScoped<InboxMessageTools>()
+    .AddScoped<PingTools>()
+    .AddScoped<PromotionTools>()
+    .AddScoped<SuggestionTools>()
+    .AddScoped<TelegramTools>()
+    .AddScoped<UserTools>();
+
 builder.Services.AddMcpServer()
-    .WithStdioServerTransport();
+    .WithStdioServerTransport()
+    .WithTools<CacheTools>()
+    .WithTools<CommandTools>()
+    .WithTools<FeedbackTools>()
+    .WithTools<HealthTools>()
+    .WithTools<InboxMessageTools>()
+    .WithTools<PingTools>()
+    .WithTools<PromotionTools>()
+    .WithTools<SuggestionTools>()
+    .WithTools<TelegramTools>()
+    .WithTools<UserTools>();
 
 await builder.Build().RunAsync();
