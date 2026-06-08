@@ -1,7 +1,7 @@
 # Eclipse MCP Server
 
 An MCP (Model Context Protocol) server for the [Eclipse](https://github.com/DaniilPoiarkov/Eclipse) Telegram bot platform.
-Exposes Eclipse's API as AI-callable tools, enabling assistants like Claude to manage todo items, reminders, mood records, users, commands, and more.
+Exposes Eclipse's user-facing API as AI-callable tools, enabling assistants like Claude to manage todo items, reminders, mood records, and more.
 
 Built with the [ModelContextProtocol C# SDK](https://modelcontextprotocol.github.io/csharp-sdk) as a self-contained executable — no .NET runtime required on the target machine.
 
@@ -13,13 +13,6 @@ Two environment variables are required when configuring the server:
 - `ECLIPSE_MODE` — Selects the target environment. Must be the string `"STANDARD"` for production. Set to `"TESTING"` only when connecting to the development environment.
 
 ## Tools
-
-### Diagnostics
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_ping` | Checks minimal availability of the Eclipse app |
-| `eclipse_health` | Calls the health check endpoint and returns application health status |
 
 ### Todo Items
 
@@ -46,65 +39,17 @@ Two environment variables are required when configuring the server:
 | `eclipse_mood_records_get` | Retrieves a specific mood record by ID |
 | `eclipse_mood_records_add` | Creates or updates the mood record for the current day |
 
-### Users *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_users_get_list` | Retrieves a paginated, filterable list of registered users |
-| `eclipse_user_statistics_get` | Retrieves activity statistics (finished todos, received reminders) |
-
-### Commands *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_commands_get_list` | Lists all registered bot commands |
-| `eclipse_commands_add` | Registers a new bot command |
-| `eclipse_commands_remove` | Removes a bot command |
-
-### Feedbacks *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_feedbacks_get_list` | Retrieves a paginated list of user feedback |
-| `eclipse_feedbacks_request` | Sends a feedback request to a user |
-
-### Promotions *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_promotions_find` | Looks up a promotion by its slug |
-| `eclipse_promotions_publish` | Publishes a promotion to users |
-
-### Suggestions *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_suggestions_get_list` | Retrieves a paginated list of user suggestions |
-
-### Telegram *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_telegram_send` | Sends a direct Telegram message to a chat by ID |
-| `eclipse_telegram_switch_handler` | Switches the active Telegram webhook handler (`Active` / `Disabled`) |
-
-### Configuration *(admin)*
+### Configuration
 
 | Tool | Description |
 |------|-------------|
 | `eclipse_configuration_get_cultures` | Lists available localization cultures |
 
-### Cache *(admin)*
+### Statistics
 
 | Tool | Description |
 |------|-------------|
-| `eclipse_cache_prune` | Prunes the application cache |
-
-### Inbox Messages *(admin)*
-
-| Tool | Description |
-|------|-------------|
-| `eclipse_inbox_messages_reset_failed` | Resets failed inbox messages for reprocessing |
+| `eclipse_user_statistics_get` | Retrieves activity statistics (finished todos, received reminders) |
 
 ## Configuration
 
@@ -197,7 +142,7 @@ Or manually:
 
 ```powershell
 dotnet pack mcp/Eclipse.MCP/Eclipse.MCP.csproj -c Release -o mcp/Eclipse.MCP/nupkg
-dotnet nuget push mcp/Eclipse.MCP/nupkg/DaniilP.Eclipse.0.1.5.nupkg --api-key <key> --source https://api.nuget.org/v3/index.json
+dotnet nuget push mcp/Eclipse.MCP/nupkg/DaniilP.Eclipse.<version>.nupkg --api-key <key> --source https://api.nuget.org/v3/index.json
 ```
 
 ## Supported Platforms

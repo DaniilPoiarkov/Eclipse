@@ -1,5 +1,5 @@
+using Eclipse.MCP.Admin.Tools;
 using Eclipse.MCP.Core.Client;
-using Eclipse.MCP.Tools;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,18 +33,28 @@ builder.Services.AddHttpClient<IEclipseClient, EclipseClient>((sp, client) =>
     client.DefaultRequestHeaders.Add("X-Api-Token", configuration["ECLIPSE_API_TOKEN"]);
 });
 
-builder.Services.AddScoped<TodoItemTools>()
-    .AddScoped<ReminderTools>()
-    .AddScoped<MoodRecordTools>()
-    .AddScoped<ConfigurationTools>()
-    .AddScoped<UserStatisticsTools>();
+builder.Services.AddScoped<CacheTools>()
+    .AddScoped<CommandTools>()
+    .AddScoped<FeedbackTools>()
+    .AddScoped<HealthTools>()
+    .AddScoped<InboxMessageTools>()
+    .AddScoped<PingTools>()
+    .AddScoped<PromotionTools>()
+    .AddScoped<SuggestionTools>()
+    .AddScoped<TelegramTools>()
+    .AddScoped<UserTools>();
 
 builder.Services.AddMcpServer()
     .WithStdioServerTransport()
-    .WithTools<TodoItemTools>()
-    .WithTools<ReminderTools>()
-    .WithTools<MoodRecordTools>()
-    .WithTools<ConfigurationTools>()
-    .WithTools<UserStatisticsTools>();
+    .WithTools<CacheTools>()
+    .WithTools<CommandTools>()
+    .WithTools<FeedbackTools>()
+    .WithTools<HealthTools>()
+    .WithTools<InboxMessageTools>()
+    .WithTools<PingTools>()
+    .WithTools<PromotionTools>()
+    .WithTools<SuggestionTools>()
+    .WithTools<TelegramTools>()
+    .WithTools<UserTools>();
 
 await builder.Build().RunAsync();

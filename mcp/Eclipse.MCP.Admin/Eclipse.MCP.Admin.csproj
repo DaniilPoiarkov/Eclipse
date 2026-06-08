@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -20,11 +20,11 @@
 
     <!-- Set recommended package metadata -->
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageId>DaniilP.Eclipse</PackageId>
-    <PackageVersion>0.1.7</PackageVersion>
+    <PackageId>DaniilP.Eclipse.Admin</PackageId>
+    <PackageVersion>0.1.0</PackageVersion>
     <PackageTags>AI; MCP; server; stdio</PackageTags>
     <Description>An MCP server using the MCP C# SDK.</Description>
-    <UserSecretsId>bba0946d-5ec1-4934-8ee1-2ca0cc0911b1</UserSecretsId>
+    <UserSecretsId>e3a1d7f2-9b4c-4e8a-bc30-6f2d1e5a0c87</UserSecretsId>
   </PropertyGroup>
 
   <!-- Include additional files for browsing the MCP server. -->

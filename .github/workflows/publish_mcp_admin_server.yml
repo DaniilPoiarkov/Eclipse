@@ -1,8 +1,8 @@
-name: Pack and Publish MCP Server
+name: Pack and Publish MCP Admin Server
 
 env:
   DOTNET_VERSION: '10.0.*'
-  PROJECT_PATH: './mcp/Eclipse.MCP/Eclipse.MCP.csproj'
+  PROJECT_PATH: './mcp/Eclipse.MCP.Admin/Eclipse.MCP.Admin.csproj'
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - develop
       - main
     paths:
-      - 'mcp/Eclipse.MCP/**'
+      - 'mcp/Eclipse.MCP.Admin/**'
       - 'mcp/Eclipse.MCP.Core/**'
   workflow_dispatch:
 
