@@ -2,6 +2,9 @@
   "Culture": "uk",
   "Texts": {
     "Pipelines:Common:About": "Привіт, {name}!\r\nМене звати Eclipse і я твій маленький помічник😊\n\rМожеш скористатися командою /help щоб отримати щоб отримати додаткову інформацю",
-    "Pipelines:Common:Help": "Ось що я можу"
+    "Pipelines:Common:Help": "Ось що я можу",
+    "Pipelines:Common:Mcp:Message": "Ти можеш підключити Eclipse як <b>MCP сервер</b> для роботи зі своїми даними безпосередньо з AI асистентів.\n\n<b>Кроки для налаштування:</b>\n1. Згенеруй API токен у <b>Налаштуваннях</b>\n2. Зареєструй MCP сервер, як показано в <a href=\"https://www.nuget.org/packages/DaniilP.Eclipse\">документації</a>",
+    "Pipelines:Common:Mcp:ButtonText": "Документація",
+    "Pipelines:Common:Mcp:ButtonUrl": "https://www.nuget.org/packages/DaniilP.Eclipse"
   }
 }
