@@ -1,6 +1,6 @@
 namespace Eclipse.MCP.Core.Client;
 
-internal sealed class EclipseClient : IEclipseClient
+public sealed class EclipseClient : IEclipseClient
 {
     private readonly HttpClient _httpClient;
 
