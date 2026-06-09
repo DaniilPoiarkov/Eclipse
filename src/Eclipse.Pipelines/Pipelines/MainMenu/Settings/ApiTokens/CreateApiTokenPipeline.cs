@@ -4,6 +4,7 @@ using Eclipse.Application.Localizations;
 using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
+using Eclipse.Domain.Shared.ApiTokens;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -28,8 +29,24 @@ internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
         RegisterStage(CreateToken);
     }
 
-    private IResult PromptName(MessageContext context)
+    private async Task<IResult> PromptName(MessageContext context, CancellationToken cancellationToken)
     {
+        var userResult = await _userService.GetByChatIdAsync(context.ChatId, cancellationToken);
+
+        if (!userResult.IsSuccess)
+        {
+            FinishPipeline();
+            return Menu(ApiTokensMenuButtons, Localizer["Error"]);
+        }
+
+        var tokensResult = await _apiTokenService.GetListAsync(userResult.Value.Id, cancellationToken);
+
+        if (tokensResult.IsSuccess && tokensResult.Value.Count >= ApiTokensConsts.MaxCount)
+        {
+            FinishPipeline();
+            return Menu(ApiTokensMenuButtons, Localizer["ApiToken:LimitReached", ApiTokensConsts.MaxCount]);
+        }
+
         return Menu(new ReplyKeyboardRemove(), Localizer["Pipelines:ApiTokens:Create:EnterName"]);
     }
 
