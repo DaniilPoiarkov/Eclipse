@@ -75,7 +75,8 @@ public static class EclipseWebApiModule
             .ConfigureOptions<SwaggerUIConfiguration>()
             .ConfigureOptions<SwaggerGenConfiguration>()
             .ConfigureOptions<AzureMonitorOptionsConfiguration>()
-            .ConfigureOptions<AuthorizationConfiguration>();
+            .ConfigureOptions<AuthorizationConfiguration>()
+            .ConfigureOptions<ApiBehaviorOptionsConfiguration>();
 
         if (configuration.GetValue<bool>("Settings:IsApplicationInsightsEnabled"))
         {
