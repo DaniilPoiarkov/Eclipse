@@ -11,6 +11,7 @@ namespace Eclipse.WebAPI.Controllers.Users.V2;
 
 [ApiController]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Users)]
 [Route("api/v{version:apiVersion}/users")]
 [ApiVersion(ApiVersions.V2.Version, Deprecated = ApiVersions.V2.Deprecated)]
 public sealed class UsersController : ControllerBase

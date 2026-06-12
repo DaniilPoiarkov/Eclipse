@@ -1,14 +1,19 @@
 using Eclipse.Application.Contracts.ApiTokens;
 using Eclipse.Common.Results;
+using Eclipse.Domain.Shared.ApiTokens;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
+using System.Security.Claims;
+
 namespace Eclipse.WebAPI.Controllers;
 
 [Authorize]
+[Authorize(Policy = AuthorizationPolicies.Scopes.ApiTokens)]
 [ApiController]
 [Route("api/api-tokens")]
 public sealed class ApiTokensController : ControllerBase
@@ -21,6 +26,13 @@ public sealed class ApiTokensController : ControllerBase
     {
         _apiTokenService = apiTokenService;
         _localizer = localizer;
+    }
+
+    [HttpGet("scopes")]
+    public IActionResult GetScopes()
+    {
+        var role = User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        return Ok(ApiTokenScopeHelper.GetAvailableScopeInfos(role));
     }
 
     [HttpGet]
@@ -39,10 +51,12 @@ public sealed class ApiTokensController : ControllerBase
         return result.Match(Ok, error => error.ToProblems(_localizer));
     }
 
-    [HttpDelete("{tokenId:guid}")]
-    public async Task<IActionResult> RevokeAsync(Guid tokenId, CancellationToken cancellationToken)
+    [HttpDelete("{nameOrId}")]
+    public async Task<IActionResult> RevokeAsync(string nameOrId, CancellationToken cancellationToken)
     {
-        var result = await _apiTokenService.RevokeAsync(User.GetUserId(), tokenId, cancellationToken);
+        var result = Guid.TryParse(nameOrId, out Guid tokenId)
+            ? await _apiTokenService.RevokeAsync(User.GetUserId(), tokenId, cancellationToken)
+            : await _apiTokenService.RevokeByNameAsync(User.GetUserId(), nameOrId, cancellationToken);
 
         return result.Match(NoContent, error => error.ToProblems(_localizer));
     }

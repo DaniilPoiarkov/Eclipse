@@ -4,6 +4,7 @@ using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Common.Background;
 using Eclipse.Localization;
 using Eclipse.WebAPI.Authentication;
+using Eclipse.WebAPI.Authorization;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
@@ -15,6 +16,7 @@ using Eclipse.WebAPI.Options;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 
@@ -43,6 +45,8 @@ public static class EclipseWebApiModule
             .AddMicrosoftIdentityWebApi(configuration);
 
         services.AddAuthorization();
+
+        services.AddSingleton<IAuthorizationHandler, ApiTokenScopeHandler>();
 
         services
             .AddControllers()

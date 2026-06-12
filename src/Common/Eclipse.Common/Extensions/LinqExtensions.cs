@@ -1,5 +1,7 @@
 ﻿using Eclipse.Common.Linq;
 
+using System.Diagnostics.CodeAnalysis;
+
 #pragma warning disable IDE0130
 
 namespace System.Linq;
@@ -23,7 +25,7 @@ public static class LinqExtensions
     /// <returns>
     ///   <c>true</c> if [is null or empty] [the specified source]; otherwise, <c>false</c>.
     /// </returns>
-    public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
+    public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this IEnumerable<T>? source)
     {
         if (source is null)
         {

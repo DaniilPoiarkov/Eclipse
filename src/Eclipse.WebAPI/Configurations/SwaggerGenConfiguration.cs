@@ -1,8 +1,10 @@
 ﻿using Asp.Versioning.ApiExplorer;
 
+using Eclipse.WebAPI.Authentication;
 using Eclipse.WebAPI.Options;
 using Eclipse.WebAPI.Swagger;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
@@ -58,20 +60,32 @@ public sealed class SwaggerGenConfiguration : IConfigureOptions<SwaggerGenOption
 
     private static void ConfigureAuthorizationSecurityDefinition(SwaggerGenOptions options)
     {
-        var apiKeySecurity = "Bearer";
-
-        options.AddSecurityDefinition(apiKeySecurity, new OpenApiSecurityScheme
+        options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
         {
             Name = "Authorization",
             Description = "JWT Bearer token based authorization. Enter your token to access authorized API",
-            Scheme = apiKeySecurity,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.ApiKey,
         });
 
         options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
         {
-            [new OpenApiSecuritySchemeReference(apiKeySecurity, document)] = []
+            [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
+        });
+
+        options.AddSecurityDefinition(ApiTokenAuthenticationHandler.SchemeName, new OpenApiSecurityScheme
+        {
+            Name = "X-Api-Token",
+            Description = "API token based authorization. Enter your token to access authorized API",
+            Scheme = ApiTokenAuthenticationHandler.SchemeName,
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+        });
+
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference(ApiTokenAuthenticationHandler.SchemeName, document)] = []
         });
     }
 

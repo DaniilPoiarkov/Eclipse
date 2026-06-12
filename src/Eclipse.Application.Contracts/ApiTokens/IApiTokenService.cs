@@ -12,5 +12,7 @@ public interface IApiTokenService
 
     Task<Result> RevokeAsync(Guid userId, Guid tokenId, CancellationToken cancellationToken = default);
 
+    Task<Result> RevokeByNameAsync(Guid userId, string name, CancellationToken cancellationToken = default);
+
     Task<ClaimsPrincipal?> AuthenticateAsync(string tokenHash, CancellationToken cancellationToken = default);
 }

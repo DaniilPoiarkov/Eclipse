@@ -11,6 +11,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/export")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Export)]
 [EnableRateLimiting(RateLimiterPolicies.IpAddress)]
 public sealed class ExportController : ControllerBase
 {

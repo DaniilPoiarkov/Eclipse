@@ -10,6 +10,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/feedbacks")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Feedbacks)]
 public sealed class FeedbacksController : ControllerBase
 {
     private readonly IFeedbackService _feedbackService;

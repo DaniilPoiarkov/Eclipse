@@ -11,6 +11,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/promotions")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Promotions)]
 public sealed class PromotionsController : ControllerBase
 {
     private readonly IPromotionService _promotionService;

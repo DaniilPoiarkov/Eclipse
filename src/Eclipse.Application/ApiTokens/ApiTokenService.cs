@@ -55,7 +55,18 @@ internal sealed class ApiTokenService : IApiTokenService
             return Error.Conflict("ApiToken.NameDuplicate", "ApiToken:NameDuplicate", create.Name);
         }
 
-        var (token, plaintext) = ApiToken.Create(userId, create.Name, _timeProvider.Now);
+        var principal = await _principalFactory.CreateAsync(user);
+        var role = principal.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var availableScopes = ApiTokenScopeHelper.GetAvailableScopes(role);
+
+        var disallowed = create.Scopes.Except(availableScopes);
+
+        if (!disallowed.IsNullOrEmpty())
+        {
+            return Error.Validation("ApiToken.InvalidScope", "ApiToken:InvalidScope", string.Join(", ", disallowed));
+        }
+
+        var (token, plaintext) = ApiToken.Create(userId, create.Name, _timeProvider.Now, [.. create.Scopes.Distinct()]);
 
         await _apiTokenRepository.CreateAsync(token, cancellationToken);
 
@@ -85,6 +96,22 @@ internal sealed class ApiTokenService : IApiTokenService
         return Result.Success();
     }
 
+    public async Task<Result> RevokeByNameAsync(Guid userId, string name, CancellationToken cancellationToken = default)
+    {
+        var tokens = await _apiTokenRepository.GetByUserIdAsync(userId, cancellationToken);
+
+        var token = tokens.FirstOrDefault(t => t.Name == name);
+
+        if (token is null)
+        {
+            return DefaultErrors.EntityNotFound<ApiToken>();
+        }
+
+        await _apiTokenRepository.DeleteAsync(token.Id, cancellationToken);
+
+        return Result.Success();
+    }
+
     public async Task<ClaimsPrincipal?> AuthenticateAsync(string tokenHash, CancellationToken cancellationToken = default)
     {
         var token = await _apiTokenRepository.FindByTokenHashAsync(tokenHash, cancellationToken);
@@ -101,6 +128,13 @@ internal sealed class ApiTokenService : IApiTokenService
             return null;
         }
 
-        return await _principalFactory.CreateAsync(user);
+        var principal = await _principalFactory.CreateAsync(user);
+        var identity = (ClaimsIdentity)principal.Identity!;
+
+        var claims = token.Scopes.Select(s => new Claim(ApiTokenClaimTypes.Scope, s.ToString()));
+
+        identity.AddClaims(claims);
+
+        return principal;
     }
 }
