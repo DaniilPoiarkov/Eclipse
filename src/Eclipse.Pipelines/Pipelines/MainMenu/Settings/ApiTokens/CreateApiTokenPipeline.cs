@@ -5,6 +5,9 @@ using Eclipse.Core.Context;
 using Eclipse.Core.Results;
 using Eclipse.Core.Routing;
 using Eclipse.Domain.Shared.ApiTokens;
+using Eclipse.Domain.Shared.Identity;
+
+using Microsoft.Extensions.Options;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -17,10 +20,13 @@ internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
 
     private readonly IUserService _userService;
 
-    public CreateApiTokenPipeline(IApiTokenService apiTokenService, IUserService userService)
+    private readonly IOptions<PipelinesOptions> _options;
+
+    public CreateApiTokenPipeline(IApiTokenService apiTokenService, IUserService userService, IOptions<PipelinesOptions> options)
     {
         _apiTokenService = apiTokenService;
         _userService = userService;
+        _options = options;
     }
 
     protected override void Initialize()
@@ -66,7 +72,17 @@ internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
             return Menu(ApiTokensMenuButtons, Localizer["Error"]);
         }
 
-        var result = await _apiTokenService.CreateAsync(userResult.Value.Id, new CreateApiTokenDto(context.Value), cancellationToken);
+        var role = context.ChatId == _options.Value.Chat
+            ? StaticRoleNames.Admin
+            : StaticRoleNames.User;
+
+        var scopes = ApiTokenScopeHelper.GetAvailableScopes(role);
+
+        var result = await _apiTokenService.CreateAsync(
+            userResult.Value.Id,
+            new CreateApiTokenDto(context.Value, scopes),
+            cancellationToken
+        );
 
         if (!result.IsSuccess)
         {
