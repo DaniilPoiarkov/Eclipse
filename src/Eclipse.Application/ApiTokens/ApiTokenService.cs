@@ -96,6 +96,22 @@ internal sealed class ApiTokenService : IApiTokenService
         return Result.Success();
     }
 
+    public async Task<Result> RevokeByNameAsync(Guid userId, string name, CancellationToken cancellationToken = default)
+    {
+        var tokens = await _apiTokenRepository.GetByUserIdAsync(userId, cancellationToken);
+
+        var token = tokens.FirstOrDefault(t => t.Name == name);
+
+        if (token is null)
+        {
+            return DefaultErrors.EntityNotFound<ApiToken>();
+        }
+
+        await _apiTokenRepository.DeleteAsync(token.Id, cancellationToken);
+
+        return Result.Success();
+    }
+
     public async Task<ClaimsPrincipal?> AuthenticateAsync(string tokenHash, CancellationToken cancellationToken = default)
     {
         var token = await _apiTokenRepository.FindByTokenHashAsync(tokenHash, cancellationToken);

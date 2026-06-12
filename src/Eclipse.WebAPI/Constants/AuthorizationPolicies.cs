@@ -6,6 +6,7 @@ public static class AuthorizationPolicies
 
     public static class Scopes
     {
+        public const string ApiTokens = "scope:api-tokens";
         public const string Reminders = "scope:reminders";
         public const string TodoItems = "scope:todo-items";
         public const string UserStatistics = "scope:user-statistics";

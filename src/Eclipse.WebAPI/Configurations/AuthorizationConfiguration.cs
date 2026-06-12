@@ -26,6 +26,9 @@ public class AuthorizationConfiguration : IConfigureOptions<AuthorizationOptions
             .RequireAuthenticatedUser()
             .Build();
 
+        options.AddPolicy(AuthorizationPolicies.Scopes.ApiTokens,
+            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.ApiTokens)));
+
         options.AddPolicy(AuthorizationPolicies.Scopes.Reminders,
             policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Reminders)));
 
