@@ -1,4 +1,5 @@
 ﻿using Eclipse.Application.Contracts.Statistics;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
 
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Eclipse.WebAPI.Controllers;
 
 [Authorize]
+[Authorize(Policy = AuthorizationPolicies.Scopes.UserStatistics)]
 [ApiController]
 [Route("api/user-statistics")]
 public sealed class UserStatisticsController : ControllerBase

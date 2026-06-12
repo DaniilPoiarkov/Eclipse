@@ -9,6 +9,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/inbox-messages")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.InboxMessages)]
 public sealed class InboxMessagesController : ControllerBase
 {
     private readonly IInboxMessageService _inboxMessageService;

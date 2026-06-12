@@ -9,6 +9,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/suggestions")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Suggestions)]
 public sealed class SuggestionsController : ControllerBase
 {
     private readonly ISuggestionsService _suggestionsService;

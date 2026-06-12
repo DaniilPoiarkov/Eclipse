@@ -13,6 +13,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/telegram")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Telegram)]
 public sealed class TelegramController : ControllerBase
 {
     private readonly ITelegramService _service;
