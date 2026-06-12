@@ -113,18 +113,11 @@ internal sealed class ApiTokenService : IApiTokenService
         }
 
         var principal = await _principalFactory.CreateAsync(user);
-
-        var role = principal.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
-        var effectiveScopes = token.Scopes.Count > 0
-            ? token.Scopes
-            : ApiTokenScopeHelper.GetAvailableScopes(role);
-
         var identity = (ClaimsIdentity)principal.Identity!;
 
-        foreach (var scope in effectiveScopes)
-        {
-            identity.AddClaim(new Claim(ApiTokenClaimTypes.Scope, scope.ToString()));
-        }
+        var claims = token.Scopes.Select(s => new Claim(ApiTokenClaimTypes.Scope, s.ToString()));
+
+        identity.AddClaims(claims);
 
         return principal;
     }
