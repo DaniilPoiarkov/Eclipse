@@ -1,7 +1,7 @@
+using Eclipse.Domain.Shared.Identity;
+
 using System.ComponentModel;
 using System.Reflection;
-
-using Eclipse.Domain.Shared.Identity;
 
 namespace Eclipse.Domain.Shared.ApiTokens;
 
@@ -46,7 +46,7 @@ public static class ApiTokenScopeHelper
         }
         if (role == StaticRoleNames.Admin)
         {
-            return [..UserScopes, ..AdminScopes];
+            return [.. UserScopes, .. AdminScopes];
         }
 
         return [];

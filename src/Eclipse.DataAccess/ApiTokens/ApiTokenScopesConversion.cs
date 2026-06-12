@@ -9,5 +9,6 @@ internal sealed class ApiTokenScopesConversion : ValueConverter<IReadOnlyList<Ap
     public ApiTokenScopesConversion() : base(
         scopes => scopes.Select(s => s.ToString()).ToArray(),
         names => names.Select(n => Enum.Parse<ApiTokenScope>(n)).ToArray()
-    ) { }
+    )
+    { }
 }
