@@ -10,6 +10,7 @@ internal static class ApiTokenExtensions
         Id = token.Id,
         Name = token.Name,
         CreatedAt = token.CreatedAt,
-        ExpiresAt = token.ExpiresAt
+        ExpiresAt = token.ExpiresAt,
+        Scopes = token.Scopes
     };
 }

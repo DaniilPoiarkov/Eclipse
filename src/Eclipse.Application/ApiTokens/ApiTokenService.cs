@@ -55,7 +55,18 @@ internal sealed class ApiTokenService : IApiTokenService
             return Error.Conflict("ApiToken.NameDuplicate", "ApiToken:NameDuplicate", create.Name);
         }
 
-        var (token, plaintext) = ApiToken.Create(userId, create.Name, _timeProvider.Now);
+        var principal = await _principalFactory.CreateAsync(user);
+        var role = principal.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var availableScopes = ApiTokenScopeHelper.GetAvailableScopes(role);
+
+        var disallowed = create.Scopes.Except(availableScopes);
+
+        if (!disallowed.IsNullOrEmpty())
+        {
+            return Error.Validation("ApiToken.InvalidScope", "ApiToken:InvalidScope", string.Join(", ", disallowed));
+        }
+
+        var (token, plaintext) = ApiToken.Create(userId, create.Name, _timeProvider.Now, [.. create.Scopes.Distinct()]);
 
         await _apiTokenRepository.CreateAsync(token, cancellationToken);
 
@@ -101,6 +112,20 @@ internal sealed class ApiTokenService : IApiTokenService
             return null;
         }
 
-        return await _principalFactory.CreateAsync(user);
+        var principal = await _principalFactory.CreateAsync(user);
+
+        var role = principal.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var effectiveScopes = token.Scopes.Count > 0
+            ? token.Scopes
+            : ApiTokenScopeHelper.GetAvailableScopes(role);
+
+        var identity = (ClaimsIdentity)principal.Identity!;
+
+        foreach (var scope in effectiveScopes)
+        {
+            identity.AddClaim(new Claim(ApiTokenClaimTypes.Scope, scope.ToString()));
+        }
+
+        return principal;
     }
 }
