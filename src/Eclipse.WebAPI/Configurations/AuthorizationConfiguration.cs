@@ -27,48 +27,93 @@ public class AuthorizationConfiguration : IConfigureOptions<AuthorizationOptions
             .Build();
 
         options.AddPolicy(AuthorizationPolicies.Scopes.ApiTokens,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.ApiTokens)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.ApiTokens))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Reminders,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Reminders)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Reminders))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.TodoItems,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.TodoItems)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.TodoItems))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.UserStatistics,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.UserStatistics)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.UserStatistics))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.MoodRecords,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.MoodRecords)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.MoodRecords))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Cache,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Cache)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Cache))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Commands,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Commands)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Commands))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Export,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Export)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Export))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Import,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Import)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Import))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Suggestions,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Suggestions)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Suggestions))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Telegram,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Telegram)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Telegram))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Users,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Users)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Users))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.InboxMessages,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.InboxMessages)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.InboxMessages))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Feedbacks,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Feedbacks)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Feedbacks))
+            );
 
         options.AddPolicy(AuthorizationPolicies.Scopes.Promotions,
-            policy => policy.AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Promotions)));
+            policy => policy.AddAuthenticationSchemes(schemes)
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiTokenScopeRequirement(ApiTokenScope.Promotions))
+            );
     }
 }
