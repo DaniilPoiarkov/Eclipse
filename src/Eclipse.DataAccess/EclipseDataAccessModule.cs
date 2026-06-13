@@ -61,6 +61,7 @@ public static class EclipseDataAccessModule
             .AddTransient<IInterceptor, DomainEventsToOutboxMessagesInterceptor>();
 
         services
+            .Decorate<IApiTokenRepository, CachedApiTokenRepository>()
             .Decorate<IUserRepository, CachedUserRepository>()
             .Decorate<IOutboxMessageRepository, CachedOutboxMessageRepository>()
             .Decorate<IInboxMessageRepository, CachedInboxMessageRepository>()
