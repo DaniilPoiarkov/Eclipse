@@ -7,6 +7,6 @@
     "Pipelines:ApiTokens:List:Revoked": "Токен успішно відкликано ✅",
 
     "Pipelines:ApiTokens:Create:EnterName": "Введи назву для нового токена або /cancel, щоб повернутись",
-    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Токен створено!\n\n🔑 {0}\n\n⚠️ Збережи цей токен зараз — він більше не буде показаний.\nЗакінчується: {1}"
+    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Токен створено!\n\n🔑 <tg-spoiler>{0}</tg-spoiler>\n\n⚠️ Збережи цей токен зараз - він більше не буде показаний.\nЗакінчується: {1}"
   }
 }

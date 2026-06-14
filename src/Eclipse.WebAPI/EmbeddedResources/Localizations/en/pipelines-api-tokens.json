@@ -7,6 +7,6 @@
     "Pipelines:ApiTokens:List:Revoked": "Token revoked successfully ✅",
 
     "Pipelines:ApiTokens:Create:EnterName": "Enter a name for the new token, or /cancel to return",
-    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Token created!\n\n🔑 {0}\n\n⚠️ Save this token now — it will not be shown again.\nExpires: {1}"
+    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Token created!\n\n🔑 <tg-spoiler>{0}</tg-spoiler>\n\n⚠️ Save this token now — it will not be shown again.\nExpires: {1}"
   }
 }
