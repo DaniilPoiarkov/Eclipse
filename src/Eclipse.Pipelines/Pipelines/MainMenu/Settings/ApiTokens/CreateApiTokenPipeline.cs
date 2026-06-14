@@ -9,6 +9,9 @@ using Eclipse.Domain.Shared.Identity;
 
 using Microsoft.Extensions.Options;
 
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Eclipse.Pipelines.Pipelines.MainMenu.Settings.ApiTokens;
@@ -20,12 +23,15 @@ internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
 
     private readonly IUserService _userService;
 
+    private readonly ITelegramBotClient _client;
+
     private readonly IOptions<PipelinesOptions> _options;
 
-    public CreateApiTokenPipeline(IApiTokenService apiTokenService, IUserService userService, IOptions<PipelinesOptions> options)
+    public CreateApiTokenPipeline(IApiTokenService apiTokenService, IUserService userService, ITelegramBotClient client, IOptions<PipelinesOptions> options)
     {
         _apiTokenService = apiTokenService;
         _userService = userService;
+        _client = client;
         _options = options;
     }
 
@@ -92,9 +98,16 @@ internal sealed class CreateApiTokenPipeline : ApiTokensPipelineBase
 
         var created = result.Value;
 
-        return Menu(
-            ApiTokensMenuButtons,
-            Localizer["Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}", created.Plaintext, created.Token.ExpiresAt.ToString("yyyy-MM-dd")]
+        await _client.SendMessage(context.ChatId,
+            text: Localizer["Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}", created.Plaintext, created.Token.ExpiresAt.ToString("yyyy-MM-dd")],
+            parseMode: ParseMode.Html,
+            replyMarkup: new ReplyKeyboardMarkup(ApiTokensMenuButtons)
+            {
+                ResizeKeyboard = true
+            },
+            cancellationToken: cancellationToken
         );
+
+        return Empty();
     }
 }
