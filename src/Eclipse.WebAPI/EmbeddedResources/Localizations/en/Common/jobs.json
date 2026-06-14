@@ -11,6 +11,8 @@
     "Jobs:MoodReport:Weekly:Caption": "Hey, what's up? I want to show you dynamics of your mood changes during the week!\n\r\n\rThink about how was your week and think which situations affected you the most",
     "Jobs:MoodReport:Monthly:Caption": "Hello hello! That's the end of the month, here is how you felt since the first day!\n\rHave a good rest and see you tomorrow🌒",
 
-    "Jobs:Feedback": "Hey, hope you're doing great!💫\n\rI'd like to hear your feedback, click /feedback to start, it will take less than a minute"
+    "Jobs:Feedback": "Hey, hope you're doing great!💫\n\rI'd like to hear your feedback, click /feedback to start, it will take less than a minute",
+
+    "Jobs:ApiTokens:ExpiringSoon{Days}{TokenName}{MaskedValue}{ExpiresAt}": "⚠️ Your API token '{1}' expires in {0} day(s) on {3}.\n{2}\n\nRenew it to continue working with the API without interruption."
   }
 }
