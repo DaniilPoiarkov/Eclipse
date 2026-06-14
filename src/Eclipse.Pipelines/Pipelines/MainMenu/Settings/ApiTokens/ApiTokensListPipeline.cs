@@ -144,6 +144,7 @@ internal sealed class ApiTokensListPipeline : ApiTokensPipelineBase
         foreach (var token in tokens)
         {
             sb.AppendLine($"🔑 {token.Name}")
+                .AppendLine(token.MaskedValue)
                 .AppendLine($"{Localizer["ExpiresAt"]}: {token.ExpiresAt:yyyy-MM-dd}")
                 .AppendLine();
         }

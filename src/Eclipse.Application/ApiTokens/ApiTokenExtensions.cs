@@ -9,6 +9,7 @@ internal static class ApiTokenExtensions
     {
         Id = token.Id,
         Name = token.Name,
+        MaskedValue = token.MaskedValue,
         CreatedAt = token.CreatedAt,
         ExpiresAt = token.ExpiresAt,
         Scopes = token.Scopes
