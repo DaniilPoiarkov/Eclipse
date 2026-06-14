@@ -1,4 +1,5 @@
 using Eclipse.MCP.Admin.Requests.Feedbacks;
+using Eclipse.MCP.Core;
 using Eclipse.MCP.Core.Client;
 using Eclipse.MCP.Core.Tools;
 
