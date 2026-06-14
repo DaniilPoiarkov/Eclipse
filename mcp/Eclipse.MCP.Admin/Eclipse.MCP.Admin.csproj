@@ -21,7 +21,7 @@
     <!-- Set recommended package metadata -->
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>DaniilP.Eclipse.Admin</PackageId>
-    <PackageVersion>0.1.0</PackageVersion>
+    <PackageVersion>1.0.0</PackageVersion>
     <PackageTags>AI; MCP; server; stdio</PackageTags>
     <Description>An MCP server using the MCP C# SDK.</Description>
     <UserSecretsId>e3a1d7f2-9b4c-4e8a-bc30-6f2d1e5a0c87</UserSecretsId>

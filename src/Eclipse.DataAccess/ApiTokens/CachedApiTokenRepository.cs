@@ -44,4 +44,20 @@ internal sealed class CachedApiTokenRepository : CachedRepositoryBase<ApiToken, 
             cancellationToken
         );
     }
+
+    public Task<IReadOnlyList<ApiToken>> GetExpiringBetweenAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        var options = new CacheOptions
+        {
+            Expiration = CacheConsts.FiveMinutes,
+            Tags = [GetPrefix()]
+        };
+
+        return CacheService.GetOrCreateAsync(
+            $"{GetPrefix()}-expiring-between-{from:O}-{to:O}",
+            () => Repository.GetExpiringBetweenAsync(from, to, cancellationToken),
+            options,
+            cancellationToken
+        );
+    }
 }

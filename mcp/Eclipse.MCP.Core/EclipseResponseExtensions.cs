@@ -1,7 +1,7 @@
 using Eclipse.MCP.Core.Client;
 using Eclipse.MCP.Core.Tools;
 
-namespace Eclipse.MCP.Admin;
+namespace Eclipse.MCP.Core;
 
 public static class EclipseResponseExtensions
 {

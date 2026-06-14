@@ -21,4 +21,11 @@ internal sealed class ApiTokenRepository : RepositoryBase<ApiToken>, IApiTokenRe
         return await DbSet.Where(t => t.UserId == userId)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<ApiToken>> GetExpiringBetweenAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Where(t => t.ExpiresAt >= from && t.ExpiresAt < to)
+            .ToListAsync(cancellationToken);
+    }
 }

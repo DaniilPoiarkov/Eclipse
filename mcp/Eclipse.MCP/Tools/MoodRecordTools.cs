@@ -1,5 +1,6 @@
 using Eclipse.MCP.Core.Client;
 using Eclipse.MCP.Core.Tools;
+using Eclipse.MCP.Core;
 using Eclipse.MCP.Requests.MoodRecords;
 
 using ModelContextProtocol.Server;
