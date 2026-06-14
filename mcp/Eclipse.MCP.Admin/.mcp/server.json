@@ -2,12 +2,12 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "description": "Eclipse Admin MCP server",
   "name": "io.github.DaniilPoiarkov/Eclipse.Admin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "packages": [
     {
       "registryType": "nuget",
       "identifier": "DaniilP.Eclipse.Admin",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "transport": {
         "type": "stdio"
       },
