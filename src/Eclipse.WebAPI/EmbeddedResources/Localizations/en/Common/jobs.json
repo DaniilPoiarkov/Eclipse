@@ -13,6 +13,6 @@
 
     "Jobs:Feedback": "Hey, hope you're doing great!💫\n\rI'd like to hear your feedback, click /feedback to start, it will take less than a minute",
 
-    "Jobs:ApiTokens:ExpiringSoon{Days}{TokenName}{MaskedValue}{ExpiresAt}": "⚠️ Your API token '{1}' expires in {0} day(s) on {3}.\n{2}\n\nRenew it to continue working with the API without interruption."
+    "Jobs:ApiTokens:ExpiringSoon{Tokens}": "⚠️ Api tokens are expiring soon:\n\n {0}\n\nRenew to continue working with the API without interruption."
   }
 }
