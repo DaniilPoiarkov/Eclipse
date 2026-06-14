@@ -11,6 +11,8 @@ public sealed class ApiToken : AggregateRoot, IHasCreatedAt
 
     public string TokenHash { get; private set; } = string.Empty;
 
+    public string MaskedValue { get; private set; } = string.Empty;
+
     public DateTime CreatedAt { get; private set; }
 
     public DateTime ExpiresAt { get; private set; }
@@ -19,12 +21,13 @@ public sealed class ApiToken : AggregateRoot, IHasCreatedAt
 
     private ApiToken() { }
 
-    private ApiToken(Guid id, Guid userId, string name, string tokenHash, DateTime createdAt, DateTime expiresAt, IReadOnlyList<ApiTokenScope> scopes)
+    private ApiToken(Guid id, Guid userId, string name, string tokenHash, string maskedValue, DateTime createdAt, DateTime expiresAt, IReadOnlyList<ApiTokenScope> scopes)
         : base(id)
     {
         UserId = userId;
         Name = name;
         TokenHash = tokenHash;
+        MaskedValue = maskedValue;
         CreatedAt = createdAt;
         ExpiresAt = expiresAt;
         Scopes = scopes;
@@ -39,6 +42,7 @@ public sealed class ApiToken : AggregateRoot, IHasCreatedAt
             userId,
             name,
             ApiTokenGenerator.Hash(plaintext),
+            ApiTokenGenerator.Mask(plaintext),
             createdAt,
             createdAt.Add(ApiTokensConsts.DefaultExpiration),
             [.. scopes]

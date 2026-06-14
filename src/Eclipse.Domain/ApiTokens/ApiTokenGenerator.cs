@@ -19,4 +19,10 @@ public static class ApiTokenGenerator
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(plaintext));
         return Convert.ToHexString(bytes).ToLowerInvariant();
     }
+
+    internal static string Mask(string plaintext)
+    {
+        var body = plaintext[Prefix.Length..];
+        return $"{Prefix}{body[..5]}...{plaintext[^5..]}";
+    }
 }
