@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Account;
 using Eclipse.Application.ApiTokens;
+using Eclipse.Application.ApiTokens.Expiration;
 using Eclipse.Application.Authorization;
 using Eclipse.Application.Configuration;
 using Eclipse.Application.Contracts.Account;
@@ -147,6 +148,7 @@ public static class EclipseApplicationModule
             .WithSingletonLifetime());
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
+        services.ConfigureOptions<ApiTokenExpirationNotificationOptionsConfiguration>();
 
         return services;
     }
