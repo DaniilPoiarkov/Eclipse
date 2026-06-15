@@ -27,7 +27,7 @@ internal sealed class GuidePipeline : EclipsePipelineBase
 
     private async Task<IResult> SendGuide(MessageContext messageContext, CancellationToken cancellationToken)
     {
-        foreach (var key in new[] { "Guide:1", "Guide:2", "Guide:3", "Guide:4" })
+        foreach (var key in new[] { "Guide:1", "Guide:2", "Guide:3", "Guide:4", "Guide:5" })
         {
             await SendSegment(messageContext.ChatId, key, cancellationToken);
         }
