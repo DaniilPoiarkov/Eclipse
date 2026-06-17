@@ -25,4 +25,12 @@ public sealed class ConfigurationController : ControllerBase
     {
         return Ok(_configurationService.GetCultures());
     }
+
+    [OutputCache]
+    [HttpGet("mood-state-scores")]
+    [EnableRateLimiting(RateLimiterPolicies.IpAddressFiveMinutes)]
+    public IActionResult GetMoodStateScores()
+    {
+        return Ok(_configurationService.GetMoodStateScores());
+    }
 }

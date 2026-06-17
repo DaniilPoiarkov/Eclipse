@@ -21,6 +21,7 @@ public sealed class MoodRecordTools
     [McpServerTool(Name = "eclipse_mood_records_get_list")]
     [Description("Retrieves all mood records for the authenticated user.\n" +
         "Use when the user asks to see, list, or show their mood records or mood history.\n" +
+        "Before analyzing or presenting mood data with numeric context, call eclipse_configuration_get_mood_state_scores first to obtain the state-to-score mapping.\n" +
         "Below are user input samples which show when to call this tool:\n" +
         "<sample1>Show me my mood records</sample1>\n" +
         "<sample2>What is my mood history?</sample2>\n" +
