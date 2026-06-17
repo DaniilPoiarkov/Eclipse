@@ -36,7 +36,7 @@ jobs:
         PATCH=$(echo "$BASE" | cut -d. -f3)
 
         if [ "${{ github.ref_name }}" = "develop" ]; then
-          VERSION="${MAJOR}.${MINOR}.${PATCH}-beta"
+          VERSION="${MAJOR}.${MINOR}.${PATCH}.${{ github.run_number }}-beta"
         else
           VERSION="${MAJOR}.${MINOR}.${PATCH}"
         fi
