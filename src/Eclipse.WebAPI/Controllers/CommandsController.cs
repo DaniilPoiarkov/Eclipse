@@ -11,6 +11,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/commands")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Commands)]
 public sealed class CommandsController : ControllerBase
 {
     private readonly ICommandService _commandService;

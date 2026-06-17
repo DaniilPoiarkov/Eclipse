@@ -2,6 +2,9 @@
   "Culture": "en",
   "Texts": {
     "Pipelines:Common:About": "Hi, {name}!\r\nMy name is Eclipse and I'm your small helper😊\r\n Use /help to get some addition info",
-    "Pipelines:Common:Help": "Here what I can do"
+    "Pipelines:Common:Help": "Here what I can do",
+    "Pipelines:Common:Mcp:Message": "You can connect Eclipse as an <b>MCP server</b> to work with your data directly from AI assistants.\n\n<b>Steps to configure:</b>\n1. Generate an API token in <b>Settings</b>\n2. Register the MCP server as shown in the <a href=\"https://www.nuget.org/packages/DaniilP.Eclipse\">documentation</a>",
+    "Pipelines:Common:Mcp:ButtonText": "Documentation",
+    "Pipelines:Common:Mcp:ButtonUrl": "https://www.nuget.org/packages/DaniilP.Eclipse"
   }
 }

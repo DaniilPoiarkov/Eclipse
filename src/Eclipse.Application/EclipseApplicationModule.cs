@@ -1,7 +1,10 @@
 ﻿using Eclipse.Application.Account;
+using Eclipse.Application.ApiTokens;
+using Eclipse.Application.ApiTokens.Expiration;
 using Eclipse.Application.Authorization;
 using Eclipse.Application.Configuration;
 using Eclipse.Application.Contracts.Account;
+using Eclipse.Application.Contracts.ApiTokens;
 using Eclipse.Application.Contracts.Authorization;
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Application.Contracts.Exporting;
@@ -65,6 +68,7 @@ public static class EclipseApplicationModule
 
         services
             .AddSingleton<IAppUrlProvider, AppUrlProvider>()
+                .AddTransient<IApiTokenService, ApiTokenService>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<ISuggestionsService, SuggestionsService>()
                 .AddTransient<ITodoItemService, TodoItemService>()
@@ -144,6 +148,7 @@ public static class EclipseApplicationModule
             .WithSingletonLifetime());
 
         services.ConfigureOptions<QuartzOptionsConfiguration>();
+        services.ConfigureOptions<ApiTokenExpirationNotificationOptionsConfiguration>();
 
         return services;
     }

@@ -2,6 +2,7 @@
 using Eclipse.Common.Clock;
 using Eclipse.Common.ContentTypes;
 using Eclipse.Common.Results;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
 
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Localization;
 namespace Eclipse.WebAPI.Controllers;
 
 [Authorize]
+[Authorize(Policy = AuthorizationPolicies.Scopes.MoodRecords)]
 [ApiController]
 [Route("api/mood-records")]
 public sealed class MoodRecordsController : ControllerBase

@@ -52,6 +52,8 @@ builder.Host.UseSerilog((context, sp, config) =>
     config.ReadFrom.Configuration(configuration)
 );
 
+builder.WebHost.ConfigureKestrel(opt => opt.AddServerHeader = false);
+
 var app = builder.Build();
 
 app.InitializeWebApiModule();

@@ -11,9 +11,11 @@ namespace Eclipse.Pipelines.Pipelines.Common;
 [Route("Menu:Guide", "/guide")]
 internal sealed class GuidePipeline : EclipsePipelineBase
 {
-    private static readonly TimeSpan _seconds = TimeSpan.FromSeconds(1.5);
+    private static readonly TimeSpan _seconds = TimeSpan.FromSeconds(0.5);
 
     private readonly ITelegramBotClient _telegramBotClient;
+
+    private static readonly string[] _segments = ["Guide:1", "Guide:2", "Guide:3", "Guide:4", "Guide:5"];
 
     public GuidePipeline(ITelegramBotClient telegramBotClient)
     {
@@ -27,7 +29,7 @@ internal sealed class GuidePipeline : EclipsePipelineBase
 
     private async Task<IResult> SendGuide(MessageContext messageContext, CancellationToken cancellationToken)
     {
-        foreach (var key in new[] { "Guide:1", "Guide:2", "Guide:3", "Guide:4" })
+        foreach (var key in _segments)
         {
             await SendSegment(messageContext.ChatId, key, cancellationToken);
         }

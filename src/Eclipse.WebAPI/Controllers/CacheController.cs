@@ -9,6 +9,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/cache")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Cache)]
 public sealed class CacheController : ControllerBase
 {
     private readonly ICacheService _cacheService;

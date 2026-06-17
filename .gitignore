@@ -299,3 +299,6 @@ infrastructure/states
 infrastructure/tfvars
 infrastructure/env
 infrastructure/apps
+
+.claude
+CLAUDE.md

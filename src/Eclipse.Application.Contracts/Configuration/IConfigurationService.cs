@@ -3,4 +3,6 @@
 public interface IConfigurationService
 {
     List<CultureInfo> GetCultures();
+
+    List<MoodStateScoreDto> GetMoodStateScores();
 }

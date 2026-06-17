@@ -12,6 +12,7 @@ namespace Eclipse.WebAPI.Controllers;
 [ApiController]
 [Route("api/import")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]
+[Authorize(Policy = AuthorizationPolicies.Scopes.Import)]
 [EnableRateLimiting(RateLimiterPolicies.IpAddress)]
 public sealed class ImportController : ControllerBase
 {

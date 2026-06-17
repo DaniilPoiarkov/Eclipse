@@ -3,6 +3,8 @@
 using Eclipse.Application.Contracts.Configuration;
 using Eclipse.Common.Background;
 using Eclipse.Localization;
+using Eclipse.WebAPI.Authentication;
+using Eclipse.WebAPI.Authorization;
 using Eclipse.WebAPI.Background;
 using Eclipse.WebAPI.Configurations;
 using Eclipse.WebAPI.Extensions;
@@ -12,7 +14,9 @@ using Eclipse.WebAPI.Health;
 using Eclipse.WebAPI.Middlewares;
 using Eclipse.WebAPI.Options;
 
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 
@@ -37,9 +41,12 @@ public static class EclipseWebApiModule
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(EclipseDefaults.AuthenticationScheme, new JwtBearerOptionsConfiguration(configuration).Configure)
+            .AddScheme<AuthenticationSchemeOptions, ApiTokenAuthenticationHandler>(ApiTokenAuthenticationHandler.SchemeName, _ => { })
             .AddMicrosoftIdentityWebApi(configuration);
 
         services.AddAuthorization();
+
+        services.AddSingleton<IAuthorizationHandler, ApiTokenScopeHandler>();
 
         services
             .AddControllers()
@@ -72,7 +79,8 @@ public static class EclipseWebApiModule
             .ConfigureOptions<SwaggerUIConfiguration>()
             .ConfigureOptions<SwaggerGenConfiguration>()
             .ConfigureOptions<AzureMonitorOptionsConfiguration>()
-            .ConfigureOptions<AuthorizationConfiguration>();
+            .ConfigureOptions<AuthorizationConfiguration>()
+            .ConfigureOptions<ApiBehaviorOptionsConfiguration>();
 
         if (configuration.GetValue<bool>("Settings:IsApplicationInsightsEnabled"))
         {
@@ -95,6 +103,10 @@ public static class EclipseWebApiModule
 
         services.Configure<AzureOAuthOptions>(
             configuration.GetSection("AzureAd")
+        );
+
+        services.Configure<ApiTokenAuthenticationOptions>(
+            configuration.GetSection("Authentication:ApiTokens")
         );
 
         services.Configure<CultureList>(

@@ -1,0 +1,71 @@
+name: Pack and Publish MCP Server
+
+env:
+  DOTNET_VERSION: '10.0.*'
+  PROJECT_PATH: './mcp/Eclipse.MCP/Eclipse.MCP.csproj'
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - 'mcp/Eclipse.MCP/**'
+      - 'mcp/Eclipse.MCP.Core/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Resolve package version
+      id: version
+      run: |
+        RAW=$(grep -oP '(?<=<PackageVersion>)[^<]+' ${{ env.PROJECT_PATH }})
+        BASE=$(echo "$RAW" | sed 's/-[^-]*$//')
+        MAJOR=$(echo "$BASE" | cut -d. -f1)
+        MINOR=$(echo "$BASE" | cut -d. -f2)
+        PATCH=$(echo "$BASE" | cut -d. -f3)
+
+        if [ "${{ github.ref_name }}" = "develop" ]; then
+          VERSION="${MAJOR}.${MINOR}.${PATCH}.${{ github.run_number }}-beta"
+        else
+          VERSION="${MAJOR}.${MINOR}.${PATCH}"
+        fi
+
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Resolved version: $VERSION"
+
+    - name: Set up dependency caching
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }}
+
+    - name: Pack
+      run: |
+        dotnet pack ${{ env.PROJECT_PATH }} \
+          --configuration Release \
+          --no-restore \
+          -p:PackageVersion=${{ steps.version.outputs.version }} \
+          --output ./artifacts
+
+    - name: Publish to NuGet
+      run: |
+        dotnet nuget push ./artifacts/*.nupkg \
+          --api-key ${{ secrets.NUGET_API_KEY }} \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate

@@ -1,0 +1,12 @@
+{
+  "Culture": "en",
+  "Texts": {
+    "Pipelines:ApiTokens": "🔐 *API Tokens*\n\nAPI tokens allow external services and tools to interact with Eclipse _on your behalf_ — without exposing your account credentials.\n\n⚠️ *Treat tokens like passwords:*\n• Never share them publicly\n• Revoke any token you no longer use\n• A leaked token gives _full access_ to your account\n\n*Manage your API tokens responsibly!*",
+    "Pipelines:ApiTokens:List:Empty": "You don't have any API tokens yet.",
+    "Pipelines:ApiTokens:List:ClickToRevoke": "Click to revoke",
+    "Pipelines:ApiTokens:List:Revoked": "Token revoked successfully ✅",
+
+    "Pipelines:ApiTokens:Create:EnterName": "Enter a name for the new token, or /cancel to return",
+    "Pipelines:ApiTokens:Create:Success{Plaintext}{ExpiresAt}": "✅ Token created!\n\n🔑 <tg-spoiler>{0}</tg-spoiler>\n\n⚠️ Save this token now — it will not be shown again.\nExpires: {1}"
+  }
+}

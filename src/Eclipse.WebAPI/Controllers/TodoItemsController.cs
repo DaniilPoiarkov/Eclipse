@@ -1,5 +1,6 @@
 ﻿using Eclipse.Application.Contracts.TodoItems;
 using Eclipse.Common.Results;
+using Eclipse.WebAPI.Constants;
 using Eclipse.WebAPI.Extensions;
 
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Localization;
 namespace Eclipse.WebAPI.Controllers;
 
 [Authorize]
+[Authorize(Policy = AuthorizationPolicies.Scopes.TodoItems)]
 [ApiController]
 [Route("api/todo-items")]
 public sealed class TodoItemsController : ControllerBase

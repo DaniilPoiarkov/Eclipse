@@ -1,4 +1,5 @@
-﻿using Eclipse.Application.InboxMessages;
+﻿using Eclipse.Application.ApiTokens.Expiration;
+using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords.Archiving;
 using Eclipse.Application.OutboxMessages;
 
@@ -17,6 +18,7 @@ internal sealed class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptio
         AddJob<DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration>(options);
         AddJob<DeleteProcessedInboxMessagesJobConfiguration>(options);
         AddJob<ArchiveMoodRecordsJobConfiguration>(options);
+        AddJob<NotifyExpiringApiTokensJobConfiguration>(options);
     }
 
     private static void AddJob<TJobConfiguration>(QuartzOptions options)
