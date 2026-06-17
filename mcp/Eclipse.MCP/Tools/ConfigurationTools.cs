@@ -30,4 +30,17 @@ public sealed class ConfigurationTools
         var response = await _client.GetCulturesAsync(cancellationToken);
         return response.ToToolResponse();
     }
+
+    [McpServerTool(Name = "eclipse_configuration_get_mood_state_scores")]
+    [Description("Retrieves the mapping of all mood states to their integer scores (Amazing=10 … Terrible=1).\n" +
+        "Call this before analyzing or displaying mood records to understand what each state's score means.\n" +
+        "Below are user input samples which show when to call this tool:\n" +
+        "<sample1>What score does Amazing mood have?</sample1>\n" +
+        "<sample2>Show me the mood state scores</sample2>\n")
+    ]
+    public async Task<ToolResponse<MoodStateScoreResponse[]>> GetMoodStateScoresAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await _client.GetMoodStateScoresAsync(cancellationToken);
+        return response.ToToolResponse();
+    }
 }

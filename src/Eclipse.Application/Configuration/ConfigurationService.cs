@@ -1,4 +1,6 @@
 ﻿using Eclipse.Application.Contracts.Configuration;
+using Eclipse.Application.MoodRecords;
+using Eclipse.Domain.Shared.MoodRecords;
 
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -25,4 +27,7 @@ internal sealed class ConfigurationService : IConfigurationService
             new CultureInfo(_stringLocalizer[info.Culture], info.Code)
         )];
     }
+
+    public List<MoodStateScoreDto> GetMoodStateScores() =>
+        [.. Enum.GetValues<MoodState>().Select(s => new MoodStateScoreDto(s.ToString(), s.ToScore()))];
 }
