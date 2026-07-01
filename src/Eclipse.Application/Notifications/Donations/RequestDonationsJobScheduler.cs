@@ -31,6 +31,7 @@ internal sealed class RequestDonationsJobScheduler : INotificationScheduler<Requ
         if (time < _timeProvider.Now)
         {
             time = time.NextMonth()
+                .AddDays(DayOfMonth)
                 .WithTime(NotificationConsts.Day130PM)
                 .Add(-options.Gmt);
         }
