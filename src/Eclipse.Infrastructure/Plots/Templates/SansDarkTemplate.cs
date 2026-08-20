@@ -10,10 +10,6 @@ internal sealed class SansDarkTemplate : IPlotTemplate
 
     private static readonly Color _axesColor = Color.FromHex("#a0acb5");
 
-    private static readonly string _font = "Sans Font";
-
-    private static readonly float _minorTickSize = 1f;
-
     public Plot Create()
     {
         var plot = new Plot();
@@ -23,10 +19,10 @@ internal sealed class SansDarkTemplate : IPlotTemplate
 
         plot.Axes.Color(_axesColor);
 
-        plot.Axes.Bottom.MinorTickStyle.Length = _minorTickSize;
-        plot.Axes.Left.MinorTickStyle.Length = _minorTickSize;
+        plot.Axes.Bottom.MinorTickStyle.Length = TemplateConsts.MinorTickSize;
+        plot.Axes.Left.MinorTickStyle.Length = TemplateConsts.MinorTickSize;
 
-        plot.Font.Set(_font);
+        plot.Font.Set(TemplateConsts.SansFont);
 
         return plot;
     }
