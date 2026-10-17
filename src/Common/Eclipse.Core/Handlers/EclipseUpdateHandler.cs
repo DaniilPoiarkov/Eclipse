@@ -88,6 +88,10 @@ internal sealed class EclipseUpdateHandler : IEclipseUpdateHandler
                 {
                     Text = command,
                     From = update.ExtractSender(),
+                    Chat = new Chat
+                    {
+                        Id = context.ChatId
+                    }
                 }
             };
 

@@ -9,6 +9,11 @@ namespace Eclipse.Core.Results;
 public interface IResult
 {
     /// <summary>
+    /// Chat identifier
+    /// </summary>
+    long ChatId { get; internal set; }
+
+    /// <summary>
     /// Sends bot answer to the user
     /// </summary>
     /// <param name="botClient"></param>
