@@ -10,6 +10,7 @@ resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
   resource_group_name = var.resource_group_name
   name                = "${var.app_name}-${var.environment}-log"
   tags                = local.tags
+  daily_quota_gb      = 1
 }
 
 resource "azurerm_application_insights" "app_insights" {
