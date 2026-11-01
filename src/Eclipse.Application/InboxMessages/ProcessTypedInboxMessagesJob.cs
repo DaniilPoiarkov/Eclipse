@@ -21,11 +21,11 @@ internal sealed class ProcessTypedInboxMessagesJob<TEvent, TEventHandler> : IJob
         _configuration = configuration;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         var count = _configuration.GetSection("InboxMessages")
             .GetValue<int>("ProcessCount");
 
-        await _processor.ProcessAsync(count, context.CancellationToken);
+        await _processor.ProcessAsync(count, cancellationToken);
     }
 }

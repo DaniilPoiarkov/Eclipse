@@ -24,7 +24,7 @@ internal sealed class SendReminderJob : IJob, IJobWithKey
         _reminderSender = reminderSender;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         var data = context.MergedJobDataMap.GetString("data");
 
@@ -51,7 +51,7 @@ internal sealed class SendReminderJob : IJob, IJobWithKey
                 reminder.Culture,
                 reminder.ChatId
             ),
-            context.CancellationToken
+            cancellationToken
         );
     }
 }

@@ -23,7 +23,7 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
         _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         if (context.RefireCount > _maxRefireCount)
         {
@@ -37,19 +37,18 @@ internal sealed class OneOffJobProcessor<TBackgroundJob, TArgs> : IJob
 
         try
         {
-            await _job.ExecuteAsync(args, context.CancellationToken);
+            await _job.ExecuteAsync(args, cancellationToken);
 
-            await context.Scheduler.UnscheduleJob(context.Trigger.Key, context.CancellationToken);
+            await context.Scheduler.UnscheduleJob(context.Trigger.Key, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError("Failed to process {Job} job. Error: {Error}", typeof(TBackgroundJob).Name, ex);
 
-            throw new JobExecutionException(
-                msg: $"Failed to process job {typeof(TBackgroundJob).Name}.",
-                refireImmediately: true,
-                cause: ex
-            );
+            throw new JobExecutionException($"Failed to process job {typeof(TBackgroundJob).Name}.", ex)
+            {
+                RefireImmediately = true
+            };
         }
     }
 }
@@ -69,7 +68,7 @@ internal sealed class OneOffJobProcessor<TBackgroundJob> : IJob
         _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         if (context.RefireCount > _maxRefireCount)
         {
@@ -79,19 +78,18 @@ internal sealed class OneOffJobProcessor<TBackgroundJob> : IJob
 
         try
         {
-            await _job.Execute(context.CancellationToken);
+            await _job.Execute(cancellationToken);
 
-            await context.Scheduler.UnscheduleJob(context.Trigger.Key, context.CancellationToken);
+            await context.Scheduler.UnscheduleJob(context.Trigger.Key, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError("Failed to process {Job} job. Error: {Error}", typeof(TBackgroundJob).Name, ex);
 
-            throw new JobExecutionException(
-                msg: $"Failed to process job {typeof(TBackgroundJob).Name}.",
-                refireImmediately: true,
-                cause: ex
-            );
+            throw new JobExecutionException($"Failed to process job {typeof(TBackgroundJob).Name}.", ex)
+            {
+                RefireImmediately = true
+            };
         }
     }
 }

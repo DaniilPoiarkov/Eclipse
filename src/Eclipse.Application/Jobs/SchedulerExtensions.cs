@@ -16,7 +16,7 @@ internal static class SchedulerExtensions
                 .StoreDurably()
                 .Build();
 
-            await scheduler.AddJob(job, replace: true, cancellationToken);
+            await scheduler.AddJob(job, AddJobOptions.Replacing, cancellationToken);
         }
 
         return job;

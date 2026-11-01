@@ -51,6 +51,6 @@ internal sealed class ReminderAddedEventHandler : IEventHandler<ReminderAddedDom
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
     }
 }

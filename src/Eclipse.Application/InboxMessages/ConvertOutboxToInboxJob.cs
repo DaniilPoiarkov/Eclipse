@@ -18,11 +18,11 @@ internal sealed class ConvertOutboxToInboxJob : IJob
         _configuration = configuration;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         var count = _configuration.GetSection("InboxMessages")
             .GetValue<int>("ConvertCount");
 
-        await _inboxMessageConvertor.ConvertAsync(count, context.CancellationToken);
+        await _inboxMessageConvertor.ConvertAsync(count, cancellationToken);
     }
 }

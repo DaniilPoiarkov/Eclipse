@@ -52,15 +52,15 @@ internal sealed class NotifyExpiringApiTokensJob : IJob
         _logger = logger;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         var now = _timeProvider.Now;
         var to = _options.Value.Thresholds.Max();
 
-        var tokens = await _apiTokenRepository.GetExpiringBetweenAsync(now, now.AddDays(to + 1), context.CancellationToken);
+        var tokens = await _apiTokenRepository.GetExpiringBetweenAsync(now, now.AddDays(to + 1), cancellationToken);
 
         var userIds = tokens.Select(t => t.UserId).Distinct();
-        var users = await _userRepository.GetByExpressionAsync(user => userIds.Contains(user.Id), context.CancellationToken);
+        var users = await _userRepository.GetByExpressionAsync(user => userIds.Contains(user.Id), cancellationToken);
 
         var tokensGrouped = tokens.GroupBy(t => t.ExpiresAt.Date)
             .IntersectBy(_options.Value.Thresholds.Select(days => now.AddDays(days).Date), g => g.Key)
@@ -68,7 +68,7 @@ internal sealed class NotifyExpiringApiTokensJob : IJob
             .GroupBy(t => t.UserId);
 
         await users.Join(tokensGrouped, u => u.Id, g => g.Key, (u, g) => (User: u, Tokens: g))
-            .Select(tuple => SendAsync(tuple.User, tuple.Tokens, context.CancellationToken))
+            .Select(tuple => SendAsync(tuple.User, tuple.Tokens, cancellationToken))
             .WhenAll();
     }
 

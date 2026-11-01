@@ -7,14 +7,14 @@ namespace Eclipse.Application.ApiTokens.Expiration;
 
 internal sealed class NotifyExpiringApiTokensJobConfiguration : IJobConfiguration
 {
-    public void Schedule(QuartzOptions options)
+    public void Schedule(IQuartzBuilder quartz)
     {
-        var jobKey = JobKey.Create(nameof(NotifyExpiringApiTokensJob), "api-tokens");
+        var jobKey = new JobKey(nameof(NotifyExpiringApiTokensJob), "api-tokens");
 
-        options.AddJob<NotifyExpiringApiTokensJob>(job => job.WithIdentity(jobKey))
+        quartz.AddJob<NotifyExpiringApiTokensJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger.ForJob(jobKey)
                 .WithCalendarIntervalSchedule(s =>
-                    s.WithIntervalInDays(NotificationConsts.OneUnit))
+                    s.WithInterval(NotificationConsts.OneUnit, IntervalUnit.Day))
                         .StartAt(DateTime.UtcNow.Date.AddDays(NotificationConsts.OneUnit)
                             .WithTime(NotificationConsts.Day130PM)
                         )

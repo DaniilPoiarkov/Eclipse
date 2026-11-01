@@ -43,6 +43,6 @@ internal sealed class BackgroundJobManager : IBackgroundJobManager
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
-        await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        await scheduler.ScheduleJob(job, trigger, cancellationToken: cancellationToken);
     }
 }
