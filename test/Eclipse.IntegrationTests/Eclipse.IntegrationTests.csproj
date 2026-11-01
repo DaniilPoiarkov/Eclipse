@@ -4,13 +4,12 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
 	  <NoWarn>xUnit1051</NoWarn>
+    <!-- All integration tests are currently disabled; don't fail the run on "zero tests ran" (exit code 8) -->
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="System.Security.Cryptography.Xml" />

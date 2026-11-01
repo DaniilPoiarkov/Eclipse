@@ -12,6 +12,7 @@ on:
       - 'test/**'
       - '**.props'
       - '**.slnx'
+      - 'global.json'
   workflow_dispatch:
 
 jobs:
@@ -43,17 +44,19 @@ jobs:
         --no-restore
 
     - name: Run tests
-      run: dotnet test ./Eclipse.WebAPI.slnx
+      run: dotnet test
+        --solution ./Eclipse.WebAPI.slnx
         --configuration ${{ env.DOTNET_CONFIGURATION }}
         --no-build
-        --logger trx
         --results-directory ${{ github.workspace }}/test-results
-        --collect "XPlat Code Coverage;Format=Cobertura"
+        --report-xunit-trx
+        --coverage
+        --coverage-output-format cobertura
 
     - name: Generate code coverage report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
       with:
-        reports: ${{ github.workspace }}/test-results/**/*.xml
+        reports: ${{ github.workspace }}/test-results/**/*.cobertura.xml
         targetdir: ${{ github.workspace }}/coverage-reports
         reporttypes: cobertura;Html_Dark;MarkdownSummaryGithub
         assemblyfilters: '-*.Tests;-*.Infrastructure;-*.DataAccess'
