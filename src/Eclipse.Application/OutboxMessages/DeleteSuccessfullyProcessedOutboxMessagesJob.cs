@@ -13,8 +13,8 @@ internal sealed class DeleteSuccessfullyProcessedOutboxMessagesJob : IJob
         _outboxMessagesService = outboxMessagesService;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
-        await _outboxMessagesService.DeleteSuccessfullyProcessedAsync(context.CancellationToken);
+        await _outboxMessagesService.DeleteSuccessfullyProcessedAsync(cancellationToken);
     }
 }

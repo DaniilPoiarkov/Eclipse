@@ -8,15 +8,15 @@ internal sealed class DeleteProcessedInboxMessagesJobConfiguration : IJobConfigu
 {
     private static readonly int _delay = 24;
 
-    public void Schedule(QuartzOptions options)
+    public void Schedule(IQuartzBuilder quartz)
     {
-        var jobKey = JobKey.Create(nameof(DeleteProcessedInboxMessagesJob), "events-processing");
+        var jobKey = new JobKey(nameof(DeleteProcessedInboxMessagesJob), "events-processing");
 
-        options.AddJob<DeleteProcessedInboxMessagesJob>(job => job.WithIdentity(jobKey))
+        quartz.AddJob<DeleteProcessedInboxMessagesJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger
             .ForJob(jobKey)
                 .WithSimpleSchedule(schedule => schedule
-                    .WithIntervalInHours(_delay)
+                    .WithInterval(TimeSpan.FromHours(_delay))
                     .RepeatForever())
                 .StartNow());
     }

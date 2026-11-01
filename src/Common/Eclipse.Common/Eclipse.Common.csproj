@@ -6,8 +6,6 @@
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.Contrib.WaitAndRetry" />
     <PackageReference Include="Quartz" />
-    <PackageReference Include="Quartz.Extensions.DependencyInjection" />
-    <PackageReference Include="Quartz.Extensions.Hosting" />
     <PackageReference Include="Telegram.Bot" />
 	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>

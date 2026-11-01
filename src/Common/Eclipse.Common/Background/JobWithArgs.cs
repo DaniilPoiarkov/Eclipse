@@ -15,7 +15,7 @@ public abstract class JobWithArgs<TArgs> : IJob
         Logger = logger;
     }
 
-    public virtual async Task Execute(IJobExecutionContext context)
+    public virtual async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         var data = context.MergedJobDataMap.GetString("data");
 
@@ -35,7 +35,7 @@ public abstract class JobWithArgs<TArgs> : IJob
 
         try
         {
-            await Execute(args, context.CancellationToken);
+            await Execute(args, cancellationToken);
         }
         catch (Exception ex)
         {

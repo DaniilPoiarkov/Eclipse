@@ -1,29 +1,27 @@
-﻿using Eclipse.Application.ApiTokens.Expiration;
+using Eclipse.Application.ApiTokens.Expiration;
 using Eclipse.Application.InboxMessages;
 using Eclipse.Application.MoodRecords.Archiving;
 using Eclipse.Application.OutboxMessages;
-
-using Microsoft.Extensions.Options;
 
 using Quartz;
 
 namespace Eclipse.Application.OptionsConfigurations;
 
-internal sealed class QuartzOptionsConfiguration : IConfigureOptions<QuartzOptions>
+internal static class QuartzOptionsConfiguration
 {
-    public void Configure(QuartzOptions options)
+    public static void Configure(IQuartzBuilder quartz)
     {
-        AddJob<ConvertOutboxToInboxJobConfiguration>(options);
-        AddJob<ProcessTypedInboxMessagesJobConfiguration>(options);
-        AddJob<DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration>(options);
-        AddJob<DeleteProcessedInboxMessagesJobConfiguration>(options);
-        AddJob<ArchiveMoodRecordsJobConfiguration>(options);
-        AddJob<NotifyExpiringApiTokensJobConfiguration>(options);
+        AddJob<ConvertOutboxToInboxJobConfiguration>(quartz);
+        AddJob<ProcessTypedInboxMessagesJobConfiguration>(quartz);
+        AddJob<DeleteSuccessfullyProcessedOutboxMessagesJobConfiguration>(quartz);
+        AddJob<DeleteProcessedInboxMessagesJobConfiguration>(quartz);
+        AddJob<ArchiveMoodRecordsJobConfiguration>(quartz);
+        AddJob<NotifyExpiringApiTokensJobConfiguration>(quartz);
     }
 
-    private static void AddJob<TJobConfiguration>(QuartzOptions options)
+    private static void AddJob<TJobConfiguration>(IQuartzBuilder quartz)
         where TJobConfiguration : IJobConfiguration, new()
     {
-        new TJobConfiguration().Schedule(options);
+        new TJobConfiguration().Schedule(quartz);
     }
 }

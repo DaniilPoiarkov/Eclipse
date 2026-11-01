@@ -97,9 +97,11 @@ jobs:
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v3
         with:
-          creds: ${{ secrets.AZURE_SP_ECLIPSE_DEV_CICD }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp

@@ -41,17 +41,17 @@ internal sealed class RequestDonationsJobScheduler : INotificationScheduler<Requ
             .WithIdentity(new TriggerKey($"{nameof(RequestDonationsJob)}-{options.UserId}", options.UserId.ToString()))
             .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithCalendarIntervalSchedule(schedule =>
-                schedule.WithIntervalInMonths(NotificationConsts.OneUnit)
+                schedule.WithInterval(NotificationConsts.OneUnit, IntervalUnit.Month)
             )
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        return scheduler.UnscheduleJob(
+        await scheduler.UnscheduleJob(
             new TriggerKey($"{nameof(RequestDonationsJob)}-{options.UserId}", options.UserId.ToString()),
             cancellationToken
         );

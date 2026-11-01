@@ -28,86 +28,86 @@ internal sealed class ProcessTypedInboxMessagesJobConfiguration : IJobConfigurat
 {
     private static readonly int _delay = 5;
 
-    public void Schedule(QuartzOptions options)
+    public void Schedule(IQuartzBuilder quartz)
     {
         /// <see cref="TestDomainEvent"/>
-        AddJob<TestDomainEvent, TestEventHandler>(options);
-        AddJob<TestDomainEvent, AnotherTestEventHandler>(options);
+        AddJob<TestDomainEvent, TestEventHandler>(quartz);
+        AddJob<TestDomainEvent, AnotherTestEventHandler>(quartz);
 
         /// <see cref="NewUserJoinedDomainEvent"/>
-        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, WeeklyMoodReportJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, MonthlyMoodReportJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>(options);
-        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>(options);
+        AddJob<NewUserJoinedDomainEvent, NewUserJoinedEventHandler>(quartz);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, FinishTodoItemsJob>>(quartz);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, GoodMorningJob>>(quartz);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, WeeklyMoodReportJob>>(quartz);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, MonthlyMoodReportJob>>(quartz);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectMoodRecordJob>>(quartz);
+        AddJob<NewUserJoinedDomainEvent, UserEventHandlerBase<NewUserJoinedDomainEvent, CollectFeedbackJob>>(quartz);
 
         /// <see cref="NewSuggestionSentDomainEvent"/>
-        AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(options);
+        AddJob<NewSuggestionSentDomainEvent, NewSuggestionSentEventHandler>(quartz);
 
         /// <see cref="FeedbackSentEvent"/>
-        AddJob<FeedbackSentEvent, FeedbackSentEventHandler>(options);
+        AddJob<FeedbackSentEvent, FeedbackSentEventHandler>(quartz);
 
         /// <see cref="ReminderAddedDomainEvent"/>
-        AddJob<ReminderAddedDomainEvent, ReminderAddedEventHandler>(options);
+        AddJob<ReminderAddedDomainEvent, ReminderAddedEventHandler>(quartz);
 
         /// <see cref="RemindersReceivedDomainEvent"/>
-        AddJob<RemindersReceivedDomainEvent, RemindersReceivedEventHandler>(options);
+        AddJob<RemindersReceivedDomainEvent, RemindersReceivedEventHandler>(quartz);
 
         /// <see cref="TodoItemFinishedDomainEvent"/>
-        AddJob<TodoItemFinishedDomainEvent, TodoItemFinishedEventHandler>(options);
+        AddJob<TodoItemFinishedDomainEvent, TodoItemFinishedEventHandler>(quartz);
 
         /// <see cref="GmtChangedDomainEvent"/>
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<FinishTodoItemsJob>>(options);
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<GoodMorningJob>>(options);
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<WeeklyMoodReportJob>>(options);
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<MonthlyMoodReportJob>>(options);
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectMoodRecordJob>>(options);
-        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectFeedbackJob>>(options);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<FinishTodoItemsJob>>(quartz);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<GoodMorningJob>>(quartz);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<WeeklyMoodReportJob>>(quartz);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<MonthlyMoodReportJob>>(quartz);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectMoodRecordJob>>(quartz);
+        AddJob<GmtChangedDomainEvent, NewTimeEventHandler<CollectFeedbackJob>>(quartz);
 
         /// <see cref="UserDisabledDomainEvent"/>
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectMoodRecordJob>>(options);
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<WeeklyMoodReportJob>>(options);
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<MonthlyMoodReportJob>>(options);
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<FinishTodoItemsJob>>(options);
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<GoodMorningJob>>(options);
-        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectFeedbackJob>>(options);
-        AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(options);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectMoodRecordJob>>(quartz);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<WeeklyMoodReportJob>>(quartz);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<MonthlyMoodReportJob>>(quartz);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<FinishTodoItemsJob>>(quartz);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<GoodMorningJob>>(quartz);
+        AddJob<UserDisabledDomainEvent, UserDisabledEventHandler<CollectFeedbackJob>>(quartz);
+        AddJob<UserDisabledDomainEvent, UnscheduleAllRemindersHandler>(quartz);
 
         /// <see cref="UserEnabledDomainEvent"/>
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, GoodMorningJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, WeeklyMoodReportJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, MonthlyMoodReportJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>(options);
-        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>(options);
-        AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(options);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, FinishTodoItemsJob>>(quartz);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, GoodMorningJob>>(quartz);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, WeeklyMoodReportJob>>(quartz);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, MonthlyMoodReportJob>>(quartz);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectMoodRecordJob>>(quartz);
+        AddJob<UserEnabledDomainEvent, UserEventHandlerBase<UserEnabledDomainEvent, CollectFeedbackJob>>(quartz);
+        AddJob<UserEnabledDomainEvent, RescheduleRemindersHandler>(quartz);
 
         /// <see cref="ReminderRescheduledDomainEvent"/>
-        AddJob<ReminderRescheduledDomainEvent, ReminderRescheduledEventHandler>(options);
+        AddJob<ReminderRescheduledDomainEvent, ReminderRescheduledEventHandler>(quartz);
 
         /// <see cref="ReminderRemovedDomainEvent"/>
-        AddJob<ReminderRemovedDomainEvent, ReminderRemovedEventHandler>(options);
+        AddJob<ReminderRemovedDomainEvent, ReminderRemovedEventHandler>(quartz);
 
         /// <see cref="PromotionPublishingRequestedDomainEvent"/>
-        AddJob<PromotionPublishingRequestedDomainEvent, PromotionPublishingRequestedEventHandler>(options);
+        AddJob<PromotionPublishingRequestedDomainEvent, PromotionPublishingRequestedEventHandler>(quartz);
     }
 
-    private static void AddJob<TEvent, TEventHanlder>(QuartzOptions options)
+    private static void AddJob<TEvent, TEventHanlder>(IQuartzBuilder quartz)
         where TEvent : IDomainEvent
         where TEventHanlder : IEventHandler<TEvent>
     {
-        var jobKey = JobKey.Create(typeof(ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>).FullName
+        var jobKey = new JobKey(typeof(ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>).FullName
             ?? throw new InvalidOperationException($"Cannot schedule processing for {typeof(TEvent).Name} type"),
             "events-processing"
         );
 
-        options.AddJob<ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>>(job => job.WithIdentity(jobKey))
+        quartz.AddJob<ProcessTypedInboxMessagesJob<TEvent, TEventHanlder>>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger
                 .ForJob(jobKey)
                 .WithSimpleSchedule(schedule => schedule
-                    .WithIntervalInSeconds(_delay)
+                    .WithInterval(TimeSpan.FromSeconds(_delay))
                     .RepeatForever())
                 .StartNow());
     }
