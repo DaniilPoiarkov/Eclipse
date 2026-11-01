@@ -13,8 +13,8 @@ internal sealed class DeleteProcessedInboxMessagesJob : IJob
         _service = service;
     }
 
-    public Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
-        return _service.DeleteProcessedAsync(context.CancellationToken);
+        await _service.DeleteProcessedAsync(cancellationToken);
     }
 }

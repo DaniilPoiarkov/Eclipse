@@ -7,8 +7,8 @@ resource "azurerm_resource_group" "rg_alerts" {
 locals {
   rg_name     = azurerm_resource_group.rg_alerts.name
   threashold  = 1
-  time_window = 15
-  frequency   = 15
+  time_window = 30
+  frequency   = 30
 
   tags = {
     management = "terraform"
@@ -153,63 +153,63 @@ resource "azurerm_monitor_smart_detector_alert_rule" "failure_anomalies_alert" {
   tags = local.tags
 }
 
-resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_query" {
-  for_each = var.dependency_targets
+# resource "azurerm_monitor_scheduled_query_rules_alert" "failed_dependency_calls_query" {
+#   for_each = var.dependency_targets
 
-  name                = "Failed calls to ${each.key}"
-  location            = var.location
-  data_source_id      = var.data_source_id
-  severity            = var.severity
-  resource_group_name = local.rg_name
-  frequency           = local.frequency
-  time_window         = local.time_window
+#   name                = "Failed calls to ${each.key}"
+#   location            = var.location
+#   data_source_id      = var.data_source_id
+#   severity            = var.severity
+#   resource_group_name = local.rg_name
+#   frequency           = local.frequency
+#   time_window         = local.time_window
 
-  query = <<-QUERY
-    dependencies
-    | where success == false and target == '${each.key}'
-    QUERY
+#   query = <<-QUERY
+#     dependencies
+#     | where success == false and target == '${each.key}'
+#     QUERY
 
-  action {
-    action_group = [
-      azurerm_monitor_action_group.monitor_action_group.id
-    ]
-  }
+#   action {
+#     action_group = [
+#       azurerm_monitor_action_group.monitor_action_group.id
+#     ]
+#   }
 
-  trigger {
-    operator  = "GreaterThanOrEqual"
-    threshold = local.threashold
-  }
+#   trigger {
+#     operator  = "GreaterThanOrEqual"
+#     threshold = local.threashold
+#   }
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
-resource "azurerm_monitor_scheduled_query_rules_alert" "failed_inbox_messages" {
-  name                = "Failed to process inbox messages"
-  location            = var.location
-  data_source_id      = var.data_source_id
-  severity            = var.severity
-  resource_group_name = local.rg_name
-  frequency           = local.frequency
-  time_window         = local.time_window
+# resource "azurerm_monitor_scheduled_query_rules_alert" "failed_inbox_messages" {
+#   name                = "Failed to process inbox messages"
+#   location            = var.location
+#   data_source_id      = var.data_source_id
+#   severity            = var.severity
+#   resource_group_name = local.rg_name
+#   frequency           = local.frequency
+#   time_window         = local.time_window
 
-  query = <<-QUERY
-    traces
-    | where severityLevel == 3 and message contains 'Failed to process inbox message'
-    QUERY
+#   query = <<-QUERY
+#     traces
+#     | where severityLevel == 3 and message contains 'Failed to process inbox message'
+#     QUERY
 
-  action {
-    action_group = [
-      azurerm_monitor_action_group.monitor_action_group.id
-    ]
-  }
+#   action {
+#     action_group = [
+#       azurerm_monitor_action_group.monitor_action_group.id
+#     ]
+#   }
 
-  trigger {
-    operator  = "GreaterThanOrEqual"
-    threshold = local.threashold
-  }
+#   trigger {
+#     operator  = "GreaterThanOrEqual"
+#     threshold = local.threashold
+#   }
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
 resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
   location            = var.location

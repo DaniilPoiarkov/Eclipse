@@ -38,7 +38,7 @@ public sealed class SendReminderJobTests
 
         var data = new ReminderAddedDomainEvent(reminderId, userId, Guid.NewGuid(), new TimeSpan(), new TimeOnly(), text, culture, chatId);
 
-        var map = new JobDataMap((IDictionary<string, object>)new Dictionary<string, object>
+        var map = new JobDataMap((IDictionary<string, object?>)new Dictionary<string, object?>
         {
             ["data"] = JsonConvert.SerializeObject(data)
         });
@@ -71,7 +71,7 @@ public sealed class SendReminderJobTests
     {
         var context = Substitute.For<IJobExecutionContext>();
 
-        var map = new JobDataMap((IDictionary<string, object>)new Dictionary<string, object>
+        var map = new JobDataMap((IDictionary<string, object?>)new Dictionary<string, object?>
         {
             ["data"] = data!
         });

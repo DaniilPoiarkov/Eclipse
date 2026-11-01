@@ -147,7 +147,7 @@ public static class EclipseApplicationModule
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
 
-        services.ConfigureOptions<QuartzOptionsConfiguration>();
+        services.ConfigureAllQuartzSchedulers(QuartzOptionsConfiguration.Configure);
         services.ConfigureOptions<ApiTokenExpirationNotificationOptionsConfiguration>();
 
         return services;

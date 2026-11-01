@@ -13,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quartz;
-using Quartz.Logging;
 
 using Serilog;
 
@@ -55,11 +54,9 @@ public static class EclipseInfrastructureModule
 
     private static IServiceCollection AddQuartzIntegration(this IServiceCollection services)
     {
-        LogProvider.IsDisabled = true;
-
         services.AddQuartz(configurator =>
         {
-            configurator.SchedulerName = $"eclipse";
+            configurator.ConfigureScheduler(scheduler => scheduler.InstanceName = "eclipse");
         });
 
         services.AddQuartzHostedService(options =>

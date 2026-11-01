@@ -68,7 +68,7 @@ internal sealed class RescheduleRemindersHandler : IEventHandler<UserEnabledDoma
                 .StartAt(time)
                 .Build();
 
-            await scheduler.ScheduleJob(trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
         }
     }
 }

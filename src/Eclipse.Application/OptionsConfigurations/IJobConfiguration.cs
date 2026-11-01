@@ -4,5 +4,5 @@ namespace Eclipse.Application.OptionsConfigurations;
 
 internal interface IJobConfiguration
 {
-    void Schedule(QuartzOptions options);
+    void Schedule(IQuartzBuilder quartz);
 }

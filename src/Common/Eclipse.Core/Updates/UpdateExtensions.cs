@@ -1,4 +1,7 @@
-﻿using Telegram.Bot.Types;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+using Telegram.Bot.Types;
 
 namespace Eclipse.Core.Updates;
 

@@ -8,15 +8,15 @@ internal sealed class ConvertOutboxToInboxJobConfiguration : IJobConfiguration
 {
     private static readonly int _delay = 5;
 
-    public void Schedule(QuartzOptions options)
+    public void Schedule(IQuartzBuilder quartz)
     {
-        var jobKey = JobKey.Create(nameof(ConvertOutboxToInboxJob), "events-processing");
+        var jobKey = new JobKey(nameof(ConvertOutboxToInboxJob), "events-processing");
 
-        options.AddJob<ConvertOutboxToInboxJob>(job => job.WithIdentity(jobKey))
+        quartz.AddJob<ConvertOutboxToInboxJob>(job => job.WithIdentity(jobKey))
             .AddTrigger(trigger => trigger
                 .ForJob(jobKey)
                 .WithSimpleSchedule(schedule => schedule
-                    .WithIntervalInSeconds(_delay)
+                    .WithInterval(TimeSpan.FromSeconds(_delay))
                     .RepeatForever())
                 .StartNow());
     }

@@ -39,7 +39,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
         _options = options;
     }
 
-    public async Task Execute(IJobExecutionContext context)
+    public async ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         var date = _timeProvider.Now
             .PreviousDayOfWeek(_timeProvider.Now.DayOfWeek)
@@ -47,7 +47,7 @@ internal sealed class ArchiveMoodRecordsJob : IJob
 
         var records = await _repository.GetByExpressionAsync(
             mr => mr.CreatedAt <= date,
-            context.CancellationToken
+            cancellationToken
         );
 
         using var stream = _excelManager.Write(records);
@@ -56,9 +56,9 @@ internal sealed class ArchiveMoodRecordsJob : IJob
             _options.Value.Chat,
             InputFile.FromStream(stream, $"mood-records-archive-{date:dd.MM.yyyy}.xlsx"),
             caption: "Mood records archive",
-            cancellationToken: context.CancellationToken
+            cancellationToken: cancellationToken
         );
 
-        await _repository.DeleteRangeAsync(records, context.CancellationToken);
+        await _repository.DeleteRangeAsync(records, cancellationToken);
     }
 }

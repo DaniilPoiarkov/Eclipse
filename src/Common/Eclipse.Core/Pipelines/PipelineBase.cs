@@ -52,10 +52,7 @@ public abstract class PipelineBase : Pipeline, IPipeline
 
         var result = await next.RunAsync(context, cancellationToken);
 
-        if (result is ResultBase resultBase)
-        {
-            resultBase.ChatId = context.ChatId;
-        }
+        result.ChatId = context.ChatId;
 
         return result;
     }

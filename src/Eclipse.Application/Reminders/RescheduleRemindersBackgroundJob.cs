@@ -53,7 +53,7 @@ internal sealed class RescheduleRemindersBackgroundJob : IBackgroundJob
                 .StartAt(time)
                 .Build();
 
-            await scheduler.ScheduleJob(trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
         }
     }
 }

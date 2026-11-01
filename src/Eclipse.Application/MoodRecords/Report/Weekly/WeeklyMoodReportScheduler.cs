@@ -34,16 +34,16 @@ internal sealed class WeeklyMoodReportScheduler : INotificationScheduler<WeeklyM
             .ForJob(job)
             .WithIdentity(new TriggerKey($"{nameof(WeeklyMoodReportJob)}-{options.UserId}", options.UserId.ToString()))
             .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
-            .WithCalendarIntervalSchedule(scheduler => scheduler.WithIntervalInWeeks(NotificationConsts.OneUnit))
+            .WithCalendarIntervalSchedule(scheduler => scheduler.WithInterval(NotificationConsts.OneUnit, IntervalUnit.Week))
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        return scheduler.UnscheduleJob(
+        await scheduler.UnscheduleJob(
             new TriggerKey($"{nameof(WeeklyMoodReportJob)}-{options.UserId}", options.UserId.ToString()),
             cancellationToken
         );

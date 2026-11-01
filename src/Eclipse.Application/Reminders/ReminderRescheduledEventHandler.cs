@@ -82,7 +82,7 @@ internal sealed class ReminderRescheduledEventHandler : IEventHandler<ReminderRe
 
         try
         {
-            await scheduler.ScheduleJob(trigger, cancellationToken);
+            await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {

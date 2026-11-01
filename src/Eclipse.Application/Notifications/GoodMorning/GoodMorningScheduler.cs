@@ -34,18 +34,18 @@ internal sealed class GoodMorningScheduler : INotificationScheduler<GoodMorningJ
             .WithIdentity(new TriggerKey($"{nameof(GoodMorningJob)}-{options.UserId}", options.UserId.ToString()))
             .UsingJobData("data", JsonConvert.SerializeObject(new UserIdJobData(options.UserId)))
             .WithSimpleSchedule(schedule => schedule
-                .WithIntervalInHours(NotificationConsts.OneDayInHours)
+                .WithInterval(TimeSpan.FromHours(NotificationConsts.OneDayInHours))
                 .RepeatForever()
             )
             .StartAt(time)
             .Build();
 
-        await scheduler.ScheduleJob(trigger, cancellationToken);
+        await scheduler.ScheduleJob(trigger, cancellationToken: cancellationToken);
     }
 
-    public Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
+    public async Task Unschedule(IScheduler scheduler, SchedulerOptions options, CancellationToken cancellationToken = default)
     {
-        return scheduler.UnscheduleJob(
+        await scheduler.UnscheduleJob(
             new TriggerKey($"{nameof(GoodMorningJob)}-{options.UserId}", options.UserId.ToString()),
             cancellationToken
         );
