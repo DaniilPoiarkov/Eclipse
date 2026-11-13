@@ -1,7 +1,7 @@
 name: Pack and Publish MCP Admin Server
 
 env:
-  DOTNET_VERSION: '10.0.*'
+  DOTNET_VERSION: '11.0.*'
   PROJECT_PATH: './mcp/Eclipse.MCP.Admin/Eclipse.MCP.Admin.csproj'
 
 on:
