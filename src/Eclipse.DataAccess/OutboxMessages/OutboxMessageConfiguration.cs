@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.OutboxMessages;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.OutboxMessages;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
     {
         builder.HasPartitionKey(m => m.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(OutboxMessage));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }

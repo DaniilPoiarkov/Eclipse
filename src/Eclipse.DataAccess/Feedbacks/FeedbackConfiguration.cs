@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Feedbacks;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.Feedbacks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
     {
         builder.HasPartitionKey(u => u.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(Feedback));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }
