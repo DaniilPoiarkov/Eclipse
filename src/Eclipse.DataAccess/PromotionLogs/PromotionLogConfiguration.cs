@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.PromotionLogs;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.PromotionLogs;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class PromotionLogConfiguration : IEntityTypeConfiguration<Promo
     {
         builder.HasPartitionKey(u => u.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(PromotionLog));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.MoodRecords;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.MoodRecords;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class MoodRecordConfiguration : IEntityTypeConfiguration<MoodRec
     {
         builder.HasPartitionKey(mr => mr.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(MoodRecord));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }

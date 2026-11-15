@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Statistics;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.Statistics;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class UserStatisticsConfiguration : IEntityTypeConfiguration<Use
     {
         builder.HasPartitionKey(us => us.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(UserStatistics));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }
