@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.Promotions;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.Promotions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class PromotionConfiguration : IEntityTypeConfiguration<Promotio
     {
         builder.HasPartitionKey(p => p.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(Promotion));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Eclipse.DataAccess.Cosmos;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Eclipse.DataAccess.Migrations;
@@ -16,6 +18,6 @@ internal sealed class VersionInfoConfiguration : IEntityTypeConfiguration<Versio
         builder.Property(x => x.AppliedAt)
             .IsRequired();
 
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eclipse.Domain.InboxMessages;
+﻿using Eclipse.DataAccess.Cosmos;
+using Eclipse.Domain.InboxMessages;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,6 @@ internal sealed class InboxMessageConfiguration : IEntityTypeConfiguration<Inbox
     {
         builder.HasPartitionKey(m => m.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(InboxMessage));
-
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }

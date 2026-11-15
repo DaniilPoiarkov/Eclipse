@@ -1,3 +1,4 @@
+using Eclipse.DataAccess.Cosmos;
 using Eclipse.Domain.ApiTokens;
 using Eclipse.Domain.Shared.ApiTokens;
 
@@ -13,9 +14,6 @@ internal sealed class ApiTokenConfiguration : IEntityTypeConfiguration<ApiToken>
     {
         builder.HasPartitionKey(t => t.Id);
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue(nameof(ApiToken));
-
         builder.Property(t => t.Scopes)
             .HasConversion<ApiTokenScopesConversion>(
                 new ValueComparer<IReadOnlyList<ApiTokenScope>>(
@@ -28,6 +26,6 @@ internal sealed class ApiTokenConfiguration : IEntityTypeConfiguration<ApiToken>
                 )
             );
 
-        builder.HasDiscriminatorInJsonId();
+        builder.HasKeyAsJsonId();
     }
 }
